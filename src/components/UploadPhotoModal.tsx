@@ -392,12 +392,15 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             </div>
           )}
 
+          {/* Project workspace: image + side shopping panel */}
+          <div className={`mt-5 ${variations.length > 0 ? "lg:grid lg:grid-cols-[1.4fr_1fr] lg:gap-5 lg:items-start" : ""}`}>
+          <div>
           {/* Upload zone */}
           <div
             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
             onDragLeave={() => setIsDragging(false)}
             onDrop={onDrop}
-            className={`mt-5 relative rounded-2xl border border-dashed overflow-hidden aspect-[5/3] transition ${
+            className={`relative rounded-2xl border border-dashed overflow-hidden aspect-[5/3] transition ${
               isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
             }`}
           >
@@ -564,6 +567,15 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               ))}
             </div>
           )}
+          </div>
+
+          {variations.length > 0 && (
+            <ShoppingPanel
+              styleName={STYLES.find((s) => s.id === style)?.name ?? "Projeto"}
+              variationLabel={variations[activeIdx]?.label}
+            />
+          )}
+          </div>
 
           {error && (
             <div className="mt-3 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
