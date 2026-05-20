@@ -147,6 +147,11 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     // Preserve original createdAt if existing
     const existing = listDrafts().find((d) => d.id === draftId);
     if (existing) draft.createdAt = existing.createdAt;
+    // Preserve version history written by pushVersion
+    if (existing?.versions) {
+      draft.versions = existing.versions;
+      draft.activeVersionId = existing.activeVersionId;
+    }
     upsertDraft(draft);
     setDrafts(listDrafts());
   }, [preview, variations, style, stage, progress, meta, draftId]);
