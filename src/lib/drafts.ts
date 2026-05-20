@@ -1,7 +1,19 @@
 const KEY = "ideal_space_drafts_v1";
 const MAX_DRAFTS = 6;
+const MAX_VERSIONS = 8;
 
 export type DraftStatus = "draft" | "generating" | "done";
+
+export type DraftVersionResult = { url: string; style: string; styleName?: string; label?: string };
+
+export type DraftVersion = {
+  id: string;
+  createdAt: number;
+  style: string;
+  styleName?: string;
+  results: DraftVersionResult[];
+  note?: string;
+};
 
 export type Draft = {
   id: string;
@@ -12,10 +24,12 @@ export type Draft = {
   styleName?: string;
   preview: string; // data URL of optimized source
   result?: string; // legacy: first/only generated result
-  results?: Array<{ url: string; style: string; styleName?: string; label?: string }>;
+  results?: DraftVersionResult[];
   meta?: { w: number; h: number; original: number; optimized: number };
   progress?: number;
   title?: string;
+  versions?: DraftVersion[];
+  activeVersionId?: string;
 };
 
 function safeParse(raw: string | null): Draft[] {
