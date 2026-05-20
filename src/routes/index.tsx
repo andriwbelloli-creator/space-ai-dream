@@ -907,9 +907,16 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
               ))}
             </div>
           </div>
-          <div className="lg:col-span-5 lg:justify-self-end">
+          <div className="lg:col-span-5 lg:justify-self-end flex flex-wrap gap-2">
             <Button onClick={onUpload} className="h-12 rounded-full bg-accent text-accent-foreground hover:opacity-95 px-6">
               Criar projeto profissional <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+            <Button
+              onClick={onCourse}
+              variant="outline"
+              className="h-12 rounded-full px-6 bg-white/5 border-white/20 text-background hover:bg-white/10 hover:text-background"
+            >
+              Conhecer o curso
             </Button>
           </div>
         </div>
