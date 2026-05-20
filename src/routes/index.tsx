@@ -20,43 +20,15 @@ import {
   Smartphone, BookmarkPlus, Gift, Layers, Ruler, LayoutGrid, Compass,
 } from "lucide-react";
 
-// Hero — antes/depois principal (sala)
-import emptyLiving from "@/assets/empty-living.jpg";
-import decoratedLiving from "@/assets/decorated-living.jpg";
+// All marketing imagery — single source of truth, one image per section.
+import { imagesFor, pair, img } from "@/lib/image-catalog";
 
-// Carrossel de ambientes vazios (6 cards — sem repetir sala do hero)
-import emptyBedroom from "@/assets/empty-bedroom.jpg";
-import emptyKitchen from "@/assets/empty-kitchen.jpg";
-import emptyOffice from "@/assets/empty-office.jpg";
-import emptyStudio from "@/assets/empty-studio.jpg";
-import emptyBathroom from "@/assets/empty-bathroom.jpg";
-import emptyDining from "@/assets/empty-dining.jpg";
+const heroPair = pair("hero-living");
+const emptyLiving = heroPair.empty!.src;
+const decoratedLiving = heroPair.decorated!.src;
 
-// Carrossel de estilos (6 cards — todos exclusivos da seção)
-import styleJapandi from "@/assets/style-japandi.jpg";
-import styleScandi from "@/assets/style-scandi.jpg";
-import styleModern from "@/assets/style-modern.jpg";
-import styleIndustrial from "@/assets/style-industrial.jpg";
-import styleLuxo from "@/assets/style-luxo.jpg";
-import styleNatural from "@/assets/style-natural.jpg";
-
-// Antes/depois em destaque (banheiro — distinto do hero e do showcase)
-import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
-
-// Showcase com lista de compras (cozinha — exclusivo desta seção)
-import decoratedKitchen from "@/assets/decorated-kitchen.jpg";
-
-// Galeria de inspirações (6 cards — todos exclusivos)
-import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
-import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
-import decoratedDining from "@/assets/decorated-dining.jpg";
-import galleryLoft from "@/assets/gallery-loft.jpg";
-import galleryVaranda from "@/assets/gallery-varanda.jpg";
-import galleryOffice from "@/assets/gallery-office.jpg";
-import galleryClinic from "@/assets/gallery-clinic.jpg";
-import floorplanApartment from "@/assets/floorplan-apartment.jpg";
-import moodboardPro from "@/assets/moodboard-pro.jpg";
-import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
+const featuredBaPair = pair("ba-bathroom");
+const showcasePair = pair("show-kitchen");
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -71,23 +43,39 @@ export const Route = createFileRoute("/")({
 
 /* ----------------------------- DATA ----------------------------- */
 
-const emptyRooms = [
-  { img: emptyBedroom, title: "Quarto vazio",      badge: "Aconchegante",     sub: "Sono, descanso e estilo" },
-  { img: emptyKitchen, title: "Cozinha simples",   badge: "Premium",          sub: "Funcional e bonita" },
-  { img: emptyOffice,  title: "Home office vazio", badge: "Profissional",     sub: "Foco, conforto e estética" },
-  { img: emptyStudio,  title: "Studio compacto",   badge: "Espaço pequeno",   sub: "Aproveite cada metro" },
-  { img: emptyBathroom,title: "Banheiro vazio",    badge: "Reforma virtual",  sub: "Visualize antes de comprar" },
-  { img: emptyDining,  title: "Sala de jantar",    badge: "Receber bem",      sub: "Convívio e personalidade" },
-] as const;
+/**
+ * Rooms + styles consume the catalog. Copy lives next to the image id so the
+ * marketing strings travel with their visual, but the asset itself is owned
+ * by `src/lib/image-catalog.ts` — guaranteeing no overlap across sections.
+ */
+const ROOM_META: Record<string, { badge: string; sub: string; title?: string }> = {
+  "empty-bedroom":  { badge: "Aconchegante",    sub: "Sono, descanso e estilo",     title: "Quarto vazio" },
+  "empty-kitchen":  { badge: "Premium",         sub: "Funcional e bonita",          title: "Cozinha simples" },
+  "empty-office":   { badge: "Profissional",    sub: "Foco, conforto e estética",   title: "Home office vazio" },
+  "empty-studio":   { badge: "Espaço pequeno",  sub: "Aproveite cada metro",        title: "Studio compacto" },
+  "empty-bathroom": { badge: "Reforma virtual", sub: "Visualize antes de comprar",  title: "Banheiro vazio" },
+  "empty-dining":   { badge: "Receber bem",     sub: "Convívio e personalidade",    title: "Sala de jantar" },
+};
+const emptyRooms = imagesFor("empty-carousel").map((i) => ({
+  img: i.src,
+  title: ROOM_META[i.id]?.title ?? i.alt,
+  badge: ROOM_META[i.id]?.badge ?? "Ambiente",
+  sub: ROOM_META[i.id]?.sub ?? "",
+}));
 
-const styles = [
-  { img: styleJapandi,    name: "Japandi",       sub: "Calma, oak e linho" },
-  { img: styleScandi,     name: "Escandinavo",   sub: "Claro, leve, neutro" },
-  { img: styleModern,     name: "Contemporâneo", sub: "Linhas suaves e arte" },
-  { img: styleIndustrial, name: "Industrial",    sub: "Tijolo, metal e couro" },
-  { img: styleLuxo,       name: "Luxo discreto", sub: "Nobreza e brass" },
-  { img: styleNatural,    name: "Natural",       sub: "Fibras, plantas, cerâmica" },
-];
+const STYLE_META: Record<string, { name: string; sub: string }> = {
+  "style-japandi":    { name: "Japandi",       sub: "Calma, oak e linho" },
+  "style-scandi":     { name: "Escandinavo",   sub: "Claro, leve, neutro" },
+  "style-modern":     { name: "Contemporâneo", sub: "Linhas suaves e arte" },
+  "style-industrial": { name: "Industrial",    sub: "Tijolo, metal e couro" },
+  "style-luxo":       { name: "Luxo discreto", sub: "Nobreza e brass" },
+  "style-natural":    { name: "Natural",       sub: "Fibras, plantas, cerâmica" },
+};
+const styles = imagesFor("style-carousel").map((i) => ({
+  img: i.src,
+  name: STYLE_META[i.id]?.name ?? i.alt,
+  sub: STYLE_META[i.id]?.sub ?? "",
+}));
 
 const shoppingList = [
   { tag: "Essencial",   name: "Sofá 3 lugares",        cat: "Móveis principais", price: "R$ 1.200–3.500" },
@@ -102,20 +90,39 @@ const shoppingList = [
 type GalleryBadge = "2D IA" | "5D" | "Planta baixa" | "Arquitetônico" | "Virtual staging";
 type GalleryFilter = "Todos" | "2D" | "5D" | "Planta baixa" | "Arquitetônico" | "Profissional";
 
+const GALLERY_META: Record<string, { title: string; badge: GalleryBadge; tags: ReadonlyArray<GalleryFilter>; cta: string; soon?: boolean }> = {
+  "g-living-warm": { title: "Sala moderna decorada",          badge: "2D IA",           tags: ["2D"],                              cta: "Gerar parecido" },
+  "g-bedroom":     { title: "Quarto japandi sereno",          badge: "2D IA",           tags: ["2D"],                              cta: "Gerar parecido" },
+  "g-loft":        { title: "Loft industrial integrado",      badge: "Virtual staging", tags: ["2D", "Profissional"],              cta: "Ver projeto" },
+  "g-varanda":     { title: "Varanda urbana ao pôr do sol",   badge: "2D IA",           tags: ["2D"],                              cta: "Gerar parecido" },
+  "g-dining":      { title: "Projeto completo com orçamento", badge: "5D",              tags: ["5D"],                              cta: "Ver projeto", soon: true },
+  "g-floorplan":   { title: "Layout de apartamento compacto", badge: "Planta baixa",    tags: ["Planta baixa", "Profissional"],    cta: "Ver layout",   soon: true },
+  "g-moodboard":   { title: "Moodboard arquitetônico",        badge: "Arquitetônico",   tags: ["Arquitetônico", "Profissional"],   cta: "Explorar",     soon: true },
+  "g-office":      { title: "Home office natural",            badge: "2D IA",           tags: ["2D", "Profissional"],              cta: "Gerar parecido" },
+  "g-clinic":      { title: "Consultório acolhedor",          badge: "Virtual staging", tags: ["2D", "Profissional"],              cta: "Gerar parecido" },
+};
 const gallery: ReadonlyArray<{
   img: string; title: string; badge: GalleryBadge; tags: ReadonlyArray<GalleryFilter>; cta: string; soon?: boolean;
-}> = [
-  { img: decoratedLivingWarm, title: "Sala moderna decorada",     badge: "2D IA",            tags: ["2D"],                            cta: "Gerar parecido" },
-  { img: decoratedBedroom,    title: "Quarto japandi sereno",     badge: "2D IA",            tags: ["2D"],                            cta: "Gerar parecido" },
-  { img: galleryLoft,         title: "Loft industrial integrado", badge: "Virtual staging",  tags: ["2D", "Profissional"],            cta: "Ver projeto" },
-  { img: galleryVaranda,      title: "Varanda urbana ao pôr do sol", badge: "2D IA",         tags: ["2D"],                            cta: "Gerar parecido" },
-  { img: decoratedDining,     title: "Projeto completo com orçamento", badge: "5D",         tags: ["5D"],                            cta: "Ver projeto", soon: true },
-  { img: floorplanApartment,  title: "Layout de apartamento compacto", badge: "Planta baixa", tags: ["Planta baixa", "Profissional"], cta: "Ver layout", soon: true },
-  { img: moodboardPro,        title: "Moodboard arquitetônico",   badge: "Arquitetônico",    tags: ["Arquitetônico", "Profissional"], cta: "Explorar", soon: true },
-  { img: galleryOffice,       title: "Home office natural",       badge: "2D IA",            tags: ["2D", "Profissional"],            cta: "Gerar parecido" },
-  { img: galleryClinic,       title: "Consultório acolhedor",     badge: "Virtual staging",  tags: ["2D", "Profissional"],            cta: "Gerar parecido" },
-  { img: rankMinimalBedroom,  title: "Quarto minimalista",        badge: "2D IA",            tags: ["2D"],                            cta: "Gerar parecido" },
-];
+}> = imagesFor("gallery").map((i) => {
+  const meta = GALLERY_META[i.id];
+  if (!meta) throw new Error(`[index] Missing gallery meta for ${i.id}`);
+  return { img: i.src, ...meta };
+});
+
+const RANKING_META: Record<string, { title: string; sub: string }> = {
+  "rank-minimal-bedroom": { title: "Quarto minimalista",   sub: "1.248 curtidas · estilo Minimalista" },
+  "rank-bathroom":        { title: "Banheiro travertino",  sub: "987 curtidas · estilo Luxo discreto" },
+  "rank-kitchen":         { title: "Cozinha quiet luxury", sub: "812 curtidas · estilo Luxo discreto" },
+};
+const ranking = imagesFor("ranking").map((i, idx) => ({
+  pos: idx + 1,
+  img: i.src,
+  alt: i.alt,
+  title: RANKING_META[i.id]?.title ?? i.alt,
+  sub: RANKING_META[i.id]?.sub ?? "",
+  room: i.room,
+  style: i.style,
+}));
 
 const filterList: ReadonlyArray<GalleryFilter> = ["Todos", "2D", "5D", "Planta baixa", "Arquitetônico", "Profissional"];
 
@@ -225,6 +232,7 @@ function Index() {
         onReward={openReward}
       />
       <InspirationGallery onUpload={() => setUploadOpen(true)} />
+      <RankingStrip onUpload={() => setUploadOpen(true)} />
       <Professionals onUpload={() => setUploadOpen(true)} />
       <Pricing onReward={openReward} />
       <Trust />
@@ -592,7 +600,7 @@ function FeaturedBeforeAfter() {
           </ul>
         </div>
         <div className="lg:col-span-7 order-1 lg:order-2">
-          <BeforeAfter before={emptyBathroom} after={decoratedBathroom} className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5" />
+          <BeforeAfter before={featuredBaPair.empty!.src} after={featuredBaPair.decorated!.src} className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5" />
         </div>
       </div>
     </section>
@@ -634,7 +642,7 @@ function ResultShowcase({
                 </Button>
               </div>
             </div>
-            <BeforeAfter before={emptyKitchen} after={decoratedKitchen} className="aspect-[5/3.4]" />
+            <BeforeAfter before={showcasePair.empty!.src} after={showcasePair.decorated!.src} className="aspect-[5/3.4]" />
           </div>
 
           <aside className="rounded-3xl border bg-card p-5">
@@ -783,6 +791,57 @@ function InspirationGallery({ onUpload }: { onUpload: () => void }) {
         {visible.length === 0 && (
           <p className="mt-10 text-center text-sm text-muted-foreground">Nada por aqui ainda — novos projetos chegam toda semana.</p>
         )}
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- RANKING ----------------------------- */
+
+function RankingStrip({ onUpload }: { onUpload: () => void }) {
+  return (
+    <section id="ranking" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <SectionHead
+            kicker="Ranking da semana"
+            title={<>Os projetos <span className="font-serif italic font-normal">mais curtidos</span> pela comunidade</>}
+            sub="Top 3 da semana — imagens exclusivas desta seção, separadas da galeria e dos antes/depois."
+          />
+          <Button onClick={onUpload} variant="outline" className="rounded-full h-11 px-5 text-sm hidden sm:inline-flex">
+            <Sparkles className="h-4 w-4 mr-1.5" /> Entrar no ranking
+          </Button>
+        </div>
+
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {ranking.map((r) => (
+            <article
+              key={r.title}
+              className="group relative rounded-3xl overflow-hidden border bg-card hover:-translate-y-0.5 hover:shadow-xl transition-all duration-500"
+            >
+              <div className="relative aspect-[5/4] overflow-hidden">
+                <img
+                  src={r.img}
+                  alt={r.alt}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-[1200ms]"
+                />
+                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background text-[10px] uppercase tracking-widest px-2.5 py-1">
+                  #{r.pos} · {r.room ?? "ambiente"}
+                </span>
+                {r.style && (
+                  <span className="absolute top-3 right-3 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 text-foreground">
+                    {r.style}
+                  </span>
+                )}
+              </div>
+              <div className="p-5">
+                <div className="text-base font-medium">{r.title}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{r.sub}</div>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
