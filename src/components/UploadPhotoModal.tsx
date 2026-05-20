@@ -259,26 +259,26 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       setStage("done");
       // Snapshot this generation as a new version in the project history.
       if (draftId) {
-        const finalVars = reset
-          ? variations.slice(0, 0) // placeholder, we'll read fresh below
-          : variations;
-        // Read latest variations from state synchronously via functional update
-        setVariations((curr) => {
-          const version: DraftVersion = {
-            id: newVersionId(),
-            createdAt: Date.now(),
-            style,
-            styleName,
-            results: curr.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label })),
-            note: `${curr.length} ${curr.length === 1 ? "variação" : "variações"} · ${styleName ?? style}`,
-          };
-          pushVersion(draftId, version);
-          setVersions(listDrafts().find((d) => d.id === draftId)?.versions ?? []);
-          setActiveVersionId(version.id);
-          setDrafts(listDrafts());
-          return curr;
-        });
-        void finalVars;
+        const justGenerated = results
+          .filter((r): r is PromiseFulfilledResult<Variation | null> => r.status === "fulfilled")
+          .map((r) => r.value)
+          .filter((v): v is Variation => !!v);
+        const snapshotVars: Variation[] = reset
+          ? justGenerated
+          : [...variations, ...justGenerated];
+        const version: DraftVersion = {
+          id: newVersionId(),
+          createdAt: Date.now(),
+          style,
+          styleName,
+          results: snapshotVars.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label })),
+          note: `${snapshotVars.length} ${snapshotVars.length === 1 ? "variação" : "variações"} · ${styleName ?? style}`,
+        };
+        pushVersion(draftId, version);
+        const fresh = listDrafts().find((d) => d.id === draftId);
+        setVersions(fresh?.versions ?? []);
+        setActiveVersionId(version.id);
+        setDrafts(listDrafts());
       }
     } catch (e: any) {
       if (ticket.cancelled) return;
