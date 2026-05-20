@@ -343,7 +343,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
         }))
       : legacy;
     setVariations(restored);
-    setActiveIdx(0);
+    const restoredIdx = Math.min(Math.max(0, d.activeIdx ?? 0), Math.max(0, restored.length - 1));
+    setActiveIdx(restoredIdx);
+    pendingScrollIdx.current = restoredIdx;
     setStyle(d.style);
     setMeta(d.meta ?? null);
     setDraftId(d.id);
@@ -366,21 +368,22 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (!v) return;
     setActiveVersionId(vid);
     setCompareVersionId(null);
-    setVariations(
-      v.results.map((r, i) => ({
+    const restored = v.results.map((r, i) => ({
         id: `${vid}_${i}`,
         url: r.url,
         style: r.style,
         styleName: r.styleName,
         label: r.label ?? variationLabels[i % variationLabels.length],
-      })),
-    );
-    setActiveIdx(0);
+    }));
+    setVariations(restored);
+    const restoredIdx = Math.min(Math.max(0, v.activeIdx ?? 0), Math.max(0, restored.length - 1));
+    setActiveIdx(restoredIdx);
+    pendingScrollIdx.current = restoredIdx;
     setStyle(v.style);
     // Persist active version pointer
     if (draftId) {
       const existing = listDrafts().find((d) => d.id === draftId);
-      if (existing) upsertDraft({ ...existing, activeVersionId: vid, updatedAt: Date.now() });
+      if (existing) upsertDraft({ ...existing, activeVersionId: vid, activeIdx: restoredIdx, updatedAt: Date.now() });
     }
   };
 
