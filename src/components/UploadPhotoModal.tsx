@@ -668,3 +668,95 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     </Dialog>
   );
 }
+
+/* ------------------------- Shopping panel ------------------------- */
+
+function ShoppingPanel({
+  styleName,
+  variationLabel,
+}: {
+  styleName: string;
+  variationLabel?: string;
+}) {
+  const [unlocked, setUnlocked] = useState(false);
+  const items = SHOPPING_LIST;
+  const visibleItems: ReadonlyArray<BudgetItem> = unlocked ? items : items.slice(0, 4);
+  const total = estimateTotal(items);
+  const projectName = variationLabel
+    ? `${styleName} · ${variationLabel}`
+    : styleName;
+
+  const tagStyles: Record<BudgetItem["tag"], string> = {
+    Essencial: "bg-accent text-accent-foreground",
+    Recomendado: "bg-foreground/85 text-background",
+    Opcional: "bg-muted text-foreground",
+  };
+
+  const onDownload = () => {
+    generateBudgetPdf({
+      project: `Ambiente · ${projectName}`,
+      items,
+      estimate: total,
+    });
+  };
+
+  return (
+    <aside className="mt-4 lg:mt-0 rounded-2xl border bg-card/60 p-4 sm:p-5 flex flex-col">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-accent">
+            <ShoppingBag className="h-3.5 w-3.5" /> Lista de compras
+          </div>
+          <div className="mt-1 text-sm font-medium leading-tight">{projectName}</div>
+        </div>
+        <div className="text-right">
+          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Estimativa</div>
+          <div className="text-sm font-semibold text-foreground">{total}</div>
+        </div>
+      </div>
+
+      <ul className="mt-4 -mx-1 divide-y divide-border/60">
+        {visibleItems.map((it) => (
+          <li key={it.name} className="flex items-start justify-between gap-3 px-1 py-2.5">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className={`text-[9px] uppercase tracking-widest rounded-full px-1.5 py-0.5 ${tagStyles[it.tag]}`}>
+                  {it.tag}
+                </span>
+                <span className="text-sm font-medium truncate">{it.name}</span>
+              </div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">{it.cat}</div>
+            </div>
+            <div className="text-xs font-medium whitespace-nowrap">{it.price}</div>
+          </li>
+        ))}
+      </ul>
+
+      {!unlocked && items.length > visibleItems.length && (
+        <button
+          onClick={() => setUnlocked(true)}
+          className="mt-3 text-xs rounded-xl border border-dashed py-2 hover:bg-muted/60"
+        >
+          Ver mais {items.length - visibleItems.length} itens
+        </button>
+      )}
+
+      <div className="mt-4 pt-4 border-t border-border/60 flex items-center justify-between">
+        <div className="text-[10px] text-muted-foreground">
+          {items.length} itens · valores estimados
+        </div>
+        <div className="text-sm font-semibold">{total}</div>
+      </div>
+
+      <Button
+        onClick={onDownload}
+        className="mt-3 h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90 text-sm"
+      >
+        <FileDown className="h-4 w-4 mr-1.5" /> Baixar orçamento em PDF
+      </Button>
+      <p className="mt-2 text-[10px] text-muted-foreground text-center">
+        PDF com lista organizada por prioridade e estimativa total.
+      </p>
+    </aside>
+  );
+}
