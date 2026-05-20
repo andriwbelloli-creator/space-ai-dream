@@ -4,13 +4,12 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { PresentationModal } from "@/components/PresentationModal";
 import { UploadPhotoModal } from "@/components/UploadPhotoModal";
+import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -18,6 +17,7 @@ import {
   ArrowRight, ArrowUpRight, Sparkles, Check, Lock, Image as ImageIcon,
   Wand2, ShoppingBag, Download, Menu, ShieldCheck, FileText,
   Building2, Briefcase, HomeIcon, Stethoscope, Star, ChevronRight, Zap, Heart, PlayCircle, Trophy, Camera,
+  Smartphone, BookmarkPlus, Gift, Tag,
 } from "lucide-react";
 
 import emptyLiving from "@/assets/empty-living.jpg";
@@ -112,11 +112,10 @@ const faqs = [
 /* ----------------------------- PAGE ----------------------------- */
 
 function Index() {
-  const [budgetOpen, setBudgetOpen] = useState(false);
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
-  const [budgetDone, setBudgetDone] = useState(false);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [reward, setReward] = useState<RewardKind | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -136,19 +135,21 @@ function Index() {
     }
   };
 
-  const downloadBudget = () => {
-    generateBudgetPdf({
-      project: "Cozinha · Luxo discreto",
-      items: shoppingList,
-      estimate: "R$ 3.000 – 8.000",
-    });
-    setBudgetDone(true);
+  const openReward = (k: RewardKind) => setReward(k);
+  const handleReward = (k: RewardKind) => {
+    if (k === "budget") {
+      generateBudgetPdf({
+        project: "Cozinha · Luxo discreto",
+        items: shoppingList,
+        estimate: "R$ 3.000 – 8.000",
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
-      <Hero onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
+      <Hero onBudget={() => openReward("budget")} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
       <Marquee />
       <UploadCTA onUpload={() => setUploadOpen(true)} />
       <EmptyRoomsCarousel />
@@ -156,72 +157,35 @@ function Index() {
       <HowItWorks />
       <ProSpaces onUpload={() => setUploadOpen(true)} />
       <FeaturedBeforeAfter />
-      <ResultShowcase onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} />
+      <ResultShowcase
+        onBudget={() => openReward("budget")}
+        onAffiliate={setAffiliateOpen}
+        onReward={openReward}
+      />
       <Ranking />
       <Testimonials />
       <Professionals />
       <Pricing />
       <Trust />
+      <RewardsStrip onReward={openReward} />
       <FAQ />
       <Footer />
 
       <MobileBottomNav
         onUpload={() => setUploadOpen(true)}
-        onShopping={() => setBudgetOpen(true)}
+        onShopping={() => openReward("budget")}
       />
 
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
       <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} />
 
-      {/* Lead-capture / orçamento */}
-      <Dialog open={budgetOpen} onOpenChange={(o) => { setBudgetOpen(o); if (!o) setBudgetDone(false); }}>
-        <DialogContent className="sm:max-w-md rounded-3xl">
-          {!budgetDone ? (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-serif">Receba seu orçamento completo</DialogTitle>
-                <DialogDescription>
-                  Informe seus dados para baixar a estimativa do projeto e salvar as recomendações.
-                </DialogDescription>
-              </DialogHeader>
-              <form
-                className="space-y-3"
-                onSubmit={(e) => { e.preventDefault(); downloadBudget(); }}
-              >
-                <Input type="email" required placeholder="seu@email.com" className="h-11 rounded-xl" />
-                <Input type="tel" required placeholder="WhatsApp com DDD" className="h-11 rounded-xl" />
-                <label className="flex gap-2 text-xs text-muted-foreground items-start pt-1">
-                  <Checkbox required className="mt-0.5" />
-                  <span>Li e aceito a Política de Privacidade e autorizo o uso dos meus dados para receber este orçamento.</span>
-                </label>
-                <label className="flex gap-2 text-xs text-muted-foreground items-start">
-                  <Checkbox className="mt-0.5" />
-                  <span>Quero receber sugestões de produtos, novidades e recomendações sobre meu projeto.</span>
-                </label>
-                <Button type="submit" className="w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90">
-                  <Download className="h-4 w-4 mr-1.5" /> Baixar orçamento em PDF
-                </Button>
-                <p className="text-[11px] text-muted-foreground">
-                  Seus dados são tratados conforme a LGPD. Você pode solicitar exclusão a qualquer momento.
-                </p>
-              </form>
-            </>
-          ) : (
-            <div className="text-center py-6">
-              <div className="mx-auto h-14 w-14 rounded-full bg-accent/15 text-accent grid place-items-center mb-3">
-                <Download className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-serif">Orçamento baixado!</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Seu PDF foi gerado com a lista organizada por prioridade. Também enviamos uma cópia ao seu e-mail.
-              </p>
-              <Button onClick={downloadBudget} variant="outline" className="mt-4 rounded-full h-10 px-4 text-xs">
-                <Download className="h-4 w-4 mr-1.5" /> Baixar novamente
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Lead-capture unificado por recompensa */}
+      <RewardModal
+        open={!!reward}
+        kind={reward}
+        onOpenChange={(o) => !o && setReward(null)}
+        onSuccess={(k) => handleReward(k)}
+      />
 
       {/* Modal afiliados */}
       <Dialog open={!!affiliateOpen} onOpenChange={(o) => !o && setAffiliateOpen(null)}>
@@ -529,7 +493,13 @@ function HowItWorks() {
 
 /* ----------------------------- RESULT SHOWCASE ----------------------------- */
 
-function ResultShowcase({ onBudget, onAffiliate }: { onBudget: () => void; onAffiliate: (s: string) => void }) {
+function ResultShowcase({
+  onBudget, onAffiliate, onReward,
+}: {
+  onBudget: () => void;
+  onAffiliate: (s: string) => void;
+  onReward: (k: RewardKind) => void;
+}) {
   return (
     <section className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -545,8 +515,15 @@ function ResultShowcase({ onBudget, onAffiliate }: { onBudget: () => void; onAff
               <Badge variant="secondary" className="rounded-full text-[10px] uppercase tracking-wider">Cozinha · Luxo discreto</Badge>
               <span className="text-xs text-muted-foreground">12 itens · estimativa R$ 3.000–8.000</span>
               <div className="ml-auto flex gap-2">
-                <Button size="sm" variant="ghost" className="text-xs">Salvar</Button>
-                <Button size="sm" variant="ghost" className="text-xs"><Zap className="h-3.5 w-3.5 mr-1" /> Variação</Button>
+                <Button size="sm" variant="ghost" onClick={() => onReward("save_project")} className="text-xs">
+                  <BookmarkPlus className="h-3.5 w-3.5 mr-1" /> Salvar
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onReward("send_phone")} className="text-xs">
+                  <Smartphone className="h-3.5 w-3.5 mr-1" /> Enviar p/ celular
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onReward("compare")} className="text-xs">
+                  <Zap className="h-3.5 w-3.5 mr-1" /> Variação
+                </Button>
               </div>
             </div>
             <BeforeAfter before={emptyKitchen} after={decoratedKitchen} className="aspect-[5/3.4]" />
@@ -581,6 +558,18 @@ function ResultShowcase({ onBudget, onAffiliate }: { onBudget: () => void; onAff
                 </li>
               ))}
             </ul>
+
+            <button
+              onClick={() => onReward("shopping_list")}
+              className="mt-3 w-full rounded-xl border border-dashed border-accent/40 bg-accent/5 px-3 py-2.5 text-left hover:bg-accent/10 transition"
+            >
+              <div className="flex items-center gap-2 text-xs font-medium text-accent">
+                <Lock className="h-3.5 w-3.5" /> Ver os 5 itens restantes
+              </div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">
+                Desbloqueie a lista completa com links das lojas.
+              </div>
+            </button>
 
             <Button onClick={onBudget} className="mt-4 w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90">
               <Download className="h-4 w-4 mr-2" /> Baixar orçamento
@@ -1150,5 +1139,48 @@ function MobileBottomNav({ onUpload, onShopping }: { onUpload: () => void; onSho
         </div>
       </div>
     </nav>
+  );
+}
+
+/* ---------------------- REWARDS STRIP ---------------------- */
+
+function RewardsStrip({ onReward }: { onReward: (k: RewardKind) => void }) {
+  const items: { k: RewardKind; icon: React.ComponentType<{ className?: string }>; t: string; d: string }[] = [
+    { k: "extra_gen",     icon: Gift,         t: "Ganhe +1 geração",       d: "Crie sua conta grátis e desbloqueie um bônus." },
+    { k: "send_phone",    icon: Smartphone,   t: "Envie ao seu celular",   d: "Receba o link do projeto no WhatsApp." },
+    { k: "coupon",        icon: Tag,          t: "Receba ofertas",         d: "Avisamos quando algo combinar com seu ambiente." },
+    { k: "compare",       icon: Sparkles,     t: "Compare 3 estilos",      d: "Mesmo ambiente, três interpretações." },
+  ];
+  return (
+    <section className="py-16 sm:py-20 bg-card/40 border-y border-border/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <SectionHead
+          kicker="Benefícios desbloqueáveis"
+          title={<>Mais valor à medida que <span className="font-serif italic font-normal">você avança</span></>}
+          sub="Recompensas opcionais — você decide quando ativar. Sem cadastro obrigatório para usar o produto."
+        />
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {items.map((it) => {
+            const Icon = it.icon;
+            return (
+              <button
+                key={it.k}
+                onClick={() => onReward(it.k)}
+                className="text-left rounded-3xl border bg-card p-5 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="h-10 w-10 rounded-2xl bg-accent/15 text-accent grid place-items-center">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="mt-4 text-base font-medium">{it.t}</div>
+                <div className="mt-1 text-sm text-muted-foreground">{it.d}</div>
+                <div className="mt-3 inline-flex items-center text-xs font-medium text-foreground/80">
+                  Ativar <ArrowRight className="h-3 w-3 ml-1" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
