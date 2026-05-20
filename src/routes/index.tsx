@@ -519,14 +519,14 @@ function ResultShowcase({ onBudget, onAffiliate }: { onBudget: () => void; onAff
         <div className="mt-12 grid lg:grid-cols-[1fr_360px] gap-6 items-start">
           <div className="rounded-3xl overflow-hidden border bg-card">
             <div className="p-3 sm:p-4 flex items-center gap-2 border-b">
-              <Badge variant="secondary" className="rounded-full text-[10px] uppercase tracking-wider">Sala · Japandi</Badge>
+              <Badge variant="secondary" className="rounded-full text-[10px] uppercase tracking-wider">Cozinha · Luxo discreto</Badge>
               <span className="text-xs text-muted-foreground">12 itens · estimativa R$ 3.000–8.000</span>
               <div className="ml-auto flex gap-2">
                 <Button size="sm" variant="ghost" className="text-xs">Salvar</Button>
                 <Button size="sm" variant="ghost" className="text-xs"><Zap className="h-3.5 w-3.5 mr-1" /> Variação</Button>
               </div>
             </div>
-            <BeforeAfter before={emptyLiving} after={decoratedLiving} className="aspect-[5/3.4]" />
+            <BeforeAfter before={emptyKitchen} after={decoratedKitchen} className="aspect-[5/3.4]" />
           </div>
 
           <aside className="rounded-3xl border bg-card p-5">
