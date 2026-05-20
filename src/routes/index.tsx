@@ -585,53 +585,175 @@ function TagBadge({ tag }: { tag: string }) {
   );
 }
 
-/* ----------------------------- GALLERY ----------------------------- */
+/* ----------------------------- FEATURED BEFORE/AFTER ----------------------------- */
 
-function Gallery() {
-  const filters = ["Todos","Salas","Quartos","Cozinhas","Escritórios","Consultórios","Moderno","Minimalista","Premium"];
-  const items = [
-    { img: decoratedLiving, t: "Sala · Japandi",        size: "lg" },
-    { img: styleScandi,     t: "Sala · Escandinavo",    size: "sm" },
-    { img: styleJapandi,    t: "Quarto · Japandi",      size: "sm" },
-    { img: galleryOffice,   t: "Home office · Natural", size: "lg" },
-    { img: styleModern,     t: "Sala · Contemporâneo",  size: "lg" },
-    { img: galleryClinic,   t: "Consultório · Acolhedor", size: "sm" },
-    { img: styleIndustrial, t: "Loft · Industrial",     size: "sm" },
-  ];
+function FeaturedBeforeAfter() {
   return (
     <section className="py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
+        <div className="lg:col-span-5 order-2 lg:order-1">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Antes e depois em destaque</div>
+          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold leading-tight">
+            Um <span className="font-serif italic font-normal">quarto vazio</span> vira refúgio japandi em segundos.
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-md">
+            Arraste o controle e veja a estrutura preservada, a iluminação trabalhada e o mobiliário sugerido
+            pela IA — pronto para virar lista de compras e orçamento.
+          </p>
+          <ul className="mt-6 space-y-2.5 text-sm">
+            {[
+              "Estrutura, janelas e proporção preservadas",
+              "Paleta linho, oak e luz quente",
+              "Sugestões coerentes com o cômodo",
+            ].map((t) => (
+              <li key={t} className="flex items-start gap-2 text-muted-foreground">
+                <Check className="h-4 w-4 mt-0.5 text-accent shrink-0" /> {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="lg:col-span-7 order-1 lg:order-2">
+          <BeforeAfter before={emptyBedroom} after={decoratedBedroom} className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- RANKING ----------------------------- */
+
+const rankingItems = [
+  { rank: 1, img: styleModern,        room: "Sala moderna",        style: "Moderno aconchegante", score: 94, saves: "2.1k" },
+  { rank: 2, img: galleryClinic,      room: "Consultório acolhedor", style: "Natural e profissional", score: 91, saves: "1.4k" },
+  { rank: 3, img: rankMinimalBedroom, room: "Quarto minimalista",  style: "Minimalista",          score: 89, saves: "980"  },
+  { rank: 4, img: galleryOffice,      room: "Home office natural", style: "Madeira e plantas",    score: 87, saves: "742"  },
+  { rank: 5, img: decoratedDining,    room: "Sala de jantar",      style: "Mid-century natural",  score: 86, saves: "611"  },
+  { rank: 6, img: styleIndustrial,    room: "Loft industrial",     style: "Tijolo e metal",       score: 84, saves: "498"  },
+];
+
+function Ranking() {
+  return (
+    <section id="ranking" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
-            kicker="Inspirações"
-            title={<>Ideias para <span className="font-serif italic font-normal">transformar</span> seus ambientes</>}
-            sub="Explore estilos, cômodos e projetos gerados por IA."
+            kicker="Ranking da comunidade"
+            title={<>Projetos mais bem <span className="font-serif italic font-normal">avaliados</span></>}
+            sub="Ambientes gerados por IA com melhor nota visual e mais salvamentos da semana."
           />
+          <div className="hidden sm:flex gap-2 text-xs text-muted-foreground">
+            {["Semana","Mês","Todos"].map((t, i) => (
+              <button key={t} className={`px-3 py-1.5 rounded-full border ${i === 0 ? "bg-foreground text-background border-foreground" : "hover:bg-muted"}`}>{t}</button>
+            ))}
+          </div>
         </div>
-        <div className="mt-6 flex flex-wrap gap-2">
-          {filters.map((f, i) => (
-            <button key={f}
-              className={`text-xs px-3 py-1.5 rounded-full border transition ${i===0 ? "bg-foreground text-background border-foreground" : "hover:bg-muted"}`}>
-              {f}
-            </button>
+
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {rankingItems.map((it) => (
+            <article key={it.rank} className="group rounded-3xl overflow-hidden border bg-card hover:-translate-y-0.5 hover:shadow-xl transition-all duration-500">
+              <div className="relative aspect-[5/4] overflow-hidden">
+                <img src={it.img} alt={it.room} loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-[1200ms]" />
+                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background text-[10px] uppercase tracking-widest px-2.5 py-1">
+                  <Trophy className="h-3 w-3 text-accent" /> #{it.rank}
+                </span>
+                <span className="absolute top-3 right-3 rounded-full bg-background/90 backdrop-blur text-[10px] font-medium px-2.5 py-1">
+                  Nota {it.score}/100
+                </span>
+              </div>
+              <div className="p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-base font-medium truncate">{it.room}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5 truncate">{it.style}</div>
+                  </div>
+                  <div className="text-[11px] text-muted-foreground inline-flex items-center gap-1 shrink-0">
+                    <Heart className="h-3.5 w-3.5 text-accent" /> {it.saves}
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center justify-between">
+                  <ScoreBar score={it.score} />
+                  <Button size="sm" variant="ghost" className="text-xs">Gerar parecido <ArrowRight className="h-3 w-3 ml-1" /></Button>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
 
-        <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 auto-rows-[200px] sm:auto-rows-[240px] gap-4">
-          {items.map((it, i) => (
-            <figure key={i}
-              className={`relative overflow-hidden rounded-3xl group ${
-                it.size === "lg" ? "col-span-2 row-span-2" : ""
-              }`}>
-              <img src={it.img} alt={it.t} loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.05] transition-transform duration-[1200ms]" />
-              <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 bg-gradient-to-t from-black/55 to-transparent text-white">
-                <div className="text-xs sm:text-sm font-medium">{it.t}</div>
-                <button className="text-[11px] opacity-90 hover:opacity-100 inline-flex items-center">
-                  Gerar parecido <ArrowRight className="h-3 w-3 ml-1" />
-                </button>
+        <p className="mt-6 text-[11px] text-muted-foreground">
+          Notas calculadas com base em estética, composição, iluminação e aderência ao estilo. Exemplos ilustrativos.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function ScoreBar({ score }: { score: number }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">
+        <div className="h-full bg-accent rounded-full" style={{ width: `${score}%` }} />
+      </div>
+      <span className="text-[10px] text-muted-foreground">{score}</span>
+    </div>
+  );
+}
+
+/* ----------------------------- TESTIMONIALS ----------------------------- */
+
+const testimonials = [
+  { name: "Mariana",  role: "Proprietária de apartamento", initials: "MA", color: "bg-accent/20 text-accent",
+    body: "Usei para visualizar minha sala antes de comprar os móveis. A lista de compras ajudou muito.",
+    rating: 5, thumb: decoratedLiving,   ambient: "Sala · Japandi" },
+  { name: "Rafael",   role: "Corretor de imóveis",         initials: "RA", color: "bg-foreground/10 text-foreground",
+    body: "Consegui mostrar uma versão decorada de um imóvel vazio para meus clientes. Fechei mais visitas.",
+    rating: 5, thumb: galleryOffice,     ambient: "Imóvel · Virtual staging" },
+  { name: "Camila",   role: "Psicóloga",                   initials: "CA", color: "bg-accent/20 text-accent",
+    body: "Gostei das sugestões para deixar meu consultório mais acolhedor e profissional.",
+    rating: 5, thumb: galleryClinic,     ambient: "Consultório · Acolhedor" },
+  { name: "Bruno",    role: "Arquiteto",                   initials: "BR", color: "bg-foreground/10 text-foreground",
+    body: "Uso como estudo visual rápido antes de aprofundar o projeto com o cliente.",
+    rating: 4, thumb: styleIndustrial,   ambient: "Loft · Industrial" },
+  { name: "Fernanda", role: "Designer de interiores",      initials: "FE", color: "bg-accent/20 text-accent",
+    body: "Ajuda a apresentar possibilidades iniciais para clientes indecisos. Economiza horas de moodboard.",
+    rating: 5, thumb: decoratedDining,   ambient: "Jantar · Natural" },
+];
+
+function Testimonials() {
+  return (
+    <section className="py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <SectionHead
+          kicker="Quem já testou"
+          title={<>O que usuários estão <span className="font-serif italic font-normal">criando</span> com IA</>}
+          sub="Exemplos ilustrativos de quem usa o Ideal Space para decidir, vender e apresentar projetos."
+        />
+
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {testimonials.map((t) => (
+            <article key={t.name} className="rounded-3xl border bg-card p-6 flex flex-col">
+              <div className="flex items-center gap-3">
+                <div className={`h-10 w-10 rounded-full grid place-items-center text-xs font-semibold ${t.color}`}>{t.initials}</div>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{t.name}</div>
+                  <div className="text-[11px] text-muted-foreground truncate">{t.role}</div>
+                </div>
+                <div className="ml-auto flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className={`h-3.5 w-3.5 ${i < t.rating ? "text-accent fill-accent" : "text-muted-foreground/30"}`} />
+                  ))}
+                </div>
               </div>
-            </figure>
+              <p className="mt-4 text-sm text-foreground/85 leading-relaxed flex-1">"{t.body}"</p>
+              <div className="mt-5 flex items-center gap-3 rounded-2xl bg-muted/50 p-2.5">
+                <img src={t.thumb} alt={t.ambient} loading="lazy" className="h-12 w-16 rounded-xl object-cover" />
+                <div className="min-w-0 flex-1">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Projeto criado</div>
+                  <div className="text-xs font-medium truncate">{t.ambient}</div>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground shrink-0" />
+              </div>
+            </article>
           ))}
         </div>
       </div>
