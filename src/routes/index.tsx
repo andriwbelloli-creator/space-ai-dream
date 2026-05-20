@@ -279,26 +279,26 @@ function Hero({ onBudget, onAffiliate, onDemo }: { onBudget: () => void; onAffil
       <div aria-hidden className="absolute -bottom-40 -right-40 h-[520px] w-[520px] rounded-full blur-3xl opacity-40"
         style={{ background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.25), transparent 60%)" }} />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-24 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center relative">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-10 sm:pt-20 pb-20 sm:pb-24 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center relative">
         <div className="lg:col-span-6 is-fade-up">
           <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" /> Nova versão · Studio com IA
           </div>
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-[68px] leading-[1.02] tracking-[-0.02em] font-semibold">
+          <h1 className="mt-5 text-[2.4rem] sm:text-5xl lg:text-[68px] leading-[1.04] tracking-[-0.02em] font-semibold">
             Transforme espaços vazios em{" "}
             <span className="font-serif italic font-normal text-accent">ambientes decorados</span>{" "}
             com IA.
           </h1>
-          <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-xl">
+          <p className="mt-4 text-[15px] sm:text-lg text-muted-foreground max-w-xl">
             Escolha ou envie uma foto do ambiente, selecione um estilo e veja a IA criar uma versão
             mobiliada, bonita e pronta para inspirar seu projeto — com lista de compras e orçamento.
           </p>
 
           <div className="mt-7 flex flex-col sm:flex-row gap-3">
-            <Button className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm">
+            <Button className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm w-full sm:w-auto">
               <Sparkles className="mr-2 h-4 w-4" /> Criar projeto com IA
             </Button>
-            <Button onClick={onDemo} variant="outline" className="h-12 rounded-full px-6 text-sm">
+            <Button onClick={onDemo} variant="outline" className="h-12 rounded-full px-6 text-sm w-full sm:w-auto">
               <PlayCircle className="mr-2 h-4 w-4" /> Ver demonstração
             </Button>
           </div>
@@ -316,16 +316,16 @@ function Hero({ onBudget, onAffiliate, onDemo }: { onBudget: () => void; onAffil
               className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5" />
 
             {/* Floating style chip */}
-            <div className="absolute -left-2 sm:left-4 top-6 bg-card/95 backdrop-blur rounded-2xl shadow-xl border p-3 pr-4 flex items-center gap-3 is-float">
-              <img src={styleJapandi} alt="" className="h-10 w-10 rounded-lg object-cover" />
+            <div className="absolute left-3 sm:left-4 top-4 sm:top-6 bg-card/95 backdrop-blur rounded-2xl shadow-xl border p-2.5 sm:p-3 pr-3 sm:pr-4 flex items-center gap-2.5 sm:gap-3 is-float">
+              <img src={styleJapandi} alt="" className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg object-cover" />
               <div className="text-left">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Estilo aplicado</div>
-                <div className="text-sm font-medium">Japandi · Sala</div>
+                <div className="text-xs sm:text-sm font-medium">Japandi · Sala</div>
               </div>
             </div>
 
             {/* Floating mini shopping list */}
-            <div className="absolute -right-2 sm:-right-4 bottom-6 w-[240px] bg-card/95 backdrop-blur rounded-2xl shadow-xl border p-4 is-float" style={{ animationDelay: "1.2s" }}>
+            <div className="absolute right-3 sm:-right-4 bottom-6 w-[200px] sm:w-[240px] bg-card/95 backdrop-blur rounded-2xl shadow-xl border p-3 sm:p-4 is-float" style={{ animationDelay: "1.2s" }}>
               <div className="flex items-center justify-between mb-2">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Lista de compras</div>
                 <ShoppingBag className="h-3.5 w-3.5 text-muted-foreground" />
