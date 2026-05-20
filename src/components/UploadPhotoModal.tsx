@@ -296,6 +296,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     setPendingCount(0);
     setDoneCount(0);
     setDraftId(null);
+    setVersions([]);
+    setActiveVersionId(null);
+    setCompareVersionId(null);
     setStage("idle");
     setProgress(0);
     setError(null);
@@ -325,6 +328,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     setStyle(d.style);
     setMeta(d.meta ?? null);
     setDraftId(d.id);
+    setVersions(d.versions ?? []);
+    setActiveVersionId(d.activeVersionId ?? d.versions?.[d.versions.length - 1]?.id ?? null);
+    setCompareVersionId(null);
     setStage(d.status === "done" ? "done" : "idle");
     setProgress(d.status === "done" ? 100 : 0);
     setError(null);
