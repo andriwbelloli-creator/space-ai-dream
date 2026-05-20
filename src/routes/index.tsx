@@ -187,6 +187,7 @@ function Index() {
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [courseOpen, setCourseOpen] = useState(false);
   const [reward, setReward] = useState<RewardKind | null>(null);
 
   useEffect(() => {
