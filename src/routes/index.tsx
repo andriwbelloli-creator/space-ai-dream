@@ -20,43 +20,15 @@ import {
   Smartphone, BookmarkPlus, Gift, Layers, Ruler, LayoutGrid, Compass,
 } from "lucide-react";
 
-// Hero — antes/depois principal (sala)
-import emptyLiving from "@/assets/empty-living.jpg";
-import decoratedLiving from "@/assets/decorated-living.jpg";
+// All marketing imagery — single source of truth, one image per section.
+import { imagesFor, pair, img } from "@/lib/image-catalog";
 
-// Carrossel de ambientes vazios (6 cards — sem repetir sala do hero)
-import emptyBedroom from "@/assets/empty-bedroom.jpg";
-import emptyKitchen from "@/assets/empty-kitchen.jpg";
-import emptyOffice from "@/assets/empty-office.jpg";
-import emptyStudio from "@/assets/empty-studio.jpg";
-import emptyBathroom from "@/assets/empty-bathroom.jpg";
-import emptyDining from "@/assets/empty-dining.jpg";
+const heroPair = pair("hero-living");
+const emptyLiving = heroPair.empty!.src;
+const decoratedLiving = heroPair.decorated!.src;
 
-// Carrossel de estilos (6 cards — todos exclusivos da seção)
-import styleJapandi from "@/assets/style-japandi.jpg";
-import styleScandi from "@/assets/style-scandi.jpg";
-import styleModern from "@/assets/style-modern.jpg";
-import styleIndustrial from "@/assets/style-industrial.jpg";
-import styleLuxo from "@/assets/style-luxo.jpg";
-import styleNatural from "@/assets/style-natural.jpg";
-
-// Antes/depois em destaque (banheiro — distinto do hero e do showcase)
-import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
-
-// Showcase com lista de compras (cozinha — exclusivo desta seção)
-import decoratedKitchen from "@/assets/decorated-kitchen.jpg";
-
-// Galeria de inspirações (6 cards — todos exclusivos)
-import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
-import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
-import decoratedDining from "@/assets/decorated-dining.jpg";
-import galleryLoft from "@/assets/gallery-loft.jpg";
-import galleryVaranda from "@/assets/gallery-varanda.jpg";
-import galleryOffice from "@/assets/gallery-office.jpg";
-import galleryClinic from "@/assets/gallery-clinic.jpg";
-import floorplanApartment from "@/assets/floorplan-apartment.jpg";
-import moodboardPro from "@/assets/moodboard-pro.jpg";
-import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
+const featuredBaPair = pair("ba-bathroom");
+const showcasePair = pair("show-kitchen");
 
 export const Route = createFileRoute("/")({
   component: Index,
