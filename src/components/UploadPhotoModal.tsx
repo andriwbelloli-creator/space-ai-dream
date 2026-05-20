@@ -15,7 +15,8 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
 import { SHOPPING_LIST, estimateTotal } from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
-import { FileDown, ShoppingBag } from "lucide-react";
+import { FileDown, ShoppingBag, RefreshCw } from "lucide-react";
+import { generateShoppingList } from "@/lib/shopping.functions";
 
 type Props = {
   open: boolean;
@@ -573,6 +574,8 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             <ShoppingPanel
               styleName={STYLES.find((s) => s.id === style)?.name ?? "Projeto"}
               variationLabel={variations[activeIdx]?.label}
+              styleId={style}
+              variation={variations[activeIdx]}
             />
           )}
           </div>
