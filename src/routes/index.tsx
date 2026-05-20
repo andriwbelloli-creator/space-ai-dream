@@ -165,17 +165,10 @@ function Index() {
       <FAQ />
       <Footer />
 
-      {/* Mobile sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-3 bg-gradient-to-t from-background via-background/95 to-background/0 pointer-events-none">
-        <div className="pointer-events-auto flex gap-2 rounded-full bg-card border shadow-xl p-1.5">
-          <Button onClick={() => handlePresentation(true)} variant="ghost" size="sm" className="rounded-full px-3 text-xs flex-1">
-            <PlayCircle className="h-4 w-4 mr-1.5" /> Demo
-          </Button>
-          <Button onClick={() => setUploadOpen(true)} className="rounded-full bg-foreground text-background hover:bg-foreground/90 h-10 px-4 text-xs flex-[1.4]">
-            <Camera className="h-4 w-4 mr-1.5" /> Enviar foto
-          </Button>
-        </div>
-      </div>
+      <MobileBottomNav
+        onUpload={() => setUploadOpen(true)}
+        onShopping={() => setBudgetOpen(true)}
+      />
 
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
       <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} />
@@ -1116,5 +1109,46 @@ function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+/* ---------------------- MOBILE BOTTOM NAV ---------------------- */
+
+function MobileBottomNav({ onUpload, onShopping }: { onUpload: () => void; onShopping: () => void }) {
+  const scrollTo = (id: string) => {
+    if (typeof document === "undefined") return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const Item = ({
+    icon: Icon, label, onClick, primary = false,
+  }: { icon: typeof Camera; label: string; onClick: () => void; primary?: boolean }) => (
+    <button
+      onClick={onClick}
+      className={[
+        "flex-1 flex flex-col items-center justify-center gap-1 py-1.5 rounded-2xl transition",
+        primary
+          ? "bg-foreground text-background -mt-5 mx-1 shadow-lg shadow-foreground/20 py-2.5"
+          : "text-muted-foreground hover:text-foreground active:bg-muted/60",
+      ].join(" ")}
+    >
+      <Icon className={primary ? "h-5 w-5" : "h-[18px] w-[18px]"} />
+      <span className={primary ? "text-[10px] font-medium" : "text-[10px]"}>{label}</span>
+    </button>
+  );
+  return (
+    <nav
+      aria-label="Navegação rápida"
+      className="lg:hidden fixed bottom-0 inset-x-0 z-40 pointer-events-none"
+    >
+      <div className="pointer-events-auto mx-2 mb-[max(env(safe-area-inset-bottom),0.5rem)] rounded-3xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl">
+        <div className="flex items-stretch px-1 py-1">
+          <Item icon={Camera} label="Upload" onClick={onUpload} primary />
+          <Item icon={Sparkles} label="Estilos" onClick={() => scrollTo("estilos")} />
+          <Item icon={Trophy} label="Resultados" onClick={() => scrollTo("ranking")} />
+          <Item icon={ShoppingBag} label="Compras" onClick={onShopping} />
+        </div>
+      </div>
+    </nav>
   );
 }
