@@ -257,6 +257,29 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       }
       setProgress(100);
       setStage("done");
+      // Snapshot this generation as a new version in the project history.
+      if (draftId) {
+        const finalVars = reset
+          ? variations.slice(0, 0) // placeholder, we'll read fresh below
+          : variations;
+        // Read latest variations from state synchronously via functional update
+        setVariations((curr) => {
+          const version: DraftVersion = {
+            id: newVersionId(),
+            createdAt: Date.now(),
+            style,
+            styleName,
+            results: curr.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label })),
+            note: `${curr.length} ${curr.length === 1 ? "variação" : "variações"} · ${styleName ?? style}`,
+          };
+          pushVersion(draftId, version);
+          setVersions(listDrafts().find((d) => d.id === draftId)?.versions ?? []);
+          setActiveVersionId(version.id);
+          setDrafts(listDrafts());
+          return curr;
+        });
+        void finalVars;
+      }
     } catch (e: any) {
       if (ticket.cancelled) return;
       setError(e?.message ?? "Não foi possível gerar agora. Tente novamente.");
