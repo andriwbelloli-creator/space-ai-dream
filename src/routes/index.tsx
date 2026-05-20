@@ -4,6 +4,7 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { PresentationModal } from "@/components/PresentationModal";
 import { UploadPhotoModal } from "@/components/UploadPhotoModal";
+import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import {
   ArrowRight, ArrowUpRight, Sparkles, Check, Lock, Image as ImageIcon,
   Wand2, ShoppingBag, Download, Menu, ShieldCheck, FileText,
   Building2, Briefcase, HomeIcon, Stethoscope, Star, ChevronRight, Zap, Heart, PlayCircle, Trophy, Camera,
+  Smartphone, BookmarkPlus, Gift, Tag,
 } from "lucide-react";
 
 import emptyLiving from "@/assets/empty-living.jpg";
@@ -112,11 +114,10 @@ const faqs = [
 /* ----------------------------- PAGE ----------------------------- */
 
 function Index() {
-  const [budgetOpen, setBudgetOpen] = useState(false);
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
-  const [budgetDone, setBudgetDone] = useState(false);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [reward, setReward] = useState<RewardKind | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -136,19 +137,21 @@ function Index() {
     }
   };
 
-  const downloadBudget = () => {
-    generateBudgetPdf({
-      project: "Cozinha · Luxo discreto",
-      items: shoppingList,
-      estimate: "R$ 3.000 – 8.000",
-    });
-    setBudgetDone(true);
+  const openReward = (k: RewardKind) => setReward(k);
+  const handleReward = (k: RewardKind) => {
+    if (k === "budget") {
+      generateBudgetPdf({
+        project: "Cozinha · Luxo discreto",
+        items: shoppingList,
+        estimate: "R$ 3.000 – 8.000",
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
-      <Hero onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
+      <Hero onBudget={() => openReward("budget")} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
       <Marquee />
       <UploadCTA onUpload={() => setUploadOpen(true)} />
       <EmptyRoomsCarousel />
@@ -156,72 +159,35 @@ function Index() {
       <HowItWorks />
       <ProSpaces onUpload={() => setUploadOpen(true)} />
       <FeaturedBeforeAfter />
-      <ResultShowcase onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} />
+      <ResultShowcase
+        onBudget={() => openReward("budget")}
+        onAffiliate={setAffiliateOpen}
+        onReward={openReward}
+      />
       <Ranking />
       <Testimonials />
       <Professionals />
       <Pricing />
       <Trust />
+      <RewardsStrip onReward={openReward} />
       <FAQ />
       <Footer />
 
       <MobileBottomNav
         onUpload={() => setUploadOpen(true)}
-        onShopping={() => setBudgetOpen(true)}
+        onShopping={() => openReward("budget")}
       />
 
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
       <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} />
 
-      {/* Lead-capture / orçamento */}
-      <Dialog open={budgetOpen} onOpenChange={(o) => { setBudgetOpen(o); if (!o) setBudgetDone(false); }}>
-        <DialogContent className="sm:max-w-md rounded-3xl">
-          {!budgetDone ? (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-serif">Receba seu orçamento completo</DialogTitle>
-                <DialogDescription>
-                  Informe seus dados para baixar a estimativa do projeto e salvar as recomendações.
-                </DialogDescription>
-              </DialogHeader>
-              <form
-                className="space-y-3"
-                onSubmit={(e) => { e.preventDefault(); downloadBudget(); }}
-              >
-                <Input type="email" required placeholder="seu@email.com" className="h-11 rounded-xl" />
-                <Input type="tel" required placeholder="WhatsApp com DDD" className="h-11 rounded-xl" />
-                <label className="flex gap-2 text-xs text-muted-foreground items-start pt-1">
-                  <Checkbox required className="mt-0.5" />
-                  <span>Li e aceito a Política de Privacidade e autorizo o uso dos meus dados para receber este orçamento.</span>
-                </label>
-                <label className="flex gap-2 text-xs text-muted-foreground items-start">
-                  <Checkbox className="mt-0.5" />
-                  <span>Quero receber sugestões de produtos, novidades e recomendações sobre meu projeto.</span>
-                </label>
-                <Button type="submit" className="w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90">
-                  <Download className="h-4 w-4 mr-1.5" /> Baixar orçamento em PDF
-                </Button>
-                <p className="text-[11px] text-muted-foreground">
-                  Seus dados são tratados conforme a LGPD. Você pode solicitar exclusão a qualquer momento.
-                </p>
-              </form>
-            </>
-          ) : (
-            <div className="text-center py-6">
-              <div className="mx-auto h-14 w-14 rounded-full bg-accent/15 text-accent grid place-items-center mb-3">
-                <Download className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-serif">Orçamento baixado!</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Seu PDF foi gerado com a lista organizada por prioridade. Também enviamos uma cópia ao seu e-mail.
-              </p>
-              <Button onClick={downloadBudget} variant="outline" className="mt-4 rounded-full h-10 px-4 text-xs">
-                <Download className="h-4 w-4 mr-1.5" /> Baixar novamente
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Lead-capture unificado por recompensa */}
+      <RewardModal
+        open={!!reward}
+        kind={reward}
+        onOpenChange={(o) => !o && setReward(null)}
+        onSuccess={(k) => handleReward(k)}
+      />
 
       {/* Modal afiliados */}
       <Dialog open={!!affiliateOpen} onOpenChange={(o) => !o && setAffiliateOpen(null)}>
