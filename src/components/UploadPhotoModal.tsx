@@ -677,12 +677,49 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 function ShoppingPanel({
   styleName,
   variationLabel,
+  styleId,
+  variation,
 }: {
   styleName: string;
   variationLabel?: string;
+  styleId: string;
+  variation?: Variation;
 }) {
   const [unlocked, setUnlocked] = useState(false);
-  const items = SHOPPING_LIST;
+  const [cache, setCache] = useState<Record<string, BudgetItem[]>>({});
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [errorId, setErrorId] = useState<string | null>(null);
+
+  const vid = variation?.id;
+  const aiItems = vid ? cache[vid] : undefined;
+  const usingFallback = !aiItems;
+  const items: ReadonlyArray<BudgetItem> = aiItems ?? SHOPPING_LIST;
+
+  const fetchList = async () => {
+    if (!variation?.url || !vid) return;
+    setLoadingId(vid);
+    setErrorId(null);
+    try {
+      const out = await generateShoppingList({
+        data: { imageDataUrl: variation.url, style: styleId, styleName },
+      });
+      setCache((prev) => ({ ...prev, [vid]: out.items }));
+    } catch (e: any) {
+      setErrorId(vid);
+    } finally {
+      setLoadingId((cur) => (cur === vid ? null : cur));
+    }
+  };
+
+  useEffect(() => {
+    if (!vid) return;
+    if (cache[vid] || loadingId === vid) return;
+    void fetchList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vid, variation?.url]);
+
+  const isLoading = loadingId === vid;
+  const hasError = errorId === vid && !aiItems;
   const visibleItems: ReadonlyArray<BudgetItem> = unlocked ? items : items.slice(0, 4);
   const total = estimateTotal(items);
   const projectName = variationLabel
@@ -711,15 +748,39 @@ function ShoppingPanel({
             <ShoppingBag className="h-3.5 w-3.5" /> Lista de compras
           </div>
           <div className="mt-1 text-sm font-medium leading-tight">{projectName}</div>
+          <div className="mt-1 text-[10px] text-muted-foreground">
+            {isLoading
+              ? "Analisando o ambiente com IA…"
+              : hasError
+              ? "Não conseguimos analisar — exibindo sugestão padrão."
+              : usingFallback
+              ? "Sugestão padrão"
+              : "Gerada a partir do seu ambiente"}
+          </div>
         </div>
         <div className="text-right">
           <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Estimativa</div>
           <div className="text-sm font-semibold text-foreground">{total}</div>
+          <button
+            onClick={fetchList}
+            disabled={isLoading || !variation}
+            className="mt-1 inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground disabled:opacity-50"
+          >
+            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+            {isLoading ? "Gerando…" : "Refazer"}
+          </button>
         </div>
       </div>
 
       <ul className="mt-4 -mx-1 divide-y divide-border/60">
-        {visibleItems.map((it) => (
+        {isLoading && !aiItems
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <li key={`sk_${i}`} className="px-1 py-2.5 animate-pulse">
+                <div className="h-3 w-2/3 rounded bg-muted" />
+                <div className="mt-2 h-2.5 w-1/3 rounded bg-muted/60" />
+              </li>
+            ))
+          : visibleItems.map((it) => (
           <li key={it.name} className="flex items-start justify-between gap-3 px-1 py-2.5">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
