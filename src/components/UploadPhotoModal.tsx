@@ -317,7 +317,13 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
             }`}
           >
-            {preview ? (
+            {preview && result && done ? (
+              <BeforeAfter
+                before={preview}
+                after={result}
+                className="absolute inset-0 h-full w-full rounded-none"
+              />
+            ) : preview ? (
               <>
                 <img src={preview} alt="Sua foto" className="absolute inset-0 h-full w-full object-cover" />
                 {(generating || optimizing) && (
@@ -332,11 +338,6 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                       <Progress value={progress} className="h-1.5 mt-3 bg-background/30" />
                       <div className="mt-1.5 text-[10px] text-background/70">{Math.round(progress)}%</div>
                     </div>
-                  </div>
-                )}
-                {done && !generating && (
-                  <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-accent text-accent-foreground text-[10px] uppercase tracking-widest px-2.5 py-1">
-                    <Check className="h-3 w-3" /> Pronto
                   </div>
                 )}
                 <button
