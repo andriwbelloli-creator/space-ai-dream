@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
   AlertCircle, Zap, Loader2, History, Trash2, Play,
+  ChevronLeft, ChevronRight, Layers,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/lib/drafts";
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import useEmblaCarousel from "embla-carousel-react";
 
 type Props = {
   open: boolean;
@@ -71,12 +73,17 @@ function formatKB(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
+type Variation = { id: string; url: string; style: string; styleName?: string; label?: string };
+
 export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
-  const [result, setResult] = useState<string | null>(null);
+  const [variations, setVariations] = useState<Variation[]>([]);
+  const [activeIdx, setActiveIdx] = useState(0);
   const [style, setStyle] = useState<string>("japandi");
   const [stage, setStage] = useState<Stage>("idle");
   const [progress, setProgress] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [doneCount, setDoneCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<{ original: number; optimized: number; w: number; h: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -85,6 +92,19 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const abortRef = useRef<{ cancelled: boolean } | null>(null);
+
+  const [emblaRef, embla] = useEmblaCarousel({ loop: false, align: "start" });
+
+  useEffect(() => {
+    if (!embla) return;
+    const onSel = () => setActiveIdx(embla.selectedScrollSnap());
+    embla.on("select", onSel);
+    return () => { embla.off("select", onSel); };
+  }, [embla]);
+
+  useEffect(() => {
+    if (embla) embla.reInit();
+  }, [embla, variations.length]);
 
   // Load drafts whenever the modal opens
   useEffect(() => {
@@ -105,7 +125,10 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       style,
       styleName,
       preview,
-      result: result ?? undefined,
+      result: variations[0]?.url,
+      results: variations.length
+        ? variations.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label }))
+        : undefined,
       meta: meta ?? undefined,
       progress,
       title: `${styleName ?? "Projeto"} · ${new Date().toLocaleDateString("pt-BR")}`,
@@ -115,7 +138,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (existing) draft.createdAt = existing.createdAt;
     upsertDraft(draft);
     setDrafts(listDrafts());
-  }, [preview, result, style, stage, progress, meta, draftId]);
+  }, [preview, variations, style, stage, progress, meta, draftId]);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -157,34 +180,70 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (file) handleFile(file);
   };
 
-  const generate = async () => {
+  const variationLabels = ["Opção A", "Opção B", "Opção C", "Opção D"];
+
+  const generate = async (count: number = 1, reset: boolean = false) => {
     if (!preview) return;
     setError(null);
-    setResult(null);
+    if (reset) setVariations([]);
+    const startIdx = reset ? 0 : variations.length;
+    setPendingCount(count);
+    setDoneCount(0);
     setStage("uploading");
     setProgress(0);
     const ticket = { cancelled: false };
     abortRef.current = ticket;
 
-    // Animated progress while we await the real AI call
+    // Animated progress while we await
     let p = 0;
     const tick = () => {
       if (ticket.cancelled) return;
-      p += Math.random() * 6 + 2;
-      if (p < 45) {
-        setStage("uploading");
-      } else {
-        setStage("generating");
-      }
+      p += Math.random() * 5 + 2;
+      if (p < 45) setStage("uploading");
+      else setStage("generating");
       setProgress(Math.min(94, p));
       if (p < 94) setTimeout(tick, 280);
     };
     tick();
 
+    const styleName = STYLES.find((s) => s.id === style)?.name;
+
     try {
-      const out = await transformImage({ data: { imageDataUrl: preview, style } });
+      const tasks = Array.from({ length: count }, (_, i) =>
+        transformImage({ data: { imageDataUrl: preview, style, variant: startIdx + i } })
+          .then((out) => {
+            if (ticket.cancelled) return null;
+            const v: Variation = {
+              id: `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+              url: out.imageDataUrl,
+              style,
+              styleName,
+              label: variationLabels[(startIdx + i) % variationLabels.length],
+            };
+            setVariations((prev) => {
+              const next = [...prev, v];
+              // jump to first new one
+              setTimeout(() => embla?.scrollTo(reset ? 0 : prev.length), 50);
+              return next;
+            });
+            setDoneCount((d) => d + 1);
+            return v;
+          })
+          .catch((err) => {
+            if (ticket.cancelled) return null;
+            throw err;
+          })
+      );
+      const results = await Promise.allSettled(tasks);
       if (ticket.cancelled) return;
-      setResult(out.imageDataUrl);
+      const anySuccess = results.some((r) => r.status === "fulfilled" && r.value);
+      const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult | undefined;
+      if (!anySuccess && firstError) {
+        setError(firstError.reason?.message ?? "Não foi possível gerar agora.");
+        setStage("error");
+        setProgress(0);
+        return;
+      }
       setProgress(100);
       setStage("done");
     } catch (e: any) {
@@ -198,7 +257,10 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const reset = () => {
     abortRef.current && (abortRef.current.cancelled = true);
     setPreview(null);
-    setResult(null);
+    setVariations([]);
+    setActiveIdx(0);
+    setPendingCount(0);
+    setDoneCount(0);
     setDraftId(null);
     setStage("idle");
     setProgress(0);
@@ -208,7 +270,24 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 
   const resumeDraft = (d: Draft) => {
     setPreview(d.preview);
-    setResult(d.result ?? null);
+    const legacy = d.result ? [{
+      id: "legacy",
+      url: d.result,
+      style: d.style,
+      styleName: d.styleName,
+      label: variationLabels[0],
+    } as Variation] : [];
+    const restored: Variation[] = d.results?.length
+      ? d.results.map((r, i) => ({
+          id: `r_${i}`,
+          url: r.url,
+          style: r.style,
+          styleName: r.styleName,
+          label: r.label ?? variationLabels[i % variationLabels.length],
+        }))
+      : legacy;
+    setVariations(restored);
+    setActiveIdx(0);
     setStyle(d.style);
     setMeta(d.meta ?? null);
     setDraftId(d.id);
