@@ -88,6 +88,27 @@ export function newDraftId() {
   return `d_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 }
 
+export function newVersionId() {
+  return `v_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 5)}`;
+}
+
+/** Append a version snapshot to a draft (capped) and bump updatedAt. */
+export function pushVersion(draftId: string, version: DraftVersion) {
+  if (typeof window === "undefined") return;
+  const all = listDrafts();
+  const idx = all.findIndex((d) => d.id === draftId);
+  if (idx < 0) return;
+  const d = all[idx];
+  const versions = [...(d.versions ?? []), version].slice(-MAX_VERSIONS);
+  all[idx] = {
+    ...d,
+    versions,
+    activeVersionId: version.id,
+    updatedAt: Date.now(),
+  };
+  writeAll(all);
+}
+
 export function timeAgo(ts: number) {
   const s = Math.max(1, Math.round((Date.now() - ts) / 1000));
   if (s < 60) return `${s}s atrás`;
