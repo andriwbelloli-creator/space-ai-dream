@@ -230,15 +230,16 @@ function Index() {
 
 /* ----------------------------- HEADER ----------------------------- */
 
-function Header() {
+function Header({ onDemo }: { onDemo: () => void }) {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
         <IdealSpaceLogo />
         <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
-          <a className="hover:text-foreground transition" href="#criar">Criar com IA</a>
+          <button onClick={onDemo} className="hover:text-foreground transition">Como funciona</button>
           <a className="hover:text-foreground transition" href="#ambientes">Ambientes</a>
           <a className="hover:text-foreground transition" href="#estilos">Estilos</a>
+          <a className="hover:text-foreground transition" href="#ranking">Ranking</a>
           <a className="hover:text-foreground transition" href="#pro">Para profissionais</a>
           <a className="hover:text-foreground transition" href="#planos">Planos</a>
         </nav>
@@ -270,7 +271,7 @@ function Header() {
 
 /* ----------------------------- HERO ----------------------------- */
 
-function Hero({ onBudget, onAffiliate }: { onBudget: () => void; onAffiliate: (s: string) => void }) {
+function Hero({ onBudget, onAffiliate, onDemo }: { onBudget: () => void; onAffiliate: (s: string) => void; onDemo: () => void }) {
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden className="absolute -top-40 -left-40 h-[480px] w-[480px] rounded-full blur-3xl opacity-50"
@@ -297,8 +298,8 @@ function Hero({ onBudget, onAffiliate }: { onBudget: () => void; onAffiliate: (s
             <Button className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm">
               <Sparkles className="mr-2 h-4 w-4" /> Criar projeto com IA
             </Button>
-            <Button variant="outline" className="h-12 rounded-full px-6 text-sm">
-              Ver antes e depois <ChevronRight className="ml-1 h-4 w-4" />
+            <Button onClick={onDemo} variant="outline" className="h-12 rounded-full px-6 text-sm">
+              <PlayCircle className="mr-2 h-4 w-4" /> Ver demonstração
             </Button>
           </div>
 
