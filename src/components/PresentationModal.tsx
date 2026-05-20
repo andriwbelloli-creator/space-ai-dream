@@ -20,7 +20,7 @@ export function PresentationModal({ open, onOpenChange, before, after }: Props) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-3xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl"
+        className="max-w-[calc(100vw-1.5rem)] sm:max-w-3xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto"
         onInteractOutside={() => onOpenChange(false)}
       >
         <button
@@ -32,16 +32,16 @@ export function PresentationModal({ open, onOpenChange, before, after }: Props) 
         </button>
 
         <div className="grid sm:grid-cols-[1.05fr_1fr]">
-          <div className="relative bg-muted/40 p-4 sm:p-5">
+          <div className="relative bg-muted/40 p-3 sm:p-5">
             <BeforeAfter before={before} after={after} auto className="aspect-[5/4] w-full ring-1 ring-black/5" />
-            <div className="absolute bottom-7 left-7 right-7 sm:left-8 sm:right-8 rounded-2xl bg-background/85 backdrop-blur border p-3 text-[11px] text-muted-foreground">
+            <div className="hidden sm:block absolute bottom-7 left-7 right-7 sm:left-8 sm:right-8 rounded-2xl bg-background/85 backdrop-blur border p-3 text-[11px] text-muted-foreground">
               Arraste o controle para comparar o antes e depois da IA.
             </div>
           </div>
 
-          <div className="p-6 sm:p-8 flex flex-col">
+          <div className="p-5 sm:p-8 flex flex-col">
             <div className="text-[10px] uppercase tracking-[0.22em] text-accent">Demonstração</div>
-            <h3 className="mt-2 text-2xl sm:text-3xl font-semibold leading-tight tracking-[-0.01em]">
+            <h3 className="mt-2 text-xl sm:text-3xl font-semibold leading-tight tracking-[-0.01em]">
               Veja como o <span className="font-serif italic font-normal">Ideal Space</span> funciona
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">
