@@ -15,7 +15,7 @@ const STYLE_PROMPTS: Record<string, string> = {
     "Quiet luxury interior: travertine, brushed brass, bouclé fabric, marble accents, deep neutral palette, ambient lighting.",
 };
 
-export type TransformInput = { imageDataUrl: string; style: string };
+export type TransformInput = { imageDataUrl: string; style: string; variant?: number };
 export type TransformOutput = { imageDataUrl: string };
 
 export const transformImage = createServerFn({ method: "POST" })
@@ -35,11 +35,21 @@ export const transformImage = createServerFn({ method: "POST" })
     const stylePrompt =
       STYLE_PROMPTS[data.style] ?? STYLE_PROMPTS.modern;
 
+    const variantHints = [
+      "Variation A: balanced and neutral layout, classic furniture proportions, soft daylight.",
+      "Variation B: warmer palette, layered textiles and rugs, accent lighting in the evening.",
+      "Variation C: more dramatic and editorial composition, bolder accent piece, statement lamp.",
+      "Variation D: airier and minimal arrangement, more negative space, brighter midday light.",
+    ];
+    const v = typeof data.variant === "number" ? Math.max(0, data.variant) % variantHints.length : 0;
+    const variantLine = data.variant !== undefined ? ` ${variantHints[v]}` : "";
+
     const prompt =
       `Redesign this exact room in the following interior style: ${stylePrompt} ` +
       `Keep the same camera angle, perspective, room geometry, windows and architectural elements. ` +
       `Only change furniture, decor, materials, colors and lighting to match the style. ` +
-      `Photorealistic, high quality interior photography, natural light. Do not add text or watermarks.`;
+      `Photorealistic, high quality interior photography, natural light. Do not add text or watermarks.` +
+      variantLine;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

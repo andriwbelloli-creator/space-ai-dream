@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
   AlertCircle, Zap, Loader2, History, Trash2, Play,
+  ChevronLeft, ChevronRight, Layers,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/lib/drafts";
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import useEmblaCarousel from "embla-carousel-react";
 
 type Props = {
   open: boolean;
@@ -71,12 +73,17 @@ function formatKB(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
+type Variation = { id: string; url: string; style: string; styleName?: string; label?: string };
+
 export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
-  const [result, setResult] = useState<string | null>(null);
+  const [variations, setVariations] = useState<Variation[]>([]);
+  const [activeIdx, setActiveIdx] = useState(0);
   const [style, setStyle] = useState<string>("japandi");
   const [stage, setStage] = useState<Stage>("idle");
   const [progress, setProgress] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [doneCount, setDoneCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<{ original: number; optimized: number; w: number; h: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -85,6 +92,19 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const abortRef = useRef<{ cancelled: boolean } | null>(null);
+
+  const [emblaRef, embla] = useEmblaCarousel({ loop: false, align: "start" });
+
+  useEffect(() => {
+    if (!embla) return;
+    const onSel = () => setActiveIdx(embla.selectedScrollSnap());
+    embla.on("select", onSel);
+    return () => { embla.off("select", onSel); };
+  }, [embla]);
+
+  useEffect(() => {
+    if (embla) embla.reInit();
+  }, [embla, variations.length]);
 
   // Load drafts whenever the modal opens
   useEffect(() => {
@@ -105,7 +125,10 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       style,
       styleName,
       preview,
-      result: result ?? undefined,
+      result: variations[0]?.url,
+      results: variations.length
+        ? variations.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label }))
+        : undefined,
       meta: meta ?? undefined,
       progress,
       title: `${styleName ?? "Projeto"} · ${new Date().toLocaleDateString("pt-BR")}`,
@@ -115,7 +138,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (existing) draft.createdAt = existing.createdAt;
     upsertDraft(draft);
     setDrafts(listDrafts());
-  }, [preview, result, style, stage, progress, meta, draftId]);
+  }, [preview, variations, style, stage, progress, meta, draftId]);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -157,34 +180,70 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (file) handleFile(file);
   };
 
-  const generate = async () => {
+  const variationLabels = ["Opção A", "Opção B", "Opção C", "Opção D"];
+
+  const generate = async (count: number = 1, reset: boolean = false) => {
     if (!preview) return;
     setError(null);
-    setResult(null);
+    if (reset) setVariations([]);
+    const startIdx = reset ? 0 : variations.length;
+    setPendingCount(count);
+    setDoneCount(0);
     setStage("uploading");
     setProgress(0);
     const ticket = { cancelled: false };
     abortRef.current = ticket;
 
-    // Animated progress while we await the real AI call
+    // Animated progress while we await
     let p = 0;
     const tick = () => {
       if (ticket.cancelled) return;
-      p += Math.random() * 6 + 2;
-      if (p < 45) {
-        setStage("uploading");
-      } else {
-        setStage("generating");
-      }
+      p += Math.random() * 5 + 2;
+      if (p < 45) setStage("uploading");
+      else setStage("generating");
       setProgress(Math.min(94, p));
       if (p < 94) setTimeout(tick, 280);
     };
     tick();
 
+    const styleName = STYLES.find((s) => s.id === style)?.name;
+
     try {
-      const out = await transformImage({ data: { imageDataUrl: preview, style } });
+      const tasks = Array.from({ length: count }, (_, i) =>
+        transformImage({ data: { imageDataUrl: preview, style, variant: startIdx + i } })
+          .then((out) => {
+            if (ticket.cancelled) return null;
+            const v: Variation = {
+              id: `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+              url: out.imageDataUrl,
+              style,
+              styleName,
+              label: variationLabels[(startIdx + i) % variationLabels.length],
+            };
+            setVariations((prev) => {
+              const next = [...prev, v];
+              // jump to first new one
+              setTimeout(() => embla?.scrollTo(reset ? 0 : prev.length), 50);
+              return next;
+            });
+            setDoneCount((d) => d + 1);
+            return v;
+          })
+          .catch((err) => {
+            if (ticket.cancelled) return null;
+            throw err;
+          })
+      );
+      const results = await Promise.allSettled(tasks);
       if (ticket.cancelled) return;
-      setResult(out.imageDataUrl);
+      const anySuccess = results.some((r) => r.status === "fulfilled" && r.value);
+      const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult | undefined;
+      if (!anySuccess && firstError) {
+        setError(firstError.reason?.message ?? "Não foi possível gerar agora.");
+        setStage("error");
+        setProgress(0);
+        return;
+      }
       setProgress(100);
       setStage("done");
     } catch (e: any) {
@@ -198,7 +257,10 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const reset = () => {
     abortRef.current && (abortRef.current.cancelled = true);
     setPreview(null);
-    setResult(null);
+    setVariations([]);
+    setActiveIdx(0);
+    setPendingCount(0);
+    setDoneCount(0);
     setDraftId(null);
     setStage("idle");
     setProgress(0);
@@ -208,7 +270,24 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 
   const resumeDraft = (d: Draft) => {
     setPreview(d.preview);
-    setResult(d.result ?? null);
+    const legacy = d.result ? [{
+      id: "legacy",
+      url: d.result,
+      style: d.style,
+      styleName: d.styleName,
+      label: variationLabels[0],
+    } as Variation] : [];
+    const restored: Variation[] = d.results?.length
+      ? d.results.map((r, i) => ({
+          id: `r_${i}`,
+          url: r.url,
+          style: r.style,
+          styleName: r.styleName,
+          label: r.label ?? variationLabels[i % variationLabels.length],
+        }))
+      : legacy;
+    setVariations(restored);
+    setActiveIdx(0);
     setStyle(d.style);
     setMeta(d.meta ?? null);
     setDraftId(d.id);
@@ -317,19 +396,56 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
             }`}
           >
-            {preview && result && done ? (
+            {preview && variations.length > 0 ? (
               <>
-                <BeforeAfter
-                  before={preview}
-                  after={result}
-                  className="absolute inset-0 h-full w-full rounded-none"
-                />
+                <div ref={emblaRef} className="absolute inset-0 overflow-hidden">
+                  <div className="flex h-full">
+                    {variations.map((v) => (
+                      <div key={v.id} className="relative shrink-0 grow-0 basis-full h-full">
+                        <BeforeAfter
+                          before={preview}
+                          after={v.url}
+                          className="absolute inset-0 h-full w-full rounded-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* In-progress placeholder slide indicator */}
+                {generating && doneCount < pendingCount && (
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 border">
+                    <Loader2 className="h-3 w-3 animate-spin text-accent" />
+                    Gerando {doneCount + 1}/{pendingCount}
+                  </div>
+                )}
+                {variations.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => embla?.scrollPrev()}
+                      aria-label="Anterior"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => embla?.scrollNext()}
+                      aria-label="Próxima"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
                 <button
                   onClick={reset}
                   className="absolute bottom-3 left-3 z-10 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
                 >
                   Trocar foto
                 </button>
+                <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
+                  <Layers className="h-3 w-3 text-accent" />
+                  {variations[activeIdx]?.label ?? `Opção ${activeIdx + 1}`} · {activeIdx + 1}/{variations.length}
+                </div>
               </>
             ) : preview ? (
               <>
@@ -412,6 +528,38 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             />
           </div>
 
+          {/* Variation thumbnails */}
+          {variations.length > 0 && (
+            <div className="mt-3 flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x snap-mandatory">
+              {variations.map((v, i) => {
+                const active = i === activeIdx;
+                return (
+                  <button
+                    key={v.id}
+                    onClick={() => embla?.scrollTo(i)}
+                    className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[88px] aspect-[5/3] transition ${
+                      active ? "ring-2 ring-accent border-accent" : "opacity-80 hover:opacity-100"
+                    }`}
+                    aria-label={v.label ?? `Opção ${i + 1}`}
+                  >
+                    <img src={v.url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                    <span className="absolute bottom-0 inset-x-0 text-[9px] text-center text-background bg-foreground/70 py-0.5">
+                      {v.label ?? `Opção ${i + 1}`}
+                    </span>
+                  </button>
+                );
+              })}
+              {generating && Array.from({ length: Math.max(0, pendingCount - doneCount) }).map((_, i) => (
+                <div
+                  key={`pending_${i}`}
+                  className="shrink-0 rounded-xl border w-[88px] aspect-[5/3] bg-muted/60 grid place-items-center"
+                >
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                </div>
+              ))}
+            </div>
+          )}
+
           {error && (
             <div className="mt-3 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
@@ -445,30 +593,53 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 
           {/* Footer actions */}
           <div className="mt-6 flex flex-col sm:flex-row gap-2">
-            <Button
-              onClick={generate}
-              disabled={!preview || generating || optimizing}
-              className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
-            >
-              <Wand2 className="h-4 w-4 mr-1.5" />
-              {generating ? "Gerando…" : done ? "Gerar nova variação" : "Gerar com IA"}
-            </Button>
-            {done && result && (
-              <a
-                href={result}
-                download={`ideal-space-${style}.png`}
-                className="h-11 inline-flex items-center justify-center rounded-full border px-5 text-sm hover:bg-muted"
-              >
-                Baixar imagem
-              </a>
+            {variations.length === 0 ? (
+              <>
+                <Button
+                  onClick={() => generate(1, true)}
+                  disabled={!preview || generating || optimizing}
+                  className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
+                >
+                  <Wand2 className="h-4 w-4 mr-1.5" />
+                  {generating ? "Gerando…" : "Gerar com IA"}
+                </Button>
+                <Button
+                  onClick={() => generate(3, true)}
+                  disabled={!preview || generating || optimizing}
+                  variant="outline"
+                  className="h-11 rounded-full px-5 text-sm"
+                >
+                  <Layers className="h-4 w-4 mr-1.5" /> Gerar 3 variações
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => generate(1, false)}
+                  disabled={generating || optimizing || variations.length >= 6}
+                  className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
+                >
+                  <Wand2 className="h-4 w-4 mr-1.5" />
+                  {generating ? "Gerando…" : "Gerar mais uma variação"}
+                </Button>
+                {variations[activeIdx] && (
+                  <a
+                    href={variations[activeIdx].url}
+                    download={`ideal-space-${style}-${activeIdx + 1}.png`}
+                    className="h-11 inline-flex items-center justify-center rounded-full border px-5 text-sm hover:bg-muted"
+                  >
+                    Baixar selecionada
+                  </a>
+                )}
+              </>
             )}
             <Button variant="outline" onClick={() => close(false)} className="h-11 rounded-full px-5 text-sm">
               Fechar
             </Button>
           </div>
-          {done && result && (
+          {variations.length > 0 && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
-              Arraste o controle sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>.
+              Arraste o slider sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>. Deslize lateralmente para ver outras variações.
             </p>
           )}
           <p className="mt-2 text-[10px] text-muted-foreground">

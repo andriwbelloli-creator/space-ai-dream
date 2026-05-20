@@ -11,7 +11,8 @@ export type Draft = {
   style: string;
   styleName?: string;
   preview: string; // data URL of optimized source
-  result?: string; // data URL or asset path of generated result
+  result?: string; // legacy: first/only generated result
+  results?: Array<{ url: string; style: string; styleName?: string; label?: string }>;
   meta?: { w: number; h: number; original: number; optimized: number };
   progress?: number;
   title?: string;
