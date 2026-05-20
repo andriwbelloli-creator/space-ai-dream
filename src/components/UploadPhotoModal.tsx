@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import {
   type Draft, listDrafts, upsertDraft, deleteDraft, newDraftId, timeAgo,
 } from "@/lib/drafts";
+import { transformImage } from "@/lib/transform.functions";
+import { BeforeAfter } from "@/components/BeforeAfter";
 
 type Props = {
   open: boolean;
@@ -71,6 +73,7 @@ function formatKB(bytes: number) {
 
 export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
+  const [result, setResult] = useState<string | null>(null);
   const [style, setStyle] = useState<string>("japandi");
   const [stage, setStage] = useState<Stage>("idle");
   const [progress, setProgress] = useState(0);
@@ -102,6 +105,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       style,
       styleName,
       preview,
+      result: result ?? undefined,
       meta: meta ?? undefined,
       progress,
       title: `${styleName ?? "Projeto"} · ${new Date().toLocaleDateString("pt-BR")}`,
@@ -111,7 +115,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (existing) draft.createdAt = existing.createdAt;
     upsertDraft(draft);
     setDrafts(listDrafts());
-  }, [preview, style, stage, progress, meta, draftId]);
+  }, [preview, result, style, stage, progress, meta, draftId]);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -153,38 +157,48 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (file) handleFile(file);
   };
 
-  const generate = () => {
+  const generate = async () => {
     if (!preview) return;
     setError(null);
+    setResult(null);
     setStage("uploading");
     setProgress(0);
     const ticket = { cancelled: false };
     abortRef.current = ticket;
 
-    // Simulated chunked upload + generation with progress
+    // Animated progress while we await the real AI call
     let p = 0;
     const tick = () => {
       if (ticket.cancelled) return;
-      p += Math.random() * 14 + 6;
-      if (p < 55) {
+      p += Math.random() * 6 + 2;
+      if (p < 45) {
         setStage("uploading");
-        setProgress(Math.min(55, p));
-        setTimeout(tick, 150);
-      } else if (p < 98) {
-        setStage("generating");
-        setProgress(Math.min(98, p));
-        setTimeout(tick, 220);
       } else {
-        setProgress(100);
-        setStage("done");
+        setStage("generating");
       }
+      setProgress(Math.min(94, p));
+      if (p < 94) setTimeout(tick, 280);
     };
     tick();
+
+    try {
+      const out = await transformImage({ data: { imageDataUrl: preview, style } });
+      if (ticket.cancelled) return;
+      setResult(out.imageDataUrl);
+      setProgress(100);
+      setStage("done");
+    } catch (e: any) {
+      if (ticket.cancelled) return;
+      setError(e?.message ?? "Não foi possível gerar agora. Tente novamente.");
+      setStage("error");
+      setProgress(0);
+    }
   };
 
   const reset = () => {
     abortRef.current && (abortRef.current.cancelled = true);
     setPreview(null);
+    setResult(null);
     setDraftId(null);
     setStage("idle");
     setProgress(0);
@@ -194,6 +208,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 
   const resumeDraft = (d: Draft) => {
     setPreview(d.preview);
+    setResult(d.result ?? null);
     setStyle(d.style);
     setMeta(d.meta ?? null);
     setDraftId(d.id);
@@ -302,7 +317,21 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
             }`}
           >
-            {preview ? (
+            {preview && result && done ? (
+              <>
+                <BeforeAfter
+                  before={preview}
+                  after={result}
+                  className="absolute inset-0 h-full w-full rounded-none"
+                />
+                <button
+                  onClick={reset}
+                  className="absolute bottom-3 left-3 z-10 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
+                >
+                  Trocar foto
+                </button>
+              </>
+            ) : preview ? (
               <>
                 <img src={preview} alt="Sua foto" className="absolute inset-0 h-full w-full object-cover" />
                 {(generating || optimizing) && (
@@ -317,11 +346,6 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                       <Progress value={progress} className="h-1.5 mt-3 bg-background/30" />
                       <div className="mt-1.5 text-[10px] text-background/70">{Math.round(progress)}%</div>
                     </div>
-                  </div>
-                )}
-                {done && !generating && (
-                  <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-accent text-accent-foreground text-[10px] uppercase tracking-widest px-2.5 py-1">
-                    <Check className="h-3 w-3" /> Pronto
                   </div>
                 )}
                 <button
@@ -429,10 +453,24 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               <Wand2 className="h-4 w-4 mr-1.5" />
               {generating ? "Gerando…" : done ? "Gerar nova variação" : "Gerar com IA"}
             </Button>
+            {done && result && (
+              <a
+                href={result}
+                download={`ideal-space-${style}.png`}
+                className="h-11 inline-flex items-center justify-center rounded-full border px-5 text-sm hover:bg-muted"
+              >
+                Baixar imagem
+              </a>
+            )}
             <Button variant="outline" onClick={() => close(false)} className="h-11 rounded-full px-5 text-sm">
               Fechar
             </Button>
           </div>
+          {done && result && (
+            <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
+              Arraste o controle sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>.
+            </p>
+          )}
           <p className="mt-2 text-[10px] text-muted-foreground">
             Reduzimos a imagem para {MAX_DIMENSION}px e qualidade {Math.round(JPEG_QUALITY * 100)}% antes do envio —
             uploads até 5× mais rápidos. Suas fotos são privadas.
