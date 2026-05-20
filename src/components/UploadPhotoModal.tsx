@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import {
   Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
   AlertCircle, Zap, Loader2, History, Trash2, Play,
-  ChevronLeft, ChevronRight, Layers,
+  ChevronLeft, ChevronRight, Layers, GitCompare, Clock,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
-  type Draft, listDrafts, upsertDraft, deleteDraft, newDraftId, timeAgo,
+  type Draft, type DraftVersion, listDrafts, upsertDraft, deleteDraft,
+  newDraftId, newVersionId, pushVersion, timeAgo,
 } from "@/lib/drafts";
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
