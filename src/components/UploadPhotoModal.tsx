@@ -17,6 +17,8 @@ import { SHOPPING_LIST, estimateTotal } from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
 import { FileDown, ShoppingBag, RefreshCw } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
+import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
+import { MessageCircle } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -98,6 +100,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const abortRef = useRef<{ cancelled: boolean } | null>(null);
 
   const [emblaRef, embla] = useEmblaCarousel({ loop: false, align: "start" });
+  const [waOpen, setWaOpen] = useState(false);
 
   useEffect(() => {
     if (!embla) return;
@@ -651,6 +654,15 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                     Baixar selecionada
                   </a>
                 )}
+                {variations[activeIdx] && (
+                  <Button
+                    type="button"
+                    onClick={() => setWaOpen(true)}
+                    className="h-11 rounded-full px-5 text-sm bg-[#25D366] hover:bg-[#1ebe5a] text-white"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-1.5" /> WhatsApp
+                  </Button>
+                )}
               </>
             )}
             <Button variant="outline" onClick={() => close(false)} className="h-11 rounded-full px-5 text-sm">
@@ -668,6 +680,15 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
           </p>
         </div>
       </DialogContent>
+      {variations[activeIdx] && (
+        <WhatsAppShareDialog
+          open={waOpen}
+          onOpenChange={setWaOpen}
+          projectName={`${STYLES.find((s) => s.id === style)?.name ?? "Projeto"}${variations[activeIdx]?.label ? " · " + variations[activeIdx].label : ""}`}
+          imageUrl={variations[activeIdx]?.url}
+          downloadName={`ideal-space-${style}-${activeIdx + 1}.png`}
+        />
+      )}
     </Dialog>
   );
 }
