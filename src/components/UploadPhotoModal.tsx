@@ -445,10 +445,24 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               <Wand2 className="h-4 w-4 mr-1.5" />
               {generating ? "Gerando…" : done ? "Gerar nova variação" : "Gerar com IA"}
             </Button>
+            {done && result && (
+              <a
+                href={result}
+                download={`ideal-space-${style}.png`}
+                className="h-11 inline-flex items-center justify-center rounded-full border px-5 text-sm hover:bg-muted"
+              >
+                Baixar imagem
+              </a>
+            )}
             <Button variant="outline" onClick={() => close(false)} className="h-11 rounded-full px-5 text-sm">
               Fechar
             </Button>
           </div>
+          {done && result && (
+            <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
+              Arraste o controle sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>.
+            </p>
+          )}
           <p className="mt-2 text-[10px] text-muted-foreground">
             Reduzimos a imagem para {MAX_DIMENSION}px e qualidade {Math.round(JPEG_QUALITY * 100)}% antes do envio —
             uploads até 5× mais rápidos. Suas fotos são privadas.
