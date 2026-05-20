@@ -396,19 +396,56 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
             }`}
           >
-            {preview && result && done ? (
+            {preview && variations.length > 0 ? (
               <>
-                <BeforeAfter
-                  before={preview}
-                  after={result}
-                  className="absolute inset-0 h-full w-full rounded-none"
-                />
+                <div ref={emblaRef} className="absolute inset-0 overflow-hidden">
+                  <div className="flex h-full">
+                    {variations.map((v) => (
+                      <div key={v.id} className="relative shrink-0 grow-0 basis-full h-full">
+                        <BeforeAfter
+                          before={preview}
+                          after={v.url}
+                          className="absolute inset-0 h-full w-full rounded-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* In-progress placeholder slide indicator */}
+                {generating && doneCount < pendingCount && (
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 border">
+                    <Loader2 className="h-3 w-3 animate-spin text-accent" />
+                    Gerando {doneCount + 1}/{pendingCount}
+                  </div>
+                )}
+                {variations.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => embla?.scrollPrev()}
+                      aria-label="Anterior"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => embla?.scrollNext()}
+                      aria-label="Próxima"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
                 <button
                   onClick={reset}
                   className="absolute bottom-3 left-3 z-10 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
                 >
                   Trocar foto
                 </button>
+                <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
+                  <Layers className="h-3 w-3 text-accent" />
+                  {variations[activeIdx]?.label ?? `Opção ${activeIdx + 1}`} · {activeIdx + 1}/{variations.length}
+                </div>
               </>
             ) : preview ? (
               <>
@@ -491,6 +528,38 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             />
           </div>
 
+          {/* Variation thumbnails */}
+          {variations.length > 0 && (
+            <div className="mt-3 flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x snap-mandatory">
+              {variations.map((v, i) => {
+                const active = i === activeIdx;
+                return (
+                  <button
+                    key={v.id}
+                    onClick={() => embla?.scrollTo(i)}
+                    className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[88px] aspect-[5/3] transition ${
+                      active ? "ring-2 ring-accent border-accent" : "opacity-80 hover:opacity-100"
+                    }`}
+                    aria-label={v.label ?? `Opção ${i + 1}`}
+                  >
+                    <img src={v.url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                    <span className="absolute bottom-0 inset-x-0 text-[9px] text-center text-background bg-foreground/70 py-0.5">
+                      {v.label ?? `Opção ${i + 1}`}
+                    </span>
+                  </button>
+                );
+              })}
+              {generating && Array.from({ length: Math.max(0, pendingCount - doneCount) }).map((_, i) => (
+                <div
+                  key={`pending_${i}`}
+                  className="shrink-0 rounded-xl border w-[88px] aspect-[5/3] bg-muted/60 grid place-items-center"
+                >
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                </div>
+              ))}
+            </div>
+          )}
+
           {error && (
             <div className="mt-3 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
@@ -524,30 +593,53 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 
           {/* Footer actions */}
           <div className="mt-6 flex flex-col sm:flex-row gap-2">
-            <Button
-              onClick={generate}
-              disabled={!preview || generating || optimizing}
-              className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
-            >
-              <Wand2 className="h-4 w-4 mr-1.5" />
-              {generating ? "Gerando…" : done ? "Gerar nova variação" : "Gerar com IA"}
-            </Button>
-            {done && result && (
-              <a
-                href={result}
-                download={`ideal-space-${style}.png`}
-                className="h-11 inline-flex items-center justify-center rounded-full border px-5 text-sm hover:bg-muted"
-              >
-                Baixar imagem
-              </a>
+            {variations.length === 0 ? (
+              <>
+                <Button
+                  onClick={() => generate(1, true)}
+                  disabled={!preview || generating || optimizing}
+                  className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
+                >
+                  <Wand2 className="h-4 w-4 mr-1.5" />
+                  {generating ? "Gerando…" : "Gerar com IA"}
+                </Button>
+                <Button
+                  onClick={() => generate(3, true)}
+                  disabled={!preview || generating || optimizing}
+                  variant="outline"
+                  className="h-11 rounded-full px-5 text-sm"
+                >
+                  <Layers className="h-4 w-4 mr-1.5" /> Gerar 3 variações
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => generate(1, false)}
+                  disabled={generating || optimizing || variations.length >= 6}
+                  className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
+                >
+                  <Wand2 className="h-4 w-4 mr-1.5" />
+                  {generating ? "Gerando…" : "Gerar mais uma variação"}
+                </Button>
+                {variations[activeIdx] && (
+                  <a
+                    href={variations[activeIdx].url}
+                    download={`ideal-space-${style}-${activeIdx + 1}.png`}
+                    className="h-11 inline-flex items-center justify-center rounded-full border px-5 text-sm hover:bg-muted"
+                  >
+                    Baixar selecionada
+                  </a>
+                )}
+              </>
             )}
             <Button variant="outline" onClick={() => close(false)} className="h-11 rounded-full px-5 text-sm">
               Fechar
             </Button>
           </div>
-          {done && result && (
+          {variations.length > 0 && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
-              Arraste o controle sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>.
+              Arraste o slider sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>. Deslize lateralmente para ver outras variações.
             </p>
           )}
           <p className="mt-2 text-[10px] text-muted-foreground">
