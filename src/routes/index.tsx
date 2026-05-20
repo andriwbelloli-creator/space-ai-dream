@@ -43,23 +43,39 @@ export const Route = createFileRoute("/")({
 
 /* ----------------------------- DATA ----------------------------- */
 
-const emptyRooms = [
-  { img: emptyBedroom, title: "Quarto vazio",      badge: "Aconchegante",     sub: "Sono, descanso e estilo" },
-  { img: emptyKitchen, title: "Cozinha simples",   badge: "Premium",          sub: "Funcional e bonita" },
-  { img: emptyOffice,  title: "Home office vazio", badge: "Profissional",     sub: "Foco, conforto e estética" },
-  { img: emptyStudio,  title: "Studio compacto",   badge: "Espaço pequeno",   sub: "Aproveite cada metro" },
-  { img: emptyBathroom,title: "Banheiro vazio",    badge: "Reforma virtual",  sub: "Visualize antes de comprar" },
-  { img: emptyDining,  title: "Sala de jantar",    badge: "Receber bem",      sub: "Convívio e personalidade" },
-] as const;
+/**
+ * Rooms + styles consume the catalog. Copy lives next to the image id so the
+ * marketing strings travel with their visual, but the asset itself is owned
+ * by `src/lib/image-catalog.ts` — guaranteeing no overlap across sections.
+ */
+const ROOM_META: Record<string, { badge: string; sub: string; title?: string }> = {
+  "empty-bedroom":  { badge: "Aconchegante",    sub: "Sono, descanso e estilo",     title: "Quarto vazio" },
+  "empty-kitchen":  { badge: "Premium",         sub: "Funcional e bonita",          title: "Cozinha simples" },
+  "empty-office":   { badge: "Profissional",    sub: "Foco, conforto e estética",   title: "Home office vazio" },
+  "empty-studio":   { badge: "Espaço pequeno",  sub: "Aproveite cada metro",        title: "Studio compacto" },
+  "empty-bathroom": { badge: "Reforma virtual", sub: "Visualize antes de comprar",  title: "Banheiro vazio" },
+  "empty-dining":   { badge: "Receber bem",     sub: "Convívio e personalidade",    title: "Sala de jantar" },
+};
+const emptyRooms = imagesFor("empty-carousel").map((i) => ({
+  img: i.src,
+  title: ROOM_META[i.id]?.title ?? i.alt,
+  badge: ROOM_META[i.id]?.badge ?? "Ambiente",
+  sub: ROOM_META[i.id]?.sub ?? "",
+}));
 
-const styles = [
-  { img: styleJapandi,    name: "Japandi",       sub: "Calma, oak e linho" },
-  { img: styleScandi,     name: "Escandinavo",   sub: "Claro, leve, neutro" },
-  { img: styleModern,     name: "Contemporâneo", sub: "Linhas suaves e arte" },
-  { img: styleIndustrial, name: "Industrial",    sub: "Tijolo, metal e couro" },
-  { img: styleLuxo,       name: "Luxo discreto", sub: "Nobreza e brass" },
-  { img: styleNatural,    name: "Natural",       sub: "Fibras, plantas, cerâmica" },
-];
+const STYLE_META: Record<string, { name: string; sub: string }> = {
+  "style-japandi":    { name: "Japandi",       sub: "Calma, oak e linho" },
+  "style-scandi":     { name: "Escandinavo",   sub: "Claro, leve, neutro" },
+  "style-modern":     { name: "Contemporâneo", sub: "Linhas suaves e arte" },
+  "style-industrial": { name: "Industrial",    sub: "Tijolo, metal e couro" },
+  "style-luxo":       { name: "Luxo discreto", sub: "Nobreza e brass" },
+  "style-natural":    { name: "Natural",       sub: "Fibras, plantas, cerâmica" },
+};
+const styles = imagesFor("style-carousel").map((i) => ({
+  img: i.src,
+  name: STYLE_META[i.id]?.name ?? i.alt,
+  sub: STYLE_META[i.id]?.sub ?? "",
+}));
 
 const shoppingList = [
   { tag: "Essencial",   name: "Sofá 3 lugares",        cat: "Móveis principais", price: "R$ 1.200–3.500" },
@@ -74,20 +90,39 @@ const shoppingList = [
 type GalleryBadge = "2D IA" | "5D" | "Planta baixa" | "Arquitetônico" | "Virtual staging";
 type GalleryFilter = "Todos" | "2D" | "5D" | "Planta baixa" | "Arquitetônico" | "Profissional";
 
+const GALLERY_META: Record<string, { title: string; badge: GalleryBadge; tags: ReadonlyArray<GalleryFilter>; cta: string; soon?: boolean }> = {
+  "g-living-warm": { title: "Sala moderna decorada",          badge: "2D IA",           tags: ["2D"],                              cta: "Gerar parecido" },
+  "g-bedroom":     { title: "Quarto japandi sereno",          badge: "2D IA",           tags: ["2D"],                              cta: "Gerar parecido" },
+  "g-loft":        { title: "Loft industrial integrado",      badge: "Virtual staging", tags: ["2D", "Profissional"],              cta: "Ver projeto" },
+  "g-varanda":     { title: "Varanda urbana ao pôr do sol",   badge: "2D IA",           tags: ["2D"],                              cta: "Gerar parecido" },
+  "g-dining":      { title: "Projeto completo com orçamento", badge: "5D",              tags: ["5D"],                              cta: "Ver projeto", soon: true },
+  "g-floorplan":   { title: "Layout de apartamento compacto", badge: "Planta baixa",    tags: ["Planta baixa", "Profissional"],    cta: "Ver layout",   soon: true },
+  "g-moodboard":   { title: "Moodboard arquitetônico",        badge: "Arquitetônico",   tags: ["Arquitetônico", "Profissional"],   cta: "Explorar",     soon: true },
+  "g-office":      { title: "Home office natural",            badge: "2D IA",           tags: ["2D", "Profissional"],              cta: "Gerar parecido" },
+  "g-clinic":      { title: "Consultório acolhedor",          badge: "Virtual staging", tags: ["2D", "Profissional"],              cta: "Gerar parecido" },
+};
 const gallery: ReadonlyArray<{
   img: string; title: string; badge: GalleryBadge; tags: ReadonlyArray<GalleryFilter>; cta: string; soon?: boolean;
-}> = [
-  { img: decoratedLivingWarm, title: "Sala moderna decorada",     badge: "2D IA",            tags: ["2D"],                            cta: "Gerar parecido" },
-  { img: decoratedBedroom,    title: "Quarto japandi sereno",     badge: "2D IA",            tags: ["2D"],                            cta: "Gerar parecido" },
-  { img: galleryLoft,         title: "Loft industrial integrado", badge: "Virtual staging",  tags: ["2D", "Profissional"],            cta: "Ver projeto" },
-  { img: galleryVaranda,      title: "Varanda urbana ao pôr do sol", badge: "2D IA",         tags: ["2D"],                            cta: "Gerar parecido" },
-  { img: decoratedDining,     title: "Projeto completo com orçamento", badge: "5D",         tags: ["5D"],                            cta: "Ver projeto", soon: true },
-  { img: floorplanApartment,  title: "Layout de apartamento compacto", badge: "Planta baixa", tags: ["Planta baixa", "Profissional"], cta: "Ver layout", soon: true },
-  { img: moodboardPro,        title: "Moodboard arquitetônico",   badge: "Arquitetônico",    tags: ["Arquitetônico", "Profissional"], cta: "Explorar", soon: true },
-  { img: galleryOffice,       title: "Home office natural",       badge: "2D IA",            tags: ["2D", "Profissional"],            cta: "Gerar parecido" },
-  { img: galleryClinic,       title: "Consultório acolhedor",     badge: "Virtual staging",  tags: ["2D", "Profissional"],            cta: "Gerar parecido" },
-  { img: rankMinimalBedroom,  title: "Quarto minimalista",        badge: "2D IA",            tags: ["2D"],                            cta: "Gerar parecido" },
-];
+}> = imagesFor("gallery").map((i) => {
+  const meta = GALLERY_META[i.id];
+  if (!meta) throw new Error(`[index] Missing gallery meta for ${i.id}`);
+  return { img: i.src, ...meta };
+});
+
+const RANKING_META: Record<string, { title: string; sub: string }> = {
+  "rank-minimal-bedroom": { title: "Quarto minimalista",   sub: "1.248 curtidas · estilo Minimalista" },
+  "rank-bathroom":        { title: "Banheiro travertino",  sub: "987 curtidas · estilo Luxo discreto" },
+  "rank-kitchen":         { title: "Cozinha quiet luxury", sub: "812 curtidas · estilo Luxo discreto" },
+};
+const ranking = imagesFor("ranking").map((i, idx) => ({
+  pos: idx + 1,
+  img: i.src,
+  alt: i.alt,
+  title: RANKING_META[i.id]?.title ?? i.alt,
+  sub: RANKING_META[i.id]?.sub ?? "",
+  room: i.room,
+  style: i.style,
+}));
 
 const filterList: ReadonlyArray<GalleryFilter> = ["Todos", "2D", "5D", "Planta baixa", "Arquitetônico", "Profissional"];
 
