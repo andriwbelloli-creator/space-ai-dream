@@ -13,7 +13,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/co
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
   ArrowRight, ArrowUpRight, Sparkles, Check, Lock, Image as ImageIcon,
-  Wand2, ShoppingBag, Download, Menu, X, Plus, ShieldCheck, FileText,
+  Wand2, ShoppingBag, Download, Menu, ShieldCheck, FileText,
   Building2, Briefcase, HomeIcon, Stethoscope, Star, ChevronRight, Zap,
 } from "lucide-react";
 
