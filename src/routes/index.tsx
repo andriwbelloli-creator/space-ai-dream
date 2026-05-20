@@ -796,6 +796,57 @@ function InspirationGallery({ onUpload }: { onUpload: () => void }) {
   );
 }
 
+/* ----------------------------- RANKING ----------------------------- */
+
+function RankingStrip({ onUpload }: { onUpload: () => void }) {
+  return (
+    <section id="ranking" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <SectionHead
+            kicker="Ranking da semana"
+            title={<>Os projetos <span className="font-serif italic font-normal">mais curtidos</span> pela comunidade</>}
+            sub="Top 3 da semana — imagens exclusivas desta seção, separadas da galeria e dos antes/depois."
+          />
+          <Button onClick={onUpload} variant="outline" className="rounded-full h-11 px-5 text-sm hidden sm:inline-flex">
+            <Sparkles className="h-4 w-4 mr-1.5" /> Entrar no ranking
+          </Button>
+        </div>
+
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {ranking.map((r) => (
+            <article
+              key={r.title}
+              className="group relative rounded-3xl overflow-hidden border bg-card hover:-translate-y-0.5 hover:shadow-xl transition-all duration-500"
+            >
+              <div className="relative aspect-[5/4] overflow-hidden">
+                <img
+                  src={r.img}
+                  alt={r.alt}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-[1200ms]"
+                />
+                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background text-[10px] uppercase tracking-widest px-2.5 py-1">
+                  #{r.pos} · {r.room ?? "ambiente"}
+                </span>
+                {r.style && (
+                  <span className="absolute top-3 right-3 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 text-foreground">
+                    {r.style}
+                  </span>
+                )}
+              </div>
+              <div className="p-5">
+                <div className="text-base font-medium">{r.title}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">{r.sub}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ----------------------------- PROFESSIONALS ----------------------------- */
 
 function Professionals({ onUpload }: { onUpload: () => void }) {
