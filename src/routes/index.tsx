@@ -4,6 +4,7 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { PresentationModal } from "@/components/PresentationModal";
 import { UploadPhotoModal } from "@/components/UploadPhotoModal";
+import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { Button } from "@/components/ui/button";
@@ -186,6 +187,7 @@ function Index() {
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [courseOpen, setCourseOpen] = useState(false);
   const [reward, setReward] = useState<RewardKind | null>(null);
 
   useEffect(() => {
@@ -233,7 +235,7 @@ function Index() {
       />
       <InspirationGallery onUpload={() => setUploadOpen(true)} />
       <RankingStrip onUpload={() => setUploadOpen(true)} />
-      <Professionals onUpload={() => setUploadOpen(true)} />
+      <Professionals onUpload={() => setUploadOpen(true)} onCourse={() => setCourseOpen(true)} />
       <Pricing onReward={openReward} />
       <Trust />
       <FAQ />
@@ -246,6 +248,7 @@ function Index() {
 
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
       <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} />
+      <CourseModal open={courseOpen} onOpenChange={setCourseOpen} onEnroll={() => { setCourseOpen(false); openReward("budget"); }} />
 
       <RewardModal
         open={!!reward}
@@ -849,7 +852,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
 
 /* ----------------------------- PROFESSIONALS ----------------------------- */
 
-function Professionals({ onUpload }: { onUpload: () => void }) {
+function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse: () => void }) {
   const modules = [
     {
       icon: <Layers className="h-5 w-5" />, t: "Módulo 2D",
@@ -904,9 +907,16 @@ function Professionals({ onUpload }: { onUpload: () => void }) {
               ))}
             </div>
           </div>
-          <div className="lg:col-span-5 lg:justify-self-end">
+          <div className="lg:col-span-5 lg:justify-self-end flex flex-wrap gap-2">
             <Button onClick={onUpload} className="h-12 rounded-full bg-accent text-accent-foreground hover:opacity-95 px-6">
               Criar projeto profissional <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+            <Button
+              onClick={onCourse}
+              variant="outline"
+              className="h-12 rounded-full px-6 bg-white/5 border-white/20 text-background hover:bg-white/10 hover:text-background"
+            >
+              Conhecer o curso
             </Button>
           </div>
         </div>
