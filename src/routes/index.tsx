@@ -232,6 +232,7 @@ function Index() {
         onReward={openReward}
       />
       <InspirationGallery onUpload={() => setUploadOpen(true)} />
+      <RankingStrip onUpload={() => setUploadOpen(true)} />
       <Professionals onUpload={() => setUploadOpen(true)} />
       <Pricing onReward={openReward} />
       <Trust />
