@@ -952,6 +952,129 @@ function FAQ() {
 
 /* ----------------------------- FOOTER ----------------------------- */
 
+/* ----------------------------- UPLOAD CTA ----------------------------- */
+
+function UploadCTA({ onUpload }: { onUpload: () => void }) {
+  return (
+    <section id="criar" className="py-14 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-[2rem] border bg-card p-6 sm:p-10 lg:p-12">
+          <div aria-hidden className="absolute -top-24 -right-24 h-[360px] w-[360px] rounded-full blur-3xl opacity-40"
+            style={{ background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.55), transparent 60%)" }} />
+
+          <div className="grid lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-12 items-center relative">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border bg-background/70 backdrop-blur px-3 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Comece pelo seu ambiente
+              </div>
+              <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[44px] leading-[1.05] tracking-[-0.02em] font-semibold">
+                Tire uma <span className="font-serif italic font-normal text-accent">foto</span> do seu espaço
+                <br className="hidden sm:block" /> e a IA decora em segundos.
+              </h2>
+              <p className="mt-4 text-muted-foreground max-w-xl">
+                Pelo celular, abra a câmera direto pelo navegador. Pelo desktop, envie qualquer imagem.
+                A IA mantém a estrutura do ambiente e devolve uma versão decorada com lista de compras.
+              </p>
+
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Button onClick={onUpload} className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm">
+                  <Camera className="h-4 w-4 mr-1.5" /> Tirar foto agora
+                </Button>
+                <Button onClick={onUpload} variant="outline" className="h-12 rounded-full px-6 text-sm">
+                  <ImageIcon className="h-4 w-4 mr-1.5" /> Enviar uma imagem
+                </Button>
+              </div>
+
+              <ul className="mt-6 grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-muted-foreground max-w-md">
+                {["Foto vazia ou mobiliada","Funciona no celular","Resultado em segundos","Fotos privadas"].map(t =>
+                  <li key={t} className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-accent" /> {t}</li>)}
+              </ul>
+            </div>
+
+            <button
+              onClick={onUpload}
+              className="relative aspect-[5/4] rounded-3xl border-2 border-dashed bg-muted/40 grid place-items-center text-center p-6 hover:bg-muted/60 transition group"
+            >
+              <div>
+                <div className="mx-auto h-16 w-16 rounded-2xl bg-accent/15 text-accent grid place-items-center group-hover:scale-105 transition-transform">
+                  <Camera className="h-7 w-7" />
+                </div>
+                <div className="mt-4 text-base font-medium">Toque para enviar uma foto</div>
+                <div className="mt-1 text-xs text-muted-foreground">JPG ou PNG · até 10 MB</div>
+                <div className="mt-5 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
+                  <Wand2 className="h-3 w-3 text-accent" /> A IA decora em segundos
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- PRO SPACES (home office, escritórios, clínicas) ----------------------------- */
+
+function ProSpaces({ onUpload }: { onUpload: () => void }) {
+  const cards = [
+    {
+      img: galleryOffice,
+      kicker: "Home office",
+      title: "Foco, conforto e estética em casa",
+      body: "Para quem trabalha de casa e quer um ambiente que ajude na concentração — e fique bonito em call.",
+    },
+    {
+      img: emptyOffice,
+      kicker: "Escritórios",
+      title: "Salas comerciais com presença",
+      body: "Recepções, salas de reunião e coworkings com identidade profissional e materiais bem escolhidos.",
+    },
+    {
+      img: galleryClinic,
+      kicker: "Clínicas",
+      title: "Acolhimento que transmite confiança",
+      body: "Consultórios médicos, odontológicos e psicológicos com decoração calma, profissional e atemporal.",
+    },
+  ];
+  return (
+    <section className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <SectionHead
+            kicker="Ambientes profissionais"
+            title={<>Feito também para <span className="font-serif italic font-normal">home office, escritórios e clínicas</span></>}
+            sub="Decoração que melhora produtividade, percepção de marca e a experiência de quem chega."
+          />
+          <Button onClick={onUpload} variant="outline" className="rounded-full h-11 px-5 text-sm hidden sm:inline-flex">
+            <Camera className="h-4 w-4 mr-1.5" /> Enviar foto do meu espaço
+          </Button>
+        </div>
+
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {cards.map((c) => (
+            <article key={c.kicker} className="group rounded-3xl overflow-hidden bg-card border hover:-translate-y-0.5 hover:shadow-xl transition-all duration-500 flex flex-col">
+              <div className="relative aspect-[5/4] overflow-hidden">
+                <img src={c.img} alt={c.title} loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-[1200ms]" />
+                <span className="absolute top-3 left-3 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1">
+                  {c.kicker}
+                </span>
+              </div>
+              <div className="p-5 flex flex-col flex-1">
+                <div className="text-base font-medium">{c.title}</div>
+                <p className="mt-1.5 text-sm text-muted-foreground flex-1">{c.body}</p>
+                <button onClick={onUpload} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-foreground/80 hover:text-foreground">
+                  Criar para este ambiente <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   const cols = [
     { t: "Produto",       l: ["Criar com IA","Ambientes","Estilos","Galeria","Planos"] },
