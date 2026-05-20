@@ -853,34 +853,32 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
 /* ----------------------------- PROFESSIONALS ----------------------------- */
 
 function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse: () => void }) {
-  const modules = [
-    {
-      icon: <Layers className="h-5 w-5" />, t: "Módulo 2D",
-      d: "Geração de imagem, antes/depois, estilos, variações e exportação.",
-      tag: "Disponível", tagColor: "bg-accent/15 text-accent",
-    },
-    {
-      icon: <LayoutGrid className="h-5 w-5" />, t: "Módulo 5D",
-      d: "Estimativa de custo, lista de compras, orçamento, comparação e produtos.",
-      tag: "Beta", tagColor: "bg-foreground/10 text-foreground",
-    },
-    {
-      icon: <Ruler className="h-5 w-5" />, t: "Módulo Planta Baixa",
-      d: "Planta simplificada, distribuição de móveis, layout por cômodo e circulação.",
-      tag: "Em breve", tagColor: "bg-muted text-muted-foreground",
-    },
-    {
-      icon: <Compass className="h-5 w-5" />, t: "Módulo Arquitetônico",
-      d: "Projetos por cliente, moodboards, variações de estilo e apresentações.",
-      tag: "Planejado", tagColor: "bg-muted text-muted-foreground",
-    },
-  ];
-
   const audiences = [
-    { icon: <Briefcase className="h-4 w-4" />,   t: "Designers" },
-    { icon: <Building2 className="h-4 w-4" />,   t: "Arquitetos" },
-    { icon: <HomeIcon className="h-4 w-4" />,    t: "Imobiliárias" },
-    { icon: <Stethoscope className="h-4 w-4" />, t: "Clínicas" },
+    {
+      icon: <Pencil className="h-4 w-4" />, t: "Designers",
+      d: "Crie variações visuais em segundos para apresentar a clientes.",
+      bullets: ["Múltiplas versões", "Galeria de referências", "Exportação de projeto"],
+    },
+    {
+      icon: <Compass className="h-4 w-4" />, t: "Arquitetos",
+      d: "Estudos iniciais e apresentações com antes/depois claro.",
+      bullets: ["Conceitos visuais", "Organização por cliente", "Observações técnicas"],
+    },
+    {
+      icon: <Building2 className="h-4 w-4" />, t: "Imobiliárias",
+      d: "Virtual staging para imóveis vazios em minutos.",
+      bullets: ["Staging rápido", "Pacotes por imagem", "Disclaimer automático"],
+    },
+    {
+      icon: <Stethoscope className="h-4 w-4" />, t: "Consultórios & Clínicas",
+      d: "Ambientes acolhedores que transmitem confiança ao paciente.",
+      bullets: ["Iluminação suave", "Privacidade visual", "Lista de itens"],
+    },
+    {
+      icon: <ShoppingBag className="h-4 w-4" />, t: "E-commerce & Afiliados",
+      d: "Transforme projetos em listas de compras prontas.",
+      bullets: ["Produtos sugeridos", "Links afiliados", "Orçamento PDF"],
+    },
   ];
 
   return (
@@ -889,49 +887,52 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
         <div aria-hidden className="absolute -top-32 -right-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-30"
           style={{ background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.7), transparent 60%)" }} />
 
-        <div className="grid lg:grid-cols-12 gap-10 items-end relative">
-          <div className="lg:col-span-7">
+        <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-14 items-start relative">
+          {/* Left column: pitch + CTAs */}
+          <div>
             <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Para profissionais</div>
-            <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold leading-tight">
-              IA para designers, <span className="font-serif italic font-normal text-accent">arquitetos</span> e imobiliárias.
+            <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold leading-tight font-serif">
+              Acelere estudos visuais e apresentações de projeto
             </h2>
-            <p className="mt-4 text-background/70 max-w-xl">
-              Quatro módulos profissionais que evoluem com a plataforma — do estudo visual 2D ao planejamento 5D
-              e à planta baixa.
+            <p className="mt-4 text-background/70 max-w-md text-sm sm:text-base leading-relaxed">
+              Use IA para criar variações de ambiente em minutos, apresentar
+              ideias a clientes e gerar orçamentos preliminares com lista de produtos.
             </p>
-            <div className="mt-6 flex flex-wrap gap-2 text-xs text-background/80">
-              {audiences.map((a) => (
-                <span key={a.t} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1.5">
-                  <span className="text-accent">{a.icon}</span> {a.t}
-                </span>
-              ))}
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Button
+                onClick={onUpload}
+                className="h-11 rounded-full bg-background text-foreground hover:bg-background/90 px-5 text-sm"
+              >
+                Conhecer recursos profissionais <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Button>
+              <Button
+                onClick={onCourse}
+                variant="outline"
+                className="h-11 rounded-full px-5 text-sm bg-white/5 border-white/20 text-background hover:bg-white/10 hover:text-background"
+              >
+                Conhecer o curso
+              </Button>
             </div>
           </div>
-          <div className="lg:col-span-5 lg:justify-self-end flex flex-wrap gap-2">
-            <Button onClick={onUpload} className="h-12 rounded-full bg-accent text-accent-foreground hover:opacity-95 px-6">
-              Criar projeto profissional <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-            <Button
-              onClick={onCourse}
-              variant="outline"
-              className="h-12 rounded-full px-6 bg-white/5 border-white/20 text-background hover:bg-white/10 hover:text-background"
-            >
-              Conhecer o curso
-            </Button>
-          </div>
-        </div>
 
-        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-3 relative">
-          {modules.map((m) => (
-            <div key={m.t} className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur p-5 hover:bg-white/10 transition flex flex-col">
-              <div className="flex items-center justify-between">
-                <div className="h-10 w-10 rounded-xl bg-white/10 grid place-items-center text-accent">{m.icon}</div>
-                <span className={`text-[10px] uppercase tracking-widest rounded-full px-2 py-0.5 ${m.tagColor}`}>{m.tag}</span>
+          {/* Right column: 5 audience cards */}
+          <div className="grid sm:grid-cols-2 gap-3">
+            {audiences.map((a) => (
+              <div
+                key={a.t}
+                className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur p-5 hover:bg-white/10 transition flex flex-col"
+              >
+                <div className="h-9 w-9 rounded-xl bg-white/10 grid place-items-center text-accent">{a.icon}</div>
+                <div className="mt-4 font-medium font-serif text-lg leading-tight">{a.t}</div>
+                <p className="mt-1.5 text-sm text-background/70 leading-relaxed">{a.d}</p>
+                <ul className="mt-4 pt-4 border-t border-white/10 space-y-1.5">
+                  {a.bullets.map((b) => (
+                    <li key={b} className="text-[12px] text-background/65 leading-relaxed">· {b}</li>
+                  ))}
+                </ul>
               </div>
-              <div className="mt-4 font-medium">{m.t}</div>
-              <div className="text-sm text-background/70 mt-1 flex-1">{m.d}</div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
