@@ -105,6 +105,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 
   const [emblaRef, embla] = useEmblaCarousel({ loop: false, align: "start" });
   const [waOpen, setWaOpen] = useState(false);
+  // Remember the carousel slot we want to restore to after embla reinitializes
+  // (e.g. when variations are restored from a draft or a version snapshot).
+  const pendingScrollIdx = useRef<number | null>(null);
 
   useEffect(() => {
     if (!embla) return;
@@ -114,7 +117,16 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   }, [embla]);
 
   useEffect(() => {
-    if (embla) embla.reInit();
+    if (!embla) return;
+    embla.reInit();
+    // After reinit, restore the previously active slide if requested.
+    if (pendingScrollIdx.current != null && variations.length > 0) {
+      const target = Math.min(pendingScrollIdx.current, variations.length - 1);
+      // jumpTo (second arg true) → no animation, feels like a real "restore"
+      embla.scrollTo(target, true);
+      setActiveIdx(target);
+      pendingScrollIdx.current = null;
+    }
   }, [embla, variations.length]);
 
   // Load drafts whenever the modal opens
@@ -143,6 +155,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       meta: meta ?? undefined,
       progress,
       title: `${styleName ?? "Projeto"} · ${new Date().toLocaleDateString("pt-BR")}`,
+      activeIdx,
     };
     // Preserve original createdAt if existing
     const existing = listDrafts().find((d) => d.id === draftId);
@@ -154,7 +167,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     }
     upsertDraft(draft);
     setDrafts(listDrafts());
-  }, [preview, variations, style, stage, progress, meta, draftId]);
+  }, [preview, variations, style, stage, progress, meta, draftId, activeIdx]);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -278,6 +291,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
           styleName,
           results: snapshotVars.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label })),
           note: `${snapshotVars.length} ${snapshotVars.length === 1 ? "variação" : "variações"} · ${styleName ?? style}`,
+          activeIdx: reset ? 0 : variations.length,
         };
         pushVersion(draftId, version);
         const fresh = listDrafts().find((d) => d.id === draftId);
@@ -329,7 +343,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
         }))
       : legacy;
     setVariations(restored);
-    setActiveIdx(0);
+    const restoredIdx = Math.min(Math.max(0, d.activeIdx ?? 0), Math.max(0, restored.length - 1));
+    setActiveIdx(restoredIdx);
+    pendingScrollIdx.current = restoredIdx;
     setStyle(d.style);
     setMeta(d.meta ?? null);
     setDraftId(d.id);
@@ -352,21 +368,22 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     if (!v) return;
     setActiveVersionId(vid);
     setCompareVersionId(null);
-    setVariations(
-      v.results.map((r, i) => ({
+    const restored = v.results.map((r, i) => ({
         id: `${vid}_${i}`,
         url: r.url,
         style: r.style,
         styleName: r.styleName,
         label: r.label ?? variationLabels[i % variationLabels.length],
-      })),
-    );
-    setActiveIdx(0);
+    }));
+    setVariations(restored);
+    const restoredIdx = Math.min(Math.max(0, v.activeIdx ?? 0), Math.max(0, restored.length - 1));
+    setActiveIdx(restoredIdx);
+    pendingScrollIdx.current = restoredIdx;
     setStyle(v.style);
     // Persist active version pointer
     if (draftId) {
       const existing = listDrafts().find((d) => d.id === draftId);
-      if (existing) upsertDraft({ ...existing, activeVersionId: vid, updatedAt: Date.now() });
+      if (existing) upsertDraft({ ...existing, activeVersionId: vid, activeIdx: restoredIdx, updatedAt: Date.now() });
     }
   };
 
