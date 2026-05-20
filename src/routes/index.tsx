@@ -235,7 +235,7 @@ function Index() {
       />
       <InspirationGallery onUpload={() => setUploadOpen(true)} />
       <RankingStrip onUpload={() => setUploadOpen(true)} />
-      <Professionals onUpload={() => setUploadOpen(true)} />
+      <Professionals onUpload={() => setUploadOpen(true)} onCourse={() => setCourseOpen(true)} />
       <Pricing onReward={openReward} />
       <Trust />
       <FAQ />
@@ -248,6 +248,7 @@ function Index() {
 
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
       <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} />
+      <CourseModal open={courseOpen} onOpenChange={setCourseOpen} onEnroll={() => { setCourseOpen(false); openReward("budget"); }} />
 
       <RewardModal
         open={!!reward}
