@@ -495,7 +495,13 @@ function HowItWorks() {
 
 /* ----------------------------- RESULT SHOWCASE ----------------------------- */
 
-function ResultShowcase({ onBudget, onAffiliate }: { onBudget: () => void; onAffiliate: (s: string) => void }) {
+function ResultShowcase({
+  onBudget, onAffiliate, onReward,
+}: {
+  onBudget: () => void;
+  onAffiliate: (s: string) => void;
+  onReward: (k: RewardKind) => void;
+}) {
   return (
     <section className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -511,8 +517,15 @@ function ResultShowcase({ onBudget, onAffiliate }: { onBudget: () => void; onAff
               <Badge variant="secondary" className="rounded-full text-[10px] uppercase tracking-wider">Cozinha · Luxo discreto</Badge>
               <span className="text-xs text-muted-foreground">12 itens · estimativa R$ 3.000–8.000</span>
               <div className="ml-auto flex gap-2">
-                <Button size="sm" variant="ghost" className="text-xs">Salvar</Button>
-                <Button size="sm" variant="ghost" className="text-xs"><Zap className="h-3.5 w-3.5 mr-1" /> Variação</Button>
+                <Button size="sm" variant="ghost" onClick={() => onReward("save_project")} className="text-xs">
+                  <BookmarkPlus className="h-3.5 w-3.5 mr-1" /> Salvar
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onReward("send_phone")} className="text-xs">
+                  <Smartphone className="h-3.5 w-3.5 mr-1" /> Enviar p/ celular
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onReward("compare")} className="text-xs">
+                  <Zap className="h-3.5 w-3.5 mr-1" /> Variação
+                </Button>
               </div>
             </div>
             <BeforeAfter before={emptyKitchen} after={decoratedKitchen} className="aspect-[5/3.4]" />
@@ -547,6 +560,18 @@ function ResultShowcase({ onBudget, onAffiliate }: { onBudget: () => void; onAff
                 </li>
               ))}
             </ul>
+
+            <button
+              onClick={() => onReward("shopping_list")}
+              className="mt-3 w-full rounded-xl border border-dashed border-accent/40 bg-accent/5 px-3 py-2.5 text-left hover:bg-accent/10 transition"
+            >
+              <div className="flex items-center gap-2 text-xs font-medium text-accent">
+                <Lock className="h-3.5 w-3.5" /> Ver os 5 itens restantes
+              </div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">
+                Desbloqueie a lista completa com links das lojas.
+              </div>
+            </button>
 
             <Button onClick={onBudget} className="mt-4 w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90">
               <Download className="h-4 w-4 mr-2" /> Baixar orçamento
