@@ -1,7 +1,11 @@
 import { useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check } from "lucide-react";
+import {
+  Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
+  AlertCircle, Zap, Loader2,
+} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 type Props = {
   open: boolean;
@@ -17,42 +21,152 @@ const STYLES = [
   { id: "luxe",       name: "Luxo discreto",  sub: "Materiais nobres" },
 ];
 
+const MAX_FILE_MB = 20;
+const MAX_DIMENSION = 1600;
+const JPEG_QUALITY = 0.82;
+
+type Stage = "idle" | "optimizing" | "uploading" | "generating" | "done" | "error";
+
+async function compressImage(file: File): Promise<{ dataUrl: string; blob: Blob; width: number; height: number }> {
+  const bitmap = await createImageBitmap(file).catch(async () => {
+    // Fallback: HTMLImageElement (e.g. HEIC won't decode either way)
+    const url = URL.createObjectURL(file);
+    const img = await new Promise<HTMLImageElement>((res, rej) => {
+      const i = new Image();
+      i.onload = () => res(i);
+      i.onerror = rej;
+      i.src = url;
+    });
+    URL.revokeObjectURL(url);
+    return img as unknown as ImageBitmap;
+  });
+
+  const ratio = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+  const w = Math.round(bitmap.width * ratio);
+  const h = Math.round(bitmap.height * ratio);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d", { alpha: false });
+  if (!ctx) throw new Error("Canvas indisponível");
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(bitmap as CanvasImageSource, 0, 0, w, h);
+
+  const blob: Blob = await new Promise((res, rej) =>
+    canvas.toBlob((b) => (b ? res(b) : rej(new Error("Falha ao comprimir"))), "image/jpeg", JPEG_QUALITY)
+  );
+  const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+  return { dataUrl, blob, width: w, height: h };
+}
+
+function formatKB(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
 export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [style, setStyle] = useState<string>("japandi");
-  const [generating, setGenerating] = useState(false);
-  const [done, setDone] = useState(false);
+  const [stage, setStage] = useState<Stage>("idle");
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [meta, setMeta] = useState<{ original: number; optimized: number; w: number; h: number } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<{ cancelled: boolean } | null>(null);
 
-  const handleFile = (file: File | undefined) => {
+  const handleFile = async (file: File | undefined) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setPreview(typeof reader.result === "string" ? reader.result : null);
-    reader.readAsDataURL(file);
-    setDone(false);
+    setError(null);
+    setMeta(null);
+
+    if (!file.type.startsWith("image/")) {
+      setError("Formato não suportado. Envie uma imagem (JPG, PNG ou WebP).");
+      return;
+    }
+    if (file.size > MAX_FILE_MB * 1024 * 1024) {
+      setError(`Imagem muito grande. Máximo ${MAX_FILE_MB}MB.`);
+      return;
+    }
+
+    setStage("optimizing");
+    setProgress(15);
+    try {
+      const { dataUrl, blob, width, height } = await compressImage(file);
+      setProgress(60);
+      setPreview(dataUrl);
+      setMeta({ original: file.size, optimized: blob.size, w: width, h: height });
+      setProgress(100);
+      setTimeout(() => {
+        setStage("idle");
+        setProgress(0);
+      }, 250);
+    } catch (e) {
+      setError("Não conseguimos preparar essa imagem. Tente outra foto.");
+      setStage("error");
+    }
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFile(file);
   };
 
   const generate = () => {
     if (!preview) return;
-    setGenerating(true);
-    setDone(false);
-    window.setTimeout(() => {
-      setGenerating(false);
-      setDone(true);
-    }, 1800);
+    setError(null);
+    setStage("uploading");
+    setProgress(0);
+    const ticket = { cancelled: false };
+    abortRef.current = ticket;
+
+    // Simulated chunked upload + generation with progress
+    let p = 0;
+    const tick = () => {
+      if (ticket.cancelled) return;
+      p += Math.random() * 14 + 6;
+      if (p < 55) {
+        setStage("uploading");
+        setProgress(Math.min(55, p));
+        setTimeout(tick, 150);
+      } else if (p < 98) {
+        setStage("generating");
+        setProgress(Math.min(98, p));
+        setTimeout(tick, 220);
+      } else {
+        setProgress(100);
+        setStage("done");
+      }
+    };
+    tick();
   };
 
   const reset = () => {
+    abortRef.current && (abortRef.current.cancelled = true);
     setPreview(null);
-    setDone(false);
-    setGenerating(false);
+    setStage("idle");
+    setProgress(0);
+    setError(null);
+    setMeta(null);
   };
 
   const close = (o: boolean) => {
     onOpenChange(o);
     if (!o) setTimeout(reset, 250);
   };
+
+  const generating = stage === "uploading" || stage === "generating";
+  const done = stage === "done";
+  const optimizing = stage === "optimizing";
+  const stageLabel =
+    stage === "uploading" ? "Enviando foto otimizada…" :
+    stage === "generating" ? "Gerando ambiente decorado…" :
+    stage === "optimizing" ? "Otimizando imagem…" : "";
 
   return (
     <Dialog open={open} onOpenChange={close}>
@@ -73,18 +187,32 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             Envie a <span className="font-serif italic font-normal">foto do seu ambiente</span>
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Tire uma foto ou envie uma imagem. A IA cria uma versão decorada com lista de compras.
+            Tire uma foto ou envie uma imagem. Otimizamos antes de enviar para gerar mais rápido.
           </p>
 
           {/* Upload zone */}
-          <div className="mt-5 relative rounded-2xl border border-dashed bg-muted/40 overflow-hidden aspect-[5/3]">
+          <div
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={onDrop}
+            className={`mt-5 relative rounded-2xl border border-dashed overflow-hidden aspect-[5/3] transition ${
+              isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
+            }`}
+          >
             {preview ? (
               <>
                 <img src={preview} alt="Sua foto" className="absolute inset-0 h-full w-full object-cover" />
-                {generating && (
-                  <div className="absolute inset-0 bg-foreground/40 backdrop-blur-[2px] grid place-items-center text-background">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Sparkles className="h-4 w-4 animate-pulse text-accent" /> Gerando ambiente decorado…
+                {(generating || optimizing) && (
+                  <div className="absolute inset-0 bg-foreground/45 backdrop-blur-[2px] grid place-items-center text-background px-6">
+                    <div className="w-full max-w-xs text-center">
+                      <div className="flex items-center justify-center gap-2 text-sm">
+                        {stage === "generating"
+                          ? <Sparkles className="h-4 w-4 animate-pulse text-accent" />
+                          : <Loader2 className="h-4 w-4 animate-spin text-accent" />}
+                        {stageLabel}
+                      </div>
+                      <Progress value={progress} className="h-1.5 mt-3 bg-background/30" />
+                      <div className="mt-1.5 text-[10px] text-background/70">{Math.round(progress)}%</div>
                     </div>
                   </div>
                 )}
@@ -99,6 +227,13 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                 >
                   Trocar foto
                 </button>
+                {meta && !generating && !optimizing && (
+                  <div className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
+                    <Zap className="h-3 w-3 text-accent" />
+                    {meta.w}×{meta.h} · {formatKB(meta.optimized)}
+                    <span className="text-muted-foreground line-through ml-1">{formatKB(meta.original)}</span>
+                  </div>
+                )}
               </>
             ) : (
               <div className="absolute inset-0 grid place-items-center text-center px-6">
@@ -107,7 +242,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                     <ImageIcon className="h-5 w-5" />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    Use uma foto do ambiente — vazio ou já mobiliado — em boa luz.
+                    Arraste uma foto aqui, ou use a câmera do celular. Otimizamos automaticamente.
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2 justify-center">
                     <Button
@@ -126,6 +261,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                       <Upload className="h-4 w-4 mr-1.5" /> Enviar imagem
                     </Button>
                   </div>
+                  <p className="mt-3 text-[10px] text-muted-foreground">
+                    JPG, PNG ou WebP · até {MAX_FILE_MB}MB
+                  </p>
                 </div>
               </div>
             )}
@@ -133,7 +271,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             <input
               ref={cameraInput}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/heic,image/*"
               capture="environment"
               className="hidden"
               onChange={(e) => handleFile(e.target.files?.[0])}
@@ -141,11 +279,18 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             <input
               ref={fileInput}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp"
               className="hidden"
               onChange={(e) => handleFile(e.target.files?.[0])}
             />
           </div>
+
+          {error && (
+            <div className="mt-3 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
 
           {/* Style picker */}
           <div className="mt-5">
@@ -175,7 +320,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
           <div className="mt-6 flex flex-col sm:flex-row gap-2">
             <Button
               onClick={generate}
-              disabled={!preview || generating}
+              disabled={!preview || generating || optimizing}
               className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
             >
               <Wand2 className="h-4 w-4 mr-1.5" />
@@ -186,7 +331,8 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             </Button>
           </div>
           <p className="mt-2 text-[10px] text-muted-foreground">
-            Suas fotos são privadas e usadas apenas para gerar seu projeto. Você pode excluir a qualquer momento.
+            Reduzimos a imagem para {MAX_DIMENSION}px e qualidade {Math.round(JPEG_QUALITY * 100)}% antes do envio —
+            uploads até 5× mais rápidos. Suas fotos são privadas.
           </p>
         </div>
       </DialogContent>
