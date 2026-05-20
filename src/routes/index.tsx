@@ -1143,3 +1143,46 @@ function MobileBottomNav({ onUpload, onShopping }: { onUpload: () => void; onSho
     </nav>
   );
 }
+
+/* ---------------------- REWARDS STRIP ---------------------- */
+
+function RewardsStrip({ onReward }: { onReward: (k: RewardKind) => void }) {
+  const items: { k: RewardKind; icon: React.ComponentType<{ className?: string }>; t: string; d: string }[] = [
+    { k: "extra_gen",     icon: Gift,         t: "Ganhe +1 geração",       d: "Crie sua conta grátis e desbloqueie um bônus." },
+    { k: "send_phone",    icon: Smartphone,   t: "Envie ao seu celular",   d: "Receba o link do projeto no WhatsApp." },
+    { k: "coupon",        icon: Tag,          t: "Receba ofertas",         d: "Avisamos quando algo combinar com seu ambiente." },
+    { k: "compare",       icon: Sparkles,     t: "Compare 3 estilos",      d: "Mesmo ambiente, três interpretações." },
+  ];
+  return (
+    <section className="py-16 sm:py-20 bg-card/40 border-y border-border/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <SectionHead
+          kicker="Benefícios desbloqueáveis"
+          title={<>Mais valor à medida que <span className="font-serif italic font-normal">você avança</span></>}
+          sub="Recompensas opcionais — você decide quando ativar. Sem cadastro obrigatório para usar o produto."
+        />
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {items.map((it) => {
+            const Icon = it.icon;
+            return (
+              <button
+                key={it.k}
+                onClick={() => onReward(it.k)}
+                className="text-left rounded-3xl border bg-card p-5 hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="h-10 w-10 rounded-2xl bg-accent/15 text-accent grid place-items-center">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="mt-4 text-base font-medium">{it.t}</div>
+                <div className="mt-1 text-sm text-muted-foreground">{it.d}</div>
+                <div className="mt-3 inline-flex items-center text-xs font-medium text-foreground/80">
+                  Ativar <ArrowRight className="h-3 w-3 ml-1" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
