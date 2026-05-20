@@ -1,7 +1,19 @@
 const KEY = "ideal_space_drafts_v1";
 const MAX_DRAFTS = 6;
+const MAX_VERSIONS = 8;
 
 export type DraftStatus = "draft" | "generating" | "done";
+
+export type DraftVersionResult = { url: string; style: string; styleName?: string; label?: string };
+
+export type DraftVersion = {
+  id: string;
+  createdAt: number;
+  style: string;
+  styleName?: string;
+  results: DraftVersionResult[];
+  note?: string;
+};
 
 export type Draft = {
   id: string;
@@ -12,10 +24,12 @@ export type Draft = {
   styleName?: string;
   preview: string; // data URL of optimized source
   result?: string; // legacy: first/only generated result
-  results?: Array<{ url: string; style: string; styleName?: string; label?: string }>;
+  results?: DraftVersionResult[];
   meta?: { w: number; h: number; original: number; optimized: number };
   progress?: number;
   title?: string;
+  versions?: DraftVersion[];
+  activeVersionId?: string;
 };
 
 function safeParse(raw: string | null): Draft[] {
@@ -72,6 +86,27 @@ export function deleteDraft(id: string) {
 
 export function newDraftId() {
   return `d_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+}
+
+export function newVersionId() {
+  return `v_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 5)}`;
+}
+
+/** Append a version snapshot to a draft (capped) and bump updatedAt. */
+export function pushVersion(draftId: string, version: DraftVersion) {
+  if (typeof window === "undefined") return;
+  const all = listDrafts();
+  const idx = all.findIndex((d) => d.id === draftId);
+  if (idx < 0) return;
+  const d = all[idx];
+  const versions = [...(d.versions ?? []), version].slice(-MAX_VERSIONS);
+  all[idx] = {
+    ...d,
+    versions,
+    activeVersionId: version.id,
+    updatedAt: Date.now(),
+  };
+  writeAll(all);
 }
 
 export function timeAgo(ts: number) {

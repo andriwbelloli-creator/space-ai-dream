@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import {
   Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
   AlertCircle, Zap, Loader2, History, Trash2, Play,
-  ChevronLeft, ChevronRight, Layers,
+  ChevronLeft, ChevronRight, Layers, GitCompare, Clock,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
-  type Draft, listDrafts, upsertDraft, deleteDraft, newDraftId, timeAgo,
+  type Draft, type DraftVersion, listDrafts, upsertDraft, deleteDraft,
+  newDraftId, newVersionId, pushVersion, timeAgo,
 } from "@/lib/drafts";
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
@@ -95,6 +96,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [draftId, setDraftId] = useState<string | null>(null);
+  const [versions, setVersions] = useState<DraftVersion[]>([]);
+  const [activeVersionId, setActiveVersionId] = useState<string | null>(null);
+  const [compareVersionId, setCompareVersionId] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const abortRef = useRef<{ cancelled: boolean } | null>(null);
@@ -143,6 +147,11 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     // Preserve original createdAt if existing
     const existing = listDrafts().find((d) => d.id === draftId);
     if (existing) draft.createdAt = existing.createdAt;
+    // Preserve version history written by pushVersion
+    if (existing?.versions) {
+      draft.versions = existing.versions;
+      draft.activeVersionId = existing.activeVersionId;
+    }
     upsertDraft(draft);
     setDrafts(listDrafts());
   }, [preview, variations, style, stage, progress, meta, draftId]);
@@ -253,6 +262,29 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       }
       setProgress(100);
       setStage("done");
+      // Snapshot this generation as a new version in the project history.
+      if (draftId) {
+        const justGenerated = results
+          .filter((r): r is PromiseFulfilledResult<Variation | null> => r.status === "fulfilled")
+          .map((r) => r.value)
+          .filter((v): v is Variation => !!v);
+        const snapshotVars: Variation[] = reset
+          ? justGenerated
+          : [...variations, ...justGenerated];
+        const version: DraftVersion = {
+          id: newVersionId(),
+          createdAt: Date.now(),
+          style,
+          styleName,
+          results: snapshotVars.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label })),
+          note: `${snapshotVars.length} ${snapshotVars.length === 1 ? "variação" : "variações"} · ${styleName ?? style}`,
+        };
+        pushVersion(draftId, version);
+        const fresh = listDrafts().find((d) => d.id === draftId);
+        setVersions(fresh?.versions ?? []);
+        setActiveVersionId(version.id);
+        setDrafts(listDrafts());
+      }
     } catch (e: any) {
       if (ticket.cancelled) return;
       setError(e?.message ?? "Não foi possível gerar agora. Tente novamente.");
@@ -269,6 +301,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     setPendingCount(0);
     setDoneCount(0);
     setDraftId(null);
+    setVersions([]);
+    setActiveVersionId(null);
+    setCompareVersionId(null);
     setStage("idle");
     setProgress(0);
     setError(null);
@@ -298,6 +333,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     setStyle(d.style);
     setMeta(d.meta ?? null);
     setDraftId(d.id);
+    setVersions(d.versions ?? []);
+    setActiveVersionId(d.activeVersionId ?? d.versions?.[d.versions.length - 1]?.id ?? null);
+    setCompareVersionId(null);
     setStage(d.status === "done" ? "done" : "idle");
     setProgress(d.status === "done" ? 100 : 0);
     setError(null);
@@ -308,6 +346,31 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
     setDrafts(listDrafts());
     if (draftId === id) reset();
   };
+
+  const loadVersion = (vid: string) => {
+    const v = versions.find((x) => x.id === vid);
+    if (!v) return;
+    setActiveVersionId(vid);
+    setCompareVersionId(null);
+    setVariations(
+      v.results.map((r, i) => ({
+        id: `${vid}_${i}`,
+        url: r.url,
+        style: r.style,
+        styleName: r.styleName,
+        label: r.label ?? variationLabels[i % variationLabels.length],
+      })),
+    );
+    setActiveIdx(0);
+    setStyle(v.style);
+    // Persist active version pointer
+    if (draftId) {
+      const existing = listDrafts().find((d) => d.id === draftId);
+      if (existing) upsertDraft({ ...existing, activeVersionId: vid, updatedAt: Date.now() });
+    }
+  };
+
+  const compareVersion = versions.find((v) => v.id === compareVersionId) ?? null;
 
   const close = (o: boolean) => {
     onOpenChange(o);
@@ -569,6 +632,110 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Versions timeline — history of generations for this project */}
+          {versions.length > 0 && (
+            <div className="mt-4 rounded-2xl border bg-card/60 p-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" /> Histórico de versões
+                  <span className="text-muted-foreground/70 normal-case tracking-normal">· {versions.length}</span>
+                </div>
+                {versions.length > 1 && (
+                  <button
+                    onClick={() => {
+                      if (compareVersionId) { setCompareVersionId(null); return; }
+                      const other = versions.slice().reverse().find((v) => v.id !== activeVersionId);
+                      setCompareVersionId(other?.id ?? null);
+                    }}
+                    className={`inline-flex items-center gap-1 text-[10px] rounded-full border px-2 py-1 transition ${
+                      compareVersionId ? "bg-accent/10 border-accent text-accent" : "hover:bg-muted"
+                    }`}
+                  >
+                    <GitCompare className="h-3 w-3" />
+                    {compareVersionId ? "Sair da comparação" : "Comparar versões"}
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x">
+                {versions.map((v, i) => {
+                  const isActive = v.id === activeVersionId;
+                  const isCompare = v.id === compareVersionId;
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => {
+                        if (compareVersionId && v.id !== activeVersionId) {
+                          setCompareVersionId(v.id);
+                        } else {
+                          loadVersion(v.id);
+                        }
+                      }}
+                      className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[110px] text-left transition ${
+                        isActive
+                          ? "ring-2 ring-accent border-accent"
+                          : isCompare
+                            ? "ring-2 ring-foreground border-foreground"
+                            : "opacity-85 hover:opacity-100"
+                      }`}
+                    >
+                      <div className="relative aspect-[5/3] bg-muted">
+                        {v.results[0]?.url ? (
+                          <img src={v.results[0].url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 grid place-items-center text-[10px] text-muted-foreground">vazio</div>
+                        )}
+                        <div className="absolute top-1 left-1 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
+                          v{i + 1}
+                        </div>
+                        {v.results.length > 1 && (
+                          <div className="absolute top-1 right-1 inline-flex items-center gap-0.5 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
+                            <Layers className="h-2.5 w-2.5" /> {v.results.length}
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-2 py-1.5">
+                        <div className="text-[10px] font-medium truncate">{v.styleName ?? "Projeto"}</div>
+                        <div className="text-[9px] text-muted-foreground">{timeAgo(v.createdAt)}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              {compareVersion && activeVersionId && (
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {[activeVersionId, compareVersion.id].map((vid, col) => {
+                    const v = versions.find((x) => x.id === vid)!;
+                    const idx = versions.indexOf(v) + 1;
+                    return (
+                      <div key={vid} className="rounded-xl overflow-hidden border bg-background">
+                        <div className="relative aspect-[5/3] bg-muted">
+                          {v.results[0]?.url && (
+                            <img src={v.results[0].url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                          )}
+                          <div className="absolute top-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[10px] px-2 py-0.5 border">
+                            {col === 0 ? "A" : "B"} · v{idx}
+                          </div>
+                        </div>
+                        <div className="px-2 py-1.5 flex items-center justify-between">
+                          <div className="text-[10px]">
+                            <div className="font-medium">{v.styleName ?? "Projeto"}</div>
+                            <div className="text-muted-foreground">{timeAgo(v.createdAt)} · {v.results.length} {v.results.length === 1 ? "img" : "imgs"}</div>
+                          </div>
+                          <button
+                            onClick={() => loadVersion(v.id)}
+                            className="text-[10px] rounded-full border px-2 py-0.5 hover:bg-muted"
+                          >
+                            Abrir
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
           </div>
