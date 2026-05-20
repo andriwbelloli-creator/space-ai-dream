@@ -18,7 +18,7 @@ import {
   ArrowRight, ArrowUpRight, Sparkles, Check, Lock, Image as ImageIcon,
   Wand2, ShoppingBag, Download, Menu, ShieldCheck, FileText,
   Building2, Briefcase, HomeIcon, Stethoscope, ChevronRight, Zap, PlayCircle, Camera,
-  Smartphone, BookmarkPlus, Gift, Layers, Ruler, LayoutGrid, Compass,
+  Smartphone, BookmarkPlus, Gift, Layers, Ruler, LayoutGrid, Compass, Pencil,
 } from "lucide-react";
 
 // All marketing imagery — single source of truth, one image per section.
