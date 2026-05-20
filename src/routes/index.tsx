@@ -943,7 +943,7 @@ function Footer() {
   ];
   return (
     <footer className="bg-foreground text-background/80">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 pb-28 lg:pb-16">
         <div className="grid lg:grid-cols-[1.4fr_3fr] gap-10">
           <div>
             <div className="text-background"><IdealSpaceLogo /></div>
