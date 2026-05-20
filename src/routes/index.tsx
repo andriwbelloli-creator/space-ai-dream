@@ -151,6 +151,18 @@ function Index() {
       <FAQ />
       <Footer />
 
+      {/* Mobile sticky CTA */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-3 bg-gradient-to-t from-background via-background/95 to-background/0 pointer-events-none">
+        <div className="pointer-events-auto flex gap-2 rounded-full bg-card border shadow-xl p-1.5">
+          <Button onClick={() => handlePresentation(true)} variant="ghost" size="sm" className="rounded-full px-3 text-xs flex-1">
+            <PlayCircle className="h-4 w-4 mr-1.5" /> Demo
+          </Button>
+          <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 h-10 px-4 text-xs flex-[1.4]">
+            <Sparkles className="h-4 w-4 mr-1.5" /> Criar com IA
+          </Button>
+        </div>
+      </div>
+
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
 
       {/* Lead-capture / orçamento */}
