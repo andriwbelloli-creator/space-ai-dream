@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import { PresentationModal } from "@/components/PresentationModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import {
   ArrowRight, ArrowUpRight, Sparkles, Check, Lock, Image as ImageIcon,
   Wand2, ShoppingBag, Download, Menu, ShieldCheck, FileText,
-  Building2, Briefcase, HomeIcon, Stethoscope, Star, ChevronRight, Zap,
+  Building2, Briefcase, HomeIcon, Stethoscope, Star, ChevronRight, Zap, Heart, PlayCircle, Trophy,
 } from "lucide-react";
 
 import emptyLiving from "@/assets/empty-living.jpg";
@@ -23,12 +24,17 @@ import emptyBedroom from "@/assets/empty-bedroom.jpg";
 import emptyKitchen from "@/assets/empty-kitchen.jpg";
 import emptyOffice from "@/assets/empty-office.jpg";
 import emptyStudio from "@/assets/empty-studio.jpg";
+import emptyBathroom from "@/assets/empty-bathroom.jpg";
 import styleScandi from "@/assets/style-scandi.jpg";
 import styleIndustrial from "@/assets/style-industrial.jpg";
 import styleJapandi from "@/assets/style-japandi.jpg";
 import styleModern from "@/assets/style-modern.jpg";
 import galleryOffice from "@/assets/gallery-office.jpg";
 import galleryClinic from "@/assets/gallery-clinic.jpg";
+import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
+import decoratedKitchen from "@/assets/decorated-kitchen.jpg";
+import decoratedDining from "@/assets/decorated-dining.jpg";
+import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -48,7 +54,7 @@ const emptyRooms = [
   { img: emptyKitchen, title: "Cozinha simples",   badge: "Premium",          sub: "Funcional e bonita" },
   { img: emptyOffice,  title: "Home office vazio", badge: "Profissional",     sub: "Foco, conforto e estética" },
   { img: emptyStudio,  title: "Studio compacto",   badge: "Espaço pequeno",   sub: "Aproveite cada metro" },
-  { img: emptyLiving,  title: "Imóvel vazio",      badge: "Ideal para imóveis", sub: "Virtual staging em segundos" },
+  { img: emptyBathroom,title: "Banheiro vazio",    badge: "Reforma virtual",  sub: "Visualize antes de comprar" },
 ] as const;
 
 const styles = [
@@ -56,10 +62,10 @@ const styles = [
   { img: styleScandi,    name: "Escandinavo",  sub: "Claro, leve, neutro" },
   { img: styleModern,    name: "Contemporâneo", sub: "Linhas suaves e arte" },
   { img: styleIndustrial,name: "Industrial",   sub: "Tijolo, metal e couro" },
-  { img: styleJapandi,   name: "Minimalista",  sub: "Menos é mais" },
-  { img: styleModern,    name: "Luxo discreto",sub: "Materiais nobres" },
-  { img: styleScandi,    name: "Natural",      sub: "Madeira e fibras" },
-  { img: styleIndustrial,name: "Urbano",       sub: "Tons grafite" },
+  { img: decoratedBedroom, name: "Aconchegante", sub: "Linho, oak e luz quente" },
+  { img: decoratedKitchen, name: "Luxo discreto",sub: "Madeira nobre e brass" },
+  { img: decoratedDining,  name: "Natural",      sub: "Fibras, plantas e cerâmica" },
+  { img: galleryClinic,    name: "Acolhedor",    sub: "Tons suaves e textura" },
 ];
 
 const shoppingList = [
@@ -107,22 +113,45 @@ function Index() {
   const [budgetOpen, setBudgetOpen] = useState(false);
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
   const [budgetDone, setBudgetDone] = useState(false);
+  const [presentationOpen, setPresentationOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const seen = window.localStorage.getItem("is_presentation_seen");
+      if (!seen) {
+        const t = window.setTimeout(() => setPresentationOpen(true), 900);
+        return () => window.clearTimeout(t);
+      }
+    } catch {}
+  }, []);
+
+  const handlePresentation = (open: boolean) => {
+    setPresentationOpen(open);
+    if (!open) {
+      try { window.localStorage.setItem("is_presentation_seen", "1"); } catch {}
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header />
-      <Hero onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} />
+      <Header onDemo={() => handlePresentation(true)} />
+      <Hero onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} />
       <Marquee />
       <EmptyRoomsCarousel />
       <StylesCarousel />
       <HowItWorks />
+      <FeaturedBeforeAfter />
       <ResultShowcase onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} />
-      <Gallery />
+      <Ranking />
+      <Testimonials />
       <Professionals />
       <Pricing />
       <Trust />
       <FAQ />
       <Footer />
+
+      <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
 
       {/* Lead-capture / orçamento */}
       <Dialog open={budgetOpen} onOpenChange={(o) => { setBudgetOpen(o); if (!o) setBudgetDone(false); }}>
