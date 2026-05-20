@@ -287,7 +287,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           <a className="hover:text-foreground transition" href="#estilos">Estilos</a>
           <a className="hover:text-foreground transition" href="#galeria">Galeria</a>
           <a className="hover:text-foreground transition" href="#pro">Para profissionais</a>
-          <a className="hover:text-foreground transition" href="#planos">Planos</a>
+          <Link to="/pricing" className="hover:text-foreground transition">Planos</Link>
         </nav>
         <div className="hidden lg:flex items-center gap-2">
           <Button variant="ghost" className="text-sm">Entrar</Button>
@@ -310,7 +310,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                 { l: "Estilos", href: "#estilos" },
                 { l: "Galeria", href: "#galeria" },
                 { l: "Para profissionais", href: "#pro" },
-                { l: "Planos", href: "#planos" },
+                { l: "Planos", href: "/pricing" },
               ].map(item => (
                 <a key={item.l} href={item.href} onClick={item.onClick} className="py-3 border-b border-border/60">{item.l}</a>
               ))}
