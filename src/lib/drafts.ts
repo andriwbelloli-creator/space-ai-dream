@@ -13,6 +13,7 @@ export type DraftVersion = {
   styleName?: string;
   results: DraftVersionResult[];
   note?: string;
+  activeIdx?: number;
 };
 
 export type Draft = {
@@ -30,6 +31,7 @@ export type Draft = {
   title?: string;
   versions?: DraftVersion[];
   activeVersionId?: string;
+  activeIdx?: number;
 };
 
 function safeParse(raw: string | null): Draft[] {
