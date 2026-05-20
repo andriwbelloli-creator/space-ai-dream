@@ -599,7 +599,7 @@ function FeaturedBeforeAfter() {
           </ul>
         </div>
         <div className="lg:col-span-7 order-1 lg:order-2">
-          <BeforeAfter before={emptyBathroom} after={decoratedBathroom} className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5" />
+          <BeforeAfter before={featuredBaPair.empty!.src} after={featuredBaPair.decorated!.src} className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5" />
         </div>
       </div>
     </section>
@@ -641,7 +641,7 @@ function ResultShowcase({
                 </Button>
               </div>
             </div>
-            <BeforeAfter before={emptyKitchen} after={decoratedKitchen} className="aspect-[5/3.4]" />
+            <BeforeAfter before={showcasePair.empty!.src} after={showcasePair.decorated!.src} className="aspect-[5/3.4]" />
           </div>
 
           <aside className="rounded-3xl border bg-card p-5">
