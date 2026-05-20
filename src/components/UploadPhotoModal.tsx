@@ -318,11 +318,19 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
             }`}
           >
             {preview && result && done ? (
-              <BeforeAfter
-                before={preview}
-                after={result}
-                className="absolute inset-0 h-full w-full rounded-none"
-              />
+              <>
+                <BeforeAfter
+                  before={preview}
+                  after={result}
+                  className="absolute inset-0 h-full w-full rounded-none"
+                />
+                <button
+                  onClick={reset}
+                  className="absolute bottom-3 left-3 z-10 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
+                >
+                  Trocar foto
+                </button>
+              </>
             ) : preview ? (
               <>
                 <img src={preview} alt="Sua foto" className="absolute inset-0 h-full w-full object-cover" />
