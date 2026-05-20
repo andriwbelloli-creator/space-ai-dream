@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { geminiImage } from "@/lib/gemini.server";
 
 const STYLE_PROMPTS: Record<string, string> = {
   japandi:
@@ -29,11 +30,7 @@ export const transformImage = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data }): Promise<TransformOutput> => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY não configurada.");
-
-    const stylePrompt =
-      STYLE_PROMPTS[data.style] ?? STYLE_PROMPTS.modern;
+    const stylePrompt = STYLE_PROMPTS[data.style] ?? STYLE_PROMPTS.modern;
 
     const variantHints = [
       "Variation A: balanced and neutral layout, classic furniture proportions, soft daylight.",
@@ -51,48 +48,21 @@ export const transformImage = createServerFn({ method: "POST" })
       `Photorealistic, high quality interior photography, natural light. Do not add text or watermarks.` +
       variantLine;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": apiKey,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-image",
-        modalities: ["image", "text"],
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt },
-              { type: "image_url", image_url: { url: data.imageDataUrl } },
-            ],
-          },
-        ],
-      }),
+    const { dataUrl, rateLimited, error } = await geminiImage({
+      model: "gemini-2.5-flash-image",
+      prompt,
+      inputImage: { dataUrl: data.imageDataUrl },
     });
 
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      if (res.status === 429) {
-        throw new Error("Muitas gerações em pouco tempo. Tente novamente em instantes.");
-      }
-      if (res.status === 402) {
-        throw new Error("Créditos de IA esgotados. Adicione créditos no workspace.");
-      }
-      throw new Error(`Falha na geração (${res.status}). ${txt.slice(0, 160)}`);
+    if (rateLimited) {
+      throw new Error("Muitas gerações em pouco tempo. Tente novamente em instantes.");
     }
-
-    const json: any = await res.json();
-    const msg = json?.choices?.[0]?.message;
-    const img =
-      msg?.images?.[0]?.image_url?.url ??
-      (Array.isArray(msg?.content)
-        ? msg.content.find((c: any) => c?.type === "image_url")?.image_url?.url
-        : undefined);
-
-    if (!img || typeof img !== "string") {
-      throw new Error("A IA não retornou uma imagem. Tente outra foto ou estilo.");
+    if (!dataUrl) {
+      throw new Error(
+        error
+          ? `A IA não retornou uma imagem (${error}). Tente outra foto ou estilo.`
+          : "A IA não retornou uma imagem. Tente outra foto ou estilo.",
+      );
     }
-    return { imageDataUrl: img };
+    return { imageDataUrl: dataUrl };
   });

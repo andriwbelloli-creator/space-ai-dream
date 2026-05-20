@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import type { BudgetItem } from "@/lib/budget-pdf";
+import { geminiText } from "@/lib/gemini.server";
 
 export type ShoppingInput = { imageDataUrl: string; style: string; styleName?: string };
 export type ShoppingOutput = { items: BudgetItem[] };
@@ -34,9 +35,6 @@ export const generateShoppingList = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data }): Promise<ShoppingOutput> => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY não configurada.");
-
     const styleLabel = data.styleName ?? data.style;
 
     const sys =
@@ -49,76 +47,32 @@ export const generateShoppingList = createServerFn({ method: "POST" })
     const userPrompt =
       `Estilo do projeto: ${styleLabel}. ` +
       "Liste os itens visíveis ou implícitos no ambiente decorado, com nome curto, " +
-      "categoria e faixa de preço no formato 'R$ 300–900'. Use o travessão (–).";
+      "categoria e faixa de preço no formato 'R$ 300–900'. Use o travessão (–). " +
+      "Responda APENAS com um objeto JSON neste formato exato: " +
+      '{"items":[{"tag":"Essencial","name":"Sofá 3 lugares linho","cat":"Móveis principais","price":"R$ 1.200–3.500"}]}. ' +
+      'O campo "tag" deve ser exatamente "Essencial", "Recomendado" ou "Opcional".';
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": apiKey,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: sys },
-          {
-            role: "user",
-            content: [
-              { type: "text", text: userPrompt },
-              { type: "image_url", image_url: { url: data.imageDataUrl } },
-            ],
-          },
-        ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "submit_shopping_list",
-              description: "Submete a lista de compras estruturada do ambiente decorado.",
-              parameters: {
-                type: "object",
-                properties: {
-                  items: {
-                    type: "array",
-                    minItems: 6,
-                    maxItems: 12,
-                    items: {
-                      type: "object",
-                      properties: {
-                        tag: { type: "string", enum: ["Essencial", "Recomendado", "Opcional"] },
-                        name: { type: "string", description: "Nome curto do item, ex.: 'Sofá 3 lugares linho'." },
-                        cat: { type: "string", description: "Categoria, ex.: 'Móveis principais', 'Iluminação', 'Decoração'." },
-                        price: { type: "string", description: "Faixa de preço em reais, ex.: 'R$ 1.200–3.500'." },
-                      },
-                      required: ["tag", "name", "cat", "price"],
-                      additionalProperties: false,
-                    },
-                  },
-                },
-                required: ["items"],
-                additionalProperties: false,
-              },
-            },
-          },
-        ],
-        tool_choice: { type: "function", function: { name: "submit_shopping_list" } },
-      }),
+    const { text, rateLimited, error } = await geminiText({
+      model: "gemini-2.5-flash",
+      system: sys,
+      userText: userPrompt,
+      image: { dataUrl: data.imageDataUrl },
+      responseJson: true,
     });
 
-    if (!res.ok) {
-      if (res.status === 429) throw new Error("Muitas requisições. Tente novamente em instantes.");
-      if (res.status === 402) throw new Error("Créditos de IA esgotados.");
-      const txt = await res.text().catch(() => "");
-      throw new Error(`Falha ao gerar lista (${res.status}). ${txt.slice(0, 160)}`);
+    if (rateLimited) {
+      throw new Error("Muitas requisições. Tente novamente em instantes.");
+    }
+    if (!text) {
+      throw new Error(`Falha ao gerar lista${error ? ` (${error})` : ""}.`);
     }
 
-    const json: any = await res.json();
-    const call = json?.choices?.[0]?.message?.tool_calls?.[0];
     let parsed: unknown = null;
     try {
-      const args = call?.function?.arguments;
-      parsed = typeof args === "string" ? JSON.parse(args) : args;
-    } catch { /* ignore */ }
+      parsed = JSON.parse(text);
+    } catch {
+      /* ignore — sanitize trata array ausente */
+    }
 
     const items = sanitize((parsed as any)?.items);
     if (!items.length) throw new Error("A IA não retornou uma lista válida.");
