@@ -13,6 +13,9 @@ import {
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
+import { SHOPPING_LIST, estimateTotal } from "@/lib/shopping";
+import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
+import { FileDown, ShoppingBag } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -318,7 +321,9 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   return (
     <Dialog open={open} onOpenChange={close}>
       <DialogContent
-        className="max-w-[calc(100vw-1.5rem)] sm:max-w-2xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto"
+        className={`max-w-[calc(100vw-1.5rem)] rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto ${
+          variations.length > 0 ? "sm:max-w-2xl lg:max-w-5xl" : "sm:max-w-2xl"
+        }`}
       >
         <button
           aria-label="Fechar"
