@@ -852,7 +852,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
 
 /* ----------------------------- PROFESSIONALS ----------------------------- */
 
-function Professionals({ onUpload }: { onUpload: () => void }) {
+function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse: () => void }) {
   const modules = [
     {
       icon: <Layers className="h-5 w-5" />, t: "Módulo 2D",
