@@ -4,6 +4,7 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { PresentationModal } from "@/components/PresentationModal";
 import { UploadPhotoModal } from "@/components/UploadPhotoModal";
+import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { Button } from "@/components/ui/button";
