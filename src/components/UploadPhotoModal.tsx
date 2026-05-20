@@ -629,6 +629,110 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               ))}
             </div>
           )}
+
+          {/* Versions timeline — history of generations for this project */}
+          {versions.length > 0 && (
+            <div className="mt-4 rounded-2xl border bg-card/60 p-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" /> Histórico de versões
+                  <span className="text-muted-foreground/70 normal-case tracking-normal">· {versions.length}</span>
+                </div>
+                {versions.length > 1 && (
+                  <button
+                    onClick={() => {
+                      if (compareVersionId) { setCompareVersionId(null); return; }
+                      const other = versions.slice().reverse().find((v) => v.id !== activeVersionId);
+                      setCompareVersionId(other?.id ?? null);
+                    }}
+                    className={`inline-flex items-center gap-1 text-[10px] rounded-full border px-2 py-1 transition ${
+                      compareVersionId ? "bg-accent/10 border-accent text-accent" : "hover:bg-muted"
+                    }`}
+                  >
+                    <GitCompare className="h-3 w-3" />
+                    {compareVersionId ? "Sair da comparação" : "Comparar versões"}
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x">
+                {versions.map((v, i) => {
+                  const isActive = v.id === activeVersionId;
+                  const isCompare = v.id === compareVersionId;
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => {
+                        if (compareVersionId && v.id !== activeVersionId) {
+                          setCompareVersionId(v.id);
+                        } else {
+                          loadVersion(v.id);
+                        }
+                      }}
+                      className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[110px] text-left transition ${
+                        isActive
+                          ? "ring-2 ring-accent border-accent"
+                          : isCompare
+                            ? "ring-2 ring-foreground border-foreground"
+                            : "opacity-85 hover:opacity-100"
+                      }`}
+                    >
+                      <div className="relative aspect-[5/3] bg-muted">
+                        {v.results[0]?.url ? (
+                          <img src={v.results[0].url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 grid place-items-center text-[10px] text-muted-foreground">vazio</div>
+                        )}
+                        <div className="absolute top-1 left-1 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
+                          v{i + 1}
+                        </div>
+                        {v.results.length > 1 && (
+                          <div className="absolute top-1 right-1 inline-flex items-center gap-0.5 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
+                            <Layers className="h-2.5 w-2.5" /> {v.results.length}
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-2 py-1.5">
+                        <div className="text-[10px] font-medium truncate">{v.styleName ?? "Projeto"}</div>
+                        <div className="text-[9px] text-muted-foreground">{timeAgo(v.createdAt)}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              {compareVersion && activeVersionId && (
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {[activeVersionId, compareVersion.id].map((vid, col) => {
+                    const v = versions.find((x) => x.id === vid)!;
+                    const idx = versions.indexOf(v) + 1;
+                    return (
+                      <div key={vid} className="rounded-xl overflow-hidden border bg-background">
+                        <div className="relative aspect-[5/3] bg-muted">
+                          {v.results[0]?.url && (
+                            <img src={v.results[0].url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                          )}
+                          <div className="absolute top-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[10px] px-2 py-0.5 border">
+                            {col === 0 ? "A" : "B"} · v{idx}
+                          </div>
+                        </div>
+                        <div className="px-2 py-1.5 flex items-center justify-between">
+                          <div className="text-[10px]">
+                            <div className="font-medium">{v.styleName ?? "Projeto"}</div>
+                            <div className="text-muted-foreground">{timeAgo(v.createdAt)} · {v.results.length} {v.results.length === 1 ? "img" : "imgs"}</div>
+                          </div>
+                          <button
+                            onClick={() => loadVersion(v.id)}
+                            className="text-[10px] rounded-full border px-2 py-0.5 hover:bg-muted"
+                          >
+                            Abrir
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
           </div>
 
           {variations.length > 0 && (
