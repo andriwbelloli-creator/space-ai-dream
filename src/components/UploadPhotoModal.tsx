@@ -1,11 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
-  AlertCircle, Zap, Loader2,
+  AlertCircle, Zap, Loader2, History, Trash2, Play,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import {
+  type Draft, listDrafts, upsertDraft, deleteDraft, newDraftId, timeAgo,
+} from "@/lib/drafts";
 
 type Props = {
   open: boolean;
@@ -74,9 +77,41 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<{ original: number; optimized: number; w: number; h: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [draftId, setDraftId] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const abortRef = useRef<{ cancelled: boolean } | null>(null);
+
+  // Load drafts whenever the modal opens
+  useEffect(() => {
+    if (open) setDrafts(listDrafts());
+  }, [open]);
+
+  // Autosave current work as a draft (debounced via stage transitions)
+  useEffect(() => {
+    if (!preview || !draftId) return;
+    const styleName = STYLES.find((s) => s.id === style)?.name;
+    const status: Draft["status"] =
+      stage === "done" ? "done" : stage === "uploading" || stage === "generating" ? "generating" : "draft";
+    const draft: Draft = {
+      id: draftId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      status,
+      style,
+      styleName,
+      preview,
+      meta: meta ?? undefined,
+      progress,
+      title: `${styleName ?? "Projeto"} · ${new Date().toLocaleDateString("pt-BR")}`,
+    };
+    // Preserve original createdAt if existing
+    const existing = listDrafts().find((d) => d.id === draftId);
+    if (existing) draft.createdAt = existing.createdAt;
+    upsertDraft(draft);
+    setDrafts(listDrafts());
+  }, [preview, style, stage, progress, meta, draftId]);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -99,6 +134,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
       setProgress(60);
       setPreview(dataUrl);
       setMeta({ original: file.size, optimized: blob.size, w: width, h: height });
+      if (!draftId) setDraftId(newDraftId());
       setProgress(100);
       setTimeout(() => {
         setStage("idle");
@@ -149,10 +185,27 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
   const reset = () => {
     abortRef.current && (abortRef.current.cancelled = true);
     setPreview(null);
+    setDraftId(null);
     setStage("idle");
     setProgress(0);
     setError(null);
     setMeta(null);
+  };
+
+  const resumeDraft = (d: Draft) => {
+    setPreview(d.preview);
+    setStyle(d.style);
+    setMeta(d.meta ?? null);
+    setDraftId(d.id);
+    setStage(d.status === "done" ? "done" : "idle");
+    setProgress(d.status === "done" ? 100 : 0);
+    setError(null);
+  };
+
+  const removeDraft = (id: string) => {
+    deleteDraft(id);
+    setDrafts(listDrafts());
+    if (draftId === id) reset();
   };
 
   const close = (o: boolean) => {
@@ -189,6 +242,56 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
           <p className="mt-1 text-sm text-muted-foreground">
             Tire uma foto ou envie uma imagem. Otimizamos antes de enviar para gerar mais rápido.
           </p>
+
+          {/* Drafts strip — only when starting fresh */}
+          {!preview && drafts.length > 0 && (
+            <div className="mt-5 rounded-2xl border bg-card/60 p-3">
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  <History className="h-3.5 w-3.5" /> Continue de onde parou
+                </div>
+                <span className="text-[10px] text-muted-foreground">{drafts.length} salvos neste aparelho</span>
+              </div>
+              <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x snap-mandatory">
+                {drafts.map((d) => (
+                  <div
+                    key={d.id}
+                    className="relative shrink-0 w-[140px] snap-start rounded-xl overflow-hidden border bg-background group"
+                  >
+                    <button onClick={() => resumeDraft(d)} className="block w-full text-left">
+                      <div className="relative aspect-[4/3] bg-muted">
+                        <img src={d.preview} alt={d.title ?? "Rascunho"} className="absolute inset-0 h-full w-full object-cover" />
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 to-transparent h-12" />
+                        <div className="absolute top-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
+                          {d.status === "done" ? (
+                            <><Check className="h-2.5 w-2.5 text-accent" /> Pronto</>
+                          ) : d.status === "generating" ? (
+                            <><Loader2 className="h-2.5 w-2.5 animate-spin text-accent" /> Gerando</>
+                          ) : (
+                            <><Play className="h-2.5 w-2.5" /> Rascunho</>
+                          )}
+                        </div>
+                        <div className="absolute bottom-1.5 left-1.5 right-1.5 text-[10px] text-background leading-tight">
+                          <div className="font-medium truncate">{d.styleName ?? "Projeto"}</div>
+                          <div className="opacity-75">{timeAgo(d.updatedAt)}</div>
+                        </div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeDraft(d.id); }}
+                      aria-label="Excluir rascunho"
+                      className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-background/90 border grid place-items-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-[10px] text-muted-foreground">
+                Rascunhos ficam neste navegador/aparelho — retome a qualquer momento, mesmo offline.
+              </p>
+            </div>
+          )}
 
           {/* Upload zone */}
           <div
