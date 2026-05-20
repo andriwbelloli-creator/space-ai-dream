@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { PresentationModal } from "@/components/PresentationModal";
+import { UploadPhotoModal } from "@/components/UploadPhotoModal";
+import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -15,7 +17,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import {
   ArrowRight, ArrowUpRight, Sparkles, Check, Lock, Image as ImageIcon,
   Wand2, ShoppingBag, Download, Menu, ShieldCheck, FileText,
-  Building2, Briefcase, HomeIcon, Stethoscope, Star, ChevronRight, Zap, Heart, PlayCircle, Trophy,
+  Building2, Briefcase, HomeIcon, Stethoscope, Star, ChevronRight, Zap, Heart, PlayCircle, Trophy, Camera,
 } from "lucide-react";
 
 import emptyLiving from "@/assets/empty-living.jpg";
@@ -114,6 +116,7 @@ function Index() {
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
   const [budgetDone, setBudgetDone] = useState(false);
   const [presentationOpen, setPresentationOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -133,14 +136,25 @@ function Index() {
     }
   };
 
+  const downloadBudget = () => {
+    generateBudgetPdf({
+      project: "Cozinha · Luxo discreto",
+      items: shoppingList,
+      estimate: "R$ 3.000 – 8.000",
+    });
+    setBudgetDone(true);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header onDemo={() => handlePresentation(true)} />
-      <Hero onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} />
+      <Header onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
+      <Hero onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
       <Marquee />
+      <UploadCTA onUpload={() => setUploadOpen(true)} />
       <EmptyRoomsCarousel />
       <StylesCarousel />
       <HowItWorks />
+      <ProSpaces onUpload={() => setUploadOpen(true)} />
       <FeaturedBeforeAfter />
       <ResultShowcase onBudget={() => setBudgetOpen(true)} onAffiliate={setAffiliateOpen} />
       <Ranking />
@@ -157,13 +171,14 @@ function Index() {
           <Button onClick={() => handlePresentation(true)} variant="ghost" size="sm" className="rounded-full px-3 text-xs flex-1">
             <PlayCircle className="h-4 w-4 mr-1.5" /> Demo
           </Button>
-          <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 h-10 px-4 text-xs flex-[1.4]">
-            <Sparkles className="h-4 w-4 mr-1.5" /> Criar com IA
+          <Button onClick={() => setUploadOpen(true)} className="rounded-full bg-foreground text-background hover:bg-foreground/90 h-10 px-4 text-xs flex-[1.4]">
+            <Camera className="h-4 w-4 mr-1.5" /> Enviar foto
           </Button>
         </div>
       </div>
 
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
+      <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} />
 
       {/* Lead-capture / orçamento */}
       <Dialog open={budgetOpen} onOpenChange={(o) => { setBudgetOpen(o); if (!o) setBudgetDone(false); }}>
@@ -178,7 +193,7 @@ function Index() {
               </DialogHeader>
               <form
                 className="space-y-3"
-                onSubmit={(e) => { e.preventDefault(); setBudgetDone(true); }}
+                onSubmit={(e) => { e.preventDefault(); downloadBudget(); }}
               >
                 <Input type="email" required placeholder="seu@email.com" className="h-11 rounded-xl" />
                 <Input type="tel" required placeholder="WhatsApp com DDD" className="h-11 rounded-xl" />
@@ -191,7 +206,7 @@ function Index() {
                   <span>Quero receber sugestões de produtos, novidades e recomendações sobre meu projeto.</span>
                 </label>
                 <Button type="submit" className="w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90">
-                  Baixar orçamento
+                  <Download className="h-4 w-4 mr-1.5" /> Baixar orçamento em PDF
                 </Button>
                 <p className="text-[11px] text-muted-foreground">
                   Seus dados são tratados conforme a LGPD. Você pode solicitar exclusão a qualquer momento.
@@ -201,12 +216,15 @@ function Index() {
           ) : (
             <div className="text-center py-6">
               <div className="mx-auto h-14 w-14 rounded-full bg-accent/15 text-accent grid place-items-center mb-3">
-                <Check className="h-6 w-6" />
+                <Download className="h-6 w-6" />
               </div>
-              <h3 className="text-xl font-serif">Orçamento enviado!</h3>
+              <h3 className="text-xl font-serif">Orçamento baixado!</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Acabamos de enviar o orçamento para o seu e-mail.
+                Seu PDF foi gerado com a lista organizada por prioridade. Também enviamos uma cópia ao seu e-mail.
               </p>
+              <Button onClick={downloadBudget} variant="outline" className="mt-4 rounded-full h-10 px-4 text-xs">
+                <Download className="h-4 w-4 mr-1.5" /> Baixar novamente
+              </Button>
             </div>
           )}
         </DialogContent>
@@ -242,7 +260,7 @@ function Index() {
 
 /* ----------------------------- HEADER ----------------------------- */
 
-function Header({ onDemo }: { onDemo: () => void }) {
+function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void }) {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -257,8 +275,8 @@ function Header({ onDemo }: { onDemo: () => void }) {
         </nav>
         <div className="hidden lg:flex items-center gap-2">
           <Button variant="ghost" className="text-sm">Entrar</Button>
-          <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm">
-            Começar agora <ArrowRight className="ml-1 h-4 w-4" />
+          <Button onClick={onUpload} className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm">
+            <Camera className="h-4 w-4 mr-1.5" /> Enviar foto
           </Button>
         </div>
         <Sheet>
@@ -283,7 +301,7 @@ function Header({ onDemo }: { onDemo: () => void }) {
 
 /* ----------------------------- HERO ----------------------------- */
 
-function Hero({ onBudget, onAffiliate, onDemo }: { onBudget: () => void; onAffiliate: (s: string) => void; onDemo: () => void }) {
+function Hero({ onBudget, onAffiliate, onDemo, onUpload }: { onBudget: () => void; onAffiliate: (s: string) => void; onDemo: () => void; onUpload: () => void }) {
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden className="absolute -top-40 -left-40 h-[480px] w-[480px] rounded-full blur-3xl opacity-50"
@@ -307,8 +325,8 @@ function Hero({ onBudget, onAffiliate, onDemo }: { onBudget: () => void; onAffil
           </p>
 
           <div className="mt-7 flex flex-col sm:flex-row gap-3">
-            <Button className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm w-full sm:w-auto">
-              <Sparkles className="mr-2 h-4 w-4" /> Criar projeto com IA
+            <Button onClick={onUpload} className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm w-full sm:w-auto">
+              <Camera className="mr-2 h-4 w-4" /> Enviar foto e criar com IA
             </Button>
             <Button onClick={onDemo} variant="outline" className="h-12 rounded-full px-6 text-sm w-full sm:w-auto">
               <PlayCircle className="mr-2 h-4 w-4" /> Ver demonstração
@@ -933,6 +951,129 @@ function FAQ() {
 }
 
 /* ----------------------------- FOOTER ----------------------------- */
+
+/* ----------------------------- UPLOAD CTA ----------------------------- */
+
+function UploadCTA({ onUpload }: { onUpload: () => void }) {
+  return (
+    <section id="criar" className="py-14 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-[2rem] border bg-card p-6 sm:p-10 lg:p-12">
+          <div aria-hidden className="absolute -top-24 -right-24 h-[360px] w-[360px] rounded-full blur-3xl opacity-40"
+            style={{ background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.55), transparent 60%)" }} />
+
+          <div className="grid lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-12 items-center relative">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border bg-background/70 backdrop-blur px-3 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Comece pelo seu ambiente
+              </div>
+              <h2 className="mt-4 text-3xl sm:text-4xl lg:text-[44px] leading-[1.05] tracking-[-0.02em] font-semibold">
+                Tire uma <span className="font-serif italic font-normal text-accent">foto</span> do seu espaço
+                <br className="hidden sm:block" /> e a IA decora em segundos.
+              </h2>
+              <p className="mt-4 text-muted-foreground max-w-xl">
+                Pelo celular, abra a câmera direto pelo navegador. Pelo desktop, envie qualquer imagem.
+                A IA mantém a estrutura do ambiente e devolve uma versão decorada com lista de compras.
+              </p>
+
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Button onClick={onUpload} className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm">
+                  <Camera className="h-4 w-4 mr-1.5" /> Tirar foto agora
+                </Button>
+                <Button onClick={onUpload} variant="outline" className="h-12 rounded-full px-6 text-sm">
+                  <ImageIcon className="h-4 w-4 mr-1.5" /> Enviar uma imagem
+                </Button>
+              </div>
+
+              <ul className="mt-6 grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-muted-foreground max-w-md">
+                {["Foto vazia ou mobiliada","Funciona no celular","Resultado em segundos","Fotos privadas"].map(t =>
+                  <li key={t} className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-accent" /> {t}</li>)}
+              </ul>
+            </div>
+
+            <button
+              onClick={onUpload}
+              className="relative aspect-[5/4] rounded-3xl border-2 border-dashed bg-muted/40 grid place-items-center text-center p-6 hover:bg-muted/60 transition group"
+            >
+              <div>
+                <div className="mx-auto h-16 w-16 rounded-2xl bg-accent/15 text-accent grid place-items-center group-hover:scale-105 transition-transform">
+                  <Camera className="h-7 w-7" />
+                </div>
+                <div className="mt-4 text-base font-medium">Toque para enviar uma foto</div>
+                <div className="mt-1 text-xs text-muted-foreground">JPG ou PNG · até 10 MB</div>
+                <div className="mt-5 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
+                  <Wand2 className="h-3 w-3 text-accent" /> A IA decora em segundos
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- PRO SPACES (home office, escritórios, clínicas) ----------------------------- */
+
+function ProSpaces({ onUpload }: { onUpload: () => void }) {
+  const cards = [
+    {
+      img: galleryOffice,
+      kicker: "Home office",
+      title: "Foco, conforto e estética em casa",
+      body: "Para quem trabalha de casa e quer um ambiente que ajude na concentração — e fique bonito em call.",
+    },
+    {
+      img: emptyOffice,
+      kicker: "Escritórios",
+      title: "Salas comerciais com presença",
+      body: "Recepções, salas de reunião e coworkings com identidade profissional e materiais bem escolhidos.",
+    },
+    {
+      img: galleryClinic,
+      kicker: "Clínicas",
+      title: "Acolhimento que transmite confiança",
+      body: "Consultórios médicos, odontológicos e psicológicos com decoração calma, profissional e atemporal.",
+    },
+  ];
+  return (
+    <section className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <SectionHead
+            kicker="Ambientes profissionais"
+            title={<>Feito também para <span className="font-serif italic font-normal">home office, escritórios e clínicas</span></>}
+            sub="Decoração que melhora produtividade, percepção de marca e a experiência de quem chega."
+          />
+          <Button onClick={onUpload} variant="outline" className="rounded-full h-11 px-5 text-sm hidden sm:inline-flex">
+            <Camera className="h-4 w-4 mr-1.5" /> Enviar foto do meu espaço
+          </Button>
+        </div>
+
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {cards.map((c) => (
+            <article key={c.kicker} className="group rounded-3xl overflow-hidden bg-card border hover:-translate-y-0.5 hover:shadow-xl transition-all duration-500 flex flex-col">
+              <div className="relative aspect-[5/4] overflow-hidden">
+                <img src={c.img} alt={c.title} loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-[1200ms]" />
+                <span className="absolute top-3 left-3 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1">
+                  {c.kicker}
+                </span>
+              </div>
+              <div className="p-5 flex flex-col flex-1">
+                <div className="text-base font-medium">{c.title}</div>
+                <p className="mt-1.5 text-sm text-muted-foreground flex-1">{c.body}</p>
+                <button onClick={onUpload} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-foreground/80 hover:text-foreground">
+                  Criar para este ambiente <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function Footer() {
   const cols = [
