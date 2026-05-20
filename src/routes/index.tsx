@@ -218,7 +218,6 @@ function Index() {
       <EmptyRoomsCarousel onUpload={() => setUploadOpen(true)} />
       <StylesCarousel />
       <HowItWorks onDemo={() => handlePresentation(true)} />
-      <EvolutionTiers onUpload={() => setUploadOpen(true)} />
       <FeaturedBeforeAfter />
       <ResultShowcase
         onBudget={() => openReward("budget")}
