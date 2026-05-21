@@ -1,0 +1,9 @@
+# Ideal Space — robots.txt
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /reset-password
+Disallow: /auth/
+Disallow: /projetos
+
+Sitemap: https://idealspace.com.br/sitemap.xml

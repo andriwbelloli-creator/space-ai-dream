@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { LeadFormModal } from "@/components/LeadFormModal";
+import { PLANS, formatPlanPrice } from "@/lib/plans";
 import {
   Check, ArrowRight, Sparkles, Compass, Building2, Ruler, Layers, FileText,
   Crown, Users, Zap, BadgeCheck, ShieldCheck, Briefcase, Palette, Image as ImageIcon,
@@ -22,81 +24,14 @@ export const Route = createFileRoute("/pricing")({
           "Comece grátis. Evolua para Premium ou Pro com módulos dedicados a designers, arquitetos e imobiliárias.",
       },
     ],
+    links: [{ rel: "canonical", href: "https://idealspace.com.br/pricing" }],
   }),
   component: PricingPage,
 });
 
 type Cycle = "monthly" | "annual";
 
-type Plan = {
-  id: "starter" | "premium" | "pro";
-  name: string;
-  tagline: string;
-  monthly: number;
-  annual: number; // por mês quando anual
-  highlight?: boolean;
-  cta: string;
-  features: string[];
-  notIncluded?: string[];
-};
-
-const PLANS: Plan[] = [
-  {
-    id: "starter",
-    name: "Starter",
-    tagline: "Para quem quer testar a IA e decorar um ambiente.",
-    monthly: 19.9,
-    annual: 14.9,
-    cta: "Começar grátis",
-    features: [
-      "10 gerações 2D em alta qualidade / mês",
-      "Todos os estilos básicos",
-      "Slider antes e depois",
-      "Lista de compras parcial",
-      "Download em resolução padrão",
-      "Rascunhos salvos no aparelho",
-    ],
-    notIncluded: ["Sem marca d'água", "Planejamento 5D", "Módulos profissionais"],
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    tagline: "Para decorar a casa toda com orçamento e variações.",
-    monthly: 49.9,
-    annual: 39.9,
-    highlight: true,
-    cta: "Assinar Premium",
-    features: [
-      "40 gerações 2D em alta qualidade / mês",
-      "Todos os estilos, inclusive premium",
-      "Variações da IA por ambiente",
-      "Lista de compras completa com preços",
-      "Orçamento estimado em PDF",
-      "Sem marca d'água",
-      "Histórico de projetos em nuvem",
-      "Suporte por e-mail prioritário",
-    ],
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    tagline: "Para designers, arquitetos, corretores e imobiliárias.",
-    monthly: 149.9,
-    annual: 119.9,
-    cta: "Falar com vendas",
-    features: [
-      "150 gerações em resolução máxima / mês",
-      "PDF profissional com sua marca",
-      "Organização por cliente e projeto",
-      "Virtual staging premium para anúncios",
-      "Fila prioritária de processamento",
-      "Modo apresentação para reuniões",
-      "Planejamento 5D — em breve",
-      "Planta baixa e estudo de layout — em breve",
-      "Compartilhamento com cliente por link",
-    ],
-  },
-];
+// Tipos e dados dos planos: src/lib/plans.ts (fonte única — /pricing + home)
 
 const MODULES = [
   {
@@ -173,6 +108,8 @@ const FAQ = [
 function PricingPage() {
   const [cycle, setCycle] = useState<Cycle>("monthly");
   const isAnnual = cycle === "annual";
+  // Funil de leads: `lead` aberto guarda o contexto do CTA que disparou o modal.
+  const [lead, setLead] = useState<{ planInterest?: string; title?: string } | null>(null);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -226,10 +163,9 @@ function PricingPage() {
       {/* Plans */}
       <section className="pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid lg:grid-cols-3 gap-5 items-stretch">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
             {PLANS.map((p) => {
               const price = isAnnual ? p.annual : p.monthly;
-              const formatted = price.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
               return (
                 <div
                   key={p.id}
@@ -245,10 +181,10 @@ function PricingPage() {
                     {p.name}
                   </div>
                   <div className="mt-2 flex items-baseline gap-1">
-                    <span className="text-4xl font-semibold tracking-tight">R$ {formatted}</span>
-                    <span className="text-sm text-muted-foreground">/mês</span>
+                    <span className="text-4xl font-semibold tracking-tight">{formatPlanPrice(price)}</span>
+                    {price > 0 && <span className="text-sm text-muted-foreground">/mês</span>}
                   </div>
-                  {isAnnual && (
+                  {isAnnual && price > 0 && (
                     <div className="mt-1 text-[11px] text-accent">cobrado anualmente · economize 25%</div>
                   )}
                   <p className="mt-3 text-sm text-muted-foreground">{p.tagline}</p>
@@ -269,15 +205,21 @@ function PricingPage() {
                   </ul>
 
                   <Button
+                    onClick={() =>
+                      setLead({
+                        planInterest: p.id,
+                        title: p.id === "pro" ? "Fale com vendas" : undefined,
+                      })
+                    }
                     className={`mt-7 h-11 rounded-xl ${p.highlight
                       ? "bg-accent text-accent-foreground hover:opacity-95"
                       : "bg-foreground text-background hover:bg-foreground/90"}`}
                   >
                     {p.cta}
                   </Button>
-                  {p.id === "starter" && (
+                  {p.footnote && (
                     <div className="mt-2 text-[11px] text-muted-foreground text-center">
-                      1 geração grátis sem cartão
+                      {p.footnote}
                     </div>
                   )}
                 </div>
@@ -382,11 +324,12 @@ function PricingPage() {
               O que muda em cada plano.
             </h2>
           </div>
-          <div className="mt-10 overflow-hidden rounded-3xl border bg-background">
-            <table className="w-full text-sm">
+          <div className="mt-10 overflow-x-auto rounded-3xl border bg-background">
+            <table className="w-full min-w-[720px] text-sm">
               <thead>
                 <tr className="bg-card/60 text-left">
                   <th className="p-4 font-medium">Recurso</th>
+                  <th className="p-4 font-medium text-center">Grátis</th>
                   <th className="p-4 font-medium text-center">Starter</th>
                   <th className="p-4 font-medium text-center text-accent">Premium</th>
                   <th className="p-4 font-medium text-center">Pro</th>
@@ -394,19 +337,21 @@ function PricingPage() {
               </thead>
               <tbody>
                 {[
-                  ["Gerações 2D / mês", "10", "40", "150"],
-                  ["Sem marca d'água", "—", "✓", "✓"],
-                  ["Lista de compras + PDF", "Parcial", "Completa", "Com sua marca"],
-                  ["Variações da IA", "—", "✓", "✓"],
-                  ["Fila prioritária", "—", "—", "✓"],
-                  ["Organização por cliente", "—", "—", "✓"],
-                  ["Virtual staging para anúncios", "—", "—", "✓"],
-                  ["5D e planta baixa", "—", "—", "Em breve"],
+                  ["Gerações 2D / mês", "3", "15", "50", "200"],
+                  ["Sem marca d'água", "—", "✓", "✓", "✓"],
+                  ["Resolução de download", "Padrão", "Alta", "Alta", "Máxima"],
+                  ["Lista de compras", "3 produtos", "Completa", "Com preços", "Com sua marca"],
+                  ["Orçamento em PDF", "—", "—", "✓", "✓"],
+                  ["Variações da IA", "—", "—", "✓", "✓"],
+                  ["Histórico na nuvem", "—", "10 projetos", "Ilimitado", "Ilimitado"],
+                  ["Fila prioritária", "—", "—", "—", "✓"],
+                  ["Organização por cliente", "—", "—", "—", "✓"],
+                  ["Virtual staging", "—", "—", "—", "✓"],
                 ].map((row) => (
                   <tr key={row[0]} className="border-t border-border/60">
                     <td className="p-4">{row[0]}</td>
                     {row.slice(1).map((c, i) => (
-                      <td key={i} className={`p-4 text-center ${i === 1 ? "bg-accent/5" : ""}`}>{c}</td>
+                      <td key={i} className={`p-4 text-center ${i === 2 ? "bg-accent/5" : ""}`}>{c}</td>
                     ))}
                   </tr>
                 ))}
@@ -451,16 +396,32 @@ function PricingPage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link to="/" className="inline-flex items-center rounded-full bg-accent text-accent-foreground h-11 px-5 text-sm font-medium">
+              <button
+                type="button"
+                onClick={() => setLead({ planInterest: "free" })}
+                className="inline-flex items-center rounded-full bg-accent text-accent-foreground h-11 px-5 text-sm font-medium"
+              >
                 Começar grátis <ArrowRight className="h-4 w-4 ml-1" />
-              </Link>
-              <a href="mailto:vendas@idealspace.app" className="inline-flex items-center rounded-full border border-background/30 h-11 px-5 text-sm hover:bg-background/10">
+              </button>
+              <button
+                type="button"
+                onClick={() => setLead({ title: "Fale com vendas" })}
+                className="inline-flex items-center rounded-full border border-background/30 h-11 px-5 text-sm hover:bg-background/10"
+              >
                 <Briefcase className="h-4 w-4 mr-1.5" /> Falar com vendas
-              </a>
+              </button>
             </div>
           </div>
         </div>
       </section>
+
+      <LeadFormModal
+        open={lead !== null}
+        onOpenChange={(o) => !o && setLead(null)}
+        source="pricing"
+        planInterest={lead?.planInterest}
+        title={lead?.title}
+      />
     </div>
   );
 }

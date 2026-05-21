@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   X, GraduationCap, Sparkles, Check, Clock, Users, PlayCircle,
@@ -72,6 +72,10 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[calc(100vw-1.5rem)] sm:max-w-3xl lg:max-w-5xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto">
+        <DialogTitle className="sr-only">Curso de design de interiores com IA</DialogTitle>
+        <DialogDescription className="sr-only">
+          Conheça os 5 módulos, o conteúdo e o investimento do curso de decoração com IA do Ideal Space.
+        </DialogDescription>
         <button
           aria-label="Fechar"
           onClick={() => onOpenChange(false)}

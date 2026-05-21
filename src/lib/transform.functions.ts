@@ -27,7 +27,43 @@ export type TransformOutput = {
   error: string | null;
   imageDataUrl: string | null;
   creditsLeft: number | null;
+  roomType?: string;
 };
+
+type RoomType = "sala" | "quarto" | "cozinha" | "home-office" | "banheiro" | "outro";
+
+const ROOM_TYPES: ReadonlyArray<RoomType> = [
+  "sala",
+  "quarto",
+  "cozinha",
+  "home-office",
+  "banheiro",
+  "outro",
+];
+
+/**
+ * Normaliza, de forma resiliente e defensiva, o `room_type` retornado pela IA.
+ * Aceita variações comuns (PT/EN, com/sem hífen) e nunca estoura erro:
+ * - valor ausente/nulo/não-string ou vazio → undefined
+ * - valor reconhecido → o RoomType canônico correspondente
+ * - string não reconhecida → "outro"
+ */
+function normalizeRoomType(value: unknown): RoomType | undefined {
+  if (typeof value !== "string") return undefined;
+  const v = value.trim().toLowerCase();
+  if (!v) return undefined;
+  if ((ROOM_TYPES as ReadonlyArray<string>).includes(v)) return v as RoomType;
+  if (["home office", "homeoffice", "office", "escritório", "escritorio"].includes(v)) {
+    return "home-office";
+  }
+  if (["living room", "living", "sala de estar", "sala de jantar", "living-room"].includes(v)) {
+    return "sala";
+  }
+  if (["bedroom", "dormitório", "dormitorio"].includes(v)) return "quarto";
+  if (v === "kitchen") return "cozinha";
+  if (["bathroom", "lavabo", "wc"].includes(v)) return "banheiro";
+  return "outro";
+}
 
 export const transformImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -122,7 +158,7 @@ export const transformImage = createServerFn({ method: "POST" })
     const validation = await geminiText({
       model: MODEL_TEXT,
       system:
-        'Você é um curador visual de fotos de ambientes internos. Sua tarefa é decidir se a imagem mostra um CÔMODO/AMBIENTE INTERNO real que pode ser redecorado.\n\nResponda SOMENTE em JSON no formato: {"valid":boolean,"reason":string,"is_empty_room":boolean}.\n\nRegras:\n- APROVE (valid:true) se a foto mostrar um ambiente interno real e identificável — sala, quarto, cozinha, banheiro, escritório/home office, varanda, closet, hall, lavanderia, sala de jantar, etc. Aceite o ambiente mesmo que esteja bagunçado, mal iluminado ou pouco mobiliado.\n- REPROVE (valid:false) fotos de: paisagem, fachada ou área externa; foto que é só uma pessoa, selfie ou pet; comida; documento, screenshot ou print de tela; produto isolado sem o ambiente ao redor; render 3D claramente artificial; ou qualquer imagem onde não dá pra identificar um cômodo.\n- Defina is_empty_room=true se o ambiente estiver VAZIO ou SEMI-VAZIO (sem mobília montada), mas que poderia ser mobiliado e decorado. Defina is_empty_room=false se já houver mobília/decoração no ambiente, ou se a foto for reprovada.\n- No campo "reason", seja específico em português (ex.: "Isso parece uma foto de paisagem, não de um cômodo").',
+        'Você é um curador visual de fotos de ambientes internos. Sua tarefa é decidir se a imagem mostra um CÔMODO/AMBIENTE INTERNO real que pode ser redecorado.\n\nResponda SOMENTE em JSON no formato: {"valid":boolean,"reason":string,"is_empty_room":boolean,"room_type":"sala"|"quarto"|"cozinha"|"home-office"|"banheiro"|"outro"}.\n\nRegras:\n- APROVE (valid:true) se a foto mostrar um ambiente interno real e identificável — sala, quarto, cozinha, banheiro, escritório/home office, varanda, closet, hall, lavanderia, sala de jantar, etc. Aceite o ambiente mesmo que esteja bagunçado, mal iluminado ou pouco mobiliado.\n- REPROVE (valid:false) fotos de: paisagem, fachada ou área externa; foto que é só uma pessoa, selfie ou pet; comida; documento, screenshot ou print de tela; produto isolado sem o ambiente ao redor; render 3D claramente artificial; ou qualquer imagem onde não dá pra identificar um cômodo.\n- Defina is_empty_room=true se o ambiente estiver VAZIO ou SEMI-VAZIO (sem mobília montada), mas que poderia ser mobiliado e decorado. Defina is_empty_room=false se já houver mobília/decoração no ambiente, ou se a foto for reprovada.\n- No campo "room_type", classifique o cômodo usando EXATAMENTE um destes valores: "sala" (para salas de estar, salas de jantar e salas em geral), "quarto" (para dormitórios), "cozinha", "home-office" (para escritórios e ambientes de trabalho), "banheiro", "outro" (para lavanderias, halls, closets, varandas ou locais não identificáveis). Se a foto for reprovada ou o cômodo não puder ser identificado, use "outro".\n- No campo "reason", seja específico em português (ex.: "Isso parece uma foto de paisagem, não de um cômodo").',
       userText: "Avalie esta foto como possível ambiente interno para redecoração.",
       image: { dataUrl: data.imageDataUrl },
       responseJson: true,
@@ -136,9 +172,12 @@ export const transformImage = createServerFn({ method: "POST" })
         creditsLeft,
       };
     }
+    // Guardado num escopo mais amplo para reaproveitar o `room_type` ao
+    // persistir o projeto e ao devolver a resposta da Server Function.
+    let parsed: any = null;
     if (validation.text) {
       try {
-        const parsed = JSON.parse(validation.text);
+        parsed = JSON.parse(validation.text);
         if (parsed && parsed.valid === false) {
           await refund("invalid_photo");
           const baseReason = parsed?.reason || "envie uma foto de um cômodo da sua casa.";
@@ -149,7 +188,9 @@ export const transformImage = createServerFn({ method: "POST" })
           };
         }
       } catch {
-        /* best-effort — se o JSON não parsear, segue pra geração */
+        /* best-effort — se o JSON não parsear, segue pra geração.
+           normalizeRoomType(parsed?.room_type) lidará com `parsed` nulo. */
+        parsed = null;
       }
     }
 
@@ -271,12 +312,21 @@ export const transformImage = createServerFn({ method: "POST" })
         after_url: storedUrl,
         ai_prompt: editPrompt,
         ai_model: MODEL_IMAGE,
-        ai_response: { style: data.style, variant: data.variant ?? null },
+        ai_response: {
+          style: data.style,
+          variant: data.variant ?? null,
+          roomType: normalizeRoomType(parsed?.room_type) ?? "outro",
+        },
       });
     } catch (e) {
       console.error("persist project failed", e);
     }
 
     // Devolve o data URL pro client — exibição, lista de compras e rascunhos.
-    return { error: null, imageDataUrl: imageRes.dataUrl, creditsLeft };
+    return {
+      error: null,
+      imageDataUrl: imageRes.dataUrl,
+      creditsLeft,
+      roomType: normalizeRoomType(parsed?.room_type),
+    };
   });

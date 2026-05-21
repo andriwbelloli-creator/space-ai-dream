@@ -24,6 +24,7 @@ export const Route = createFileRoute("/legal")({
       },
       { name: "robots", content: "index,follow" },
     ],
+    links: [{ rel: "canonical", href: "https://idealspace.com.br/legal" }],
   }),
   component: LegalPage,
 });

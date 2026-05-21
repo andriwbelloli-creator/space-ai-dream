@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
@@ -14,12 +14,13 @@ import {
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
-import { SHOPPING_LIST, estimateTotal } from "@/lib/shopping";
+import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
 import { FileDown, ShoppingBag, RefreshCw } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
+import { LeadFormModal } from "@/components/LeadFormModal";
 import { MessageCircle } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -86,7 +87,7 @@ function formatKB(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-type Variation = { id: string; url: string; style: string; styleName?: string; label?: string };
+type Variation = { id: string; url: string; style: string; styleName?: string; label?: string; roomType?: string };
 
 export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const navigate = useNavigate();
@@ -162,7 +163,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
       preview,
       result: variations[0]?.url,
       results: variations.length
-        ? variations.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label }))
+        ? variations.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label, roomType: v.roomType }))
         : undefined,
       meta: meta ?? undefined,
       progress,
@@ -277,6 +278,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
               style,
               styleName,
               label: variationLabels[(startIdx + i) % variationLabels.length],
+              roomType: out.roomType,
             };
             setVariations((prev) => {
               const next = [...prev, v];
@@ -318,7 +320,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           createdAt: Date.now(),
           style,
           styleName,
-          results: snapshotVars.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label })),
+          results: snapshotVars.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label, roomType: v.roomType })),
           note: `${snapshotVars.length} ${snapshotVars.length === 1 ? "variação" : "variações"} · ${styleName ?? style}`,
           activeIdx: reset ? 0 : variations.length,
         };
@@ -369,6 +371,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           style: r.style,
           styleName: r.styleName,
           label: r.label ?? variationLabels[i % variationLabels.length],
+          roomType: r.roomType,
         }))
       : legacy;
     setVariations(restored);
@@ -403,6 +406,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
         style: r.style,
         styleName: r.styleName,
         label: r.label ?? variationLabels[i % variationLabels.length],
+        roomType: r.roomType,
     }));
     setVariations(restored);
     const restoredIdx = Math.min(Math.max(0, v.activeIdx ?? 0), Math.max(0, restored.length - 1));
@@ -438,6 +442,10 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           variations.length > 0 ? "sm:max-w-2xl lg:max-w-5xl" : "sm:max-w-2xl"
         }`}
       >
+        <DialogTitle className="sr-only">Criar projeto com IA</DialogTitle>
+        <DialogDescription className="sr-only">
+          Envie a foto do seu ambiente e gere uma proposta de decoração com inteligência artificial.
+        </DialogDescription>
         <button
           aria-label="Fechar"
           onClick={() => close(false)}
@@ -930,11 +938,13 @@ function ShoppingPanel({
   const [cache, setCache] = useState<Record<string, BudgetItem[]>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<string | null>(null);
+  const [leadOpen, setLeadOpen] = useState(false);
 
+  const roomType = variation?.roomType;
   const vid = variation?.id;
   const aiItems = vid ? cache[vid] : undefined;
   const usingFallback = !aiItems;
-  const items: ReadonlyArray<BudgetItem> = aiItems ?? SHOPPING_LIST;
+  const items: ReadonlyArray<BudgetItem> = aiItems ?? getShoppingFallback(roomType);
 
   const fetchList = async () => {
     if (!variation?.url || !vid) return;
@@ -942,7 +952,12 @@ function ShoppingPanel({
     setErrorId(null);
     try {
       const out = await generateShoppingList({
-        data: { imageDataUrl: variation.url, style: styleId, styleName },
+        data: {
+          imageDataUrl: variation.url,
+          style: styleId,
+          styleName,
+          roomType,
+        },
       });
       setCache((prev) => ({ ...prev, [vid]: out.items }));
     } catch (e: any) {
@@ -1057,6 +1072,11 @@ function ShoppingPanel({
         ))}
       </ul>
 
+      <p className="mt-2 px-1 text-[10px] leading-relaxed text-muted-foreground">
+        Tocar num produto abre a busca em lojas parceiras. Alguns links podem gerar comissão para o
+        Ideal Space, sem custo a mais para você.
+      </p>
+
       {!unlocked && items.length > visibleItems.length && (
         <button
           onClick={() => setUnlocked(true)}
@@ -1082,6 +1102,25 @@ function ShoppingPanel({
       <p className="mt-2 text-[10px] text-muted-foreground text-center">
         PDF com lista organizada por prioridade e estimativa total.
       </p>
+
+      {/* Oportunidade de lead — orçamento completo com a equipe */}
+      <button
+        type="button"
+        onClick={() => setLeadOpen(true)}
+        className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-accent/30 bg-accent/5 py-2.5 text-xs font-medium text-accent hover:bg-accent/10 transition"
+      >
+        <MessageCircle className="h-3.5 w-3.5" /> Receber orçamento por WhatsApp
+      </button>
+
+      <LeadFormModal
+        open={leadOpen}
+        onOpenChange={setLeadOpen}
+        source="shopping-list"
+        defaultRoomType={roomType}
+        defaultStyle={styleId}
+        title="Solicitar orçamento completo"
+        description="Deixe seus dados e a nossa equipe envia um orçamento detalhado deste ambiente pelo WhatsApp."
+      />
     </aside>
   );
 }

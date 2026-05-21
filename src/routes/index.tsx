@@ -6,8 +6,10 @@ import { PresentationModal } from "@/components/PresentationModal";
 import { UploadPhotoModal } from "@/components/UploadPhotoModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
+import { LeadFormModal } from "@/components/LeadFormModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { buildAffiliateLinks } from "@/lib/affiliate";
+import { PLANS, formatPlanPrice } from "@/lib/plans";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -40,6 +42,7 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Plataforma de design de interiores com IA: gere ambientes decorados em 2D, evolua para planejamento 5D com orçamento e lista de compras, e veja recursos de planta baixa e projeto arquitetônico para designers, arquitetos e imobiliárias." },
       { name: "keywords", content: "design de interiores com IA, projeto 2D com IA, projeto 5D de interiores, planta baixa com IA, layout de ambientes com IA, decoração com IA, virtual staging, planejamento de interiores, IA para arquitetos, IA para designers de interiores" },
     ],
+    links: [{ rel: "canonical", href: "https://idealspace.com.br/" }],
   }),
 });
 
@@ -129,50 +132,7 @@ const ranking = imagesFor("ranking").map((i, idx) => ({
 
 const filterList: ReadonlyArray<GalleryFilter> = ["Todos", "2D", "5D", "Planta baixa", "Arquitetônico", "Profissional"];
 
-const plans = [
-  {
-    name: "Starter", price: "R$ 19,90", per: "/mês",
-    desc: "Para testar ideias e criar poucos ambientes em 2D rápido.",
-    features: [
-      "10 gerações 2D por mês",
-      "Ambientes residenciais",
-      "Estilos básicos",
-      "Antes e depois",
-      "Lista de compras parcial",
-      "Download em resolução padrão",
-    ],
-    cta: "Começar grátis",
-  },
-  {
-    name: "Premium", price: "R$ 49,90", per: "/mês",
-    desc: "Para decorar a casa inteira com orçamento e lista completa.",
-    features: [
-      "40 gerações 2D por mês",
-      "Todos os ambientes",
-      "Estilos premium",
-      "Lista de compras completa",
-      "Orçamento em PDF",
-      "Sem marca d'água",
-      "Variações da IA",
-      "Projetos ilimitados",
-    ],
-    cta: "Assinar Premium", featured: true,
-  },
-  {
-    name: "Pro", price: "R$ 149,90", per: "/mês",
-    desc: "Para designers, arquitetos, corretores e imobiliárias.",
-    features: [
-      "150 gerações em alta resolução",
-      "PDF profissional",
-      "Organização por cliente",
-      "Virtual staging premium",
-      "Prioridade de processamento",
-      "Planejamento 5D — em breve",
-      "Planta baixa e layout — em breve",
-    ],
-    cta: "Começar no Pro",
-  },
-];
+// Planos: src/lib/plans.ts (fonte única — /pricing + home)
 
 const faqs = [
   { q: "Como funciona a geração 2D com IA?", a: "Você envia uma foto do ambiente vazio, escolhe um estilo e a IA gera uma versão decorada preservando a estrutura do espaço." },
@@ -192,6 +152,8 @@ function Index() {
   const [initialStyle, setInitialStyle] = useState<string | undefined>(undefined);
   const [courseOpen, setCourseOpen] = useState(false);
   const [reward, setReward] = useState<RewardKind | null>(null);
+  // Funil de leads: contexto do CTA de plano que abriu o modal comercial.
+  const [lead, setLead] = useState<{ planInterest?: string; title?: string } | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -215,7 +177,7 @@ function Index() {
   const handleReward = (k: RewardKind) => {
     if (k === "budget") {
       generateBudgetPdf({
-        project: "Cozinha · Luxo discreto",
+        project: "Sala de estar · Luxo discreto",
         items: shoppingList,
         estimate: "R$ 3.000 – 8.000",
       });
@@ -248,7 +210,15 @@ function Index() {
       <InspirationGallery onUpload={openUpload} />
       <RankingStrip onUpload={openUpload} />
       <Professionals onUpload={openUpload} onCourse={() => setCourseOpen(true)} />
-      <Pricing onReward={openReward} />
+      <Pricing
+        onReward={openReward}
+        onLead={(planInterest) =>
+          setLead({
+            planInterest,
+            title: planInterest === "pro" ? "Fale com vendas" : undefined,
+          })
+        }
+      />
       <Trust />
       <FAQ />
       <Footer />
@@ -267,6 +237,14 @@ function Index() {
         kind={reward}
         onOpenChange={(o) => !o && setReward(null)}
         onSuccess={(k) => handleReward(k)}
+      />
+
+      <LeadFormModal
+        open={lead !== null}
+        onOpenChange={(o) => !o && setLead(null)}
+        source="home"
+        planInterest={lead?.planInterest}
+        title={lead?.title}
       />
 
       <Dialog open={!!affiliateOpen} onOpenChange={(o) => !o && setAffiliateOpen(null)}>
@@ -663,7 +641,7 @@ function ResultShowcase({
         <div className="mt-12 grid lg:grid-cols-[1fr_360px] gap-6 items-start">
           <div className="rounded-3xl overflow-hidden border bg-card">
             <div className="p-3 sm:p-4 flex items-center gap-2 border-b flex-wrap">
-              <Badge variant="secondary" className="rounded-full text-[10px] uppercase tracking-wider">Cozinha · Luxo discreto</Badge>
+              <Badge variant="secondary" className="rounded-full text-[10px] uppercase tracking-wider">Sala de estar · Luxo discreto</Badge>
               <span className="text-xs text-muted-foreground">12 itens · estimativa R$ 3.000–8.000</span>
               <div className="ml-auto flex gap-1 sm:gap-2">
                 <Button size="sm" variant="ghost" onClick={() => onReward("save_project")} className="text-xs">
@@ -973,7 +951,13 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
 
 /* ----------------------------- PRICING ----------------------------- */
 
-function Pricing({ onReward }: { onReward: (k: RewardKind) => void }) {
+function Pricing({
+  onReward,
+  onLead,
+}: {
+  onReward: (k: RewardKind) => void;
+  onLead: (planInterest: string) => void;
+}) {
   return (
     <section id="planos" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -987,31 +971,43 @@ function Pricing({ onReward }: { onReward: (k: RewardKind) => void }) {
           </p>
         </div>
 
-        <div className="mt-12 grid lg:grid-cols-3 gap-5 items-stretch">
-          {plans.map(p => (
-            <div key={p.name}
-              className={`relative rounded-3xl p-7 flex flex-col border bg-card ${p.featured ? "ring-2 ring-accent shadow-2xl" : ""}`}>
-              {p.featured && (
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+          {PLANS.map(p => (
+            <div key={p.id}
+              className={`relative rounded-3xl p-7 flex flex-col border bg-card ${p.highlight ? "ring-2 ring-accent shadow-2xl" : ""}`}>
+              {p.highlight && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent text-accent-foreground text-[10px] uppercase tracking-widest px-3 py-1">
                   Mais escolhido
                 </span>
               )}
               <div className="text-sm text-muted-foreground">{p.name}</div>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-4xl font-semibold tracking-tight">{p.price}</span>
-                <span className="text-sm text-muted-foreground">{p.per}</span>
+                <span className="text-4xl font-semibold tracking-tight">{formatPlanPrice(p.monthly)}</span>
+                {p.monthly > 0 && <span className="text-sm text-muted-foreground">/mês</span>}
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{p.tagline}</p>
 
               <ul className="mt-6 space-y-2.5 text-sm flex-1">
                 {p.features.map(f => (
-                  <li key={f} className="flex gap-2"><Check className="h-4 w-4 mt-0.5 text-accent shrink-0" />{f}</li>
+                  <li key={f} className="flex gap-2">
+                    <Check className="h-4 w-4 mt-0.5 text-accent shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+                {p.notIncluded?.map(f => (
+                  <li key={f} className="flex gap-2 text-muted-foreground/70">
+                    <span className="h-4 w-4 mt-0.5 shrink-0 grid place-items-center">×</span>
+                    <span className="line-through">{f}</span>
+                  </li>
                 ))}
               </ul>
 
-              <Button className={`mt-7 h-11 rounded-xl ${p.featured
-                ? "bg-accent text-accent-foreground hover:opacity-95"
-                : "bg-foreground text-background hover:bg-foreground/90"}`}>
+              <Button
+                onClick={() => onLead(p.id)}
+                className={`mt-7 h-11 rounded-xl ${p.highlight
+                  ? "bg-accent text-accent-foreground hover:opacity-95"
+                  : "bg-foreground text-background hover:bg-foreground/90"}`}
+              >
                 {p.cta}
               </Button>
             </div>

@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { ArrowRight, ImageIcon, Wand2, Sparkles, X } from "lucide-react";
@@ -23,6 +23,10 @@ export function PresentationModal({ open, onOpenChange, before, after }: Props) 
         className="max-w-[calc(100vw-1.5rem)] sm:max-w-3xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto"
         onInteractOutside={() => onOpenChange(false)}
       >
+        <DialogTitle className="sr-only">Demonstração do Ideal Space</DialogTitle>
+        <DialogDescription className="sr-only">
+          Veja em três passos como o Ideal Space transforma a foto de um ambiente em um projeto decorado.
+        </DialogDescription>
         <button
           aria-label="Fechar"
           onClick={() => onOpenChange(false)}

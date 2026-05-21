@@ -105,6 +105,9 @@ function ProjetosPage() {
                       alt={p.title ?? "Projeto"}
                       className="h-full w-full object-cover"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
                     />
                   )}
                   {p.before_url && (
@@ -113,6 +116,9 @@ function ProjetosPage() {
                       alt="Antes da transformação"
                       className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
                     />
                   )}
                   {p.before_url && (

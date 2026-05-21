@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -200,6 +200,8 @@ export function RewardModal({ open, onOpenChange, kind, onSuccess }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[calc(100vw-1.5rem)] sm:max-w-md rounded-3xl p-0 overflow-hidden border-0 shadow-2xl">
+        <DialogTitle className="sr-only">{cfg.title}</DialogTitle>
+        <DialogDescription className="sr-only">{cfg.subtitle}</DialogDescription>
         <button
           aria-label="Fechar"
           onClick={() => onOpenChange(false)}

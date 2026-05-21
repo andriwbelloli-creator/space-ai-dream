@@ -4,7 +4,13 @@ const MAX_VERSIONS = 8;
 
 export type DraftStatus = "draft" | "generating" | "done";
 
-export type DraftVersionResult = { url: string; style: string; styleName?: string; label?: string };
+export type DraftVersionResult = {
+  url: string;
+  style: string;
+  styleName?: string;
+  label?: string;
+  roomType?: string;
+};
 
 export type DraftVersion = {
   id: string;
@@ -32,6 +38,7 @@ export type Draft = {
   versions?: DraftVersion[];
   activeVersionId?: string;
   activeIdx?: number;
+  roomType?: string;
 };
 
 function safeParse(raw: string | null): Draft[] {

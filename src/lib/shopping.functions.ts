@@ -1,8 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import type { BudgetItem } from "@/lib/budget-pdf";
 import { geminiText } from "@/lib/gemini.server";
+import { categoriesForRoom } from "@/lib/room-products";
 
-export type ShoppingInput = { imageDataUrl: string; style: string; styleName?: string };
+export type ShoppingInput = {
+  imageDataUrl: string;
+  style: string;
+  styleName?: string;
+  roomType?: string;
+};
 export type ShoppingOutput = { items: BudgetItem[] };
 
 const TAGS = ["Essencial", "Recomendado", "Opcional"] as const;
@@ -32,10 +38,29 @@ export const generateShoppingList = createServerFn({ method: "POST" })
       throw new Error("Imagem inválida.");
     }
     if (!input?.style) throw new Error("Estilo inválido.");
-    return input;
+    // roomType é opcional — normaliza para string limpa ou undefined.
+    const roomType =
+      typeof input.roomType === "string" && input.roomType.trim()
+        ? input.roomType.trim()
+        : undefined;
+    return { ...input, roomType };
   })
   .handler(async ({ data }): Promise<ShoppingOutput> => {
     const styleLabel = data.styleName ?? data.style;
+    const roomType = data.roomType;
+    const allowedCategories = categoriesForRoom(roomType);
+
+    // Quando o cômodo é reconhecido, orienta o Gemini a restringir as
+    // recomendações às categorias coerentes com o ambiente.
+    const roomDirective =
+      roomType && allowedCategories.length
+        ? ` O cômodo sob análise é do tipo '${roomType}'. ` +
+          "Priorize e restrinja as recomendações de produtos principalmente às categorias " +
+          `associadas a este ambiente: ${allowedCategories.join(", ")}. ` +
+          "Evite sugerir móveis e decorações que fujam do propósito deste ambiente " +
+          "(por exemplo, não recomende sofás ou racks em cozinhas ou banheiros), " +
+          "mas permita itens decorativos complementares coerentes."
+        : "";
 
     const sys =
       "Você é um designer de interiores brasileiro. Analise a imagem decorada e " +
@@ -50,7 +75,8 @@ export const generateShoppingList = createServerFn({ method: "POST" })
       "categoria e faixa de preço no formato 'R$ 300–900'. Use o travessão (–). " +
       "Responda APENAS com um objeto JSON neste formato exato: " +
       '{"items":[{"tag":"Essencial","name":"Sofá 3 lugares linho","cat":"Móveis principais","price":"R$ 1.200–3.500"}]}. ' +
-      'O campo "tag" deve ser exatamente "Essencial", "Recomendado" ou "Opcional".';
+      'O campo "tag" deve ser exatamente "Essencial", "Recomendado" ou "Opcional".' +
+      roomDirective;
 
     const { text, rateLimited, error } = await geminiText({
       model: "gemini-2.5-flash",
