@@ -10,6 +10,9 @@ import {
 
 import appCss from "../styles.css?url";
 
+import { AuthProvider } from "@/lib/auth";
+import { Toaster } from "@/components/ui/sonner";
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -72,15 +75,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
+      { title: "Ideal Space — Design de interiores com IA" },
       { name: "description", content: "AI-powered interior design platform that transforms empty spaces into beautifully decorated rooms." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
+      { name: "author", content: "Ideal Space" },
+      { property: "og:title", content: "Ideal Space — Design de interiores com IA" },
       { property: "og:description", content: "AI-powered interior design platform that transforms empty spaces into beautifully decorated rooms." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
+      { name: "twitter:title", content: "Ideal Space — Design de interiores com IA" },
       { name: "twitter:description", content: "AI-powered interior design platform that transforms empty spaces into beautifully decorated rooms." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/21e58506-3307-4ee1-b658-cc869c7fd808/id-preview-a23eab1b--39807fcf-2e8e-4c6f-80a3-16799910eeae.lovable.app-1779249362750.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/21e58506-3307-4ee1-b658-cc869c7fd808/id-preview-a23eab1b--39807fcf-2e8e-4c6f-80a3-16799910eeae.lovable.app-1779249362750.png" },
@@ -117,7 +119,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <AuthProvider>
+        <Outlet />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

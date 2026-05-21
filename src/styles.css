@@ -1,11 +1,10 @@
 @import "tailwindcss" source(none);
+/* Premium typography — Plus Jakarta Sans (body/UI) + Instrument Serif (display accents) */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @source "../src";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-
-/* Premium typography — Plus Jakarta Sans (body/UI) + Instrument Serif (display accents) */
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 
 /*
  * Design system definition.

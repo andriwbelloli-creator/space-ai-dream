@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
   AlertCircle, Zap, Loader2, History, Trash2, Play,
-  ChevronLeft, ChevronRight, Layers, GitCompare, Clock,
+  ChevronLeft, ChevronRight, Layers, GitCompare, Clock, ArrowUpRight,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -18,12 +18,18 @@ import { SHOPPING_LIST, estimateTotal } from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
 import { FileDown, ShoppingBag, RefreshCw } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
+import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
 import { MessageCircle } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { useAuth } from "@/lib/auth";
+import { useCredits } from "@/hooks/use-credits";
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialStyle?: string;
 };
 
 const STYLES = [
@@ -82,11 +88,17 @@ function formatKB(bytes: number) {
 
 type Variation = { id: string; url: string; style: string; styleName?: string; label?: string };
 
-export function UploadPhotoModal({ open, onOpenChange }: Props) {
+export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { credits, setBalance } = useCredits();
   const [preview, setPreview] = useState<string | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
   const [style, setStyle] = useState<string>("japandi");
+  useEffect(() => {
+    if (open && initialStyle) setStyle(initialStyle);
+  }, [open, initialStyle]);
   const [stage, setStage] = useState<Stage>("idle");
   const [progress, setProgress] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
@@ -213,6 +225,19 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
 
   const generate = async (count: number = 1, reset: boolean = false) => {
     if (!preview) return;
+    if (!user) {
+      toast.error("Crie sua conta grátis para gerar — leva 30 segundos.");
+      navigate({ to: "/login", search: { redirect: "/" } });
+      return;
+    }
+    if (credits && !credits.unlimited && credits.balance < count) {
+      toast.error(
+        count === 1
+          ? "Você não tem créditos. Veja os planos para continuar gerando."
+          : `Você precisa de ${count} créditos para gerar ${count} variações.`,
+      );
+      return;
+    }
     setError(null);
     if (reset) setVariations([]);
     const startIdx = reset ? 0 : variations.length;
@@ -242,6 +267,10 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
         transformImage({ data: { imageDataUrl: preview, style, variant: startIdx + i } })
           .then((out) => {
             if (ticket.cancelled) return null;
+            if (out.creditsLeft !== null) setBalance(out.creditsLeft);
+            if (out.error || !out.imageDataUrl) {
+              throw new Error(out.error ?? "Não foi possível gerar agora.");
+            }
             const v: Variation = {
               id: `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
               url: out.imageDataUrl,
@@ -808,7 +837,7 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
                   className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
                 >
                   <Wand2 className="h-4 w-4 mr-1.5" />
-                  {generating ? "Gerando…" : "Gerar com IA"}
+                  {generating ? "Gerando…" : !user ? "Entrar para gerar" : "Gerar com IA"}
                 </Button>
                 <Button
                   onClick={() => generate(3, true)}
@@ -853,6 +882,13 @@ export function UploadPhotoModal({ open, onOpenChange }: Props) {
               Fechar
             </Button>
           </div>
+          {user && credits && (
+            <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
+              {credits.unlimited
+                ? "Plano ilimitado — gere à vontade."
+                : `Você tem ${credits.balance} ${credits.balance === 1 ? "crédito" : "créditos"} · cada geração usa 1.`}
+            </p>
+          )}
           {variations.length > 0 && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
               Arraste o slider sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>. Deslize lateralmente para ver outras variações.
@@ -937,6 +973,14 @@ function ShoppingPanel({
     Opcional: "bg-muted text-foreground",
   };
 
+  const buyUrl = (name: string) => {
+    const links = buildAffiliateLinks(name);
+    return (
+      (links.find((m) => m.id === "amazon") ?? links[0])?.url ??
+      `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(name)}`
+    );
+  };
+
   const onDownload = () => {
     generateBudgetPdf({
       project: `Ambiente · ${projectName}`,
@@ -986,17 +1030,29 @@ function ShoppingPanel({
               </li>
             ))
           : visibleItems.map((it) => (
-          <li key={it.name} className="flex items-start justify-between gap-3 px-1 py-2.5">
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className={`text-[9px] uppercase tracking-widest rounded-full px-1.5 py-0.5 ${tagStyles[it.tag]}`}>
-                  {it.tag}
-                </span>
-                <span className="text-sm font-medium truncate">{it.name}</span>
+          <li key={it.name}>
+            <a
+              href={buyUrl(it.name)}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60"
+            >
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[9px] uppercase tracking-widest rounded-full px-1.5 py-0.5 ${tagStyles[it.tag]}`}>
+                    {it.tag}
+                  </span>
+                  <span className="text-sm font-medium truncate">{it.name}</span>
+                </div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">{it.cat}</div>
               </div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">{it.cat}</div>
-            </div>
-            <div className="text-xs font-medium whitespace-nowrap">{it.price}</div>
+              <div className="flex shrink-0 flex-col items-end gap-0.5">
+                <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
+                <span className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent">
+                  Comprar <ArrowUpRight className="h-3 w-3" />
+                </span>
+              </div>
+            </a>
           </li>
         ))}
       </ul>

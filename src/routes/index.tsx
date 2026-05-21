@@ -7,6 +7,7 @@ import { UploadPhotoModal } from "@/components/UploadPhotoModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
+import { buildAffiliateLinks } from "@/lib/affiliate";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -64,18 +65,19 @@ const emptyRooms = imagesFor("empty-carousel").map((i) => ({
   sub: ROOM_META[i.id]?.sub ?? "",
 }));
 
-const STYLE_META: Record<string, { name: string; sub: string }> = {
-  "style-japandi":    { name: "Japandi",       sub: "Calma, oak e linho" },
-  "style-scandi":     { name: "Escandinavo",   sub: "Claro, leve, neutro" },
-  "style-modern":     { name: "Contemporâneo", sub: "Linhas suaves e arte" },
-  "style-industrial": { name: "Industrial",    sub: "Tijolo, metal e couro" },
-  "style-luxo":       { name: "Luxo discreto", sub: "Nobreza e brass" },
-  "style-natural":    { name: "Natural",       sub: "Fibras, plantas, cerâmica" },
+const STYLE_META: Record<string, { name: string; sub: string; styleId: string }> = {
+  "style-japandi":    { name: "Japandi",       sub: "Calma, oak e linho",        styleId: "japandi" },
+  "style-scandi":     { name: "Escandinavo",   sub: "Claro, leve, neutro",       styleId: "minimal" },
+  "style-modern":     { name: "Contemporâneo", sub: "Linhas suaves e arte",      styleId: "modern" },
+  "style-industrial": { name: "Industrial",    sub: "Tijolo, metal e couro",     styleId: "industrial" },
+  "style-luxo":       { name: "Luxo discreto", sub: "Nobreza e brass",           styleId: "luxe" },
+  "style-natural":    { name: "Natural",       sub: "Fibras, plantas, cerâmica", styleId: "natural" },
 };
 const styles = imagesFor("style-carousel").map((i) => ({
   img: i.src,
   name: STYLE_META[i.id]?.name ?? i.alt,
   sub: STYLE_META[i.id]?.sub ?? "",
+  styleId: STYLE_META[i.id]?.styleId ?? "japandi",
 }));
 
 const shoppingList = [
@@ -187,6 +189,7 @@ function Index() {
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [initialStyle, setInitialStyle] = useState<string | undefined>(undefined);
   const [courseOpen, setCourseOpen] = useState(false);
   const [reward, setReward] = useState<RewardKind | null>(null);
 
@@ -219,13 +222,22 @@ function Index() {
     }
   };
 
+  const openUpload = () => {
+    setInitialStyle(undefined);
+    setUploadOpen(true);
+  };
+  const openUploadWithStyle = (styleId: string) => {
+    setInitialStyle(styleId);
+    setUploadOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
-      <Hero onBudget={() => openReward("budget")} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} onUpload={() => setUploadOpen(true)} />
+      <Header onDemo={() => handlePresentation(true)} onUpload={openUpload} />
+      <Hero onBudget={() => openReward("budget")} onAffiliate={setAffiliateOpen} onDemo={() => handlePresentation(true)} onUpload={openUpload} />
       <Marquee />
-      <EmptyRoomsCarousel onUpload={() => setUploadOpen(true)} />
-      <StylesCarousel />
+      <EmptyRoomsCarousel onUpload={openUpload} />
+      <StylesCarousel onPickStyle={openUploadWithStyle} />
       <HowItWorks onDemo={() => handlePresentation(true)} />
       <FeaturedBeforeAfter />
       <ResultShowcase
@@ -233,21 +245,21 @@ function Index() {
         onAffiliate={setAffiliateOpen}
         onReward={openReward}
       />
-      <InspirationGallery onUpload={() => setUploadOpen(true)} />
-      <RankingStrip onUpload={() => setUploadOpen(true)} />
-      <Professionals onUpload={() => setUploadOpen(true)} onCourse={() => setCourseOpen(true)} />
+      <InspirationGallery onUpload={openUpload} />
+      <RankingStrip onUpload={openUpload} />
+      <Professionals onUpload={openUpload} onCourse={() => setCourseOpen(true)} />
       <Pricing onReward={openReward} />
       <Trust />
       <FAQ />
       <Footer />
 
       <MobileBottomNav
-        onUpload={() => setUploadOpen(true)}
+        onUpload={openUpload}
         onShopping={() => openReward("budget")}
       />
 
       <PresentationModal open={presentationOpen} onOpenChange={handlePresentation} before={emptyLiving} after={decoratedLiving} />
-      <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} />
+      <UploadPhotoModal open={uploadOpen} onOpenChange={setUploadOpen} initialStyle={initialStyle} />
       <CourseModal open={courseOpen} onOpenChange={setCourseOpen} onEnroll={() => { setCourseOpen(false); openReward("budget"); }} />
 
       <RewardModal
@@ -265,15 +277,30 @@ function Index() {
           </DialogHeader>
           <div className="rounded-2xl border bg-muted/40 p-4">
             <div className="text-sm font-medium">{affiliateOpen ?? "Item"}</div>
-            <div className="text-xs text-muted-foreground mt-0.5">Conforto · R$ 500–1.800</div>
+            <div className="text-xs text-muted-foreground mt-0.5">Buscamos esse item nas lojas parceiras.</div>
           </div>
           <div className="grid grid-cols-1 gap-2">
-            {["Amazon", "Mercado Livre", "Magalu", "Shopee", "Buscar no Google Shopping"].map((m) => (
-              <Button key={m} variant="outline" className="h-11 rounded-xl justify-between">
-                <span>Ver na {m.replace("Buscar no ", "")}</span>
-                <ArrowUpRight className="h-4 w-4" />
+            {affiliateOpen &&
+              buildAffiliateLinks(affiliateOpen).map((m) => (
+                <Button key={m.id} asChild variant="outline" className="h-11 rounded-xl justify-between">
+                  <a href={m.url} target="_blank" rel="sponsored noopener noreferrer">
+                    <span>Ver na {m.label}</span>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </a>
+                </Button>
+              ))}
+            {affiliateOpen && (
+              <Button asChild variant="ghost" className="h-11 rounded-xl justify-between text-muted-foreground">
+                <a
+                  href={`https://www.google.com/search?tbm=shop&q=${encodeURIComponent(affiliateOpen)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>Buscar no Google Shopping</span>
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
               </Button>
-            ))}
+            )}
           </div>
           <p className="text-[11px] text-muted-foreground">
             Alguns links podem gerar comissão para o Ideal Space, sem custo adicional para você. Os preços e disponibilidade podem variar.
@@ -300,7 +327,9 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           <Link to="/pricing" className="hover:text-foreground transition">Planos</Link>
         </nav>
         <div className="hidden lg:flex items-center gap-2">
-          <Button variant="ghost" className="text-sm">Entrar</Button>
+          <Button asChild variant="ghost" className="text-sm">
+            <Link to="/login">Entrar</Link>
+          </Button>
           <Button onClick={onUpload} className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm">
             <Camera className="h-4 w-4 mr-1.5" /> Criar projeto com IA
           </Button>
@@ -326,6 +355,9 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
               ))}
             </div>
             <Button onClick={onUpload} className="mt-6 w-full h-11 rounded-xl bg-foreground text-background">Criar projeto com IA</Button>
+            <Button asChild variant="outline" className="mt-2 w-full h-11 rounded-xl">
+              <Link to="/login">Entrar</Link>
+            </Button>
           </SheetContent>
         </Sheet>
       </div>
@@ -481,7 +513,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
                   <span className="absolute top-3 left-3 rounded-full bg-background/85 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1">
                     {r.badge}
                   </span>
-                  <button className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-foreground text-background grid place-items-center opacity-0 group-hover:opacity-100 transition">
+                  <button onClick={onUpload} aria-label={`Criar projeto — ${r.title}`} className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-foreground text-background grid place-items-center opacity-0 group-hover:opacity-100 transition">
                     <ArrowUpRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -490,7 +522,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
                     <div className="text-base font-medium">{r.title}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">{r.sub}</div>
                   </div>
-                  <Button size="sm" variant="ghost" className="text-xs">Criar aqui</Button>
+                  <Button size="sm" variant="ghost" className="text-xs" onClick={onUpload}>Criar aqui</Button>
                 </div>
               </article>
             ))}
@@ -503,7 +535,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
 
 /* ----------------------------- STYLES ----------------------------- */
 
-function StylesCarousel() {
+function StylesCarousel({ onPickStyle }: { onPickStyle: (styleId: string) => void }) {
   return (
     <section id="estilos" className="py-20 sm:py-28 bg-card/40 border-y border-border/60 is-pause-hover overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -526,7 +558,7 @@ function StylesCarousel() {
               </div>
               <div className="p-4 flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">{s.sub}</div>
-                <Button size="sm" variant="ghost" className="text-xs">Usar estilo →</Button>
+                <Button size="sm" variant="ghost" className="text-xs" onClick={() => onPickStyle(s.styleId)}>Usar estilo →</Button>
               </div>
             </div>
           ))}
@@ -1057,10 +1089,35 @@ function FAQ() {
 
 function Footer() {
   const cols = [
-    { t: "Produto",       l: ["Criar com IA","Ambientes","Estilos","Galeria","Planos"] },
-    { t: "Recursos",      l: ["Design 2D","Planejamento 5D","Planta baixa","Virtual staging","Lista de compras"] },
-    { t: "Profissionais", l: ["Designers","Arquitetos","Imobiliárias","Clínicas","Corretores"] },
-    { t: "Legal",         l: ["Termos de Uso","Política de Privacidade","Política de Imagens","LGPD","Afiliados","Aviso sobre IA"] },
+    { t: "Produto", l: [
+      { label: "Criar com IA", href: "/" },
+      { label: "Ambientes", href: "#ambientes" },
+      { label: "Estilos", href: "#estilos" },
+      { label: "Galeria", href: "#galeria" },
+      { label: "Planos", href: "/pricing" },
+    ] },
+    { t: "Recursos", l: [
+      { label: "Design 2D", href: "/pricing" },
+      { label: "Planejamento 5D", href: "/pricing" },
+      { label: "Planta baixa", href: "/pricing" },
+      { label: "Virtual staging", href: "#galeria" },
+      { label: "Lista de compras", href: "#galeria" },
+    ] },
+    { t: "Profissionais", l: [
+      { label: "Designers", href: "#pro" },
+      { label: "Arquitetos", href: "#pro" },
+      { label: "Imobiliárias", href: "#pro" },
+      { label: "Clínicas", href: "#pro" },
+      { label: "Corretores", href: "#pro" },
+    ] },
+    { t: "Legal", l: [
+      { label: "Termos de Uso", href: "/legal#termos" },
+      { label: "Política de Privacidade", href: "/legal#privacidade" },
+      { label: "Política de Imagens", href: "/legal#imagens" },
+      { label: "LGPD", href: "/legal#lgpd" },
+      { label: "Afiliados", href: "/legal#afiliados" },
+      { label: "Aviso sobre IA", href: "/legal#aviso-ia" },
+    ] },
   ];
   return (
     <footer className="bg-foreground text-background/80">
@@ -1078,7 +1135,7 @@ function Footer() {
               <div key={c.t}>
                 <div className="text-background text-xs uppercase tracking-widest">{c.t}</div>
                 <ul className="mt-4 space-y-2">
-                  {c.l.map(x => <li key={x}><a className="hover:text-background transition" href="#">{x}</a></li>)}
+                  {c.l.map(x => <li key={x.label}><a className="hover:text-background transition" href={x.href}>{x.label}</a></li>)}
                 </ul>
               </div>
             ))}
