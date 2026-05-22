@@ -304,7 +304,7 @@ export const transformImage = createServerFn({ method: "POST" })
 
     // 5) Persiste o projeto na tabela `projects` (best-effort).
     try {
-      await context.supabase.from("projects").insert({
+      const { error: persistErr } = await context.supabase.from("projects").insert({
         user_id: context.userId,
         title: `Projeto ${styleName}`,
         style_slug: data.style,
@@ -318,6 +318,20 @@ export const transformImage = createServerFn({ method: "POST" })
           roomType: normalizeRoomType(parsed?.room_type) ?? "outro",
         },
       });
+      if (persistErr) {
+        console.error("persist project failed", persistErr);
+      } else {
+        // Lote 2 — evento de funil. Fire-and-forget: nunca afeta a geração.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        void (supabaseAdmin as any)
+          .from("events")
+          .insert({
+            event: "project_saved",
+            user_id: context.userId,
+            props: { style: data.style },
+          })
+          .then(undefined, () => {});
+      }
     } catch (e) {
       console.error("persist project failed", e);
     }

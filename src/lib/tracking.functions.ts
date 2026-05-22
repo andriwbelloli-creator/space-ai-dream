@@ -1,57 +1,70 @@
-// Tracking de eventos do Ideal Space — Lote 6A P0.
-// Registra a intenção de clique de afiliado via log estruturado no server-side
-// (console.log em JSON). NÃO grava no Supabase, NÃO cria tabelas, NÃO persiste.
+// Tracking do funil mínimo do MVP — Lote 2.
+// Server function genérica `logEvent`: grava na tabela append-only `events`
+// (Supabase, via service_role). Generaliza o antigo `logAffiliateClick`.
 // NUNCA inclui PII (nome, e-mail, telefone) — apenas metadados de domínio.
 import { createServerFn } from "@tanstack/react-start";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-/** Dados mínimos de um clique de afiliado — sem PII. */
-export type AffiliateClickEvent = {
-  provider: string;
-  productName: string;
-  productCategory?: string;
-  roomType?: string;
-  style?: string;
-  subId?: string;
-  destinationUrl: string;
-  timestamp: string;
+/** Eventos do funil mínimo — allowlist. Nomes fora desta lista são ignorados. */
+export const ALLOWED_EVENTS = [
+  "start_project",
+  "image_uploaded",
+  "image_generated",
+  "shopping_list_loaded",
+  "affiliate_click",
+  "pdf_download",
+  "whatsapp_click",
+  "signup_started",
+  "project_saved",
+] as const;
+
+export type FunnelEvent = (typeof ALLOWED_EVENTS)[number];
+
+export type LogEventInput = {
+  event: string;
+  props?: Record<string, unknown>;
 };
 
 /**
- * Mantém só os campos esperados e os coage a string com limite de tamanho —
- * barreira extra contra PII acidental ou payloads inflados.
+ * Coage `props` a um objeto plano de strings curtas — barreira contra PII
+ * acidental e payloads inflados. Mantém no máximo 12 chaves.
  */
-function sanitizeEvent(input: AffiliateClickEvent): AffiliateClickEvent {
-  const str = (v: unknown, max: number): string => (typeof v === "string" ? v.slice(0, max) : "");
-  const optional = (v: unknown, max: number): string | undefined => {
-    const s = str(v, max);
-    return s ? s : undefined;
-  };
-  return {
-    provider: str(input?.provider, 60),
-    productName: str(input?.productName, 200),
-    productCategory: optional(input?.productCategory, 120),
-    roomType: optional(input?.roomType, 60),
-    style: optional(input?.style, 60),
-    subId: optional(input?.subId, 200),
-    destinationUrl: str(input?.destinationUrl, 1000),
-    timestamp: str(input?.timestamp, 40),
-  };
+function sanitizeProps(props: unknown): Record<string, string> {
+  if (!props || typeof props !== "object") return {};
+  const out: Record<string, string> = {};
+  let n = 0;
+  for (const [k, v] of Object.entries(props as Record<string, unknown>)) {
+    if (n >= 12) break;
+    if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
+      out[k.slice(0, 40)] = String(v).slice(0, 200);
+      n++;
+    }
+  }
+  return out;
 }
 
 /**
- * Server function: registra a intenção de clique de afiliado.
- * Emite um log estruturado em JSON no server-side e retorna { ok: true }.
- * Preparação de tracking (Lote 6A P0) — não persiste nada no banco.
+ * Registra um evento do funil na tabela `events`. Server-only (service_role).
+ * Fire-and-forget no client — nunca bloqueia nem quebra a UI. Eventos fora da
+ * allowlist são ignorados silenciosamente.
  */
-export const logAffiliateClick = createServerFn({ method: "POST" })
-  .handler(async ({ data }): Promise<{ ok: true }> => {
-    const clean = sanitizeEvent(data as AffiliateClickEvent);
-    console.log(
-      JSON.stringify({
-        event: "affiliate_click",
-        ...clean,
-        loggedAt: new Date().toISOString(),
-      }),
-    );
+export const logEvent = createServerFn({ method: "POST" }).handler(
+  async ({ data }): Promise<{ ok: boolean }> => {
+    const input = (data ?? {}) as LogEventInput;
+    if (!ALLOWED_EVENTS.includes(input.event as FunnelEvent)) {
+      return { ok: false };
+    }
+    try {
+      // `events` ainda não está nos tipos gerados (types.ts) — cast pontual,
+      // mesmo padrão usado em src/lib/leads.ts.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabaseAdmin as any).from("events").insert({
+        event: input.event,
+        props: sanitizeProps(input.props),
+      });
+    } catch (e) {
+      console.error("logEvent failed", e);
+    }
     return { ok: true };
-  });
+  },
+);

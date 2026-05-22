@@ -50,7 +50,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { useCredits } from "@/hooks/use-credits";
 import { useServerFn } from "@tanstack/react-start";
-import { logAffiliateClick } from "@/lib/tracking.functions";
+import { logEvent } from "@/lib/tracking.functions";
 
 type Props = {
   open: boolean;
@@ -131,6 +131,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { credits, setBalance } = useCredits();
+  const track = useServerFn(logEvent);
   const [preview, setPreview] = useState<string | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -201,7 +202,11 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
 
   // Load drafts whenever the modal opens
   useEffect(() => {
-    if (open) setDrafts(listDrafts());
+    if (open) {
+      setDrafts(listDrafts());
+      void track({ data: { event: "start_project" } }).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // Autosave current work as a draft (debounced via stage transitions)
@@ -271,6 +276,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
       setPreview(dataUrl);
       setMeta({ original: file.size, optimized: blob.size, w: width, h: height });
       if (!draftId) setDraftId(newDraftId());
+      void track({ data: { event: "image_uploaded" } }).catch(() => {});
       setProgress(100);
       setTimeout(() => {
         setStage("idle");
@@ -375,6 +381,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
       }
       setProgress(100);
       setStage("done");
+      void track({ data: { event: "image_generated", props: { style } } }).catch(() => {});
       // Snapshot this generation as a new version in the project history.
       if (draftId) {
         const justGenerated = results
@@ -1049,7 +1056,10 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                 {variations[activeIdx] && (
                   <Button
                     type="button"
-                    onClick={() => setWaOpen(true)}
+                    onClick={() => {
+                      setWaOpen(true);
+                      void track({ data: { event: "whatsapp_click" } }).catch(() => {});
+                    }}
                     className="h-11 rounded-full px-5 text-sm bg-[#25D366] hover:bg-[#1ebe5a] text-white"
                   >
                     <MessageCircle className="h-4 w-4 mr-1.5" /> WhatsApp
@@ -1141,7 +1151,7 @@ function ShoppingPanel({
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<string | null>(null);
   const [leadOpen, setLeadOpen] = useState(false);
-  const trackAffiliateClick = useServerFn(logAffiliateClick);
+  const track = useServerFn(logEvent);
 
   const roomType = variation?.roomType;
   const vid = variation?.id;
@@ -1163,6 +1173,7 @@ function ShoppingPanel({
         },
       });
       setCache((prev) => ({ ...prev, [vid]: out.items }));
+      void track({ data: { event: "shopping_list_loaded" } }).catch(() => {});
     } catch (e: any) {
       setErrorId(vid);
     } finally {
@@ -1207,15 +1218,16 @@ function ShoppingPanel({
     // Cliques modificados (ctrl/cmd/shift/alt) seguem o comportamento nativo.
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
-    void trackAffiliateClick({
+    void track({
       data: {
-        provider: affiliateProviderFromUrl(url),
-        productName: item.name,
-        productCategory: item.cat,
-        roomType: roomType ?? undefined,
-        style: styleId || undefined,
-        destinationUrl: url,
-        timestamp: new Date().toISOString(),
+        event: "affiliate_click",
+        props: {
+          provider: affiliateProviderFromUrl(url),
+          productName: item.name,
+          productCategory: item.cat,
+          roomType: roomType ?? undefined,
+          style: styleId || undefined,
+        },
       },
     }).catch(() => {
       /* log falhou — sem impacto: o link abre mesmo assim */
@@ -1230,6 +1242,7 @@ function ShoppingPanel({
       items,
       estimate: total,
     });
+    void track({ data: { event: "pdf_download" } }).catch(() => {});
   };
 
   return (

@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
+import { logEvent } from "@/lib/tracking.functions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleButton } from "@/components/GoogleButton";
@@ -77,6 +79,7 @@ function passwordStrength(pw: string): { score: 0 | 1 | 2 | 3 | 4; label: string
 
 function LoginPage() {
   const navigate = useNavigate();
+  const track = useServerFn(logEvent);
   const { redirect: redirectTo, mode: initialMode } = Route.useSearch();
   const dest = redirectTo ?? "/";
 
@@ -114,6 +117,7 @@ function LoginPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
+        void track({ data: { event: "signup_started" } }).catch(() => {});
         // emailRedirectTo passa por /auth/callback (processa o code) e depois
         // navega pro `dest` validado. NUNCA direto pra rota privada.
         const redirectUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(dest)}`;
