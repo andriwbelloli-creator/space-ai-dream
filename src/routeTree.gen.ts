@@ -17,10 +17,12 @@ import { Route as ParaArquitetosRouteImport } from './routes/para-arquitetos'
 import { Route as OrcamentoDesignInterioresRouteImport } from './routes/orcamento-design-interiores'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AmbientesRoomSlugRouteImport } from './routes/ambientes.$roomSlug'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AuthenticatedProjetosRouteImport } from './routes/_authenticated/projetos'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -64,6 +66,11 @@ const LegalRoute = LegalRouteImport.update({
   path: '/legal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -83,6 +90,11 @@ const AmbientesRoomSlugRoute = AmbientesRoomSlugRouteImport.update({
   path: '/ambientes/$roomSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AuthenticatedProjetosRoute = AuthenticatedProjetosRouteImport.update({
   id: '/projetos',
   path: '/projetos',
@@ -91,6 +103,7 @@ const AuthenticatedProjetosRoute = AuthenticatedProjetosRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
@@ -100,11 +113,13 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/projetos': typeof AuthenticatedProjetosRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
@@ -114,6 +129,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/projetos': typeof AuthenticatedProjetosRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
@@ -121,6 +137,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
@@ -130,6 +147,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/projetos': typeof AuthenticatedProjetosRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
@@ -137,6 +155,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/legal'
     | '/login'
     | '/orcamento-design-interiores'
@@ -146,11 +165,13 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/projetos'
+    | '/admin/leads'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/legal'
     | '/login'
     | '/orcamento-design-interiores'
@@ -160,12 +181,14 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/projetos'
+    | '/admin/leads'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/admin'
     | '/legal'
     | '/login'
     | '/orcamento-design-interiores'
@@ -175,6 +198,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/_authenticated/projetos'
+    | '/admin/leads'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
   fileRoutesById: FileRoutesById
@@ -182,6 +206,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
   OrcamentoDesignInterioresRoute: typeof OrcamentoDesignInterioresRoute
@@ -252,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -280,6 +312,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AmbientesRoomSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_authenticated/projetos': {
       id: '/_authenticated/projetos'
       path: '/projetos'
@@ -302,9 +341,20 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface AdminRouteChildren {
+  AdminLeadsRoute: typeof AdminLeadsRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminLeadsRoute: AdminLeadsRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
   OrcamentoDesignInterioresRoute: OrcamentoDesignInterioresRoute,
