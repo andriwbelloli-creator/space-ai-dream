@@ -1,12 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { PresentationModal } from "@/components/PresentationModal";
-import { UploadPhotoModal } from "@/components/UploadPhotoModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
-import { LeadFormModal } from "@/components/LeadFormModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
@@ -66,6 +64,21 @@ const decoratedLiving = heroPair.decorated!.src;
 
 const featuredBaPair = pair("ba-bathroom");
 const showcasePair = pair("show-kitchen");
+
+// Modais pesados carregados sob demanda — reduz o JS inicial e melhora o LCP.
+const UploadPhotoModal = lazy(() =>
+  import("@/components/UploadPhotoModal").then((m) => ({ default: m.UploadPhotoModal })),
+);
+const LeadFormModal = lazy(() =>
+  import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
+);
+
+/** Fallback leve enquanto o chunk do modal carrega sob demanda. */
+const modalFallback = (
+  <div className="fixed inset-0 z-50 grid place-items-center bg-background/40">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+  </div>
+);
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -301,6 +314,15 @@ function Index() {
   const [reward, setReward] = useState<RewardKind | null>(null);
   // Funil de leads: contexto do CTA de plano que abriu o modal comercial.
   const [lead, setLead] = useState<{ planInterest?: string; title?: string } | null>(null);
+  // Monta cada modal lazy só na 1ª abertura e o mantém montado (preserva animações).
+  const [uploadMounted, setUploadMounted] = useState(false);
+  const [leadMounted, setLeadMounted] = useState(false);
+  useEffect(() => {
+    if (uploadOpen) setUploadMounted(true);
+  }, [uploadOpen]);
+  useEffect(() => {
+    if (lead !== null) setLeadMounted(true);
+  }, [lead]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -389,11 +411,15 @@ function Index() {
         before={emptyLiving}
         after={decoratedLiving}
       />
-      <UploadPhotoModal
-        open={uploadOpen}
-        onOpenChange={setUploadOpen}
-        initialStyle={initialStyle}
-      />
+      {uploadMounted && (
+        <Suspense fallback={modalFallback}>
+          <UploadPhotoModal
+            open={uploadOpen}
+            onOpenChange={setUploadOpen}
+            initialStyle={initialStyle}
+          />
+        </Suspense>
+      )}
       <CourseModal
         open={courseOpen}
         onOpenChange={setCourseOpen}
@@ -410,13 +436,17 @@ function Index() {
         onSuccess={(k) => handleReward(k)}
       />
 
-      <LeadFormModal
-        open={lead !== null}
-        onOpenChange={(o) => !o && setLead(null)}
-        source="home"
-        planInterest={lead?.planInterest}
-        title={lead?.title}
-      />
+      {leadMounted && (
+        <Suspense fallback={modalFallback}>
+          <LeadFormModal
+            open={lead !== null}
+            onOpenChange={(o) => !o && setLead(null)}
+            source="home"
+            planInterest={lead?.planInterest}
+            title={lead?.title}
+          />
+        </Suspense>
+      )}
 
       <Dialog open={!!affiliateOpen} onOpenChange={(o) => !o && setAffiliateOpen(null)}>
         <DialogContent className="sm:max-w-md rounded-3xl">

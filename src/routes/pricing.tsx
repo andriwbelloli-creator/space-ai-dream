@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { LeadFormModal } from "@/components/LeadFormModal";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
 import {
   Check,
@@ -21,6 +20,17 @@ import {
   Palette,
   Image as ImageIcon,
 } from "lucide-react";
+
+const LeadFormModal = lazy(() =>
+  import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
+);
+
+/** Fallback leve enquanto o chunk do modal carrega sob demanda. */
+const modalFallback = (
+  <div className="fixed inset-0 z-50 grid place-items-center bg-background/40">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+  </div>
+);
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -163,6 +173,11 @@ function PricingPage() {
   const isAnnual = cycle === "annual";
   // Funil de leads: `lead` aberto guarda o contexto do CTA que disparou o modal.
   const [lead, setLead] = useState<{ planInterest?: string; title?: string } | null>(null);
+  // Monta o modal lazy só na 1ª abertura e o mantém montado (preserva animações).
+  const [leadMounted, setLeadMounted] = useState(false);
+  useEffect(() => {
+    if (lead !== null) setLeadMounted(true);
+  }, [lead]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -515,13 +530,17 @@ function PricingPage() {
         </div>
       </section>
 
-      <LeadFormModal
-        open={lead !== null}
-        onOpenChange={(o) => !o && setLead(null)}
-        source="pricing"
-        planInterest={lead?.planInterest}
-        title={lead?.title}
-      />
+      {leadMounted && (
+        <Suspense fallback={modalFallback}>
+          <LeadFormModal
+            open={lead !== null}
+            onOpenChange={(o) => !o && setLead(null)}
+            source="pricing"
+            planInterest={lead?.planInterest}
+            title={lead?.title}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

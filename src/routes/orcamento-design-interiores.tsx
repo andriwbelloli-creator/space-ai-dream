@@ -1,8 +1,18 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { LeadFormModal } from "@/components/LeadFormModal";
 import { ArrowRight, Sparkles, Calculator, Check, FileText } from "lucide-react";
+
+const LeadFormModal = lazy(() =>
+  import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
+);
+
+/** Fallback leve enquanto o chunk do modal carrega sob demanda. */
+const modalFallback = (
+  <div className="fixed inset-0 z-50 grid place-items-center bg-background/40">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+  </div>
+);
 
 const TITLE = "Simulador de Orçamento de Design de Interiores online — Ideal Space";
 const DESCRIPTION =
@@ -66,6 +76,11 @@ function formatBRL(value: number): string {
 
 function OrcamentoPage() {
   const [leadOpen, setLeadOpen] = useState(false);
+  // Monta o modal lazy só na 1ª abertura e o mantém montado (preserva animações).
+  const [leadMounted, setLeadMounted] = useState(false);
+  useEffect(() => {
+    if (leadOpen) setLeadMounted(true);
+  }, [leadOpen]);
   const [roomId, setRoomId] = useState<(typeof ROOMS)[number]["id"]>("sala");
   const [scopeId, setScopeId] = useState<(typeof SCOPES)[number]["id"]>("decoracao");
 
@@ -283,12 +298,16 @@ function OrcamentoPage() {
         </div>
       </section>
 
-      <LeadFormModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        source="orcamento-design-interiores"
-        title="Receber Orçamento e Proposta em PDF"
-      />
+      {leadMounted && (
+        <Suspense fallback={modalFallback}>
+          <LeadFormModal
+            open={leadOpen}
+            onOpenChange={setLeadOpen}
+            source="orcamento-design-interiores"
+            title="Receber Orçamento e Proposta em PDF"
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

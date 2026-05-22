@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { LeadFormModal } from "@/components/LeadFormModal";
 import { SEO_ROOMS, type RoomSlug } from "@/lib/seo-rooms-data";
 import { ArrowRight, Sparkles } from "lucide-react";
+
+const LeadFormModal = lazy(() =>
+  import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
+);
+
+/** Fallback leve enquanto o chunk do modal carrega sob demanda. */
+const modalFallback = (
+  <div className="fixed inset-0 z-50 grid place-items-center bg-background/40">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+  </div>
+);
 
 /** Type guard: o slug recebido é um cômodo conhecido do mapa de SEO. */
 function isRoomSlug(slug: string): slug is RoomSlug {
@@ -56,6 +66,11 @@ function AmbientePage() {
   const { roomSlug } = Route.useLoaderData();
   const room = SEO_ROOMS[roomSlug];
   const [leadOpen, setLeadOpen] = useState(false);
+  // Monta o modal lazy só na 1ª abertura e o mantém montado (preserva animações).
+  const [leadMounted, setLeadMounted] = useState(false);
+  useEffect(() => {
+    if (leadOpen) setLeadMounted(true);
+  }, [leadOpen]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -112,12 +127,16 @@ function AmbientePage() {
         </div>
       </section>
 
-      <LeadFormModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        source={`ambientes-${roomSlug}`}
-        defaultRoomType={room.defaultRoomType}
-      />
+      {leadMounted && (
+        <Suspense fallback={modalFallback}>
+          <LeadFormModal
+            open={leadOpen}
+            onOpenChange={setLeadOpen}
+            source={`ambientes-${roomSlug}`}
+            defaultRoomType={room.defaultRoomType}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

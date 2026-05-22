@@ -1,8 +1,18 @@
-import { useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { LeadFormModal } from "@/components/LeadFormModal";
 import { ArrowRight, Sparkles, Ruler, Layers, FileText, Check } from "lucide-react";
+
+const LeadFormModal = lazy(() =>
+  import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
+);
+
+/** Fallback leve enquanto o chunk do modal carrega sob demanda. */
+const modalFallback = (
+  <div className="fixed inset-0 z-50 grid place-items-center bg-background/40">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+  </div>
+);
 
 const TITLE = "Módulo de Inteligência Artificial para Arquitetos — Ideal Space";
 const DESCRIPTION =
@@ -42,6 +52,11 @@ const PROMISES = [
 
 function ParaArquitetosPage() {
   const [leadOpen, setLeadOpen] = useState(false);
+  // Monta o modal lazy só na 1ª abertura e o mantém montado (preserva animações).
+  const [leadMounted, setLeadMounted] = useState(false);
+  useEffect(() => {
+    if (leadOpen) setLeadMounted(true);
+  }, [leadOpen]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -170,13 +185,17 @@ function ParaArquitetosPage() {
         </div>
       </section>
 
-      <LeadFormModal
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        source="para-arquitetos"
-        planInterest="pro"
-        title="Fale com nosso time de Projetos"
-      />
+      {leadMounted && (
+        <Suspense fallback={modalFallback}>
+          <LeadFormModal
+            open={leadOpen}
+            onOpenChange={setLeadOpen}
+            source="para-arquitetos"
+            planInterest="pro"
+            title="Fale com nosso time de Projetos"
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
