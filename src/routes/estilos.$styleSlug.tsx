@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { SEO_ROOMS, type RoomSlug } from "@/lib/seo-rooms-data";
+import { SEO_STYLES, type StyleSlug } from "@/lib/seo-styles-data";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 const LeadFormModal = lazy(() =>
@@ -15,19 +15,14 @@ const modalFallback = (
   </div>
 );
 
-/** Type guard: o slug recebido é um cômodo conhecido do mapa de SEO. */
-function isRoomSlug(slug: string): slug is RoomSlug {
-  return Object.prototype.hasOwnProperty.call(SEO_ROOMS, slug);
-}
-
-/** Nome curto do cômodo para uso no breadcrumb estruturado (JSON-LD). */
-function roomName(slug: RoomSlug): string {
-  return slug === "home-office" ? "Home office" : slug.charAt(0).toUpperCase() + slug.slice(1);
+/** Type guard: o slug recebido é um estilo conhecido do mapa de SEO. */
+function isStyleSlug(slug: string): slug is StyleSlug {
+  return Object.prototype.hasOwnProperty.call(SEO_STYLES, slug);
 }
 
 /**
  * Renderiza o H1: o trecho entre `*asteriscos*` ganha o destaque serifado,
- * o resto fica como texto comum. Ex.: "Simule a *Decoração* com IA".
+ * o resto fica como texto comum. Ex.: "Decore no estilo *Japandi* com IA".
  */
 function renderHeadline(text: string) {
   return text.split(/\*([^*]+)\*/g).map((segment, i) =>
@@ -41,27 +36,28 @@ function renderHeadline(text: string) {
   );
 }
 
-export const Route = createFileRoute("/ambientes/$roomSlug")({
+export const Route = createFileRoute("/estilos/$styleSlug")({
   // Slug desconhecido: redireciona pra Home antes de qualquer renderização.
   loader: ({ params }) => {
-    if (!isRoomSlug(params.roomSlug)) {
+    if (!isStyleSlug(params.styleSlug)) {
       throw redirect({ to: "/" });
     }
-    return { roomSlug: params.roomSlug };
+    return { styleSlug: params.styleSlug };
   },
-  // Metadados de SEO dinâmicos por cômodo.
+  // Metadados de SEO dinâmicos por estilo + breadcrumb estruturado (JSON-LD).
   head: ({ params }) => {
-    const slug = params.roomSlug;
-    if (!isRoomSlug(slug)) return {};
-    const room = SEO_ROOMS[slug];
+    const slug = params.styleSlug;
+    if (!isStyleSlug(slug)) return {};
+    const style = SEO_STYLES[slug];
+    const url = `https://idealspace.com.br/estilos/${slug}`;
     return {
       meta: [
-        { title: room.title },
-        { name: "description", content: room.description },
-        { property: "og:title", content: room.title },
-        { property: "og:description", content: room.description },
+        { title: style.title },
+        { name: "description", content: style.description },
+        { property: "og:title", content: style.title },
+        { property: "og:description", content: style.description },
       ],
-      links: [{ rel: "canonical", href: `https://idealspace.com.br/ambientes/${slug}` }],
+      links: [{ rel: "canonical", href: url }],
       scripts: [
         {
           type: "application/ld+json",
@@ -75,24 +71,19 @@ export const Route = createFileRoute("/ambientes/$roomSlug")({
                 name: "Início",
                 item: "https://idealspace.com.br/",
               },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: roomName(slug),
-                item: `https://idealspace.com.br/ambientes/${slug}`,
-              },
+              { "@type": "ListItem", position: 2, name: style.name, item: url },
             ],
           }),
         },
       ],
     };
   },
-  component: AmbientePage,
+  component: EstiloPage,
 });
 
-function AmbientePage() {
-  const { roomSlug } = Route.useLoaderData();
-  const room = SEO_ROOMS[roomSlug];
+function EstiloPage() {
+  const { styleSlug } = Route.useLoaderData();
+  const style = SEO_STYLES[styleSlug];
   const [leadOpen, setLeadOpen] = useState(false);
   // Monta o modal lazy só na 1ª abertura e o mantém montado (preserva animações).
   const [leadMounted, setLeadMounted] = useState(false);
@@ -128,7 +119,7 @@ function AmbientePage() {
         </div>
       </header>
 
-      {/* Hero do ambiente */}
+      {/* Hero do estilo */}
       <section className="pt-16 sm:pt-24 pb-20 sm:pb-28">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
           <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-accent">
@@ -137,10 +128,10 @@ function AmbientePage() {
           </div>
 
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl tracking-[-0.02em] font-semibold leading-[1.05]">
-            {renderHeadline(room.h1)}
+            {renderHeadline(style.h1)}
           </h1>
 
-          <p className="mt-6 text-muted-foreground text-lg leading-relaxed">{room.promise}</p>
+          <p className="mt-6 text-muted-foreground text-lg leading-relaxed">{style.promise}</p>
 
           {/* CTA de destaque — responsivo */}
           <div className="mt-9">
@@ -148,7 +139,7 @@ function AmbientePage() {
               onClick={() => setLeadOpen(true)}
               className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
             >
-              {room.cta}
+              {style.cta}
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
           </div>
@@ -160,8 +151,8 @@ function AmbientePage() {
           <LeadFormModal
             open={leadOpen}
             onOpenChange={setLeadOpen}
-            source={`ambientes-${roomSlug}`}
-            defaultRoomType={room.defaultRoomType}
+            source={`estilos-${styleSlug}`}
+            defaultStyle={style.defaultStyle}
           />
         </Suspense>
       )}

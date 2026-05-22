@@ -100,6 +100,31 @@ export const Route = createFileRoute("/")({
       },
     ],
     links: [{ rel: "canonical", href: "https://idealspace.com.br/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://idealspace.com.br/#organization",
+              name: "Ideal Space",
+              url: "https://idealspace.com.br",
+              logo: "https://idealspace.com.br/icon-512.png",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://idealspace.com.br/#website",
+              name: "Ideal Space",
+              url: "https://idealspace.com.br",
+              inLanguage: "pt-BR",
+              publisher: { "@id": "https://idealspace.com.br/#organization" },
+            },
+          ],
+        }),
+      },
+    ],
   }),
 });
 
@@ -1726,6 +1751,23 @@ function Footer() {
       ],
     },
   ];
+  // Landing pages programáticas — um link interno por ambiente e por estilo,
+  // para que os crawlers descubram e distribuam autoridade para essas páginas.
+  const roomLinks = [
+    { slug: "sala", label: "Sala" },
+    { slug: "quarto", label: "Quarto" },
+    { slug: "cozinha", label: "Cozinha" },
+    { slug: "home-office", label: "Home office" },
+    { slug: "banheiro", label: "Banheiro" },
+  ];
+  const styleLinks = [
+    { slug: "japandi", label: "Japandi" },
+    { slug: "contemporaneo", label: "Contemporâneo" },
+    { slug: "minimalista", label: "Minimalista" },
+    { slug: "natural", label: "Natural" },
+    { slug: "industrial", label: "Industrial" },
+    { slug: "luxo", label: "Luxo discreto" },
+  ];
   return (
     <footer className="bg-foreground text-background/80">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 pb-28 lg:pb-16">
@@ -1757,6 +1799,42 @@ function Footer() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Landing pages por ambiente e estilo — links internos para SEO. */}
+        <div className="mt-12 pt-8 border-t border-white/10 space-y-4 text-sm">
+          <nav aria-label="Decorar por ambiente">
+            <span className="text-background text-xs uppercase tracking-widest">
+              Decorar por ambiente
+            </span>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-background/55">
+              {roomLinks.map((r) => (
+                <a
+                  key={r.slug}
+                  href={`/ambientes/${r.slug}`}
+                  className="hover:text-background transition"
+                >
+                  {r.label}
+                </a>
+              ))}
+            </div>
+          </nav>
+          <nav aria-label="Decorar por estilo">
+            <span className="text-background text-xs uppercase tracking-widest">
+              Decorar por estilo
+            </span>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-background/55">
+              {styleLinks.map((s) => (
+                <a
+                  key={s.slug}
+                  href={`/estilos/${s.slug}`}
+                  className="hover:text-background transition"
+                >
+                  {s.label}
+                </a>
+              ))}
+            </div>
+          </nav>
         </div>
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-4 justify-between text-xs text-background/50">
           <div>© {new Date().getFullYear()} Ideal Space. Todos os direitos reservados.</div>

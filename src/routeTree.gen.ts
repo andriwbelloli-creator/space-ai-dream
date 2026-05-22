@@ -20,6 +20,7 @@ import { Route as LegalRouteImport } from './routes/legal'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EstilosStyleSlugRouteImport } from './routes/estilos.$styleSlug'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AmbientesRoomSlugRouteImport } from './routes/ambientes.$roomSlug'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
@@ -80,6 +81,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EstilosStyleSlugRoute = EstilosStyleSlugRouteImport.update({
+  id: '/estilos/$styleSlug',
+  path: '/estilos/$styleSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/admin/leads': typeof AdminLeadsRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/admin/leads': typeof AdminLeadsRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/admin/leads': typeof AdminLeadsRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
+    | '/estilos/$styleSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
+    | '/estilos/$styleSlug'
   id:
     | '__root__'
     | '/'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
+    | '/estilos/$styleSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -217,6 +229,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AmbientesRoomSlugRoute: typeof AmbientesRoomSlugRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  EstilosStyleSlugRoute: typeof EstilosStyleSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/estilos/$styleSlug': {
+      id: '/estilos/$styleSlug'
+      path: '/estilos/$styleSlug'
+      fullPath: '/estilos/$styleSlug'
+      preLoaderRoute: typeof EstilosStyleSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -365,6 +385,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AmbientesRoomSlugRoute: AmbientesRoomSlugRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  EstilosStyleSlugRoute: EstilosStyleSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
