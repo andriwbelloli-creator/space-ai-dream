@@ -1588,11 +1588,9 @@ function Pricing({
             </div>
             <div>
               <div className="text-sm font-medium">
-                Teste o Premium por 7 dias com limite de gerações.
+                Crie sua conta grátis e comece a gerar ambientes com IA.
               </div>
-              <div className="text-xs text-muted-foreground mt-0.5">
-                Sem compromisso. Cancele a qualquer momento.
-              </div>
+              <div className="text-xs text-muted-foreground mt-0.5">Sem cartão de crédito.</div>
             </div>
           </div>
           <Button
@@ -1600,7 +1598,7 @@ function Pricing({
             variant="outline"
             className="rounded-full h-11 px-5 text-sm"
           >
-            Desbloquear gerações <ArrowRight className="h-4 w-4 ml-1" />
+            Criar conta grátis <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
       </div>

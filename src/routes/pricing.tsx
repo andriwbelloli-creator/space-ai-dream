@@ -239,6 +239,11 @@ function PricingPage() {
             fidelidade.
           </p>
 
+          <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-muted-foreground">
+            Os planos pagos estão <span className="font-medium text-foreground">em breve</span>.
+            Nesta etapa não há cobrança — crie sua conta para garantir acesso antecipado.
+          </div>
+
           {/* Toggle */}
           <div className="mt-8 inline-flex items-center rounded-full border bg-card p-1 text-sm">
             <button

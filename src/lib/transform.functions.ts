@@ -166,7 +166,8 @@ export const transformImage = createServerFn({ method: "POST" })
     if (validation.rateLimited) {
       await refund("rate_limit_validation");
       return {
-        error: "Muitas solicitações. Tente em alguns instantes.",
+        error:
+          "Estamos com muitas solicitações no momento. Aguarde alguns instantes e tente novamente.",
         imageDataUrl: null,
         creditsLeft,
       };
@@ -279,7 +280,8 @@ export const transformImage = createServerFn({ method: "POST" })
     if (imageRes.rateLimited) {
       await refund("rate_limit_image");
       return {
-        error: "Muitas solicitações. Tente em alguns instantes.",
+        error:
+          "Estamos com muitas solicitações no momento. Aguarde alguns instantes e tente novamente.",
         imageDataUrl: null,
         creditsLeft,
       };

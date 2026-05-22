@@ -51,7 +51,7 @@ export const PLANS: Plan[] = [
     tagline: "Para decorar um ambiente do seu jeito, sem marca d'água.",
     monthly: 29.9,
     annual: 22.9,
-    cta: "Assinar Starter",
+    cta: "Quero acesso antecipado",
     ctaHref: "/login",
     features: [
       "15 gerações 2D por mês",
@@ -62,6 +62,7 @@ export const PLANS: Plan[] = [
       "Histórico na nuvem (até 10 projetos)",
     ],
     notIncluded: ["Variações da IA", "Orçamento em PDF"],
+    footnote: "Planos pagos em breve — sem cobrança nesta etapa.",
   },
   {
     id: "premium",
@@ -70,7 +71,7 @@ export const PLANS: Plan[] = [
     monthly: 49.9,
     annual: 39.9,
     highlight: true,
-    cta: "Assinar Premium",
+    cta: "Quero acesso antecipado",
     ctaHref: "/login",
     features: [
       "50 gerações 2D por mês",
@@ -82,6 +83,7 @@ export const PLANS: Plan[] = [
       "Histórico ilimitado na nuvem",
       "Suporte prioritário por e-mail",
     ],
+    footnote: "Planos pagos em breve — sem cobrança nesta etapa.",
   },
   {
     id: "pro",

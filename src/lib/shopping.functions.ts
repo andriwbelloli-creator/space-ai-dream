@@ -87,7 +87,9 @@ export const generateShoppingList = createServerFn({ method: "POST" })
     });
 
     if (rateLimited) {
-      throw new Error("Muitas requisições. Tente novamente em instantes.");
+      throw new Error(
+        "Estamos com muitas solicitações no momento. Aguarde alguns instantes e tente novamente.",
+      );
     }
     if (!text) {
       throw new Error(`Falha ao gerar lista${error ? ` (${error})` : ""}.`);
