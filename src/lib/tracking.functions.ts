@@ -44,12 +44,12 @@ function sanitizeEvent(input: AffiliateClickEvent): AffiliateClickEvent {
  * Preparação de tracking (Lote 6A P0) — não persiste nada no banco.
  */
 export const logAffiliateClick = createServerFn({ method: "POST" })
-  .validator((input: AffiliateClickEvent) => sanitizeEvent(input))
   .handler(async ({ data }): Promise<{ ok: true }> => {
+    const clean = sanitizeEvent(data as AffiliateClickEvent);
     console.log(
       JSON.stringify({
         event: "affiliate_click",
-        ...data,
+        ...clean,
         loggedAt: new Date().toISOString(),
       }),
     );
