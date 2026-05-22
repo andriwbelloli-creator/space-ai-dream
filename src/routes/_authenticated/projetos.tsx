@@ -13,6 +13,24 @@ type ProjectRow = {
   created_at: string;
 };
 
+/** Rótulos legíveis para os slugs persistidos em projects.style_slug. */
+const STYLE_LABELS: Record<string, string> = {
+  japandi: "Japandi",
+  modern: "Contemporâneo",
+  contemporaneo: "Contemporâneo",
+  minimal: "Minimalista",
+  minimalista: "Minimalista",
+  natural: "Natural",
+  industrial: "Industrial",
+  luxe: "Luxo discreto",
+  escandinavo: "Escandinavo",
+};
+
+/** Converte o slug de estilo num rótulo legível; capitaliza se desconhecido. */
+function styleLabel(slug: string): string {
+  return STYLE_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
+}
+
 export const Route = createFileRoute("/_authenticated/projetos")({
   head: () => ({
     meta: [{ title: "Meus projetos — Ideal Space" }],
@@ -62,10 +80,20 @@ function ProjetosPage() {
       </header>
 
       <main className="mx-auto max-w-5xl px-5 py-10 md:px-8">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Meus projetos</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Os ambientes que você gerou com IA ficam salvos aqui.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Meus projetos</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Os ambientes que você gerou com IA ficam salvos aqui.
+            </p>
+          </div>
+          <Link
+            to="/"
+            className="inline-flex h-10 shrink-0 items-center justify-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            + Novo projeto
+          </Link>
+        </div>
 
         {projects === null ? (
           <div className="mt-12 flex items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -123,8 +151,7 @@ function ProjetosPage() {
                   )}
                   {p.before_url && (
                     <span className="absolute bottom-2 left-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-foreground backdrop-blur">
-                      <span className="group-hover:hidden">Depois</span>
-                      <span className="hidden group-hover:inline">Antes</span>
+                      Antes / Depois
                     </span>
                   )}
                 </div>
@@ -132,8 +159,14 @@ function ProjetosPage() {
                   <div className="truncate text-sm font-medium text-foreground">
                     {p.title ?? "Projeto"}
                   </div>
-                  <div className="mt-0.5 text-xs text-muted-foreground">
-                    {new Date(p.created_at).toLocaleDateString("pt-BR")}
+                  <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    {p.style_slug && (
+                      <>
+                        <span className="text-foreground">{styleLabel(p.style_slug)}</span>
+                        <span aria-hidden>·</span>
+                      </>
+                    )}
+                    <span>{new Date(p.created_at).toLocaleDateString("pt-BR")}</span>
                   </div>
                 </div>
               </div>
