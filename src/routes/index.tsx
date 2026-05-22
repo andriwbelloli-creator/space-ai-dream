@@ -541,9 +541,11 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           )}
         </nav>
         <div className="hidden lg:flex items-center gap-2">
-          <Button asChild variant="ghost" className="text-sm">
-            <Link to="/login">Entrar</Link>
-          </Button>
+          {!user && (
+            <Button asChild variant="ghost" className="text-sm">
+              <Link to="/login">Entrar</Link>
+            </Button>
+          )}
           <Button
             onClick={onUpload}
             className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm"
@@ -605,9 +607,11 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
             >
               Criar projeto com IA
             </Button>
-            <Button asChild variant="outline" className="mt-2 w-full h-11 rounded-xl">
-              <Link to="/login">Entrar</Link>
-            </Button>
+            {!user && (
+              <Button asChild variant="outline" className="mt-2 w-full h-11 rounded-xl">
+                <Link to="/login">Entrar</Link>
+              </Button>
+            )}
           </SheetContent>
         </Sheet>
       </div>
