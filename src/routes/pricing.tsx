@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
+import { useAuth } from "@/lib/auth";
 import {
   Check,
   ArrowRight,
@@ -187,6 +188,9 @@ function PricingPage() {
     if (lead !== null) setLeadMounted(true);
   }, [lead]);
 
+  // Usuário autenticado controla a exibição do link "Meus Projetos" no header.
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -205,6 +209,11 @@ function PricingPage() {
             <Link to="/pricing" className="text-foreground font-medium">
               Planos
             </Link>
+            {user && (
+              <Link to="/projetos" className="hover:text-foreground transition">
+                Meus Projetos
+              </Link>
+            )}
           </nav>
           <Link
             to="/"

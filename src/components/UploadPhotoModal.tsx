@@ -39,7 +39,7 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
 import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
-import { FileDown, ShoppingBag, RefreshCw } from "lucide-react";
+import { FileDown, ShoppingBag, RefreshCw, Download, Lock } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
@@ -161,6 +161,18 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
 
   const [emblaRef, embla] = useEmblaCarousel({ loop: false, align: "start" });
   const [waOpen, setWaOpen] = useState(false);
+  // Lote 8 — upsell "Salvar Imagem em HD".
+  const [hdLeadOpen, setHdLeadOpen] = useState(false);
+  // Plano pago confiável: credits.plan vem do getUserCredits (user_roles +
+  // user_credits). Sem credits ou plan "free" → tratado como Free (fallback seguro).
+  const isPaidUser = !!credits && credits.plan !== "free";
+  const handleHdSave = (resultUrl: string) => {
+    if (isPaidUser) {
+      window.open(resultUrl, "_blank", "noopener,noreferrer");
+    } else {
+      setHdLeadOpen(true);
+    }
+  };
   // Remember the carousel slot we want to restore to after embla reinitializes
   // (e.g. when variations are restored from a draft or a version snapshot).
   const pendingScrollIdx = useRef<number | null>(null);
@@ -1022,6 +1034,21 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                 {variations[activeIdx] && (
                   <Button
                     type="button"
+                    variant="outline"
+                    onClick={() => handleHdSave(variations[activeIdx].url)}
+                    className="h-11 rounded-full px-5 text-sm"
+                  >
+                    {isPaidUser ? (
+                      <Download className="h-4 w-4 mr-1.5" />
+                    ) : (
+                      <Lock className="h-4 w-4 mr-1.5" />
+                    )}
+                    Salvar Imagem em HD
+                  </Button>
+                )}
+                {variations[activeIdx] && (
+                  <Button
+                    type="button"
                     onClick={() => setWaOpen(true)}
                     className="h-11 rounded-full px-5 text-sm bg-[#25D366] hover:bg-[#1ebe5a] text-white"
                   >
@@ -1068,6 +1095,15 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           downloadName={`ideal-space-${style}-${activeIdx + 1}.png`}
         />
       )}
+      {/* Lote 8 — upsell de download HD para usuário Free (reusa o LeadFormModal). */}
+      <LeadFormModal
+        open={hdLeadOpen}
+        onOpenChange={setHdLeadOpen}
+        source="hd-download-upsell"
+        planInterest="premium"
+        title="Desbloqueie o download em HD"
+        description="Faça upgrade para um plano pago e salve suas imagens em alta resolução."
+      />
     </Dialog>
   );
 }

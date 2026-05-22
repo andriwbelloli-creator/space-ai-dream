@@ -8,6 +8,7 @@ import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
+import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -507,6 +508,7 @@ function Index() {
 /* ----------------------------- HEADER ----------------------------- */
 
 function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void }) {
+  const { user } = useAuth();
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -530,6 +532,11 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           <Link to="/pricing" className="hover:text-foreground transition">
             Planos
           </Link>
+          {user && (
+            <Link to="/projetos" className="hover:text-foreground transition">
+              Meus Projetos
+            </Link>
+          )}
         </nav>
         <div className="hidden lg:flex items-center gap-2">
           <Button asChild variant="ghost" className="text-sm">
@@ -575,6 +582,11 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                   {item.l}
                 </a>
               ))}
+              {user && (
+                <a href="/projetos" className="py-3 border-b border-border/60">
+                  Meus Projetos
+                </a>
+              )}
             </div>
             <Button
               onClick={onUpload}
