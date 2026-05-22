@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { PresentationModal } from "@/components/PresentationModal";
@@ -7,6 +8,7 @@ import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { buildAffiliateLinks } from "@/lib/affiliate";
+import { logEvent } from "@/lib/tracking.functions";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -335,6 +337,7 @@ const faqs = [
 
 function Index() {
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
+  const trackAffiliate = useServerFn(logEvent);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [initialStyle, setInitialStyle] = useState<string | undefined>(undefined);
@@ -495,7 +498,24 @@ function Index() {
                   variant="outline"
                   className="h-11 rounded-xl justify-between"
                 >
-                  <a href={m.url} target="_blank" rel="sponsored noopener noreferrer">
+                  <a
+                    href={m.url}
+                    target="_blank"
+                    rel="sponsored noopener noreferrer"
+                    onClick={() => {
+                      void trackAffiliate({
+                        data: {
+                          event: "affiliate_click",
+                          props: {
+                            provider: m.id,
+                            productName: affiliateOpen,
+                            productUrl: m.url,
+                            source: "home_buy_dialog",
+                          },
+                        },
+                      }).catch(() => {});
+                    }}
+                  >
                     <span>Ver na {m.label}</span>
                     <ArrowUpRight className="h-4 w-4" />
                   </a>
@@ -511,6 +531,18 @@ function Index() {
                   href={`https://www.google.com/search?tbm=shop&q=${encodeURIComponent(affiliateOpen)}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    void trackAffiliate({
+                      data: {
+                        event: "affiliate_click",
+                        props: {
+                          provider: "google_shopping",
+                          productName: affiliateOpen,
+                          source: "home_buy_dialog",
+                        },
+                      },
+                    }).catch(() => {});
+                  }}
                 >
                   <span>Buscar no Google Shopping</span>
                   <ArrowUpRight className="h-4 w-4" />

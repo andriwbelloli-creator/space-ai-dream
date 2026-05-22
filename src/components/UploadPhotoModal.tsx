@@ -1225,8 +1225,10 @@ function ShoppingPanel({
           provider: affiliateProviderFromUrl(url),
           productName: item.name,
           productCategory: item.cat,
+          productUrl: url,
           roomType: roomType ?? undefined,
           style: styleId || undefined,
+          source: "shopping_list",
         },
       },
     }).catch(() => {

@@ -44,7 +44,8 @@ export const MARKETPLACES: Marketplace[] = [
     label: "Mercado Livre",
     short: "ML",
     network: "direct",
-    enabled: true,
+    // Ativa só quando houver um matt_tool real do Mercado Livre.
+    enabled: Boolean(AFFILIATE_TAGS.mercadolivre),
     build: (q) => {
       const slug = enc(q).replace(/%20/g, "-");
       const base = `https://lista.mercadolivre.com.br/${slug}`;
@@ -58,7 +59,8 @@ export const MARKETPLACES: Marketplace[] = [
     label: "Amazon BR",
     short: "AMZ",
     network: "direct",
-    enabled: true,
+    // Ativa só com a tag Amazon Associates configurada.
+    enabled: Boolean(AFFILIATE_TAGS.amazon),
     build: (q) => {
       const params = new URLSearchParams({ k: q });
       if (AFFILIATE_TAGS.amazon) params.set("tag", AFFILIATE_TAGS.amazon);
@@ -70,7 +72,8 @@ export const MARKETPLACES: Marketplace[] = [
     label: "Magalu",
     short: "MGL",
     network: "direct",
-    enabled: true,
+    // Ativa só com a loja Magazine Você cadastrada (sem ID = desativada).
+    enabled: Boolean(AFFILIATE_TAGS.magalu),
     build: (q) => {
       // Magazine Você: vendas pela sua "loja" do parceiro
       if (AFFILIATE_TAGS.magalu) {
@@ -84,7 +87,8 @@ export const MARKETPLACES: Marketplace[] = [
     label: "Shopee",
     short: "SHP",
     network: "direct",
-    enabled: true,
+    // Sem programa de afiliado Shopee configurado — desativado.
+    enabled: false,
     build: (q) => `https://shopee.com.br/search?keyword=${enc(q)}`,
   },
   {
