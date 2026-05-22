@@ -417,16 +417,18 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
         setActiveVersionId(version.id);
         setDrafts(listDrafts());
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (ticket.cancelled) return;
-      setError(e?.message ?? "Não foi possível gerar agora. Tente novamente.");
+      const message =
+        e instanceof Error ? e.message : "Não foi possível gerar agora. Tente novamente.";
+      setError(message);
       setStage("error");
       setProgress(0);
     }
   };
 
   const reset = () => {
-    abortRef.current && (abortRef.current.cancelled = true);
+    if (abortRef.current) abortRef.current.cancelled = true;
     setPreview(null);
     setVariations([]);
     setActiveIdx(0);
@@ -1187,7 +1189,7 @@ function ShoppingPanel({
       });
       setCache((prev) => ({ ...prev, [vid]: out.items }));
       void track({ data: { event: "shopping_list_loaded" } }).catch(() => {});
-    } catch (e: any) {
+    } catch {
       setErrorId(vid);
     } finally {
       setLoadingId((cur) => (cur === vid ? null : cur));
