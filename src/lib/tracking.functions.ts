@@ -16,6 +16,8 @@ export const ALLOWED_EVENTS = [
   "whatsapp_click",
   "signup_started",
   "project_saved",
+  "demo_viewed",
+  "start_project_blocked_by_auth",
 ] as const;
 
 export type FunnelEvent = (typeof ALLOWED_EVENTS)[number];

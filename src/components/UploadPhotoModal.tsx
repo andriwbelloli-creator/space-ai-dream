@@ -300,8 +300,15 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const generate = async (count: number = 1, reset: boolean = false) => {
     if (!preview) return;
     if (!user) {
+      // Marca pra home reabrir o modal de upload quando o usuário voltar logado.
+      try {
+        window.sessionStorage.setItem("is_resume_create", "1");
+      } catch {
+        /* ignore */
+      }
+      void track({ data: { event: "start_project_blocked_by_auth" } }).catch(() => {});
       toast.error("Crie sua conta grátis para gerar — leva 30 segundos.");
-      navigate({ to: "/login", search: { redirect: "/" } });
+      navigate({ to: "/login", search: { redirect: "/", mode: "signup" } });
       return;
     }
     if (credits && !credits.unlimited && credits.balance < count) {
@@ -1008,7 +1015,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                   className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
                 >
                   <Wand2 className="h-4 w-4 mr-1.5" />
-                  {generating ? "Gerando…" : !user ? "Entrar para gerar" : "Gerar com IA"}
+                  {generating ? "Gerando…" : !user ? "Criar conta para gerar" : "Gerar com IA"}
                 </Button>
                 <Button
                   onClick={() => generate(3, true)}
@@ -1075,6 +1082,12 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
               Fechar
             </Button>
           </div>
+          {!user && (
+            <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
+              Conta gratuita · leva menos de 1 minuto · seu antes/depois fica salvo em Meus
+              Projetos.
+            </p>
+          )}
           {user && credits && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
               {credits.unlimited

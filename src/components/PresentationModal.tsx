@@ -8,9 +8,11 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   before: string;
   after: string;
+  /** Abre o fluxo de criação a partir do CTA primário da demo. */
+  onCreate?: () => void;
 };
 
-export function PresentationModal({ open, onOpenChange, before, after }: Props) {
+export function PresentationModal({ open, onOpenChange, before, after, onCreate }: Props) {
   const steps = [
     {
       icon: <ImageIcon className="h-4 w-4" />,
@@ -93,7 +95,10 @@ export function PresentationModal({ open, onOpenChange, before, after }: Props) 
 
             <div className="mt-auto pt-6 flex flex-col sm:flex-row gap-2">
               <Button
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  onOpenChange(false);
+                  onCreate?.();
+                }}
                 className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1"
               >
                 Criar meu primeiro projeto <ArrowRight className="ml-1 h-4 w-4" />

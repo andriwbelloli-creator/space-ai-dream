@@ -336,8 +336,9 @@ const faqs = [
 /* ----------------------------- PAGE ----------------------------- */
 
 function Index() {
+  const { user } = useAuth();
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
-  const trackAffiliate = useServerFn(logEvent);
+  const track = useServerFn(logEvent);
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [initialStyle, setInitialStyle] = useState<string | undefined>(undefined);
@@ -366,6 +367,9 @@ function Index() {
 
   const handlePresentation = (open: boolean) => {
     setPresentationOpen(open);
+    if (open) {
+      void track({ data: { event: "demo_viewed" } }).catch(() => {});
+    }
     if (!open) {
       try {
         window.localStorage.setItem("is_presentation_seen", "1");
@@ -394,6 +398,26 @@ function Index() {
     setInitialStyle(styleId);
     setUploadOpen(true);
   };
+
+  // Retoma o fluxo de criação após login: se o usuário foi mandado ao /login
+  // pelo muro de geração, reabrimos o modal de upload quando ele volta logado.
+  useEffect(() => {
+    if (!user) return;
+    let flag: string | null = null;
+    try {
+      flag = window.sessionStorage.getItem("is_resume_create");
+    } catch {
+      /* ignore */
+    }
+    if (flag === "1") {
+      try {
+        window.sessionStorage.removeItem("is_resume_create");
+      } catch {
+        /* ignore */
+      }
+      openUpload();
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -435,6 +459,7 @@ function Index() {
       <PresentationModal
         open={presentationOpen}
         onOpenChange={handlePresentation}
+        onCreate={openUpload}
         before={emptyLiving}
         after={decoratedLiving}
       />
@@ -503,7 +528,7 @@ function Index() {
                     target="_blank"
                     rel="sponsored noopener noreferrer"
                     onClick={() => {
-                      void trackAffiliate({
+                      void track({
                         data: {
                           event: "affiliate_click",
                           props: {
@@ -532,7 +557,7 @@ function Index() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
-                    void trackAffiliate({
+                    void track({
                       data: {
                         event: "affiliate_click",
                         props: {
