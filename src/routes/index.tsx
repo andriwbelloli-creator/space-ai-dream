@@ -1478,6 +1478,27 @@ function Pricing({
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
             Comece grátis e evolua quando precisar — do 2D rápido aos recursos profissionais.
           </p>
+          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-xs font-medium text-accent">
+            <Sparkles className="h-3.5 w-3.5" /> Planos a partir de R$ 29,90/mês
+          </div>
+        </div>
+
+        {/* Reforço visual de monetização — iscas de conversão */}
+        <div className="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            { icon: Wand2, t: "Transforme seu ambiente em minutos" },
+            { icon: Gift, t: "3 gerações grátis para testar" },
+            { icon: ShieldCheck, t: "Sem marca d'água nos planos pagos" },
+            { icon: ShoppingBag, t: "Receba orçamento completo pelo WhatsApp" },
+          ].map((v) => (
+            <div
+              key={v.t}
+              className="flex items-start gap-2.5 rounded-2xl border bg-card px-4 py-3.5"
+            >
+              <v.icon className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+              <span className="text-xs sm:text-sm leading-snug">{v.t}</span>
+            </div>
+          ))}
         </div>
 
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">

@@ -168,6 +168,14 @@ const FAQ = [
   },
 ];
 
+/** Microcopy curto de público-alvo por plano — só exibição, não altera plans.ts. */
+const PLAN_AUDIENCE: Record<string, string> = {
+  free: "Para testar a IA",
+  starter: "Para um ambiente",
+  premium: "Para a casa toda",
+  pro: "Para clientes e equipes",
+};
+
 function PricingPage() {
   const [cycle, setCycle] = useState<Cycle>("monthly");
   const isAnnual = cycle === "annual";
@@ -252,14 +260,17 @@ function PricingPage() {
               return (
                 <div
                   key={p.id}
-                  className={`relative rounded-3xl p-7 flex flex-col border bg-card ${p.highlight ? "ring-2 ring-accent shadow-2xl" : ""}`}
+                  className={`relative rounded-3xl p-7 flex flex-col border bg-card transition ${p.highlight ? "ring-2 ring-accent shadow-2xl bg-accent/[0.04] lg:-translate-y-2" : ""}`}
                 >
                   {p.highlight && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent text-accent-foreground text-[10px] uppercase tracking-widest px-3 py-1">
-                      Mais escolhido
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent text-accent-foreground text-[10px] font-semibold uppercase tracking-widest px-3 py-1 shadow-lg">
+                      ★ Mais escolhido
                     </span>
                   )}
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-accent">
+                    {PLAN_AUDIENCE[p.id]}
+                  </div>
+                  <div className="mt-1.5 flex items-center gap-2 text-sm text-muted-foreground">
                     {p.id === "pro" && <Crown className="h-4 w-4 text-accent" />}
                     {p.name}
                   </div>
@@ -314,6 +325,23 @@ function PricingPage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* Reforço de valor — microcopy de conversão dos planos */}
+          <div className="mt-8 grid sm:grid-cols-3 gap-3">
+            {[
+              { icon: ShieldCheck, t: "Sem marca d'água nos planos pagos" },
+              { icon: Sparkles, t: "Mais gerações para testar estilos" },
+              { icon: Zap, t: "Troque de plano quando quiser, sem fidelidade" },
+            ].map((v) => (
+              <div
+                key={v.t}
+                className="flex items-center gap-2.5 rounded-2xl border bg-card px-4 py-3 text-sm"
+              >
+                <v.icon className="h-4 w-4 text-accent shrink-0" />
+                <span>{v.t}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
