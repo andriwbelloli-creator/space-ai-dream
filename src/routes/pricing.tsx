@@ -148,24 +148,24 @@ const DIFFERENTIALS = [
 
 const FAQ = [
   {
-    q: "Posso trocar de plano a qualquer momento?",
-    a: "Sim. Você pode subir ou descer de plano quando quiser — cobramos apenas a diferença proporcional.",
+    q: "Já existe cobrança nos planos?",
+    a: "Não. Nesta etapa o uso é gratuito. Os planos pagos serão liberados no lançamento — crie sua conta agora para garantir acesso antecipado.",
+  },
+  {
+    q: "Vou poder trocar de plano depois?",
+    a: "Sim. Quando os planos pagos forem lançados, será possível subir ou descer de plano quando quiser.",
   },
   {
     q: "As gerações não usadas acumulam?",
-    a: "As gerações são mensais e renovam todo mês. No plano anual, oferecemos um bônus inicial de gerações.",
+    a: "As gerações serão mensais e renovam a cada mês. As regras finais serão confirmadas no lançamento dos planos.",
   },
   {
-    q: "O plano Pro tem nota fiscal?",
-    a: "Sim. Emitimos NF-e para todos os planos pagos, com CNPJ ou CPF.",
-  },
-  {
-    q: "Posso cancelar quando quiser?",
-    a: "Sim, sem multa. Você mantém o acesso até o fim do ciclo já pago.",
+    q: "Os planos terão nota fiscal?",
+    a: "Sim. Quando os planos pagos forem lançados, emitiremos nota fiscal para todos os planos.",
   },
   {
     q: "Como funciona o módulo para imobiliárias?",
-    a: "Oferecemos pacotes por anúncio ou licença por equipe. Fale com vendas para um plano sob medida.",
+    a: "Teremos pacotes por anúncio ou licença por equipe. Fale com vendas para saber mais.",
   },
 ];
 

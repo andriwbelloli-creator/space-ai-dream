@@ -67,8 +67,10 @@ const featuredBaPair = pair("ba-bathroom");
 const showcasePair = pair("show-kitchen");
 
 // Modais pesados carregados sob demanda — reduz o JS inicial e melhora o LCP.
+/** Import isolado do modal de upload — permite pré-carregar o chunk. */
+const loadUploadModal = () => import("@/components/UploadPhotoModal");
 const UploadPhotoModal = lazy(() =>
-  import("@/components/UploadPhotoModal").then((m) => ({ default: m.UploadPhotoModal })),
+  loadUploadModal().then((m) => ({ default: m.UploadPhotoModal })),
 );
 const LeadFormModal = lazy(() =>
   import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
@@ -251,10 +253,10 @@ const gallery: ReadonlyArray<{
 const RANKING_META: Record<string, { title: string; sub: string }> = {
   "rank-minimal-bedroom": {
     title: "Quarto minimalista",
-    sub: "1.248 curtidas · estilo Minimalista",
+    sub: "Estilo Minimalista",
   },
-  "rank-bathroom": { title: "Banheiro travertino", sub: "987 curtidas · estilo Luxo discreto" },
-  "rank-kitchen": { title: "Cozinha quiet luxury", sub: "812 curtidas · estilo Luxo discreto" },
+  "rank-bathroom": { title: "Banheiro travertino", sub: "Estilo Luxo discreto" },
+  "rank-kitchen": { title: "Cozinha quiet luxury", sub: "Estilo Luxo discreto" },
 };
 const ranking = imagesFor("ranking").map((i, idx) => ({
   pos: idx + 1,
@@ -299,8 +301,8 @@ const faqs = [
     a: "Não. Suas fotos são privadas e nunca são publicadas sem sua autorização explícita.",
   },
   {
-    q: "Posso cancelar a assinatura quando quiser?",
-    a: "Sim. O cancelamento é simples e pode ser feito a qualquer momento dentro da sua conta.",
+    q: "Já existe cobrança ou assinatura paga?",
+    a: "Ainda não. Nesta etapa o uso é gratuito — os planos pagos serão liberados no lançamento, sem cobrança agora.",
   },
 ];
 
@@ -325,17 +327,13 @@ function Index() {
     if (lead !== null) setLeadMounted(true);
   }, [lead]);
 
+  // Pré-carrega o chunk do modal de upload após o load — assim o primeiro
+  // clique no CTA "Criar projeto com IA" abre o modal na hora.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const seen = window.localStorage.getItem("is_presentation_seen");
-      if (!seen) {
-        const t = window.setTimeout(() => setPresentationOpen(true), 900);
-        return () => window.clearTimeout(t);
-      }
-    } catch {
-      /* ignore */
-    }
+    const t = window.setTimeout(() => {
+      void loadUploadModal();
+    }, 1200);
+    return () => window.clearTimeout(t);
   }, []);
 
   const handlePresentation = (open: boolean) => {
@@ -653,7 +651,7 @@ function Hero({
         <div className="lg:col-span-6 is-fade-up">
           <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" /> Design de
-            interiores com IA · 2D, 5D e planta baixa
+            interiores com IA · decoração comprável
           </div>
           <h1 className="mt-5 text-[2.4rem] sm:text-5xl lg:text-[68px] leading-[1.04] tracking-[-0.02em] font-semibold">
             Transforme espaços vazios em{" "}
@@ -661,8 +659,8 @@ function Hero({
             com IA.
           </h1>
           <p className="mt-4 text-[15px] sm:text-lg text-muted-foreground max-w-xl">
-            Comece com geração 2D rápida e evolua para orçamento, lista de compras e recursos de
-            planta baixa e projeto arquitetônico. Tudo em uma plataforma só.
+            Envie a foto do seu ambiente, escolha um estilo e veja a IA decorar em segundos — com
+            lista de compras e orçamento estimado de produtos reais para comprar.
           </p>
 
           <div className="mt-7 flex flex-col sm:flex-row gap-3">
@@ -1333,21 +1331,20 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
-            kicker="Ranking da semana"
+            kicker="Inspirações"
             title={
               <>
-                Os projetos <span className="font-serif italic font-normal">mais curtidos</span>{" "}
-                pela comunidade
+                Ambientes para <span className="font-serif italic font-normal">se inspirar</span>
               </>
             }
-            sub="Top 3 da semana — imagens exclusivas desta seção, separadas da galeria e dos antes/depois."
+            sub="Exemplos de transformações criadas com IA na plataforma."
           />
           <Button
             onClick={onUpload}
             variant="outline"
             className="rounded-full h-11 px-5 text-sm hidden sm:inline-flex"
           >
-            <Sparkles className="h-4 w-4 mr-1.5" /> Entrar no ranking
+            <Sparkles className="h-4 w-4 mr-1.5" /> Criar o meu projeto
           </Button>
         </div>
 
@@ -1365,7 +1362,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
                   className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04] transition-transform duration-[1200ms]"
                 />
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background text-[10px] uppercase tracking-widest px-2.5 py-1">
-                  #{r.pos} · {r.room ?? "ambiente"}
+                  {r.room ?? "ambiente"}
                 </span>
                 {r.style && (
                   <span className="absolute top-3 right-3 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 text-foreground">
