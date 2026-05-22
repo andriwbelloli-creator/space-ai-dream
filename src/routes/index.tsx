@@ -512,7 +512,9 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-        <IdealSpaceLogo />
+        <Link to="/" aria-label="Ideal Space — página inicial">
+          <IdealSpaceLogo />
+        </Link>
         <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
           <button onClick={onDemo} className="hover:text-foreground transition">
             Como funciona
@@ -561,7 +563,9 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           <SheetContent side="right" className="w-[86%] sm:w-[380px]">
             <SheetHeader>
               <SheetTitle>
-                <IdealSpaceLogo />
+                <Link to="/" aria-label="Ideal Space — página inicial">
+                  <IdealSpaceLogo />
+                </Link>
               </SheetTitle>
             </SheetHeader>
             <div className="mt-6 flex flex-col gap-1 text-base">
@@ -576,7 +580,14 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                 <a
                   key={item.l}
                   href={item.href}
-                  onClick={item.onClick}
+                  onClick={
+                    item.onClick
+                      ? (e) => {
+                          e.preventDefault();
+                          item.onClick!();
+                        }
+                      : undefined
+                  }
                   className="py-3 border-b border-border/60"
                 >
                   {item.l}
@@ -1286,7 +1297,13 @@ function InspirationGallery({ onUpload }: { onUpload: () => void }) {
                     {g.tags.join(" · ")}
                   </div>
                 </div>
-                <Button size="sm" variant="ghost" className="text-xs shrink-0">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs shrink-0"
+                  onClick={g.soon ? undefined : onUpload}
+                  disabled={g.soon}
+                >
                   {g.cta} <ChevronRight className="h-3 w-3 ml-0.5" />
                 </Button>
               </div>
@@ -1716,7 +1733,9 @@ function Footer() {
         <div className="grid lg:grid-cols-[1.4fr_3fr] gap-10">
           <div>
             <div className="text-background">
-              <IdealSpaceLogo />
+              <Link to="/" aria-label="Ideal Space — página inicial">
+                <IdealSpaceLogo />
+              </Link>
             </div>
             <p className="mt-5 text-sm text-background/60 max-w-sm">
               Plataforma de design de interiores com IA. Geração 2D rápida, planejamento 5D e

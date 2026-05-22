@@ -350,8 +350,20 @@ function LoginPage() {
                 {mode === "signup" && (
                   <p className="text-center text-xs leading-relaxed text-muted-foreground">
                     Ao criar uma conta você concorda com os{" "}
-                    <span className="font-medium text-foreground">Termos de uso</span> e a{" "}
-                    <span className="font-medium text-foreground">Política de privacidade</span>.
+                    <a
+                      href="/legal#termos"
+                      className="font-medium text-foreground underline underline-offset-2 hover:text-accent"
+                    >
+                      Termos de uso
+                    </a>{" "}
+                    e a{" "}
+                    <a
+                      href="/legal#privacidade"
+                      className="font-medium text-foreground underline underline-offset-2 hover:text-accent"
+                    >
+                      Política de privacidade
+                    </a>
+                    .
                   </p>
                 )}
               </form>
