@@ -49,6 +49,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { useCredits } from "@/hooks/use-credits";
+import { useServerFn } from "@tanstack/react-start";
+import { logAffiliateClick } from "@/lib/tracking.functions";
 
 type Props = {
   open: boolean;
@@ -1072,6 +1074,21 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
 
 /* ------------------------- Shopping panel ------------------------- */
 
+/** Deriva o nome do provider a partir do host da URL de destino (sem PII). */
+function affiliateProviderFromUrl(url: string): string {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    if (host.includes("amazon")) return "amazon";
+    if (host.includes("mercadolivre") || host.includes("mercadolibre")) return "mercadolivre";
+    if (host.includes("magazinevoce") || host.includes("magazineluiza")) return "magalu";
+    if (host.includes("shopee")) return "shopee";
+    if (host.includes("google")) return "google_shopping";
+    return host.replace(/^www\./, "") || "desconhecido";
+  } catch {
+    return "desconhecido";
+  }
+}
+
 function ShoppingPanel({
   styleName,
   variationLabel,
@@ -1088,6 +1105,7 @@ function ShoppingPanel({
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<string | null>(null);
   const [leadOpen, setLeadOpen] = useState(false);
+  const trackAffiliateClick = useServerFn(logAffiliateClick);
 
   const roomType = variation?.roomType;
   const vid = variation?.id;
@@ -1141,6 +1159,33 @@ function ShoppingPanel({
       (links.find((m) => m.id === "amazon") ?? links[0])?.url ??
       `https://www.google.com/search?tbm=shop&q=${encodeURIComponent(name)}`
     );
+  };
+
+  // Lote 6A — registra a intenção de clique de afiliado antes de redirecionar.
+  // Fire-and-forget: o tracking nunca bloqueia nem atrasa a abertura do link.
+  const handleAffiliateClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: BudgetItem,
+    url: string,
+  ) => {
+    // Cliques modificados (ctrl/cmd/shift/alt) seguem o comportamento nativo.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    void trackAffiliateClick({
+      data: {
+        provider: affiliateProviderFromUrl(url),
+        productName: item.name,
+        productCategory: item.cat,
+        roomType: roomType ?? undefined,
+        style: styleId || undefined,
+        destinationUrl: url,
+        timestamp: new Date().toISOString(),
+      },
+    }).catch(() => {
+      /* log falhou — sem impacto: o link abre mesmo assim */
+    });
+    // window.open síncrono (dentro do gesto) — evita bloqueio de pop-up.
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const onDownload = () => {
@@ -1203,6 +1248,7 @@ function ShoppingPanel({
                   href={buyUrl(it.name)}
                   target="_blank"
                   rel="sponsored noopener noreferrer"
+                  onClick={(e) => handleAffiliateClick(e, it, buyUrl(it.name))}
                   className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60"
                 >
                   <div className="min-w-0">
