@@ -10,7 +10,14 @@ type Props = {
   priority?: boolean;
 };
 
-export function BeforeAfter({ before, after, alt = "", auto = false, className = "", priority }: Props) {
+export function BeforeAfter({
+  before,
+  after,
+  alt = "",
+  auto = false,
+  className = "",
+  priority,
+}: Props) {
   const [pos, setPos] = useState(50);
   const [dragging, setDragging] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -43,12 +50,27 @@ export function BeforeAfter({ before, after, alt = "", auto = false, className =
     if (auto) return;
     const big = e.shiftKey ? 10 : 1;
     switch (e.key) {
-      case "ArrowLeft":  e.preventDefault(); bump(-big); break;
-      case "ArrowRight": e.preventDefault(); bump(+big); break;
-      case "Home":       e.preventDefault(); setPos(2); break;
-      case "End":        e.preventDefault(); setPos(98); break;
+      case "ArrowLeft":
+        e.preventDefault();
+        bump(-big);
+        break;
+      case "ArrowRight":
+        e.preventDefault();
+        bump(+big);
+        break;
+      case "Home":
+        e.preventDefault();
+        setPos(2);
+        break;
+      case "End":
+        e.preventDefault();
+        setPos(98);
+        break;
       case " ":
-      case "Enter":      e.preventDefault(); setPos(50); break;
+      case "Enter":
+        e.preventDefault();
+        setPos(50);
+        break;
       default:
         if (e.key >= "0" && e.key <= "9") {
           e.preventDefault();
@@ -68,18 +90,36 @@ export function BeforeAfter({ before, after, alt = "", auto = false, className =
     <div
       ref={ref}
       className={`relative overflow-hidden rounded-3xl select-none touch-none ${className}`}
-      onPointerDown={(e) => { setDragging(true); move(e.clientX); }}
+      onPointerDown={(e) => {
+        setDragging(true);
+        move(e.clientX);
+      }}
       onPointerMove={(e) => dragging && move(e.clientX)}
       onPointerUp={() => setDragging(false)}
       onPointerLeave={() => setDragging(false)}
       onDoubleClick={() => setPos(50)}
     >
-      <img src={after} alt={alt} className="block w-full h-full object-cover" loading={priority ? "eager" : "lazy"} />
+      <img
+        src={after}
+        alt={alt}
+        className="block w-full h-full object-cover"
+        loading={priority ? "eager" : "lazy"}
+      />
       <div className="absolute inset-0 overflow-hidden" style={{ width: `${pos}%` }}>
-        <img src={before} alt="" className="block h-full w-auto max-w-none object-cover" style={{ width: `${10000 / pos}%` }} loading={priority ? "eager" : "lazy"} />
+        <img
+          src={before}
+          alt=""
+          className="block h-full w-auto max-w-none object-cover"
+          style={{ width: `${10000 / pos}%` }}
+          loading={priority ? "eager" : "lazy"}
+        />
       </div>
-      <div className="pointer-events-none absolute top-3 left-3 rounded-full bg-black/60 text-white text-[10px] font-medium tracking-widest uppercase px-2.5 py-1 backdrop-blur">Antes</div>
-      <div className="pointer-events-none absolute top-3 right-3 rounded-full bg-accent text-accent-foreground text-[10px] font-medium tracking-widest uppercase px-2.5 py-1">Depois</div>
+      <div className="pointer-events-none absolute top-3 left-3 rounded-full bg-black/60 text-white text-[10px] font-medium tracking-widest uppercase px-2.5 py-1 backdrop-blur">
+        Antes
+      </div>
+      <div className="pointer-events-none absolute top-3 right-3 rounded-full bg-accent text-accent-foreground text-[10px] font-medium tracking-widest uppercase px-2.5 py-1">
+        Depois
+      </div>
 
       {/* Divider + draggable/keyboard handle */}
       <div
@@ -104,7 +144,9 @@ export function BeforeAfter({ before, after, alt = "", auto = false, className =
             focused ? "ring-2 ring-accent ring-offset-2 ring-offset-background" : ""
           }`}
         >
-          <svg viewBox="0 0 24 24" className="h-4 w-4 text-foreground"><path fill="currentColor" d="M8 7l-5 5 5 5V7zm8 0v10l5-5-5-5z"/></svg>
+          <svg viewBox="0 0 24 24" className="h-4 w-4 text-foreground">
+            <path fill="currentColor" d="M8 7l-5 5 5 5V7zm8 0v10l5-5-5-5z" />
+          </svg>
         </button>
       </div>
 
@@ -113,9 +155,16 @@ export function BeforeAfter({ before, after, alt = "", auto = false, className =
         <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2 z-10">
           <div
             className="relative flex-1 h-1.5 rounded-full bg-white/30 backdrop-blur cursor-pointer pointer-events-auto"
-            onPointerDown={(e) => { e.stopPropagation(); setDragging(true); move(e.clientX); }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setDragging(true);
+              move(e.clientX);
+            }}
             onPointerMove={(e) => dragging && move(e.clientX)}
-            onPointerUp={(e) => { e.stopPropagation(); setDragging(false); }}
+            onPointerUp={(e) => {
+              e.stopPropagation();
+              setDragging(false);
+            }}
           >
             {[25, 50, 75].map((m) => (
               <span

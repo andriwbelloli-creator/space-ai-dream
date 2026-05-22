@@ -7,13 +7,7 @@ import { GoogleButton } from "@/components/GoogleButton";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import {
-  Loader2,
-  ArrowLeft,
-  CheckCircle2,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react";
 
 type Mode = "signin" | "signup" | "forgot";
 
@@ -289,7 +283,11 @@ function LoginPage() {
                         aria-pressed={showPassword}
                         tabIndex={-1}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                     {mode === "signup" && password.length > 0 && (
@@ -333,7 +331,12 @@ function LoginPage() {
                     />
                   </div>
                 )}
-                <Button type="submit" disabled={loading} aria-busy={loading} className="h-11 w-full">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  aria-busy={loading}
+                  className="h-11 w-full"
+                >
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : mode === "signin" ? (

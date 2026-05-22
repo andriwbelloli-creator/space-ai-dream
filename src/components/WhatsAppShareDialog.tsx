@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +34,9 @@ const phoneSchema = z
 
 const formSchema = z.object({
   phone: phoneSchema,
-  consent: z.literal(true, { errorMap: () => ({ message: "Você precisa autorizar o uso do seu número." }) }),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "Você precisa autorizar o uso do seu número." }),
+  }),
 });
 
 const CONSENT_KEY = "is_wa_consent";
@@ -42,7 +50,13 @@ function formatBR(d: string) {
   return `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7, 11)}`;
 }
 
-export function WhatsAppShareDialog({ open, onOpenChange, projectName, imageUrl, downloadName }: Props) {
+export function WhatsAppShareDialog({
+  open,
+  onOpenChange,
+  projectName,
+  imageUrl,
+  downloadName,
+}: Props) {
   const [phone, setPhone] = useState("");
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +71,9 @@ export function WhatsAppShareDialog({ open, onOpenChange, projectName, imageUrl,
         if (parsed.phone) setPhone(formatBR(parsed.phone));
         if (parsed.consent) setConsent(true);
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, [open]);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -76,7 +92,9 @@ export function WhatsAppShareDialog({ open, onOpenChange, projectName, imageUrl,
         CONSENT_KEY,
         JSON.stringify({ phone: digits, consent: true, ts: Date.now() }),
       );
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
 
     const msg =
       `Olá! Acabei de gerar um projeto no Ideal Space: ${projectName}. ` +
@@ -107,7 +125,8 @@ export function WhatsAppShareDialog({ open, onOpenChange, projectName, imageUrl,
           <div className="rounded-2xl border bg-muted/40 p-3 flex items-center gap-3">
             <img src={imageUrl} alt="" className="h-14 w-20 rounded-lg object-cover border" />
             <div className="text-xs text-muted-foreground leading-relaxed flex-1">
-              O WhatsApp não permite anexar imagens automaticamente. Baixe primeiro e anexe na conversa.
+              O WhatsApp não permite anexar imagens automaticamente. Baixe primeiro e anexe na
+              conversa.
             </div>
             <a
               href={imageUrl}
@@ -121,7 +140,9 @@ export function WhatsAppShareDialog({ open, onOpenChange, projectName, imageUrl,
 
         <form onSubmit={onSubmit} className="space-y-3">
           <div>
-            <Label htmlFor="wa-phone" className="text-xs">Seu WhatsApp</Label>
+            <Label htmlFor="wa-phone" className="text-xs">
+              Seu WhatsApp
+            </Label>
             <Input
               id="wa-phone"
               inputMode="tel"
@@ -145,8 +166,8 @@ export function WhatsAppShareDialog({ open, onOpenChange, projectName, imageUrl,
             />
             <span className="text-[11px] text-muted-foreground leading-relaxed">
               <ShieldCheck className="inline h-3 w-3 mr-1 text-accent" />
-              Autorizo o Ideal Space a usar meu número exclusivamente para enviar este projeto
-              e mensagens relacionadas. Posso revogar a qualquer momento. Conforme a{" "}
+              Autorizo o Ideal Space a usar meu número exclusivamente para enviar este projeto e
+              mensagens relacionadas. Posso revogar a qualquer momento. Conforme a{" "}
               <span className="text-foreground font-medium">LGPD (Lei 13.709/18)</span>.
             </span>
           </label>
@@ -165,7 +186,12 @@ export function WhatsAppShareDialog({ open, onOpenChange, projectName, imageUrl,
             >
               <MessageCircle className="h-4 w-4 mr-1.5" /> Abrir WhatsApp
             </Button>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="h-11 rounded-full px-5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="h-11 rounded-full px-5"
+            >
               Cancelar
             </Button>
           </div>

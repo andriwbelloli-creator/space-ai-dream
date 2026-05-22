@@ -80,7 +80,7 @@
   --secondary-foreground: oklch(0.22 0.015 60);
   --muted: oklch(0.95 0.01 75);
   --muted-foreground: oklch(0.5 0.015 65);
-  --accent: oklch(0.72 0.13 55);          /* warm terracotta accent */
+  --accent: oklch(0.72 0.13 55); /* warm terracotta accent */
   --accent-foreground: oklch(0.99 0.005 80);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
@@ -150,28 +150,51 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  .font-serif { font-family: var(--font-serif); }
+  .font-serif {
+    font-family: var(--font-serif);
+  }
 }
 
 /* ------------ Premium motion utilities ------------ */
 @keyframes is-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
-.is-marquee { animation: is-marquee 40s linear infinite; }
-.is-marquee-slow { animation: is-marquee 70s linear infinite; }
+.is-marquee {
+  animation: is-marquee 40s linear infinite;
+}
+.is-marquee-slow {
+  animation: is-marquee 70s linear infinite;
+}
 .is-pause-hover:hover .is-marquee,
-.is-pause-hover:hover .is-marquee-slow { animation-play-state: paused; }
+.is-pause-hover:hover .is-marquee-slow {
+  animation-play-state: paused;
+}
 
 @keyframes is-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
-.is-float { animation: is-float 6s ease-in-out infinite; }
+.is-float {
+  animation: is-float 6s ease-in-out infinite;
+}
 
 @keyframes is-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 .is-shimmer {
   background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.55), transparent);
@@ -180,21 +203,37 @@
 }
 
 @keyframes is-slider {
-  0%, 100% { left: 38%; }
-  50%      { left: 62%; }
+  0%,
+  100% {
+    left: 38%;
+  }
+  50% {
+    left: 62%;
+  }
 }
-.is-slider-auto { animation: is-slider 7s ease-in-out infinite; }
+.is-slider-auto {
+  animation: is-slider 7s ease-in-out infinite;
+}
 
 @keyframes is-fade-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.is-fade-up { animation: is-fade-up 0.7s ease-out both; }
+.is-fade-up {
+  animation: is-fade-up 0.7s ease-out both;
+}
 
 /* Soft grain for premium feel */
 .is-grain::before {
   content: "";
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   background-image: radial-gradient(oklch(0 0 0 / 0.04) 1px, transparent 1px);
   background-size: 3px 3px;
   mix-blend-mode: multiply;

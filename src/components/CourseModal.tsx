@@ -2,8 +2,19 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
-  X, GraduationCap, Sparkles, Check, Clock, Users, PlayCircle,
-  BadgeCheck, Wand2, Layers, Compass, ShoppingBag, Award,
+  X,
+  GraduationCap,
+  Sparkles,
+  Check,
+  Clock,
+  Users,
+  PlayCircle,
+  BadgeCheck,
+  Wand2,
+  Layers,
+  Compass,
+  ShoppingBag,
+  Award,
 } from "lucide-react";
 
 type Props = {
@@ -74,7 +85,8 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
       <DialogContent className="max-w-[calc(100vw-1.5rem)] sm:max-w-3xl lg:max-w-5xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto">
         <DialogTitle className="sr-only">Curso de design de interiores com IA</DialogTitle>
         <DialogDescription className="sr-only">
-          Conheça os 5 módulos, o conteúdo e o investimento do curso de decoração com IA do Ideal Space.
+          Conheça os 5 módulos, o conteúdo e o investimento do curso de decoração com IA do Ideal
+          Space.
         </DialogDescription>
         <button
           aria-label="Fechar"
@@ -89,7 +101,9 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
           <div
             aria-hidden
             className="absolute -top-32 -right-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-40"
-            style={{ background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.7), transparent 60%)" }}
+            style={{
+              background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.7), transparent 60%)",
+            }}
           />
           <div className="relative grid lg:grid-cols-[1.4fr_1fr] gap-8 items-end">
             <div>
@@ -97,11 +111,15 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
                 <GraduationCap className="h-3.5 w-3.5" /> Curso oficial Ideal Space
               </div>
               <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl tracking-[-0.02em] font-semibold leading-tight">
-                Decoração com IA <span className="font-serif italic font-normal text-accent">do briefing à entrega</span>.
+                Decoração com IA{" "}
+                <span className="font-serif italic font-normal text-accent">
+                  do briefing à entrega
+                </span>
+                .
               </h2>
               <p className="mt-3 text-background/70 max-w-xl text-sm sm:text-base">
-                Em 5 módulos práticos você aprende a transformar a Ideal Space numa máquina de projetos —
-                do estudo visual ao orçamento aprovado pelo cliente.
+                Em 5 módulos práticos você aprende a transformar a Ideal Space numa máquina de
+                projetos — do estudo visual ao orçamento aprovado pelo cliente.
               </p>
               <div className="mt-5 flex flex-wrap gap-2 text-xs text-background/80">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1.5">
@@ -117,7 +135,9 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
             </div>
 
             <div className="rounded-2xl border border-white/15 bg-white/5 backdrop-blur p-5">
-              <div className="text-[10px] uppercase tracking-[0.22em] text-background/60">Investimento</div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-background/60">
+                Investimento
+              </div>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="text-3xl sm:text-4xl font-semibold tracking-tight">R$ 497</span>
                 <span className="text-xs text-background/60 line-through">R$ 897</span>
@@ -153,15 +173,15 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
                     key={m.title}
                     onClick={() => setActiveModule(i)}
                     className={`w-full text-left rounded-2xl border p-4 transition ${
-                      active
-                        ? "border-accent bg-accent/8 ring-1 ring-accent"
-                        : "hover:bg-muted/60"
+                      active ? "border-accent bg-accent/8 ring-1 ring-accent" : "hover:bg-muted/60"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`h-9 w-9 rounded-xl grid place-items-center shrink-0 ${
-                        active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground"
-                      }`}>
+                      <div
+                        className={`h-9 w-9 rounded-xl grid place-items-center shrink-0 ${
+                          active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground"
+                        }`}
+                      >
                         {m.icon}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -174,11 +194,15 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
                             <Clock className="h-3 w-3" /> {m.duration}
                           </span>
                           <span className="text-[10px] text-muted-foreground">·</span>
-                          <span className="text-[10px] text-muted-foreground">{m.lessons} aulas</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {m.lessons} aulas
+                          </span>
                         </div>
                         <div className="mt-0.5 text-sm font-medium leading-tight">{m.title}</div>
                         {active && (
-                          <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{m.desc}</p>
+                          <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                            {m.desc}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -191,21 +215,29 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
           {/* Side: para quem é + bônus */}
           <aside className="space-y-5 lg:sticky lg:top-4 self-start">
             <div className="rounded-2xl border bg-card/60 p-4">
-              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Para quem é</div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                Para quem é
+              </div>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {FOR.map((f) => (
-                  <span key={f.t} className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-[11px]">
+                  <span
+                    key={f.t}
+                    className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-[11px]"
+                  >
                     <span className="text-accent">{f.icon}</span> {f.t}
                   </span>
                 ))}
               </div>
               <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
-                Profissionais que entregam estudos visuais, projetos residenciais ou virtual staging e querem ganhar tempo sem perder qualidade.
+                Profissionais que entregam estudos visuais, projetos residenciais ou virtual staging
+                e querem ganhar tempo sem perder qualidade.
               </p>
             </div>
 
             <div className="rounded-2xl border bg-card/60 p-4">
-              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Está incluso</div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                Está incluso
+              </div>
               <ul className="mt-2 space-y-2">
                 {PERKS.map((p) => (
                   <li key={p} className="flex items-start gap-2 text-xs">

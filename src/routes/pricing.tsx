@@ -4,8 +4,22 @@ import { Button } from "@/components/ui/button";
 import { LeadFormModal } from "@/components/LeadFormModal";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
 import {
-  Check, ArrowRight, Sparkles, Compass, Building2, Ruler, Layers, FileText,
-  Crown, Users, Zap, BadgeCheck, ShieldCheck, Briefcase, Palette, Image as ImageIcon,
+  Check,
+  ArrowRight,
+  Sparkles,
+  Compass,
+  Building2,
+  Ruler,
+  Layers,
+  FileText,
+  Crown,
+  Users,
+  Zap,
+  BadgeCheck,
+  ShieldCheck,
+  Briefcase,
+  Palette,
+  Image as ImageIcon,
 } from "lucide-react";
 
 export const Route = createFileRoute("/pricing")({
@@ -17,7 +31,10 @@ export const Route = createFileRoute("/pricing")({
         content:
           "Planos para criar projetos 2D, 5D e planta baixa com IA. Módulos profissionais para designers de interiores, arquitetos e imobiliárias.",
       },
-      { property: "og:title", content: "Planos Ideal Space — IA para projetos 2D, 5D e planta baixa" },
+      {
+        property: "og:title",
+        content: "Planos Ideal Space — IA para projetos 2D, 5D e planta baixa",
+      },
       {
         property: "og:description",
         content:
@@ -38,8 +55,7 @@ const MODULES = [
     icon: Palette,
     audience: "Designer de interiores",
     title: "Studio do Designer",
-    desc:
-      "Crie moodboards, variações de estilo e propostas com a sua identidade visual. Apresente cenários ao cliente em minutos.",
+    desc: "Crie moodboards, variações de estilo e propostas com a sua identidade visual. Apresente cenários ao cliente em minutos.",
     bullets: [
       "Moodboards automáticos por projeto",
       "Variações 2D por estilo e paleta",
@@ -55,8 +71,7 @@ const MODULES = [
     icon: Ruler,
     audience: "Arquiteto",
     title: "Arquitetônico 5D + Planta baixa",
-    desc:
-      "Conecta o projeto 2D à planta baixa, estudo de layout e referências arquitetônicas. Pensado para anteprojetos rápidos.",
+    desc: "Conecta o projeto 2D à planta baixa, estudo de layout e referências arquitetônicas. Pensado para anteprojetos rápidos.",
     bullets: [
       "Importar planta baixa e gerar variações",
       "Estudo de layout e circulação",
@@ -73,8 +88,7 @@ const MODULES = [
     icon: Building2,
     audience: "Imobiliária e corretor",
     title: "Virtual Staging para anúncios",
-    desc:
-      "Transforme fotos de imóveis vazios em ambientes decorados que vendem mais rápido. Pacotes por anúncio ou ilimitado.",
+    desc: "Transforme fotos de imóveis vazios em ambientes decorados que vendem mais rápido. Pacotes por anúncio ou ilimitado.",
     bullets: [
       "Staging em segundos para portais",
       "Estilos pensados para venda e locação",
@@ -89,20 +103,59 @@ const MODULES = [
 ];
 
 const DIFFERENTIALS = [
-  { icon: Sparkles, t: "IA dedicada a interiores", d: "Modelo afinado para preservar a estrutura real do ambiente — paredes, janelas, perspectiva." },
-  { icon: Zap, t: "Geração em segundos", d: "Pipeline otimizado para foto de celular: comprimimos antes de enviar, geramos em alta qualidade." },
-  { icon: Layers, t: "2D, 5D e planta baixa", d: "Um único projeto que evolui do antes/depois até planejamento técnico (5D e planta em breve)." },
-  { icon: FileText, t: "PDF profissional", d: "Orçamento, moodboard e proposta com a sua marca, prontos para enviar ao cliente." },
-  { icon: Users, t: "Múltiplos clientes", d: "Organize projetos por cliente, com permissões e link de compartilhamento." },
-  { icon: ShieldCheck, t: "Privacidade e LGPD", d: "Fotos privadas por padrão. Você decide o que aparece em galeria pública." },
+  {
+    icon: Sparkles,
+    t: "IA dedicada a interiores",
+    d: "Modelo afinado para preservar a estrutura real do ambiente — paredes, janelas, perspectiva.",
+  },
+  {
+    icon: Zap,
+    t: "Geração em segundos",
+    d: "Pipeline otimizado para foto de celular: comprimimos antes de enviar, geramos em alta qualidade.",
+  },
+  {
+    icon: Layers,
+    t: "2D, 5D e planta baixa",
+    d: "Um único projeto que evolui do antes/depois até planejamento técnico (5D e planta em breve).",
+  },
+  {
+    icon: FileText,
+    t: "PDF profissional",
+    d: "Orçamento, moodboard e proposta com a sua marca, prontos para enviar ao cliente.",
+  },
+  {
+    icon: Users,
+    t: "Múltiplos clientes",
+    d: "Organize projetos por cliente, com permissões e link de compartilhamento.",
+  },
+  {
+    icon: ShieldCheck,
+    t: "Privacidade e LGPD",
+    d: "Fotos privadas por padrão. Você decide o que aparece em galeria pública.",
+  },
 ];
 
 const FAQ = [
-  { q: "Posso trocar de plano a qualquer momento?", a: "Sim. Você pode subir ou descer de plano quando quiser — cobramos apenas a diferença proporcional." },
-  { q: "As gerações não usadas acumulam?", a: "As gerações são mensais e renovam todo mês. No plano anual, oferecemos um bônus inicial de gerações." },
-  { q: "O plano Pro tem nota fiscal?", a: "Sim. Emitimos NF-e para todos os planos pagos, com CNPJ ou CPF." },
-  { q: "Posso cancelar quando quiser?", a: "Sim, sem multa. Você mantém o acesso até o fim do ciclo já pago." },
-  { q: "Como funciona o módulo para imobiliárias?", a: "Oferecemos pacotes por anúncio ou licença por equipe. Fale com vendas para um plano sob medida." },
+  {
+    q: "Posso trocar de plano a qualquer momento?",
+    a: "Sim. Você pode subir ou descer de plano quando quiser — cobramos apenas a diferença proporcional.",
+  },
+  {
+    q: "As gerações não usadas acumulam?",
+    a: "As gerações são mensais e renovam todo mês. No plano anual, oferecemos um bônus inicial de gerações.",
+  },
+  {
+    q: "O plano Pro tem nota fiscal?",
+    a: "Sim. Emitimos NF-e para todos os planos pagos, com CNPJ ou CPF.",
+  },
+  {
+    q: "Posso cancelar quando quiser?",
+    a: "Sim, sem multa. Você mantém o acesso até o fim do ciclo já pago.",
+  },
+  {
+    q: "Como funciona o módulo para imobiliárias?",
+    a: "Oferecemos pacotes por anúncio ou licença por equipe. Fale com vendas para um plano sob medida.",
+  },
 ];
 
 function PricingPage() {
@@ -117,14 +170,23 @@ function PricingPage() {
       <header className="border-b border-border/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-            <span className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center text-xs">IS</span>
+            <span className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center text-xs">
+              IS
+            </span>
             Ideal Space
           </Link>
           <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground transition">Início</Link>
-            <Link to="/pricing" className="text-foreground font-medium">Planos</Link>
+            <Link to="/" className="hover:text-foreground transition">
+              Início
+            </Link>
+            <Link to="/pricing" className="text-foreground font-medium">
+              Planos
+            </Link>
           </nav>
-          <Link to="/" className="text-sm rounded-full border h-9 px-4 inline-flex items-center hover:bg-muted">
+          <Link
+            to="/"
+            className="text-sm rounded-full border h-9 px-4 inline-flex items-center hover:bg-muted"
+          >
             Voltar
           </Link>
         </div>
@@ -133,12 +195,16 @@ function PricingPage() {
       {/* Hero */}
       <section className="pt-16 sm:pt-24 pb-12 text-center">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Planos e módulos profissionais</div>
+          <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+            Planos e módulos profissionais
+          </div>
           <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl tracking-[-0.02em] font-semibold leading-[1.05]">
-            Do antes e depois ao <span className="font-serif italic font-normal">projeto completo</span>.
+            Do antes e depois ao{" "}
+            <span className="font-serif italic font-normal">projeto completo</span>.
           </h1>
           <p className="mt-5 text-muted-foreground text-lg max-w-2xl mx-auto">
-            Escolha o plano certo para você — pessoa, designer, arquiteto ou imobiliária. Sem fidelidade.
+            Escolha o plano certo para você — pessoa, designer, arquiteto ou imobiliária. Sem
+            fidelidade.
           </p>
 
           {/* Toggle */}
@@ -154,7 +220,9 @@ function PricingPage() {
               className={`rounded-full px-4 py-1.5 transition inline-flex items-center gap-2 ${cycle === "annual" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
             >
               Anual
-              <span className="text-[10px] uppercase tracking-widest rounded-full bg-accent text-accent-foreground px-1.5 py-0.5">−25%</span>
+              <span className="text-[10px] uppercase tracking-widest rounded-full bg-accent text-accent-foreground px-1.5 py-0.5">
+                −25%
+              </span>
             </button>
           </div>
         </div>
@@ -181,11 +249,15 @@ function PricingPage() {
                     {p.name}
                   </div>
                   <div className="mt-2 flex items-baseline gap-1">
-                    <span className="text-4xl font-semibold tracking-tight">{formatPlanPrice(price)}</span>
+                    <span className="text-4xl font-semibold tracking-tight">
+                      {formatPlanPrice(price)}
+                    </span>
                     {price > 0 && <span className="text-sm text-muted-foreground">/mês</span>}
                   </div>
                   {isAnnual && price > 0 && (
-                    <div className="mt-1 text-[11px] text-accent">cobrado anualmente · economize 25%</div>
+                    <div className="mt-1 text-[11px] text-accent">
+                      cobrado anualmente · economize 25%
+                    </div>
                   )}
                   <p className="mt-3 text-sm text-muted-foreground">{p.tagline}</p>
 
@@ -205,17 +277,19 @@ function PricingPage() {
                   </ul>
 
                   <Button
-                    onClick={() =>
-                      setLead({
-                        planInterest: p.id,
-                        title: p.id === "pro" ? "Fale com vendas" : undefined,
-                      })
+                    asChild={p.id !== "pro"}
+                    onClick={
+                      p.id === "pro"
+                        ? () => setLead({ planInterest: p.id, title: "Fale com vendas" })
+                        : undefined
                     }
-                    className={`mt-7 h-11 rounded-xl ${p.highlight
-                      ? "bg-accent text-accent-foreground hover:opacity-95"
-                      : "bg-foreground text-background hover:bg-foreground/90"}`}
+                    className={`mt-7 h-11 rounded-xl ${
+                      p.highlight
+                        ? "bg-accent text-accent-foreground hover:opacity-95"
+                        : "bg-foreground text-background hover:bg-foreground/90"
+                    }`}
                   >
-                    {p.cta}
+                    {p.id === "pro" ? p.cta : <Link to={p.ctaHref}>{p.cta}</Link>}
                   </Button>
                   {p.footnote && (
                     <div className="mt-2 text-[11px] text-muted-foreground text-center">
@@ -233,9 +307,12 @@ function PricingPage() {
       <section className="py-20 bg-card/40 border-y border-border/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Por que Ideal Space</div>
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+              Por que Ideal Space
+            </div>
             <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold">
-              Não é só um gerador de imagens. <span className="font-serif italic font-normal">É um estúdio.</span>
+              Não é só um gerador de imagens.{" "}
+              <span className="font-serif italic font-normal">É um estúdio.</span>
             </h2>
           </div>
           <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -257,15 +334,24 @@ function PricingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div className="max-w-2xl">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Módulos profissionais</div>
+              <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+                Módulos profissionais
+              </div>
               <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold">
-                Pensados para <span className="font-serif italic font-normal">designers, arquitetos e imobiliárias</span>.
+                Pensados para{" "}
+                <span className="font-serif italic font-normal">
+                  designers, arquitetos e imobiliárias
+                </span>
+                .
               </h2>
               <p className="mt-3 text-muted-foreground">
                 Inclusos no plano Pro. Você pode contratar módulos avulsos para sua equipe.
               </p>
             </div>
-            <a href="#contato" className="text-sm inline-flex items-center gap-1 text-accent hover:underline">
+            <a
+              href="#contato"
+              className="text-sm inline-flex items-center gap-1 text-accent hover:underline"
+            >
               Falar com vendas <ArrowRight className="h-4 w-4" />
             </a>
           </div>
@@ -283,7 +369,9 @@ function PricingPage() {
                     </span>
                   )}
                 </div>
-                <div className="mt-5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{m.audience}</div>
+                <div className="mt-5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {m.audience}
+                </div>
                 <h3 className="mt-1 text-xl font-semibold tracking-tight">{m.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{m.desc}</p>
 
@@ -319,7 +407,9 @@ function PricingPage() {
       <section className="py-16 bg-card/40 border-y border-border/60">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="text-center">
-            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Comparativo rápido</div>
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+              Comparativo rápido
+            </div>
             <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold">
               O que muda em cada plano.
             </h2>
@@ -351,7 +441,9 @@ function PricingPage() {
                   <tr key={row[0]} className="border-t border-border/60">
                     <td className="p-4">{row[0]}</td>
                     {row.slice(1).map((c, i) => (
-                      <td key={i} className={`p-4 text-center ${i === 2 ? "bg-accent/5" : ""}`}>{c}</td>
+                      <td key={i} className={`p-4 text-center ${i === 2 ? "bg-accent/5" : ""}`}>
+                        {c}
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -365,15 +457,21 @@ function PricingPage() {
       <section className="py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <div className="text-center">
-            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Dúvidas frequentes</div>
-            <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold">Antes de assinar.</h2>
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+              Dúvidas frequentes
+            </div>
+            <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold">
+              Antes de assinar.
+            </h2>
           </div>
           <div className="mt-10 divide-y divide-border/60 border-y">
             {FAQ.map((f) => (
               <details key={f.q} className="group py-5">
                 <summary className="cursor-pointer list-none flex items-center justify-between gap-4">
                   <span className="font-medium">{f.q}</span>
-                  <span className="text-muted-foreground group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+                  <span className="text-muted-foreground group-open:rotate-45 transition-transform text-xl leading-none">
+                    +
+                  </span>
                 </summary>
                 <p className="mt-3 text-sm text-muted-foreground">{f.a}</p>
               </details>
@@ -387,22 +485,24 @@ function PricingPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="rounded-3xl border bg-foreground text-background p-8 sm:p-12 flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
             <div className="max-w-xl">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Pronto para começar</div>
+              <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+                Pronto para começar
+              </div>
               <h2 className="mt-3 text-2xl sm:text-3xl tracking-[-0.02em] font-semibold">
                 Crie sua primeira proposta hoje.
               </h2>
               <p className="mt-3 text-background/70 text-sm">
-                Comece grátis em segundos. Para equipes e imobiliárias, montamos um plano sob medida.
+                Comece grátis em segundos. Para equipes e imobiliárias, montamos um plano sob
+                medida.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => setLead({ planInterest: "free" })}
-                className="inline-flex items-center rounded-full bg-accent text-accent-foreground h-11 px-5 text-sm font-medium"
+              <Link
+                to="/login"
+                className="inline-flex items-center rounded-full bg-accent text-accent-foreground h-11 px-5 text-sm font-medium hover:opacity-90"
               >
                 Começar grátis <ArrowRight className="h-4 w-4 ml-1" />
-              </button>
+              </Link>
               <button
                 type="button"
                 onClick={() => setLead({ title: "Fale com vendas" })}

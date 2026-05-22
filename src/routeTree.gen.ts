@@ -11,11 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ParaImobiliariasRouteImport } from './routes/para-imobiliarias'
+import { Route as ParaDesignersRouteImport } from './routes/para-designers'
+import { Route as ParaArquitetosRouteImport } from './routes/para-arquitetos'
+import { Route as OrcamentoDesignInterioresRouteImport } from './routes/orcamento-design-interiores'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AmbientesRoomSlugRouteImport } from './routes/ambientes.$roomSlug'
 import { Route as AuthenticatedProjetosRouteImport } from './routes/_authenticated/projetos'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -28,6 +33,27 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParaImobiliariasRoute = ParaImobiliariasRouteImport.update({
+  id: '/para-imobiliarias',
+  path: '/para-imobiliarias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParaDesignersRoute = ParaDesignersRouteImport.update({
+  id: '/para-designers',
+  path: '/para-designers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParaArquitetosRoute = ParaArquitetosRouteImport.update({
+  id: '/para-arquitetos',
+  path: '/para-arquitetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrcamentoDesignInterioresRoute =
+  OrcamentoDesignInterioresRouteImport.update({
+    id: '/orcamento-design-interiores',
+    path: '/orcamento-design-interiores',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -52,6 +78,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AmbientesRoomSlugRoute = AmbientesRoomSlugRouteImport.update({
+  id: '/ambientes/$roomSlug',
+  path: '/ambientes/$roomSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProjetosRoute = AuthenticatedProjetosRouteImport.update({
   id: '/projetos',
   path: '/projetos',
@@ -62,18 +93,28 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
+  '/para-arquitetos': typeof ParaArquitetosRoute
+  '/para-designers': typeof ParaDesignersRoute
+  '/para-imobiliarias': typeof ParaImobiliariasRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/projetos': typeof AuthenticatedProjetosRoute
+  '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
+  '/para-arquitetos': typeof ParaArquitetosRoute
+  '/para-designers': typeof ParaDesignersRoute
+  '/para-imobiliarias': typeof ParaImobiliariasRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/projetos': typeof AuthenticatedProjetosRoute
+  '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 export interface FileRoutesById {
@@ -82,9 +123,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
+  '/para-arquitetos': typeof ParaArquitetosRoute
+  '/para-designers': typeof ParaDesignersRoute
+  '/para-imobiliarias': typeof ParaImobiliariasRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/projetos': typeof AuthenticatedProjetosRoute
+  '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
 }
 export interface FileRouteTypes {
@@ -93,18 +139,28 @@ export interface FileRouteTypes {
     | '/'
     | '/legal'
     | '/login'
+    | '/orcamento-design-interiores'
+    | '/para-arquitetos'
+    | '/para-designers'
+    | '/para-imobiliarias'
     | '/pricing'
     | '/reset-password'
     | '/projetos'
+    | '/ambientes/$roomSlug'
     | '/auth/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/legal'
     | '/login'
+    | '/orcamento-design-interiores'
+    | '/para-arquitetos'
+    | '/para-designers'
+    | '/para-imobiliarias'
     | '/pricing'
     | '/reset-password'
     | '/projetos'
+    | '/ambientes/$roomSlug'
     | '/auth/callback'
   id:
     | '__root__'
@@ -112,9 +168,14 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/legal'
     | '/login'
+    | '/orcamento-design-interiores'
+    | '/para-arquitetos'
+    | '/para-designers'
+    | '/para-imobiliarias'
     | '/pricing'
     | '/reset-password'
     | '/_authenticated/projetos'
+    | '/ambientes/$roomSlug'
     | '/auth/callback'
   fileRoutesById: FileRoutesById
 }
@@ -123,8 +184,13 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
+  OrcamentoDesignInterioresRoute: typeof OrcamentoDesignInterioresRoute
+  ParaArquitetosRoute: typeof ParaArquitetosRoute
+  ParaDesignersRoute: typeof ParaDesignersRoute
+  ParaImobiliariasRoute: typeof ParaImobiliariasRoute
   PricingRoute: typeof PricingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  AmbientesRoomSlugRoute: typeof AmbientesRoomSlugRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
 }
 
@@ -142,6 +208,34 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/para-imobiliarias': {
+      id: '/para-imobiliarias'
+      path: '/para-imobiliarias'
+      fullPath: '/para-imobiliarias'
+      preLoaderRoute: typeof ParaImobiliariasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/para-designers': {
+      id: '/para-designers'
+      path: '/para-designers'
+      fullPath: '/para-designers'
+      preLoaderRoute: typeof ParaDesignersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/para-arquitetos': {
+      id: '/para-arquitetos'
+      path: '/para-arquitetos'
+      fullPath: '/para-arquitetos'
+      preLoaderRoute: typeof ParaArquitetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orcamento-design-interiores': {
+      id: '/orcamento-design-interiores'
+      path: '/orcamento-design-interiores'
+      fullPath: '/orcamento-design-interiores'
+      preLoaderRoute: typeof OrcamentoDesignInterioresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -179,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ambientes/$roomSlug': {
+      id: '/ambientes/$roomSlug'
+      path: '/ambientes/$roomSlug'
+      fullPath: '/ambientes/$roomSlug'
+      preLoaderRoute: typeof AmbientesRoomSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/projetos': {
       id: '/_authenticated/projetos'
       path: '/projetos'
@@ -206,8 +307,13 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
+  OrcamentoDesignInterioresRoute: OrcamentoDesignInterioresRoute,
+  ParaArquitetosRoute: ParaArquitetosRoute,
+  ParaDesignersRoute: ParaDesignersRoute,
+  ParaImobiliariasRoute: ParaImobiliariasRoute,
   PricingRoute: PricingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  AmbientesRoomSlugRoute: AmbientesRoomSlugRoute,
   AuthCallbackRoute: AuthCallbackRoute,
 }
 export const routeTree = rootRouteImport

@@ -36,10 +36,7 @@ export const Route = createFileRoute("/auth/callback")({
     next: SAFE_REDIRECT(search.next),
   }),
   head: () => ({
-    meta: [
-      { title: "Confirmando — Ideal Space" },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
+    meta: [{ title: "Confirmando — Ideal Space" }, { name: "robots", content: "noindex,nofollow" }],
   }),
   component: AuthCallback,
 });

@@ -8,17 +8,17 @@ export type BudgetItem = {
 };
 
 export type BudgetData = {
-  project: string;       // e.g. "Sala · Japandi"
+  project: string; // e.g. "Sala · Japandi"
   email?: string;
   whatsapp?: string;
   items: ReadonlyArray<BudgetItem>;
-  estimate: string;      // e.g. "R$ 3.000 – 8.000"
+  estimate: string; // e.g. "R$ 3.000 – 8.000"
 };
 
-const ACCENT: [number, number, number] = [196, 101, 74];   // terracotta
-const INK:    [number, number, number] = [28, 26, 24];
-const MUTED:  [number, number, number] = [120, 115, 110];
-const SOFT:   [number, number, number] = [244, 240, 233];
+const ACCENT: [number, number, number] = [196, 101, 74]; // terracotta
+const INK: [number, number, number] = [28, 26, 24];
+const MUTED: [number, number, number] = [120, 115, 110];
+const SOFT: [number, number, number] = [244, 240, 233];
 
 export function generateBudgetPdf(data: BudgetData) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
@@ -89,7 +89,10 @@ export function generateBudgetPdf(data: BudgetData) {
     const itemsInGroup = data.items.filter((i) => i.tag === tag);
     if (!itemsInGroup.length) continue;
 
-    if (y > H - 140) { doc.addPage(); y = M; }
+    if (y > H - 140) {
+      doc.addPage();
+      y = M;
+    }
 
     // Section header
     doc.setFillColor(...ACCENT);
@@ -101,7 +104,12 @@ export function generateBudgetPdf(data: BudgetData) {
     doc.setFont("helvetica", "normal");
     doc.setTextColor(...MUTED);
     doc.setFontSize(9);
-    doc.text(`${itemsInGroup.length} ${itemsInGroup.length === 1 ? "item" : "itens"}`, W - M, y + 11, { align: "right" });
+    doc.text(
+      `${itemsInGroup.length} ${itemsInGroup.length === 1 ? "item" : "itens"}`,
+      W - M,
+      y + 11,
+      { align: "right" },
+    );
     y += 22;
 
     // Table header
@@ -110,7 +118,10 @@ export function generateBudgetPdf(data: BudgetData) {
     y += 14;
 
     for (const it of itemsInGroup) {
-      if (y > H - 80) { doc.addPage(); y = M; }
+      if (y > H - 80) {
+        doc.addPage();
+        y = M;
+      }
 
       doc.setTextColor(...INK);
       doc.setFont("helvetica", "bold");
@@ -146,11 +157,16 @@ export function generateBudgetPdf(data: BudgetData) {
     doc.setTextColor(...MUTED);
     doc.text(
       "Valores estimados, podem variar conforme loja e disponibilidade. Alguns links podem gerar comissão para o Ideal Space.",
-      M, H - 38, { maxWidth: W - M * 2 }
+      M,
+      H - 38,
+      { maxWidth: W - M * 2 },
     );
     doc.text(`idealspace.com.br  ·  ${p} / ${pageCount}`, W - M, H - 22, { align: "right" });
   }
 
-  const slug = data.project.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const slug = data.project
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
   doc.save(`ideal-space-orcamento-${slug || "projeto"}.pdf`);
 }

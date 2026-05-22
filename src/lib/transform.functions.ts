@@ -18,8 +18,7 @@ const STYLE_PROMPTS: Record<string, string> = {
     "Natural interior: light wood, rattan and jute fibers, lots of greenery, beige and cream tones, organic textures.",
   industrial:
     "Industrial interior: exposed brick, black steel, leather sofa, vintage Edison bulbs, concrete floor, moody warm light.",
-  luxe:
-    "Quiet luxury interior: travertine, brushed brass, bouclé fabric, marble accents, deep neutral palette, ambient lighting.",
+  luxe: "Quiet luxury interior: travertine, brushed brass, bouclé fabric, marble accents, deep neutral palette, ambient lighting.",
 };
 
 export type TransformInput = { imageDataUrl: string; style: string; variant?: number };
@@ -174,6 +173,7 @@ export const transformImage = createServerFn({ method: "POST" })
     }
     // Guardado num escopo mais amplo para reaproveitar o `room_type` ao
     // persistir o projeto e ao devolver a resposta da Server Function.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let parsed: any = null;
     if (validation.text) {
       try {

@@ -2,14 +2,37 @@ import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
-  Camera, Upload, Sparkles, X, Wand2, ImageIcon, Check,
-  AlertCircle, Zap, Loader2, History, Trash2, Play,
-  ChevronLeft, ChevronRight, Layers, GitCompare, Clock, ArrowUpRight,
+  Camera,
+  Upload,
+  Sparkles,
+  X,
+  Wand2,
+  ImageIcon,
+  Check,
+  AlertCircle,
+  Zap,
+  Loader2,
+  History,
+  Trash2,
+  Play,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
+  GitCompare,
+  Clock,
+  ArrowUpRight,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import {
-  type Draft, type DraftVersion, listDrafts, upsertDraft, deleteDraft,
-  newDraftId, newVersionId, pushVersion, timeAgo,
+  type Draft,
+  type DraftVersion,
+  listDrafts,
+  upsertDraft,
+  deleteDraft,
+  newDraftId,
+  newVersionId,
+  pushVersion,
+  timeAgo,
 } from "@/lib/drafts";
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
@@ -34,12 +57,12 @@ type Props = {
 };
 
 const STYLES = [
-  { id: "japandi",    name: "Japandi",        sub: "Calmo, oak e linho" },
-  { id: "modern",     name: "Contemporâneo",  sub: "Linhas suaves e arte" },
-  { id: "minimal",    name: "Minimalista",    sub: "Menos é mais" },
-  { id: "natural",    name: "Natural",        sub: "Madeira e fibras" },
-  { id: "industrial", name: "Industrial",     sub: "Tijolo e metal" },
-  { id: "luxe",       name: "Luxo discreto",  sub: "Materiais nobres" },
+  { id: "japandi", name: "Japandi", sub: "Calmo, oak e linho" },
+  { id: "modern", name: "Contemporâneo", sub: "Linhas suaves e arte" },
+  { id: "minimal", name: "Minimalista", sub: "Menos é mais" },
+  { id: "natural", name: "Natural", sub: "Madeira e fibras" },
+  { id: "industrial", name: "Industrial", sub: "Tijolo e metal" },
+  { id: "luxe", name: "Luxo discreto", sub: "Materiais nobres" },
 ];
 
 const MAX_FILE_MB = 20;
@@ -48,7 +71,9 @@ const JPEG_QUALITY = 0.82;
 
 type Stage = "idle" | "optimizing" | "uploading" | "generating" | "done" | "error";
 
-async function compressImage(file: File): Promise<{ dataUrl: string; blob: Blob; width: number; height: number }> {
+async function compressImage(
+  file: File,
+): Promise<{ dataUrl: string; blob: Blob; width: number; height: number }> {
   const bitmap = await createImageBitmap(file).catch(async () => {
     // Fallback: HTMLImageElement (e.g. HEIC won't decode either way)
     const url = URL.createObjectURL(file);
@@ -75,7 +100,11 @@ async function compressImage(file: File): Promise<{ dataUrl: string; blob: Blob;
   ctx.drawImage(bitmap as CanvasImageSource, 0, 0, w, h);
 
   const blob: Blob = await new Promise((res, rej) =>
-    canvas.toBlob((b) => (b ? res(b) : rej(new Error("Falha ao comprimir"))), "image/jpeg", JPEG_QUALITY)
+    canvas.toBlob(
+      (b) => (b ? res(b) : rej(new Error("Falha ao comprimir"))),
+      "image/jpeg",
+      JPEG_QUALITY,
+    ),
   );
   const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
   return { dataUrl, blob, width: w, height: h };
@@ -87,7 +116,14 @@ function formatKB(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-type Variation = { id: string; url: string; style: string; styleName?: string; label?: string; roomType?: string };
+type Variation = {
+  id: string;
+  url: string;
+  style: string;
+  styleName?: string;
+  label?: string;
+  roomType?: string;
+};
 
 export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const navigate = useNavigate();
@@ -105,7 +141,12 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const [pendingCount, setPendingCount] = useState(0);
   const [doneCount, setDoneCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<{ original: number; optimized: number; w: number; h: number } | null>(null);
+  const [meta, setMeta] = useState<{
+    original: number;
+    optimized: number;
+    w: number;
+    h: number;
+  } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [draftId, setDraftId] = useState<string | null>(null);
@@ -126,7 +167,9 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
     if (!embla) return;
     const onSel = () => setActiveIdx(embla.selectedScrollSnap());
     embla.on("select", onSel);
-    return () => { embla.off("select", onSel); };
+    return () => {
+      embla.off("select", onSel);
+    };
   }, [embla]);
 
   useEffect(() => {
@@ -152,7 +195,11 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
     if (!preview || !draftId) return;
     const styleName = STYLES.find((s) => s.id === style)?.name;
     const status: Draft["status"] =
-      stage === "done" ? "done" : stage === "uploading" || stage === "generating" ? "generating" : "draft";
+      stage === "done"
+        ? "done"
+        : stage === "uploading" || stage === "generating"
+          ? "generating"
+          : "draft";
     const draft: Draft = {
       id: draftId,
       createdAt: Date.now(),
@@ -163,7 +210,13 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
       preview,
       result: variations[0]?.url,
       results: variations.length
-        ? variations.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label, roomType: v.roomType }))
+        ? variations.map((v) => ({
+            url: v.url,
+            style: v.style,
+            styleName: v.styleName,
+            label: v.label,
+            roomType: v.roomType,
+          }))
         : undefined,
       meta: meta ?? undefined,
       progress,
@@ -292,12 +345,14 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           .catch((err) => {
             if (ticket.cancelled) return null;
             throw err;
-          })
+          }),
       );
       const results = await Promise.allSettled(tasks);
       if (ticket.cancelled) return;
       const anySuccess = results.some((r) => r.status === "fulfilled" && r.value);
-      const firstError = results.find((r) => r.status === "rejected") as PromiseRejectedResult | undefined;
+      const firstError = results.find((r) => r.status === "rejected") as
+        | PromiseRejectedResult
+        | undefined;
       if (!anySuccess && firstError) {
         setError(firstError.reason?.message ?? "Não foi possível gerar agora.");
         setStage("error");
@@ -312,15 +367,19 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           .filter((r): r is PromiseFulfilledResult<Variation | null> => r.status === "fulfilled")
           .map((r) => r.value)
           .filter((v): v is Variation => !!v);
-        const snapshotVars: Variation[] = reset
-          ? justGenerated
-          : [...variations, ...justGenerated];
+        const snapshotVars: Variation[] = reset ? justGenerated : [...variations, ...justGenerated];
         const version: DraftVersion = {
           id: newVersionId(),
           createdAt: Date.now(),
           style,
           styleName,
-          results: snapshotVars.map((v) => ({ url: v.url, style: v.style, styleName: v.styleName, label: v.label, roomType: v.roomType })),
+          results: snapshotVars.map((v) => ({
+            url: v.url,
+            style: v.style,
+            styleName: v.styleName,
+            label: v.label,
+            roomType: v.roomType,
+          })),
           note: `${snapshotVars.length} ${snapshotVars.length === 1 ? "variação" : "variações"} · ${styleName ?? style}`,
           activeIdx: reset ? 0 : variations.length,
         };
@@ -357,13 +416,17 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
 
   const resumeDraft = (d: Draft) => {
     setPreview(d.preview);
-    const legacy = d.result ? [{
-      id: "legacy",
-      url: d.result,
-      style: d.style,
-      styleName: d.styleName,
-      label: variationLabels[0],
-    } as Variation] : [];
+    const legacy = d.result
+      ? [
+          {
+            id: "legacy",
+            url: d.result,
+            style: d.style,
+            styleName: d.styleName,
+            label: variationLabels[0],
+          } as Variation,
+        ]
+      : [];
     const restored: Variation[] = d.results?.length
       ? d.results.map((r, i) => ({
           id: `r_${i}`,
@@ -401,12 +464,12 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
     setActiveVersionId(vid);
     setCompareVersionId(null);
     const restored = v.results.map((r, i) => ({
-        id: `${vid}_${i}`,
-        url: r.url,
-        style: r.style,
-        styleName: r.styleName,
-        label: r.label ?? variationLabels[i % variationLabels.length],
-        roomType: r.roomType,
+      id: `${vid}_${i}`,
+      url: r.url,
+      style: r.style,
+      styleName: r.styleName,
+      label: r.label ?? variationLabels[i % variationLabels.length],
+      roomType: r.roomType,
     }));
     setVariations(restored);
     const restoredIdx = Math.min(Math.max(0, v.activeIdx ?? 0), Math.max(0, restored.length - 1));
@@ -416,7 +479,13 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
     // Persist active version pointer
     if (draftId) {
       const existing = listDrafts().find((d) => d.id === draftId);
-      if (existing) upsertDraft({ ...existing, activeVersionId: vid, activeIdx: restoredIdx, updatedAt: Date.now() });
+      if (existing)
+        upsertDraft({
+          ...existing,
+          activeVersionId: vid,
+          activeIdx: restoredIdx,
+          updatedAt: Date.now(),
+        });
     }
   };
 
@@ -431,9 +500,13 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const done = stage === "done";
   const optimizing = stage === "optimizing";
   const stageLabel =
-    stage === "uploading" ? "Enviando foto otimizada…" :
-    stage === "generating" ? "Gerando ambiente decorado…" :
-    stage === "optimizing" ? "Otimizando imagem…" : "";
+    stage === "uploading"
+      ? "Enviando foto otimizada…"
+      : stage === "generating"
+        ? "Gerando ambiente decorado…"
+        : stage === "optimizing"
+          ? "Otimizando imagem…"
+          : "";
 
   return (
     <Dialog open={open} onOpenChange={close}>
@@ -470,7 +543,9 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                 <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                   <History className="h-3.5 w-3.5" /> Continue de onde parou
                 </div>
-                <span className="text-[10px] text-muted-foreground">{drafts.length} salvos neste aparelho</span>
+                <span className="text-[10px] text-muted-foreground">
+                  {drafts.length} salvos neste aparelho
+                </span>
               </div>
               <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x snap-mandatory">
                 {drafts.map((d) => (
@@ -480,15 +555,25 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                   >
                     <button onClick={() => resumeDraft(d)} className="block w-full text-left">
                       <div className="relative aspect-[4/3] bg-muted">
-                        <img src={d.preview} alt={d.title ?? "Rascunho"} className="absolute inset-0 h-full w-full object-cover" />
+                        <img
+                          src={d.preview}
+                          alt={d.title ?? "Rascunho"}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 to-transparent h-12" />
                         <div className="absolute top-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
                           {d.status === "done" ? (
-                            <><Check className="h-2.5 w-2.5 text-accent" /> Pronto</>
+                            <>
+                              <Check className="h-2.5 w-2.5 text-accent" /> Pronto
+                            </>
                           ) : d.status === "generating" ? (
-                            <><Loader2 className="h-2.5 w-2.5 animate-spin text-accent" /> Gerando</>
+                            <>
+                              <Loader2 className="h-2.5 w-2.5 animate-spin text-accent" /> Gerando
+                            </>
                           ) : (
-                            <><Play className="h-2.5 w-2.5" /> Rascunho</>
+                            <>
+                              <Play className="h-2.5 w-2.5" /> Rascunho
+                            </>
                           )}
                         </div>
                         <div className="absolute bottom-1.5 left-1.5 right-1.5 text-[10px] text-background leading-tight">
@@ -498,7 +583,10 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                       </div>
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); removeDraft(d.id); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeDraft(d.id);
+                      }}
                       aria-label="Excluir rascunho"
                       className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-background/90 border grid place-items-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition"
                     >
@@ -514,294 +602,348 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           )}
 
           {/* Project workspace: image + side shopping panel */}
-          <div className={`mt-5 ${variations.length > 0 ? "lg:grid lg:grid-cols-[1.4fr_1fr] lg:gap-5 lg:items-start" : ""}`}>
-          <div>
-          {/* Upload zone */}
           <div
-            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={onDrop}
-            className={`relative rounded-2xl border border-dashed overflow-hidden aspect-[5/3] transition ${
-              isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
-            }`}
+            className={`mt-5 ${variations.length > 0 ? "lg:grid lg:grid-cols-[1.4fr_1fr] lg:gap-5 lg:items-start" : ""}`}
           >
-            {preview && variations.length > 0 ? (
-              <>
-                <div ref={emblaRef} className="absolute inset-0 overflow-hidden">
-                  <div className="flex h-full">
-                    {variations.map((v) => (
-                      <div key={v.id} className="relative shrink-0 grow-0 basis-full h-full">
-                        <BeforeAfter
-                          before={preview}
-                          after={v.url}
-                          className="absolute inset-0 h-full w-full rounded-none"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* In-progress placeholder slide indicator */}
-                {generating && doneCount < pendingCount && (
-                  <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 border">
-                    <Loader2 className="h-3 w-3 animate-spin text-accent" />
-                    Gerando {doneCount + 1}/{pendingCount}
-                  </div>
-                )}
-                {variations.length > 1 && (
+            <div>
+              {/* Upload zone */}
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={onDrop}
+                className={`relative rounded-2xl border border-dashed overflow-hidden aspect-[5/3] transition ${
+                  isDragging ? "bg-accent/10 border-accent" : "bg-muted/40"
+                }`}
+              >
+                {preview && variations.length > 0 ? (
                   <>
-                    <button
-                      onClick={() => embla?.scrollPrev()}
-                      aria-label="Anterior"
-                      className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => embla?.scrollNext()}
-                      aria-label="Próxima"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </>
-                )}
-                <button
-                  onClick={reset}
-                  className="absolute bottom-3 left-3 z-10 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
-                >
-                  Trocar foto
-                </button>
-                <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
-                  <Layers className="h-3 w-3 text-accent" />
-                  {variations[activeIdx]?.label ?? `Opção ${activeIdx + 1}`} · {activeIdx + 1}/{variations.length}
-                </div>
-              </>
-            ) : preview ? (
-              <>
-                <img src={preview} alt="Sua foto" className="absolute inset-0 h-full w-full object-cover" />
-                {(generating || optimizing) && (
-                  <div className="absolute inset-0 bg-foreground/45 backdrop-blur-[2px] grid place-items-center text-background px-6">
-                    <div className="w-full max-w-xs text-center">
-                      <div className="flex items-center justify-center gap-2 text-sm">
-                        {stage === "generating"
-                          ? <Sparkles className="h-4 w-4 animate-pulse text-accent" />
-                          : <Loader2 className="h-4 w-4 animate-spin text-accent" />}
-                        {stageLabel}
+                    <div ref={emblaRef} className="absolute inset-0 overflow-hidden">
+                      <div className="flex h-full">
+                        {variations.map((v) => (
+                          <div key={v.id} className="relative shrink-0 grow-0 basis-full h-full">
+                            <BeforeAfter
+                              before={preview}
+                              after={v.url}
+                              className="absolute inset-0 h-full w-full rounded-none"
+                            />
+                          </div>
+                        ))}
                       </div>
-                      <Progress value={progress} className="h-1.5 mt-3 bg-background/30" />
-                      <div className="mt-1.5 text-[10px] text-background/70">{Math.round(progress)}%</div>
+                    </div>
+                    {/* In-progress placeholder slide indicator */}
+                    {generating && doneCount < pendingCount && (
+                      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 border">
+                        <Loader2 className="h-3 w-3 animate-spin text-accent" />
+                        Gerando {doneCount + 1}/{pendingCount}
+                      </div>
+                    )}
+                    {variations.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => embla?.scrollPrev()}
+                          aria-label="Anterior"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => embla?.scrollNext()}
+                          aria-label="Próxima"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-background/85 backdrop-blur border grid place-items-center hover:bg-background"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={reset}
+                      className="absolute bottom-3 left-3 z-10 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
+                    >
+                      Trocar foto
+                    </button>
+                    <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
+                      <Layers className="h-3 w-3 text-accent" />
+                      {variations[activeIdx]?.label ?? `Opção ${activeIdx + 1}`} · {activeIdx + 1}/
+                      {variations.length}
+                    </div>
+                  </>
+                ) : preview ? (
+                  <>
+                    <img
+                      src={preview}
+                      alt="Sua foto"
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                    {(generating || optimizing) && (
+                      <div className="absolute inset-0 bg-foreground/45 backdrop-blur-[2px] grid place-items-center text-background px-6">
+                        <div className="w-full max-w-xs text-center">
+                          <div className="flex items-center justify-center gap-2 text-sm">
+                            {stage === "generating" ? (
+                              <Sparkles className="h-4 w-4 animate-pulse text-accent" />
+                            ) : (
+                              <Loader2 className="h-4 w-4 animate-spin text-accent" />
+                            )}
+                            {stageLabel}
+                          </div>
+                          <Progress value={progress} className="h-1.5 mt-3 bg-background/30" />
+                          <div className="mt-1.5 text-[10px] text-background/70">
+                            {Math.round(progress)}%
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      onClick={reset}
+                      className="absolute bottom-3 left-3 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
+                    >
+                      Trocar foto
+                    </button>
+                    {meta && !generating && !optimizing && (
+                      <div className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
+                        <Zap className="h-3 w-3 text-accent" />
+                        {meta.w}×{meta.h} · {formatKB(meta.optimized)}
+                        <span className="text-muted-foreground line-through ml-1">
+                          {formatKB(meta.original)}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="absolute inset-0 grid place-items-center text-center px-6">
+                    <div>
+                      <div className="mx-auto h-12 w-12 rounded-2xl bg-accent/15 text-accent grid place-items-center">
+                        <ImageIcon className="h-5 w-5" />
+                      </div>
+                      <p className="mt-3 text-sm text-muted-foreground">
+                        Arraste uma foto aqui, ou use a câmera do celular. Otimizamos
+                        automaticamente.
+                      </p>
+                      <div className="mt-4 flex flex-wrap gap-2 justify-center">
+                        <Button
+                          size="sm"
+                          onClick={() => cameraInput.current?.click()}
+                          className="rounded-full bg-foreground text-background hover:bg-foreground/90"
+                        >
+                          <Camera className="h-4 w-4 mr-1.5" /> Tirar foto
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => fileInput.current?.click()}
+                          className="rounded-full"
+                        >
+                          <Upload className="h-4 w-4 mr-1.5" /> Enviar imagem
+                        </Button>
+                      </div>
+                      <p className="mt-3 text-[10px] text-muted-foreground">
+                        JPG, PNG ou WebP · até {MAX_FILE_MB}MB
+                      </p>
                     </div>
                   </div>
                 )}
-                <button
-                  onClick={reset}
-                  className="absolute bottom-3 left-3 rounded-full bg-background/85 backdrop-blur text-xs px-3 py-1.5 border"
-                >
-                  Trocar foto
-                </button>
-                {meta && !generating && !optimizing && (
-                  <div className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
-                    <Zap className="h-3 w-3 text-accent" />
-                    {meta.w}×{meta.h} · {formatKB(meta.optimized)}
-                    <span className="text-muted-foreground line-through ml-1">{formatKB(meta.original)}</span>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="absolute inset-0 grid place-items-center text-center px-6">
-                <div>
-                  <div className="mx-auto h-12 w-12 rounded-2xl bg-accent/15 text-accent grid place-items-center">
-                    <ImageIcon className="h-5 w-5" />
-                  </div>
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    Arraste uma foto aqui, ou use a câmera do celular. Otimizamos automaticamente.
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                    <Button
-                      size="sm"
-                      onClick={() => cameraInput.current?.click()}
-                      className="rounded-full bg-foreground text-background hover:bg-foreground/90"
-                    >
-                      <Camera className="h-4 w-4 mr-1.5" /> Tirar foto
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => fileInput.current?.click()}
-                      className="rounded-full"
-                    >
-                      <Upload className="h-4 w-4 mr-1.5" /> Enviar imagem
-                    </Button>
-                  </div>
-                  <p className="mt-3 text-[10px] text-muted-foreground">
-                    JPG, PNG ou WebP · até {MAX_FILE_MB}MB
-                  </p>
-                </div>
-              </div>
-            )}
 
-            <input
-              ref={cameraInput}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/heic,image/*"
-              capture="environment"
-              className="hidden"
-              onChange={(e) => handleFile(e.target.files?.[0])}
-            />
-            <input
-              ref={fileInput}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="hidden"
-              onChange={(e) => handleFile(e.target.files?.[0])}
-            />
-          </div>
-
-          {/* Variation thumbnails */}
-          {variations.length > 0 && (
-            <div className="mt-3 flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x snap-mandatory">
-              {variations.map((v, i) => {
-                const active = i === activeIdx;
-                return (
-                  <button
-                    key={v.id}
-                    onClick={() => embla?.scrollTo(i)}
-                    className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[88px] aspect-[5/3] transition ${
-                      active ? "ring-2 ring-accent border-accent" : "opacity-80 hover:opacity-100"
-                    }`}
-                    aria-label={v.label ?? `Opção ${i + 1}`}
-                  >
-                    <img src={v.url} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                    <span className="absolute bottom-0 inset-x-0 text-[9px] text-center text-background bg-foreground/70 py-0.5">
-                      {v.label ?? `Opção ${i + 1}`}
-                    </span>
-                  </button>
-                );
-              })}
-              {generating && Array.from({ length: Math.max(0, pendingCount - doneCount) }).map((_, i) => (
-                <div
-                  key={`pending_${i}`}
-                  className="shrink-0 rounded-xl border w-[88px] aspect-[5/3] bg-muted/60 grid place-items-center"
-                >
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Versions timeline — history of generations for this project */}
-          {versions.length > 0 && (
-            <div className="mt-4 rounded-2xl border bg-card/60 p-3">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" /> Histórico de versões
-                  <span className="text-muted-foreground/70 normal-case tracking-normal">· {versions.length}</span>
-                </div>
-                {versions.length > 1 && (
-                  <button
-                    onClick={() => {
-                      if (compareVersionId) { setCompareVersionId(null); return; }
-                      const other = versions.slice().reverse().find((v) => v.id !== activeVersionId);
-                      setCompareVersionId(other?.id ?? null);
-                    }}
-                    className={`inline-flex items-center gap-1 text-[10px] rounded-full border px-2 py-1 transition ${
-                      compareVersionId ? "bg-accent/10 border-accent text-accent" : "hover:bg-muted"
-                    }`}
-                  >
-                    <GitCompare className="h-3 w-3" />
-                    {compareVersionId ? "Sair da comparação" : "Comparar versões"}
-                  </button>
-                )}
+                <input
+                  ref={cameraInput}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={(e) => handleFile(e.target.files?.[0])}
+                />
+                <input
+                  ref={fileInput}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => handleFile(e.target.files?.[0])}
+                />
               </div>
-              <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x">
-                {versions.map((v, i) => {
-                  const isActive = v.id === activeVersionId;
-                  const isCompare = v.id === compareVersionId;
-                  return (
-                    <button
-                      key={v.id}
-                      onClick={() => {
-                        if (compareVersionId && v.id !== activeVersionId) {
-                          setCompareVersionId(v.id);
-                        } else {
-                          loadVersion(v.id);
-                        }
-                      }}
-                      className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[110px] text-left transition ${
-                        isActive
-                          ? "ring-2 ring-accent border-accent"
-                          : isCompare
-                            ? "ring-2 ring-foreground border-foreground"
-                            : "opacity-85 hover:opacity-100"
-                      }`}
-                    >
-                      <div className="relative aspect-[5/3] bg-muted">
-                        {v.results[0]?.url ? (
-                          <img src={v.results[0].url} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                        ) : (
-                          <div className="absolute inset-0 grid place-items-center text-[10px] text-muted-foreground">vazio</div>
-                        )}
-                        <div className="absolute top-1 left-1 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
-                          v{i + 1}
-                        </div>
-                        {v.results.length > 1 && (
-                          <div className="absolute top-1 right-1 inline-flex items-center gap-0.5 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
-                            <Layers className="h-2.5 w-2.5" /> {v.results.length}
-                          </div>
-                        )}
-                      </div>
-                      <div className="px-2 py-1.5">
-                        <div className="text-[10px] font-medium truncate">{v.styleName ?? "Projeto"}</div>
-                        <div className="text-[9px] text-muted-foreground">{timeAgo(v.createdAt)}</div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-              {compareVersion && activeVersionId && (
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  {[activeVersionId, compareVersion.id].map((vid, col) => {
-                    const v = versions.find((x) => x.id === vid)!;
-                    const idx = versions.indexOf(v) + 1;
+
+              {/* Variation thumbnails */}
+              {variations.length > 0 && (
+                <div className="mt-3 flex items-center gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x snap-mandatory">
+                  {variations.map((v, i) => {
+                    const active = i === activeIdx;
                     return (
-                      <div key={vid} className="rounded-xl overflow-hidden border bg-background">
-                        <div className="relative aspect-[5/3] bg-muted">
-                          {v.results[0]?.url && (
-                            <img src={v.results[0].url} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                          )}
-                          <div className="absolute top-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[10px] px-2 py-0.5 border">
-                            {col === 0 ? "A" : "B"} · v{idx}
-                          </div>
-                        </div>
-                        <div className="px-2 py-1.5 flex items-center justify-between">
-                          <div className="text-[10px]">
-                            <div className="font-medium">{v.styleName ?? "Projeto"}</div>
-                            <div className="text-muted-foreground">{timeAgo(v.createdAt)} · {v.results.length} {v.results.length === 1 ? "img" : "imgs"}</div>
-                          </div>
-                          <button
-                            onClick={() => loadVersion(v.id)}
-                            className="text-[10px] rounded-full border px-2 py-0.5 hover:bg-muted"
-                          >
-                            Abrir
-                          </button>
-                        </div>
-                      </div>
+                      <button
+                        key={v.id}
+                        onClick={() => embla?.scrollTo(i)}
+                        className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[88px] aspect-[5/3] transition ${
+                          active
+                            ? "ring-2 ring-accent border-accent"
+                            : "opacity-80 hover:opacity-100"
+                        }`}
+                        aria-label={v.label ?? `Opção ${i + 1}`}
+                      >
+                        <img
+                          src={v.url}
+                          alt=""
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                        <span className="absolute bottom-0 inset-x-0 text-[9px] text-center text-background bg-foreground/70 py-0.5">
+                          {v.label ?? `Opção ${i + 1}`}
+                        </span>
+                      </button>
                     );
                   })}
+                  {generating &&
+                    Array.from({ length: Math.max(0, pendingCount - doneCount) }).map((_, i) => (
+                      <div
+                        key={`pending_${i}`}
+                        className="shrink-0 rounded-xl border w-[88px] aspect-[5/3] bg-muted/60 grid place-items-center"
+                      >
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                      </div>
+                    ))}
+                </div>
+              )}
+
+              {/* Versions timeline — history of generations for this project */}
+              {versions.length > 0 && (
+                <div className="mt-4 rounded-2xl border bg-card/60 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5" /> Histórico de versões
+                      <span className="text-muted-foreground/70 normal-case tracking-normal">
+                        · {versions.length}
+                      </span>
+                    </div>
+                    {versions.length > 1 && (
+                      <button
+                        onClick={() => {
+                          if (compareVersionId) {
+                            setCompareVersionId(null);
+                            return;
+                          }
+                          const other = versions
+                            .slice()
+                            .reverse()
+                            .find((v) => v.id !== activeVersionId);
+                          setCompareVersionId(other?.id ?? null);
+                        }}
+                        className={`inline-flex items-center gap-1 text-[10px] rounded-full border px-2 py-1 transition ${
+                          compareVersionId
+                            ? "bg-accent/10 border-accent text-accent"
+                            : "hover:bg-muted"
+                        }`}
+                      >
+                        <GitCompare className="h-3 w-3" />
+                        {compareVersionId ? "Sair da comparação" : "Comparar versões"}
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1 snap-x">
+                    {versions.map((v, i) => {
+                      const isActive = v.id === activeVersionId;
+                      const isCompare = v.id === compareVersionId;
+                      return (
+                        <button
+                          key={v.id}
+                          onClick={() => {
+                            if (compareVersionId && v.id !== activeVersionId) {
+                              setCompareVersionId(v.id);
+                            } else {
+                              loadVersion(v.id);
+                            }
+                          }}
+                          className={`relative shrink-0 snap-start rounded-xl overflow-hidden border w-[110px] text-left transition ${
+                            isActive
+                              ? "ring-2 ring-accent border-accent"
+                              : isCompare
+                                ? "ring-2 ring-foreground border-foreground"
+                                : "opacity-85 hover:opacity-100"
+                          }`}
+                        >
+                          <div className="relative aspect-[5/3] bg-muted">
+                            {v.results[0]?.url ? (
+                              <img
+                                src={v.results[0].url}
+                                alt=""
+                                className="absolute inset-0 h-full w-full object-cover"
+                              />
+                            ) : (
+                              <div className="absolute inset-0 grid place-items-center text-[10px] text-muted-foreground">
+                                vazio
+                              </div>
+                            )}
+                            <div className="absolute top-1 left-1 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
+                              v{i + 1}
+                            </div>
+                            {v.results.length > 1 && (
+                              <div className="absolute top-1 right-1 inline-flex items-center gap-0.5 rounded-full bg-background/90 backdrop-blur text-[9px] px-1.5 py-0.5 border">
+                                <Layers className="h-2.5 w-2.5" /> {v.results.length}
+                              </div>
+                            )}
+                          </div>
+                          <div className="px-2 py-1.5">
+                            <div className="text-[10px] font-medium truncate">
+                              {v.styleName ?? "Projeto"}
+                            </div>
+                            <div className="text-[9px] text-muted-foreground">
+                              {timeAgo(v.createdAt)}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {compareVersion && activeVersionId && (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      {[activeVersionId, compareVersion.id].map((vid, col) => {
+                        const v = versions.find((x) => x.id === vid)!;
+                        const idx = versions.indexOf(v) + 1;
+                        return (
+                          <div
+                            key={vid}
+                            className="rounded-xl overflow-hidden border bg-background"
+                          >
+                            <div className="relative aspect-[5/3] bg-muted">
+                              {v.results[0]?.url && (
+                                <img
+                                  src={v.results[0].url}
+                                  alt=""
+                                  className="absolute inset-0 h-full w-full object-cover"
+                                />
+                              )}
+                              <div className="absolute top-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur text-[10px] px-2 py-0.5 border">
+                                {col === 0 ? "A" : "B"} · v{idx}
+                              </div>
+                            </div>
+                            <div className="px-2 py-1.5 flex items-center justify-between">
+                              <div className="text-[10px]">
+                                <div className="font-medium">{v.styleName ?? "Projeto"}</div>
+                                <div className="text-muted-foreground">
+                                  {timeAgo(v.createdAt)} · {v.results.length}{" "}
+                                  {v.results.length === 1 ? "img" : "imgs"}
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => loadVersion(v.id)}
+                                className="text-[10px] rounded-full border px-2 py-0.5 hover:bg-muted"
+                              >
+                                Abrir
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-          </div>
 
-          {variations.length > 0 && (
-            <ShoppingPanel
-              styleName={STYLES.find((s) => s.id === style)?.name ?? "Projeto"}
-              variationLabel={variations[activeIdx]?.label}
-              styleId={style}
-              variation={variations[activeIdx]}
-            />
-          )}
+            {variations.length > 0 && (
+              <ShoppingPanel
+                styleName={STYLES.find((s) => s.id === style)?.name ?? "Projeto"}
+                variationLabel={variations[activeIdx]?.label}
+                styleId={style}
+                variation={variations[activeIdx]}
+              />
+            )}
           </div>
 
           {error && (
@@ -813,7 +955,9 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
 
           {/* Style picker */}
           <div className="mt-5">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-2">Escolha o estilo</div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-2">
+              Escolha o estilo
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {STYLES.map((s) => {
                 const active = s.id === style;
@@ -822,9 +966,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                     key={s.id}
                     onClick={() => setStyle(s.id)}
                     className={`text-left rounded-xl border px-3 py-2.5 transition ${
-                      active
-                        ? "border-accent bg-accent/8 ring-1 ring-accent"
-                        : "hover:bg-muted/60"
+                      active ? "border-accent bg-accent/8 ring-1 ring-accent" : "hover:bg-muted/60"
                     }`}
                   >
                     <div className="text-sm font-medium">{s.name}</div>
@@ -886,7 +1028,11 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                 )}
               </>
             )}
-            <Button variant="outline" onClick={() => close(false)} className="h-11 rounded-full px-5 text-sm">
+            <Button
+              variant="outline"
+              onClick={() => close(false)}
+              className="h-11 rounded-full px-5 text-sm"
+            >
               Fechar
             </Button>
           </div>
@@ -899,12 +1045,15 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           )}
           {variations.length > 0 && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
-              Arraste o slider sobre a imagem para comparar <span className="font-medium text-foreground">antes</span> e <span className="font-medium text-foreground">depois</span>. Deslize lateralmente para ver outras variações.
+              Arraste o slider sobre a imagem para comparar{" "}
+              <span className="font-medium text-foreground">antes</span> e{" "}
+              <span className="font-medium text-foreground">depois</span>. Deslize lateralmente para
+              ver outras variações.
             </p>
           )}
           <p className="mt-2 text-[10px] text-muted-foreground">
-            Reduzimos a imagem para {MAX_DIMENSION}px e qualidade {Math.round(JPEG_QUALITY * 100)}% antes do envio —
-            uploads até 5× mais rápidos. Suas fotos são privadas.
+            Reduzimos a imagem para {MAX_DIMENSION}px e qualidade {Math.round(JPEG_QUALITY * 100)}%
+            antes do envio — uploads até 5× mais rápidos. Suas fotos são privadas.
           </p>
         </div>
       </DialogContent>
@@ -978,9 +1127,7 @@ function ShoppingPanel({
   const hasError = errorId === vid && !aiItems;
   const visibleItems: ReadonlyArray<BudgetItem> = unlocked ? items : items.slice(0, 4);
   const total = estimateTotal(items);
-  const projectName = variationLabel
-    ? `${styleName} · ${variationLabel}`
-    : styleName;
+  const projectName = variationLabel ? `${styleName} · ${variationLabel}` : styleName;
 
   const tagStyles: Record<BudgetItem["tag"], string> = {
     Essencial: "bg-accent text-accent-foreground",
@@ -1016,21 +1163,27 @@ function ShoppingPanel({
             {isLoading
               ? "Analisando o ambiente com IA…"
               : hasError
-              ? "Não conseguimos analisar — exibindo sugestão padrão."
-              : usingFallback
-              ? "Sugestão padrão"
-              : "Gerada a partir do seu ambiente"}
+                ? "Não conseguimos analisar — exibindo sugestão padrão."
+                : usingFallback
+                  ? "Sugestão padrão"
+                  : "Gerada a partir do seu ambiente"}
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Estimativa</div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            Estimativa
+          </div>
           <div className="text-sm font-semibold text-foreground">{total}</div>
           <button
             onClick={fetchList}
             disabled={isLoading || !variation}
             className="mt-1 inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground disabled:opacity-50"
           >
-            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+            {isLoading ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3 w-3" />
+            )}
             {isLoading ? "Gerando…" : "Refazer"}
           </button>
         </div>
@@ -1045,31 +1198,33 @@ function ShoppingPanel({
               </li>
             ))
           : visibleItems.map((it) => (
-          <li key={it.name}>
-            <a
-              href={buyUrl(it.name)}
-              target="_blank"
-              rel="sponsored noopener noreferrer"
-              className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60"
-            >
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className={`text-[9px] uppercase tracking-widest rounded-full px-1.5 py-0.5 ${tagStyles[it.tag]}`}>
-                    {it.tag}
-                  </span>
-                  <span className="text-sm font-medium truncate">{it.name}</span>
-                </div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">{it.cat}</div>
-              </div>
-              <div className="flex shrink-0 flex-col items-end gap-0.5">
-                <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
-                <span className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent">
-                  Comprar <ArrowUpRight className="h-3 w-3" />
-                </span>
-              </div>
-            </a>
-          </li>
-        ))}
+              <li key={it.name}>
+                <a
+                  href={buyUrl(it.name)}
+                  target="_blank"
+                  rel="sponsored noopener noreferrer"
+                  className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`text-[9px] uppercase tracking-widest rounded-full px-1.5 py-0.5 ${tagStyles[it.tag]}`}
+                      >
+                        {it.tag}
+                      </span>
+                      <span className="text-sm font-medium truncate">{it.name}</span>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">{it.cat}</div>
+                  </div>
+                  <div className="flex shrink-0 flex-col items-end gap-0.5">
+                    <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
+                    <span className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent">
+                      Comprar <ArrowUpRight className="h-3 w-3" />
+                    </span>
+                  </div>
+                </a>
+              </li>
+            ))}
       </ul>
 
       <p className="mt-2 px-1 text-[10px] leading-relaxed text-muted-foreground">

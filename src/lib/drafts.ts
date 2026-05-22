@@ -54,8 +54,7 @@ function safeParse(raw: string | null): Draft[] {
 export function listDrafts(): Draft[] {
   if (typeof window === "undefined") return [];
   try {
-    return safeParse(window.localStorage.getItem(KEY))
-      .sort((a, b) => b.updatedAt - a.updatedAt);
+    return safeParse(window.localStorage.getItem(KEY)).sort((a, b) => b.updatedAt - a.updatedAt);
   } catch {
     return [];
   }

@@ -5,11 +5,11 @@
 // ============================================================
 
 export const AFFILIATE_TAGS = {
-  amazon: "deskly02-20",   // Amazon Associates BR (conta Deskly)
-  mercadolivre: "",        // pendente — matt_tool do ML
-  magalu: "desklylife",    // Magazine Você (loja Magazine Desklylife, magazinevoce.com.br/desklylife)
-  awin: "2890163",         // Awin Publisher ID (conta Deskly) — desativado até ter merchants
-  lomadee: "",             // pendente — Lomadee sourceId
+  amazon: "deskly02-20", // Amazon Associates BR (conta Deskly)
+  mercadolivre: "", // pendente — matt_tool do ML
+  magalu: "desklylife", // Magazine Você (loja Magazine Desklylife, magazinevoce.com.br/desklylife)
+  awin: "2890163", // Awin Publisher ID (conta Deskly) — desativado até ter merchants
+  lomadee: "", // pendente — Lomadee sourceId
 } as const;
 
 // Awin/Lomadee são redes — cobrem várias lojas (Casas Bahia, Carrefour,
@@ -173,20 +173,20 @@ export function buildAffiliateLinks(productName: string) {
 // ============================================================
 
 export type AffiliateContext = {
-  projectId: string;        // uuid do projeto (truncamos pra 8 chars no subid)
+  projectId: string; // uuid do projeto (truncamos pra 8 chars no subid)
   roomType?: string | null;
   styleSlug?: string | null;
   budgetRange?: string | null;
   productCategory?: string | null;
-  source?: string;          // ex: "empty_room_result"
+  source?: string; // ex: "empty_room_result"
 };
 
 export type AffiliateResolved = {
-  primaryUrl: string;             // URL principal pra "Ver opções"
-  primaryProvider: string;        // amazon | magalu | mercadolivre | shopee | direct | google_shopping
-  fallbackUrl: string;            // Google Shopping (sempre disponível pra fallback)
-  isDirectProduct: boolean;       // true se primary é affiliate_url direto do produto
-  subId: string;                  // string usada nos params (transparência/debug)
+  primaryUrl: string; // URL principal pra "Ver opções"
+  primaryProvider: string; // amazon | magalu | mercadolivre | shopee | direct | google_shopping
+  fallbackUrl: string; // Google Shopping (sempre disponível pra fallback)
+  isDirectProduct: boolean; // true se primary é affiliate_url direto do produto
+  subId: string; // string usada nos params (transparência/debug)
 };
 
 /**
@@ -276,11 +276,15 @@ function googleShoppingUrl(productName: string): string {
  */
 export function buildAffiliateLinkForProduct(args: {
   productName: string;
-  productAffiliateUrl: string | null;  // do products.affiliate_url
+  productAffiliateUrl: string | null; // do products.affiliate_url
   context: AffiliateContext;
 }): AffiliateResolved {
   const subId = compactSubId(args.context);
-  const fallbackUrl = appendSubIdToUrl(googleShoppingUrl(args.productName), "google_shopping", subId);
+  const fallbackUrl = appendSubIdToUrl(
+    googleShoppingUrl(args.productName),
+    "google_shopping",
+    subId,
+  );
 
   // 1. Direct (produto tem affiliate_url cadastrado)
   if (args.productAffiliateUrl) {

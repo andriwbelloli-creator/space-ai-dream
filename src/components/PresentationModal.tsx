@@ -12,9 +12,21 @@ type Props = {
 
 export function PresentationModal({ open, onOpenChange, before, after }: Props) {
   const steps = [
-    { icon: <ImageIcon className="h-4 w-4" />, t: "Escolha o ambiente", d: "Use uma foto vazia ou selecione um exemplo da galeria." },
-    { icon: <Wand2 className="h-4 w-4" />,     t: "Escolha o estilo",   d: "Moderno, minimalista, premium, aconchegante e muito mais." },
-    { icon: <Sparkles className="h-4 w-4" />,  t: "Veja o resultado",    d: "Compare antes e depois, baixe o orçamento e veja a lista de produtos." },
+    {
+      icon: <ImageIcon className="h-4 w-4" />,
+      t: "Escolha o ambiente",
+      d: "Use uma foto vazia ou selecione um exemplo da galeria.",
+    },
+    {
+      icon: <Wand2 className="h-4 w-4" />,
+      t: "Escolha o estilo",
+      d: "Moderno, minimalista, premium, aconchegante e muito mais.",
+    },
+    {
+      icon: <Sparkles className="h-4 w-4" />,
+      t: "Veja o resultado",
+      d: "Compare antes e depois, baixe o orçamento e veja a lista de produtos.",
+    },
   ];
 
   return (
@@ -25,7 +37,8 @@ export function PresentationModal({ open, onOpenChange, before, after }: Props) 
       >
         <DialogTitle className="sr-only">Demonstração do Ideal Space</DialogTitle>
         <DialogDescription className="sr-only">
-          Veja em três passos como o Ideal Space transforma a foto de um ambiente em um projeto decorado.
+          Veja em três passos como o Ideal Space transforma a foto de um ambiente em um projeto
+          decorado.
         </DialogDescription>
         <button
           aria-label="Fechar"
@@ -37,7 +50,12 @@ export function PresentationModal({ open, onOpenChange, before, after }: Props) 
 
         <div className="grid sm:grid-cols-[1.05fr_1fr]">
           <div className="relative bg-muted/40 p-3 sm:p-5">
-            <BeforeAfter before={before} after={after} auto className="aspect-[5/4] w-full ring-1 ring-black/5" />
+            <BeforeAfter
+              before={before}
+              after={after}
+              auto
+              className="aspect-[5/4] w-full ring-1 ring-black/5"
+            />
             <div className="hidden sm:block absolute bottom-7 left-7 right-7 sm:left-8 sm:right-8 rounded-2xl bg-background/85 backdrop-blur border p-3 text-[11px] text-muted-foreground">
               Arraste o controle para comparar o antes e depois da IA.
             </div>
@@ -46,21 +64,28 @@ export function PresentationModal({ open, onOpenChange, before, after }: Props) 
           <div className="p-5 sm:p-8 flex flex-col">
             <div className="text-[10px] uppercase tracking-[0.22em] text-accent">Demonstração</div>
             <h3 className="mt-2 text-xl sm:text-3xl font-semibold leading-tight tracking-[-0.01em]">
-              Veja como o <span className="font-serif italic font-normal">Ideal Space</span> funciona
+              Veja como o <span className="font-serif italic font-normal">Ideal Space</span>{" "}
+              funciona
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Escolha um ambiente vazio, selecione um estilo e veja a IA criar uma versão decorada em segundos.
+              Escolha um ambiente vazio, selecione um estilo e veja a IA criar uma versão decorada
+              em segundos.
             </p>
 
             <ol className="mt-5 space-y-3.5">
               {steps.map((s, i) => (
                 <li key={s.t} className="flex gap-3">
-                  <div className="h-8 w-8 shrink-0 rounded-xl bg-accent/12 text-accent grid place-items-center">{s.icon}</div>
+                  <div className="h-8 w-8 shrink-0 rounded-xl bg-accent/12 text-accent grid place-items-center">
+                    {s.icon}
+                  </div>
                   <div>
                     <div className="text-sm font-medium">
-                      <span className="text-muted-foreground mr-1.5">0{i + 1}.</span>{s.t}
+                      <span className="text-muted-foreground mr-1.5">0{i + 1}.</span>
+                      {s.t}
                     </div>
-                    <div className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{s.d}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                      {s.d}
+                    </div>
                   </div>
                 </li>
               ))}

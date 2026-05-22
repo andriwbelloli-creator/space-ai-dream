@@ -40,7 +40,9 @@ function Mail() {
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <section id={id} className="mt-12 scroll-mt-24">
-      <h2 className="text-xl font-semibold tracking-[-0.01em] text-foreground sm:text-2xl">{title}</h2>
+      <h2 className="text-xl font-semibold tracking-[-0.01em] text-foreground sm:text-2xl">
+        {title}
+      </h2>
       <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">{children}</div>
     </section>
   );
@@ -78,7 +80,9 @@ function LegalPage() {
 
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
         <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Documentos legais</div>
-        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">Termos e políticas</h1>
+        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
+          Termos e políticas
+        </h1>
         <p className="mt-3 text-sm text-muted-foreground">Última atualização: {LAST_UPDATED}</p>
 
         <nav className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -115,9 +119,8 @@ function LegalPage() {
             projeto arquitetônico, de engenharia ou garantia de resultado.
           </p>
           <p>
-            <strong className="text-foreground">Créditos e planos.</strong> O plano gratuito
-            oferece um número limitado de gerações. Planos pagos e seus limites estão descritos na
-            página de{" "}
+            <strong className="text-foreground">Créditos e planos.</strong> O plano gratuito oferece
+            um número limitado de gerações. Planos pagos e seus limites estão descritos na página de{" "}
             <Link to="/pricing" className="text-foreground underline underline-offset-2">
               Planos
             </Link>
@@ -140,7 +143,9 @@ function LegalPage() {
         </Section>
 
         <Section id="privacidade" title="Política de Privacidade">
-          <p>Esta política descreve como o Ideal Space coleta, usa e protege seus dados pessoais.</p>
+          <p>
+            Esta política descreve como o Ideal Space coleta, usa e protege seus dados pessoais.
+          </p>
           <p>
             <strong className="text-foreground">Dados coletados.</strong> E-mail e dados de conta no
             cadastro; fotos enviadas; imagens geradas; e dados de uso, como projetos criados e
@@ -161,8 +166,8 @@ function LegalPage() {
             quando exigido por lei.
           </p>
           <p>
-            <strong className="text-foreground">Armazenamento local.</strong> Usamos o
-            armazenamento do seu navegador para manter sua sessão e seus rascunhos de projeto.
+            <strong className="text-foreground">Armazenamento local.</strong> Usamos o armazenamento
+            do seu navegador para manter sua sessão e seus rascunhos de projeto.
           </p>
           <p>
             <strong className="text-foreground">Retenção e segurança.</strong> Mantemos seus dados
@@ -175,7 +180,9 @@ function LegalPage() {
         </Section>
 
         <Section id="imagens" title="Política de Imagens">
-          <p>As fotos que você envia são suas. Ao enviá-las, você declara ter o direito de usá-las.</p>
+          <p>
+            As fotos que você envia são suas. Ao enviá-las, você declara ter o direito de usá-las.
+          </p>
           <p>
             Suas fotos e os ambientes gerados a partir delas são{" "}
             <strong className="text-foreground">privados por padrão</strong> — não os publicamos nem
@@ -244,8 +251,9 @@ function LegalPage() {
             ilustrativo e de inspiração.
           </p>
           <p>
-            A IA busca preservar a estrutura do ambiente original — paredes, janelas e perspectiva —,
-            mas pode introduzir imprecisões. Proporções, medidas e itens exibidos são aproximados.
+            A IA busca preservar a estrutura do ambiente original — paredes, janelas e perspectiva
+            —, mas pode introduzir imprecisões. Proporções, medidas e itens exibidos são
+            aproximados.
           </p>
           <p>
             O resultado <strong className="text-foreground">não substitui</strong> um projeto

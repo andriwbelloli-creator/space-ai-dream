@@ -9,9 +9,7 @@ const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models
 
 type ImagePart = { dataUrl: string }; // "data:image/jpeg;base64,..."
 
-type GeminiPart =
-  | { text: string }
-  | { inlineData: { mimeType: string; data: string } };
+type GeminiPart = { text: string } | { inlineData: { mimeType: string; data: string } };
 
 type GeminiResponse = {
   candidates?: Array<{
@@ -87,7 +85,12 @@ export async function geminiText(opts: GeminiTextOptions): Promise<{
   const { status, data } = await callGemini(opts.model, body);
   if (status === 429) return { text: null, status, rateLimited: true, error: "rate_limit" };
   if (status >= 400) {
-    return { text: null, status, rateLimited: false, error: data.error?.message ?? `http_${status}` };
+    return {
+      text: null,
+      status,
+      rateLimited: false,
+      error: data.error?.message ?? `http_${status}`,
+    };
   }
 
   const rawParts = data.candidates?.[0]?.content?.parts ?? [];
@@ -130,7 +133,12 @@ export async function geminiImage(opts: GeminiImageOptions): Promise<{
   const { status, data } = await callGemini(opts.model, body);
   if (status === 429) return { dataUrl: null, status, rateLimited: true, error: "rate_limit" };
   if (status >= 400) {
-    return { dataUrl: null, status, rateLimited: false, error: data.error?.message ?? `http_${status}` };
+    return {
+      dataUrl: null,
+      status,
+      rateLimited: false,
+      error: data.error?.message ?? `http_${status}`,
+    };
   }
 
   const rawParts = data.candidates?.[0]?.content?.parts ?? [];
