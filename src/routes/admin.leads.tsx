@@ -44,15 +44,7 @@ function formatDate(iso: string): string {
 }
 
 /** Card de indicador do topo do dashboard. */
-function StatCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-}) {
+function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center gap-2">

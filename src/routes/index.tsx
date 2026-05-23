@@ -462,7 +462,11 @@ function Index() {
         onAffiliate={setAffiliateOpen}
         onReward={openReward}
       />
-      <InspirationGallery onUpload={openUpload} onPickStyle={openUploadWithStyle} />
+      <InspirationGallery
+        onUpload={openUpload}
+        onPickStyle={openUploadWithStyle}
+        onLead={(title) => setLead({ planInterest: "pro", title })}
+      />
       <RankingStrip onUpload={openUpload} />
       <Professionals onUpload={openUpload} onCourse={() => setCourseOpen(true)} />
       <Pricing
@@ -1403,9 +1407,11 @@ function TagBadge({ tag }: { tag: string }) {
 function InspirationGallery({
   onUpload,
   onPickStyle,
+  onLead,
 }: {
   onUpload: () => void;
   onPickStyle: (styleId: string) => void;
+  onLead: (title: string) => void;
 }) {
   const [active, setActive] = useState<GalleryFilter>("Todos");
   const visible = active === "Todos" ? gallery : gallery.filter((g) => g.tags.includes(active));
@@ -1482,7 +1488,19 @@ function InspirationGallery({
                     Em breve
                   </span>
                 )}
-                {g.style && !g.soon && (
+                {g.soon ? (
+                  <button
+                    type="button"
+                    onClick={() => onLead(`Acesso antecipado: ${g.title}`)}
+                    aria-label={`Solicitar acesso antecipado para ${g.title}`}
+                    className="absolute inset-0 z-10 flex items-center justify-center bg-foreground/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                  >
+                    <span className="inline-flex items-center gap-2 rounded-full bg-background text-foreground h-11 px-5 text-sm font-medium shadow-xl">
+                      <Sparkles className="h-4 w-4 text-accent animate-pulse" />
+                      Solicitar Acesso
+                    </span>
+                  </button>
+                ) : g.style ? (
                   <button
                     type="button"
                     onClick={() => onPickStyle(g.style!)}
@@ -1494,7 +1512,7 @@ function InspirationGallery({
                       Gerar parecido
                     </span>
                   </button>
-                )}
+                ) : null}
               </div>
               <div className="p-5 flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -1508,12 +1526,12 @@ function InspirationGallery({
                   variant="ghost"
                   className="text-xs shrink-0"
                   onClick={
-                    // Mobile fallback do overlay desktop: se houver estilo
-                    // mapeado, abre modal com o estilo pre-selecionado igual
-                    // ao overlay (hover-only); senao, abre vazio.
-                    g.soon ? undefined : g.style ? () => onPickStyle(g.style!) : onUpload
+                    g.soon
+                      ? () => onLead(`Acesso antecipado: ${g.title}`)
+                      : g.style
+                        ? () => onPickStyle(g.style!)
+                        : onUpload
                   }
-                  disabled={g.soon}
                 >
                   {g.cta} <ChevronRight className="h-3 w-3 ml-0.5" />
                 </Button>

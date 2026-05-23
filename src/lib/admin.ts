@@ -88,10 +88,9 @@ export const getAdminLeads = createServerFn({ method: "GET" })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const query = supabaseAdmin.from("leads") as any;
       const { data, error, count } = await query
-        .select(
-          "id, name, email, phone, source, plan_interest, room_type, interest, created_at",
-          { count: "exact" },
-        )
+        .select("id, name, email, phone, source, plan_interest, room_type, interest, created_at", {
+          count: "exact",
+        })
         .order("created_at", { ascending: false })
         .limit(MAX_LEADS);
 
@@ -108,9 +107,8 @@ export const getAdminLeads = createServerFn({ method: "GET" })
         planPaid: rows.filter(
           (r) => r.plan_interest && PAID_PLANS.includes(r.plan_interest.toLowerCase()),
         ).length,
-        b2b: rows.filter(
-          (r) => r.interest && B2B_INTERESTS.includes(r.interest.toLowerCase()),
-        ).length,
+        b2b: rows.filter((r) => r.interest && B2B_INTERESTS.includes(r.interest.toLowerCase()))
+          .length,
         last7days: rows.filter((r) => {
           const t = new Date(r.created_at).getTime();
           return !Number.isNaN(t) && t >= sevenDaysAgo;

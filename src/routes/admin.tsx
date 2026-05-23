@@ -13,10 +13,7 @@ export const Route = createFileRoute("/admin")({
     }
   },
   head: () => ({
-    meta: [
-      { title: "Admin — Ideal Space" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: [{ title: "Admin — Ideal Space" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: AdminLayout,
 });
