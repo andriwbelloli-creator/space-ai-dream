@@ -71,7 +71,7 @@ export function PresentationModal({ open, onOpenChange, before, after, onCreate 
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">
               Escolha um ambiente vazio, selecione um estilo e veja a IA criar uma versão decorada
-              em segundos.
+              em poucos minutos.
             </p>
 
             <ol className="mt-5 space-y-3.5">

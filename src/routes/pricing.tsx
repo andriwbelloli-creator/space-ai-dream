@@ -81,16 +81,16 @@ const MODULES = [
   {
     icon: Ruler,
     audience: "Arquiteto",
-    title: "Arquitetônico 5D + Planta baixa",
-    desc: "Conecta o projeto 2D à planta baixa, estudo de layout e referências arquitetônicas. Pensado para anteprojetos rápidos.",
+    title: "Arquitetônico 5D + Planta baixa (acesso antecipado)",
+    desc: "Conecta o projeto 2D à planta baixa, estudo de layout e referências arquitetônicas. Pensado para anteprojetos rápidos. Em desenvolvimento, liberação progressiva no plano Pro.",
     bullets: [
-      "Importar planta baixa e gerar variações",
-      "Estudo de layout e circulação",
+      "Importar planta baixa e gerar variações (em breve)",
+      "Estudo de layout e circulação (em breve)",
       "Materiais e acabamentos sugeridos",
-      "Caderno técnico em PDF",
+      "Caderno técnico em PDF (em breve)",
     ],
     differentials: [
-      "Camadas 2D, 5D e planta baixa em um único projeto",
+      "Camadas 2D, 5D e planta baixa no mesmo projeto (5D e planta em breve)",
       "Exportação compatível com seu fluxo CAD",
     ],
     soon: true,
@@ -101,7 +101,7 @@ const MODULES = [
     title: "Virtual Staging para anúncios",
     desc: "Transforme fotos de imóveis vazios em ambientes decorados que vendem mais rápido. Pacotes por anúncio ou ilimitado.",
     bullets: [
-      "Staging em segundos para portais",
+      "Staging em lote rápido para portais",
       "Estilos pensados para venda e locação",
       "Marca d'água da imobiliária opcional",
       "Pacotes por imóvel ou por equipe",
@@ -121,7 +121,7 @@ const DIFFERENTIALS = [
   },
   {
     icon: Zap,
-    t: "Geração em segundos",
+    t: "Geração rápida",
     d: "Pipeline otimizado para foto de celular: comprimimos antes de enviar, geramos em alta qualidade.",
   },
   {
@@ -549,7 +549,7 @@ function PricingPage() {
                 Crie sua primeira proposta hoje.
               </h2>
               <p className="mt-3 text-background/70 text-sm">
-                Comece grátis em segundos. Para equipes e imobiliárias, montamos um plano sob
+                Comece grátis em poucos cliques. Para equipes e imobiliárias, montamos um plano sob
                 medida.
               </p>
             </div>

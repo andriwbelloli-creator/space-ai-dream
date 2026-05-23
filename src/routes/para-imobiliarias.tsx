@@ -161,7 +161,7 @@ function ParaImobiliariasPage() {
             </div>
             <ul className="space-y-2 text-sm shrink-0">
               {[
-                "Staging em segundos para portais",
+                "Staging rápido para portais",
                 "Modo lote para vários cômodos",
                 "Marca d'água da imobiliária opcional",
               ].map((item) => (

@@ -1175,7 +1175,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           {user && credits && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
               {credits.unlimited
-                ? "Plano ilimitado. Gere à vontade."
+                ? "Plano ilimitado. Gere quantas vezes precisar."
                 : `Você tem ${credits.balance} ${credits.balance === 1 ? "crédito" : "créditos"} · cada geração usa 1.`}
             </p>
           )}

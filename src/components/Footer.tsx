@@ -82,8 +82,8 @@ export function Footer() {
               </Link>
             </div>
             <p className="mt-5 text-sm text-background/60 max-w-sm">
-              Plataforma de design de interiores com IA. Geração 2D rápida, planejamento 5D e
-              recursos de planta baixa para projetos residenciais e profissionais.
+              Plataforma de design de interiores com IA. Geração 2D rápida hoje, planejamento 5D e
+              recursos de planta baixa em breve, para projetos residenciais e profissionais.
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-sm">

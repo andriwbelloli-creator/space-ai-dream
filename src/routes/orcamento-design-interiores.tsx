@@ -16,7 +16,7 @@ const modalFallback = (
 
 const TITLE = "Simulador de Orçamento de Design de Interiores online | Ideal Space";
 const DESCRIPTION =
-  "Simule online e de graça o orçamento do seu projeto de design de interiores. Escolha o ambiente e o escopo e veja faixas de custo realistas em segundos.";
+  "Simule online e de graça o orçamento do seu projeto de design de interiores. Escolha o ambiente e o escopo e veja faixas de custo realistas na hora.";
 
 export const Route = createFileRoute("/orcamento-design-interiores")({
   head: () => ({

@@ -893,10 +893,10 @@ function Hero({
 
           <ul className="mt-8 grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-muted-foreground max-w-md">
             {[
-              "1 geração grátis",
+              "3 gerações grátis por mês",
               "Sem cartão no início",
               "Fotos privadas",
-              "Resultado em segundos",
+              "Resultado rápido",
             ].map((t) => (
               <li key={t} className="flex items-center gap-2">
                 <Check className="h-3.5 w-3.5 text-accent" /> {t}
@@ -1038,7 +1038,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
                 transformar
               </>
             }
-            sub="Quarto, cozinha, banheiro, home office, studio e jantar. Todos prontos para receber um projeto 2D em segundos."
+            sub="Quarto, cozinha, banheiro, home office, studio e jantar. Todos prontos para receber um projeto 2D em minutos."
           />
           <Button
             onClick={onUpload}
@@ -1186,7 +1186,7 @@ function HowItWorks({ onDemo }: { onDemo: () => void }) {
       n: "03",
       icon: <Sparkles className="h-5 w-5" />,
       t: "A IA decora",
-      d: "Geração 2D em segundos preservando a estrutura.",
+      d: "Geração 2D rápida preservando a estrutura do ambiente.",
     },
     {
       n: "04",
@@ -1301,7 +1301,7 @@ function ResultShowcase({
           title={
             <>
               Seu projeto fica{" "}
-              <span className="font-serif italic font-normal">pronto em segundos</span>
+              <span className="font-serif italic font-normal">pronto em minutos</span>
             </>
           }
           sub="Imagem como protagonista, lista de compras ao lado e orçamento a um clique."
@@ -1657,7 +1657,7 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
     {
       icon: <Pencil className="h-4 w-4" />,
       t: "Designers",
-      d: "Crie variações visuais em segundos para apresentar a clientes.",
+      d: "Crie variações visuais com rapidez para apresentar a clientes.",
       bullets: ["Múltiplas versões", "Galeria de referências", "Exportação de projeto"],
       href: "/para-designers",
     },

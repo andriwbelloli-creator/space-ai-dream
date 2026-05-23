@@ -101,7 +101,7 @@ function ParaArquitetosPage() {
           </h1>
 
           <p className="mt-6 text-muted-foreground text-lg leading-relaxed">
-            Transforme uma foto ou planta do terreno em estudos preliminares em segundos. A IA do
+            Transforme uma foto ou planta do terreno em estudos preliminares com rapidez. A IA do
             Ideal Space cuida do partido inicial, do estudo de layout e da apresentação 5D para que
             você dedique o seu tempo ao que importa: o projeto executivo.
           </p>
