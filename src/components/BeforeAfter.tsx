@@ -21,11 +21,15 @@ export function BeforeAfter({
   const [pos, setPos] = useState(50);
   const [dragging, setDragging] = useState(false);
   const [focused, setFocused] = useState(false);
+  // Quando `auto` esta ativo, o slider anima sozinho. Mas no primeiro
+  // toque/click do user, desligamos a animacao permanentemente — o user
+  // tomou controle e o RAF nao pode mais sobrescrever o pos do drag.
+  const [userInteracted, setUserInteracted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!auto) return;
+    if (!auto || userInteracted) return;
     let raf = 0;
     const start = performance.now();
     const tick = (t: number) => {
@@ -35,7 +39,11 @@ export function BeforeAfter({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [auto]);
+  }, [auto, userInteracted]);
+
+  // Slider e interativo se nao tem auto OU se o user ja tomou controle.
+  // Bloqueia teclado, tabindex e progress bar enquanto for puramente decorativo.
+  const interactive = !auto || userInteracted;
 
   const clamp = (n: number) => Math.max(2, Math.min(98, n));
   const move = (clientX: number) => {
@@ -47,7 +55,7 @@ export function BeforeAfter({
   const bump = (delta: number) => setPos((p) => clamp(p + delta));
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (auto) return;
+    if (!interactive) return;
     const big = e.shiftKey ? 10 : 1;
     switch (e.key) {
       case "ArrowLeft":
@@ -95,6 +103,7 @@ export function BeforeAfter({
         // mesmo se o cursor sair do container durante o drag.
         e.currentTarget.setPointerCapture(e.pointerId);
         setDragging(true);
+        setUserInteracted(true);
         move(e.clientX);
       }}
       onPointerMove={(e) => dragging && move(e.clientX)}
@@ -119,12 +128,15 @@ export function BeforeAfter({
         className="block w-full h-full object-cover"
         loading={priority ? "eager" : "lazy"}
       />
-      <div className="absolute inset-0 overflow-hidden" style={{ width: `${pos}%` }}>
+      {/* Antes' overlay sobre o 'depois' base, recortado por clip-path
+          (GPU-accelerated, sem layout recalc). Substitui o approach antigo
+          de mudar `width` do container + `width: 10000/pos%` da imagem,
+          que disparava layout em cada pointermove e travava o drag. */}
+      <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
         <img
           src={before}
           alt=""
-          className="block h-full w-auto max-w-none object-cover"
-          style={{ width: `${10000 / pos}%` }}
+          className="block h-full w-full object-cover"
           loading={priority ? "eager" : "lazy"}
         />
       </div>
@@ -149,7 +161,7 @@ export function BeforeAfter({
           aria-valuemax={100}
           aria-valuenow={Math.round(pos)}
           aria-valuetext={`${Math.round(pos)}% antes`}
-          tabIndex={auto ? -1 : 0}
+          tabIndex={interactive ? 0 : -1}
           onKeyDown={onKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -165,7 +177,7 @@ export function BeforeAfter({
       </div>
 
       {/* Bottom progress track with snap markers + reset */}
-      {!auto && (
+      {interactive && (
         <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2 z-10">
           <div
             className="relative flex-1 h-1.5 rounded-full bg-white/30 backdrop-blur cursor-pointer pointer-events-auto"
