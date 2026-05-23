@@ -1507,7 +1507,12 @@ function InspirationGallery({
                   size="sm"
                   variant="ghost"
                   className="text-xs shrink-0"
-                  onClick={g.soon ? undefined : onUpload}
+                  onClick={
+                    // Mobile fallback do overlay desktop: se houver estilo
+                    // mapeado, abre modal com o estilo pre-selecionado igual
+                    // ao overlay (hover-only); senao, abre vazio.
+                    g.soon ? undefined : g.style ? () => onPickStyle(g.style!) : onUpload
+                  }
                   disabled={g.soon}
                 >
                   {g.cta} <ChevronRight className="h-3 w-3 ml-0.5" />
@@ -1589,24 +1594,36 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
 /* ----------------------------- PROFESSIONALS ----------------------------- */
 
 function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse: () => void }) {
-  const audiences = [
+  // `href` opcional: quando presente, o card vira link pra landing dedicada.
+  // Quando ausente (Clinicas, E-commerce) o card fica puramente informativo —
+  // sem hover/cursor de clique pra nao parecer botao falso.
+  const audiences: Array<{
+    icon: React.ReactNode;
+    t: string;
+    d: string;
+    bullets: string[];
+    href?: string;
+  }> = [
     {
       icon: <Pencil className="h-4 w-4" />,
       t: "Designers",
       d: "Crie variações visuais em segundos para apresentar a clientes.",
       bullets: ["Múltiplas versões", "Galeria de referências", "Exportação de projeto"],
+      href: "/para-designers",
     },
     {
       icon: <Compass className="h-4 w-4" />,
       t: "Arquitetos",
       d: "Estudos iniciais e apresentações com antes/depois claro.",
       bullets: ["Conceitos visuais", "Organização por cliente", "Observações técnicas"],
+      href: "/para-arquitetos",
     },
     {
       icon: <Building2 className="h-4 w-4" />,
       t: "Imobiliárias",
       d: "Virtual staging para imóveis vazios em minutos.",
       bullets: ["Staging rápido", "Pacotes por imagem", "Disclaimer automático"],
+      href: "/para-imobiliarias",
     },
     {
       icon: <Stethoscope className="h-4 w-4" />,
@@ -1665,25 +1682,36 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
 
           {/* Right column: 5 audience cards */}
           <div className="grid sm:grid-cols-2 gap-3">
-            {audiences.map((a) => (
-              <div
-                key={a.t}
-                className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur p-5 hover:bg-white/10 transition flex flex-col"
-              >
-                <div className="h-9 w-9 rounded-xl bg-white/10 grid place-items-center text-accent">
-                  {a.icon}
+            {audiences.map((a) => {
+              const baseClass =
+                "rounded-2xl bg-white/5 border border-white/10 backdrop-blur p-5 flex flex-col";
+              const interactiveClass = "hover:bg-white/10 transition";
+              const body = (
+                <>
+                  <div className="h-9 w-9 rounded-xl bg-white/10 grid place-items-center text-accent">
+                    {a.icon}
+                  </div>
+                  <div className="mt-4 font-medium font-serif text-lg leading-tight">{a.t}</div>
+                  <p className="mt-1.5 text-sm text-background/70 leading-relaxed">{a.d}</p>
+                  <ul className="mt-4 pt-4 border-t border-white/10 space-y-1.5">
+                    {a.bullets.map((b) => (
+                      <li key={b} className="text-[12px] text-background/65 leading-relaxed">
+                        · {b}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              );
+              return a.href ? (
+                <Link key={a.t} to={a.href} className={`${baseClass} ${interactiveClass}`}>
+                  {body}
+                </Link>
+              ) : (
+                <div key={a.t} className={baseClass}>
+                  {body}
                 </div>
-                <div className="mt-4 font-medium font-serif text-lg leading-tight">{a.t}</div>
-                <p className="mt-1.5 text-sm text-background/70 leading-relaxed">{a.d}</p>
-                <ul className="mt-4 pt-4 border-t border-white/10 space-y-1.5">
-                  {a.bullets.map((b) => (
-                    <li key={b} className="text-[12px] text-background/65 leading-relaxed">
-                      · {b}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
