@@ -95,10 +95,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:image", content: "https://idealspace.com.br/og-image.jpg" },
       { property: "og:image:type", content: "image/jpeg" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
       { property: "og:image:alt", content: "Ideal Space — Design de interiores com IA" },
+      { property: "og:site_name", content: "Ideal Space" },
+      { property: "og:locale", content: "pt_BR" },
       { name: "twitter:image", content: "https://idealspace.com.br/og-image.jpg" },
+      { name: "twitter:image:alt", content: "Ideal Space — Design de interiores com IA" },
     ],
     links: [
       {
