@@ -54,12 +54,12 @@ export interface RoomSeoData {
 /** Mapa estático de cada cômodo conhecido para o seu conteúdo de SEO. */
 export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
   sala: {
-    title: "Decorar Sala com Inteligência Artificial — Ideal Space",
+    title: "Decorar Sala com Inteligência Artificial | Ideal Space",
     description:
       "Veja sua sala decorada com IA. Envie uma foto, escolha um estilo e receba uma inspiração visual com lista de compras sugerida.",
     h1: "Veja sua *sala* decorada com IA",
     promise:
-      "Envie uma foto da sala como ela está hoje e veja como ela pode ficar mais aconchegante. Teste combinações de sofá, tapete, iluminação e mesa de centro — com sugestões de produtos para começar.",
+      "Envie uma foto da sala como ela está hoje e veja como ela pode ficar mais aconchegante. Teste combinações de sofá, tapete, iluminação e mesa de centro, com sugestões de produtos para começar.",
     cta: "Ver minha sala decorada",
     trustText: "Em poucos passos, a partir de uma foto comum.",
     defaultRoomType: "sala",
@@ -72,7 +72,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     steps: [
       {
         t: "Envie uma foto da sala",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Escolha um estilo de decoração",
@@ -118,12 +118,12 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     },
   },
   quarto: {
-    title: "Decorar Quarto com Inteligência Artificial — Ideal Space",
+    title: "Decorar Quarto com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu quarto decorado com IA. Envie uma foto, escolha um estilo e receba uma inspiração visual com lista de compras sugerida.",
     h1: "Veja seu *quarto* decorado com IA",
     promise:
-      "Envie uma foto do quarto como ele está hoje e veja como ele pode ficar mais acolhedor. Cama, cabeceira, iluminação indireta, têxteis e tons relaxantes — com sugestões de produtos para começar.",
+      "Envie uma foto do quarto como ele está hoje e veja como ele pode ficar mais acolhedor. Cama, cabeceira, iluminação indireta, têxteis e tons relaxantes, com sugestões de produtos para começar.",
     cta: "Ver meu quarto decorado",
     trustText: "Em poucos passos, sem cadastro pra ver a primeira ideia.",
     defaultRoomType: "quarto",
@@ -136,7 +136,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     steps: [
       {
         t: "Envie uma foto do quarto",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Escolha um estilo de decoração",
@@ -182,12 +182,12 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     },
   },
   cozinha: {
-    title: "Decorar Cozinha com Inteligência Artificial — Ideal Space",
+    title: "Decorar Cozinha com Inteligência Artificial | Ideal Space",
     description:
       "Veja sua cozinha decorada com IA. Envie uma foto e receba uma inspiração visual com sugestões de armários, bancada, iluminação e décor.",
     h1: "Veja sua *cozinha* decorada com IA",
     promise:
-      "Envie uma foto da cozinha como ela está hoje e veja ideias para deixá-la mais bonita e funcional. Combinações de armários, bancada, iluminação e organização — com sugestões de produtos, sem precisar reformar tudo.",
+      "Envie uma foto da cozinha como ela está hoje e veja ideias para deixá-la mais bonita e funcional. Combinações de armários, bancada, iluminação e organização, com sugestões de produtos, sem precisar reformar tudo.",
     cta: "Ver minha cozinha decorada",
     trustText: "Em poucos passos, sem precisar de obra grande.",
     defaultRoomType: "cozinha",
@@ -200,7 +200,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     steps: [
       {
         t: "Envie uma foto da cozinha",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Escolha um estilo de decoração",
@@ -217,7 +217,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     faq: [
       {
         q: "Preciso reformar pra usar o resultado?",
-        a: "Não. A inspiração serve para decidir o que mudar — pode ser só décor, iluminação ou paleta, sem obra grande.",
+        a: "Não. A inspiração serve para decidir o que mudar, e pode ser só décor, iluminação ou paleta, sem obra grande.",
       },
       {
         q: "É um projeto técnico para o marceneiro?",
@@ -225,7 +225,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
       },
       {
         q: "Funciona com cozinha americana?",
-        a: "Sim. Envie a foto que mostre a área que você quer transformar — corredor, ilha ou integrada com sala.",
+        a: "Sim. Envie a foto que mostre a área que você quer transformar: corredor, ilha ou integrada com sala.",
       },
       {
         q: "A IA preserva fogão e geladeira no lugar?",
@@ -246,25 +246,25 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     },
   },
   "home-office": {
-    title: "Decorar Home Office com Inteligência Artificial — Ideal Space",
+    title: "Decorar Home Office com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu home office decorado com IA. Envie uma foto e receba uma inspiração visual com mesa, cadeira, iluminação e organização.",
     h1: "Veja seu *home office* decorado com IA",
     promise:
-      "Envie uma foto do seu espaço de trabalho e veja como ele pode ficar mais bonito e produtivo. Mesa, cadeira, iluminação, monitor e organização de cabos — com sugestões de produtos pra investir só no que faz diferença.",
+      "Envie uma foto do seu espaço de trabalho e veja como ele pode ficar mais bonito e produtivo. Mesa, cadeira, iluminação, monitor e organização de cabos, com sugestões de produtos pra investir só no que faz diferença.",
     cta: "Ver meu home office decorado",
     trustText: "Em poucos passos, a partir da foto que você já tem.",
     defaultRoomType: "home-office",
     benefits: [
       "Ambiente bonito para trabalhar, sem perder produtividade",
       "Mesa, cadeira ergonômica e iluminação pensadas em conjunto",
-      "Organização inteligente — cabos, monitor, prateleiras",
+      "Organização inteligente: cabos, monitor, prateleiras",
       "Fundo agradável para reuniões e gravações em vídeo",
     ],
     steps: [
       {
         t: "Envie uma foto do espaço",
-        d: "Use a foto que você já tem — canto da sala, quarto ou escritório dedicado.",
+        d: "Use a foto que você já tem: canto da sala, quarto ou escritório dedicado.",
       },
       {
         t: "Escolha um estilo de decoração",
@@ -281,7 +281,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     faq: [
       {
         q: "Funciona em canto de sala ou quarto?",
-        a: "Sim. Envie a foto do espaço que você usa — o resultado considera o ambiente real, não um escritório fictício.",
+        a: "Sim. Envie a foto do espaço que você usa. O resultado considera o ambiente real, não um escritório fictício.",
       },
       {
         q: "É um projeto técnico de ergonomia?",
@@ -293,7 +293,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
       },
       {
         q: "Sugere marca específica de cadeira ou mesa?",
-        a: "A lista de compras sugere categorias e faixas de preço — você escolhe a marca que combina com o seu orçamento.",
+        a: "A lista de compras sugere categorias e faixas de preço. Você escolhe a marca que combina com o seu orçamento.",
       },
     ],
     finalCta: "Criar uma inspiração para meu home office",
@@ -310,12 +310,12 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     },
   },
   banheiro: {
-    title: "Decorar Banheiro com Inteligência Artificial — Ideal Space",
+    title: "Decorar Banheiro com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu banheiro decorado com IA. Envie uma foto e receba uma inspiração visual com revestimentos, espelhos, metais e décor.",
     h1: "Veja seu *banheiro* decorado com IA",
     promise:
-      "Envie uma foto do banheiro como ele está hoje e veja ideias para deixá-lo mais bonito e prático. Iluminação, espelhos, metais e organização — com visual leve, sensação de hotel ou spa, sem prometer reforma garantida.",
+      "Envie uma foto do banheiro como ele está hoje e veja ideias para deixá-lo mais bonito e prático. Iluminação, espelhos, metais e organização, com visual leve e sensação de hotel ou spa, sem prometer reforma garantida.",
     cta: "Ver meu banheiro decorado",
     trustText: "Em poucos passos, a partir de uma foto comum.",
     defaultRoomType: "banheiro",
@@ -328,7 +328,7 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     steps: [
       {
         t: "Envie uma foto do banheiro",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Escolha um estilo de decoração",

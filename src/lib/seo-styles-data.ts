@@ -63,12 +63,12 @@ export interface StyleSeoData {
 export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   japandi: {
     name: "Japandi",
-    title: "Decoração Japandi com Inteligência Artificial — Ideal Space",
+    title: "Decoração Japandi com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu ambiente decorado no estilo Japandi. Envie uma foto, escolha o estilo e receba uma inspiração visual com lista de compras sugerida.",
     h1: "Veja seu ambiente no estilo *Japandi*",
     promise:
-      "Madeira clara, linho, cerâmica artesanal e uma paleta calma. Envie uma foto do ambiente como ele está hoje e veja como ele pode ficar com toques Japandi — móveis e decoração que cabem no seu espaço, com uma lista de compras sugerida.",
+      "Madeira clara, linho, cerâmica artesanal e uma paleta calma. Envie uma foto do ambiente como ele está hoje e veja como ele pode ficar com toques Japandi: móveis e decoração que cabem no seu espaço, com uma lista de compras sugerida.",
     cta: "Testar Japandi no meu ambiente",
     trustText: "Em poucos passos, a partir de uma foto comum.",
     defaultStyle: "japandi",
@@ -81,7 +81,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     steps: [
       {
         t: "Envie uma foto do ambiente",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Aplicamos o estilo Japandi",
@@ -110,7 +110,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         q: "Posso testar outros estilos no mesmo ambiente?",
-        a: "Sim. A mesma foto pode receber Japandi, natural, minimalista ou contemporâneo — compare as versões para decidir o que combina mais com você.",
+        a: "Sim. A mesma foto pode receber Japandi, natural, minimalista ou contemporâneo. Compare as versões e decida o que combina mais com você.",
       },
     ],
     finalCta: "Ver meu ambiente em Japandi",
@@ -128,12 +128,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   contemporaneo: {
     name: "Contemporâneo",
-    title: "Decoração Contemporânea com Inteligência Artificial — Ideal Space",
+    title: "Decoração Contemporânea com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu ambiente decorado no estilo contemporâneo. Envie uma foto e receba uma inspiração visual com sugestões de móveis e lista de compras.",
     h1: "Veja seu ambiente no estilo *Contemporâneo*",
     promise:
-      "Linhas atuais, mistura de texturas e equilíbrio entre conforto e sofisticação. Envie uma foto do seu ambiente e veja como ele pode ficar com toques contemporâneos — móveis elegantes, paleta sóbria e composição moderna sem exagero.",
+      "Linhas atuais, mistura de texturas e equilíbrio entre conforto e sofisticação. Envie uma foto do seu ambiente e veja como ele pode ficar com toques contemporâneos: móveis elegantes, paleta sóbria e composição moderna sem exagero.",
     cta: "Testar Contemporâneo no meu ambiente",
     trustText: "Em poucos passos, com a foto que você já tem.",
     defaultStyle: "contemporaneo",
@@ -146,7 +146,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     steps: [
       {
         t: "Envie uma foto do ambiente",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Aplicamos o estilo Contemporâneo",
@@ -193,12 +193,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   minimalista: {
     name: "Minimalista",
-    title: "Decoração Minimalista com Inteligência Artificial — Ideal Space",
+    title: "Decoração Minimalista com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu ambiente decorado no estilo minimalista. Envie uma foto e receba uma inspiração visual com lista de compras sugerida.",
     h1: "Veja seu ambiente no estilo *Minimalista*",
     promise:
-      "Linhas limpas, paleta neutra, poucos elementos e respiro visual. Envie uma foto do seu ambiente e veja como ele pode ficar com toques minimalistas — organização, funcionalidade e sugestões do que vale realmente comprar.",
+      "Linhas limpas, paleta neutra, poucos elementos e respiro visual. Envie uma foto do seu ambiente e veja como ele pode ficar com toques minimalistas: organização, funcionalidade e sugestões do que vale realmente comprar.",
     cta: "Testar Minimalista no meu ambiente",
     trustText: "Em poucos passos, sem precisar de cadastro pra ver a primeira ideia.",
     defaultStyle: "minimalista",
@@ -211,7 +211,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     steps: [
       {
         t: "Envie uma foto do ambiente",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Aplicamos o estilo Minimalista",
@@ -228,7 +228,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     faq: [
       {
         q: "Minimalismo significa ficar com pouca coisa?",
-        a: "Significa manter o que você de fato usa. A IA propõe uma composição onde cada item tem propósito — não vira ambiente vazio.",
+        a: "Significa manter o que você de fato usa. A IA propõe uma composição onde cada item tem propósito, sem virar ambiente vazio.",
       },
       {
         q: "É um projeto arquitetônico?",
@@ -258,12 +258,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   natural: {
     name: "Natural",
-    title: "Decoração Natural com Inteligência Artificial — Ideal Space",
+    title: "Decoração Natural com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu ambiente decorado no estilo natural. Envie uma foto e receba uma inspiração visual com madeira, fibras, plantas e tons claros.",
     h1: "Veja seu ambiente no estilo *Natural*",
     promise:
-      "Madeira, fibras, plantas e tons claros que trazem leveza e bem-estar. Envie uma foto do seu ambiente e veja como ele pode ficar com toques naturais — composição leve, sensação acolhedora e sugestões de produtos.",
+      "Madeira, fibras, plantas e tons claros que trazem leveza e bem-estar. Envie uma foto do seu ambiente e veja como ele pode ficar com toques naturais: composição leve, sensação acolhedora e sugestões de produtos.",
     cta: "Testar Natural no meu ambiente",
     trustText: "Em poucos passos, a partir da foto que você já tem.",
     defaultStyle: "natural",
@@ -276,7 +276,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     steps: [
       {
         t: "Envie uma foto do ambiente",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Aplicamos o estilo Natural",
@@ -297,7 +297,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         q: "Combina com apartamento?",
-        a: "Sim. Funciona muito bem em espaços urbanos — madeira, plantas e fibras quebram a rigidez de paredes brancas e piso liso.",
+        a: "Sim. Funciona muito bem em espaços urbanos. Madeira, plantas e fibras quebram a rigidez de paredes brancas e piso liso.",
       },
       {
         q: "Preciso comprar muitas plantas?",
@@ -323,12 +323,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   industrial: {
     name: "Industrial",
-    title: "Decoração Industrial com Inteligência Artificial — Ideal Space",
+    title: "Decoração Industrial com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu ambiente decorado no estilo industrial. Envie uma foto e receba uma inspiração visual com metal, madeira escura e tijolo aparente.",
     h1: "Veja seu ambiente no estilo *Industrial*",
     promise:
-      "Metal, madeira escura, concreto, tijolo aparente e iluminação marcante. Envie uma foto do ambiente e veja como ele pode ficar com um ar urbano — composição cheia de personalidade, sem virar galpão.",
+      "Metal, madeira escura, concreto, tijolo aparente e iluminação marcante. Envie uma foto do ambiente e veja como ele pode ficar com um ar urbano: composição cheia de personalidade, sem virar galpão.",
     cta: "Testar Industrial no meu ambiente",
     trustText: "Em poucos passos, com a foto que você já tem.",
     defaultStyle: "industrial",
@@ -341,7 +341,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     steps: [
       {
         t: "Envie uma foto do ambiente",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Aplicamos o estilo Industrial",
@@ -358,7 +358,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     faq: [
       {
         q: "Industrial fica frio?",
-        a: "Pode ficar se não for equilibrado. A IA combina materiais crus com têxteis, iluminação amarela e detalhes que dão atmosfera — não galpão.",
+        a: "Pode ficar se não for equilibrado. A IA combina materiais crus com têxteis, iluminação amarela e detalhes que dão atmosfera, sem virar galpão.",
       },
       {
         q: "Preciso quebrar parede para ter tijolo aparente?",
@@ -388,12 +388,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   luxo: {
     name: "Luxo discreto",
-    title: "Decoração de Luxo Discreto com Inteligência Artificial — Ideal Space",
+    title: "Decoração de Luxo Discreto com Inteligência Artificial | Ideal Space",
     description:
       "Veja seu ambiente decorado no estilo luxo discreto. Envie uma foto e receba uma inspiração visual com materiais nobres e composição elegante.",
     h1: "Veja seu ambiente em *Luxo Discreto*",
     promise:
-      "Materiais nobres, iluminação cuidadosa e composição elegante, sem exagero. Envie uma foto do seu ambiente e veja como ele pode ganhar um visual premium — com sugestões de produtos para decidir onde investir.",
+      "Materiais nobres, iluminação cuidadosa e composição elegante, sem exagero. Envie uma foto do seu ambiente e veja como ele pode ganhar um visual premium, com sugestões de produtos para decidir onde investir.",
     cta: "Testar Luxo Discreto no meu ambiente",
     trustText: "Em poucos passos, sem promessa de obra ou render técnico.",
     defaultStyle: "luxo",
@@ -401,12 +401,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       "Composição elegante com materiais nobres aplicados com critério",
       "Iluminação pontual que valoriza os detalhes certos",
       "Visual premium sem cair em ostentação",
-      "Cuidado para não parecer artificial — refinamento na medida certa",
+      "Cuidado para não parecer artificial, com refinamento na medida certa",
     ],
     steps: [
       {
         t: "Envie uma foto do ambiente",
-        d: "Use a foto que você já tem — do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador.",
       },
       {
         t: "Aplicamos o estilo Luxo Discreto",
@@ -431,7 +431,7 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         q: "Luxo discreto exige orçamento alto?",
-        a: "É um estilo, não um orçamento fixo. A lista de compras vem com sugestões em diferentes faixas — você escolhe onde priorizar.",
+        a: "É um estilo, não um orçamento fixo. A lista de compras vem com sugestões em diferentes faixas, e você escolhe onde priorizar.",
       },
       {
         q: "Posso aplicar gradualmente?",
