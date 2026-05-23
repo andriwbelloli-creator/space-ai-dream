@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { ChevronsLeftRight, RotateCcw } from "lucide-react";
 
 type Props = {
   before: string;
@@ -172,9 +172,7 @@ export function BeforeAfter({
             focused ? "ring-2 ring-accent ring-offset-2 ring-offset-background" : ""
           }`}
         >
-          <svg viewBox="0 0 24 24" className="h-4 w-4 text-foreground">
-            <path fill="currentColor" d="M8 7l-5 5 5 5V7zm8 0v10l5-5-5-5z" />
-          </svg>
+          <ChevronsLeftRight className="h-4 w-4 text-foreground" strokeWidth={2.25} />
         </button>
       </div>
 
