@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
@@ -101,7 +101,15 @@ const modalFallback = (
   </div>
 );
 
+// Query param opcional `?upload=1` abre o UploadPhotoModal automaticamente
+// no mount. Permite deeplink "comece um novo projeto" (ex.: /projetos "+ Novo
+// projeto" → /?upload=1) sem precisar duplicar a montagem do modal aqui.
+type IndexSearch = { upload?: "1" };
+
 export const Route = createFileRoute("/")({
+  validateSearch: (search): IndexSearch => ({
+    upload: search.upload === "1" ? "1" : undefined,
+  }),
   component: Index,
   head: () => ({
     meta: [
@@ -368,6 +376,7 @@ const faqs = [
 
 function Index() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
   const track = useServerFn(logEvent);
   const [presentationOpen, setPresentationOpen] = useState(false);
@@ -395,6 +404,18 @@ function Index() {
     }, 1200);
     return () => window.clearTimeout(t);
   }, []);
+
+  // Deeplink: /?upload=1 abre o modal de upload no mount e limpa o query
+  // param (pra reload nao reabrir indefinidamente). Usado pelo botao
+  // "+ Novo projeto" em /projetos pra evitar 1 clique extra na home.
+  const search = Route.useSearch();
+  useEffect(() => {
+    if (search.upload === "1") {
+      setUploadOpen(true);
+      navigate({ to: "/", search: {}, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.upload]);
 
   const handlePresentation = (open: boolean) => {
     setPresentationOpen(open);

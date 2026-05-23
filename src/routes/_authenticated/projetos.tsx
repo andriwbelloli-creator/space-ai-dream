@@ -110,6 +110,7 @@ function ProjetosPage() {
           </div>
           <Link
             to="/"
+            search={{ upload: "1" }}
             className="inline-flex h-10 shrink-0 items-center justify-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             + Novo projeto
@@ -135,6 +136,7 @@ function ProjetosPage() {
             </p>
             <Link
               to="/"
+              search={{ upload: "1" }}
               className="mt-5 inline-flex h-10 items-center justify-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Criar meu primeiro ambiente
