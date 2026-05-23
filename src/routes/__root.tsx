@@ -93,8 +93,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Plataforma de design de interiores com IA: transforme ambientes vazios em espaços decorados e veja o antes e depois do seu cômodo em segundos.",
       },
-      { property: "og:image", content: "https://idealspace.com.br/icon-512.png" },
-      { name: "twitter:image", content: "https://idealspace.com.br/icon-512.png" },
+      { property: "og:image", content: "https://idealspace.com.br/og-image.jpg" },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Ideal Space — Design de interiores com IA" },
+      { name: "twitter:image", content: "https://idealspace.com.br/og-image.jpg" },
     ],
     links: [
       {
