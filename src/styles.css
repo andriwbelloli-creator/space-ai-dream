@@ -161,6 +161,15 @@
   .font-serif {
     font-family: var(--font-serif);
   }
+
+  /* Desabilita o drag-and-drop nativo do browser nas imagens — sem isso,
+     clicar e arrastar uma <img> mostra o "fantasma" da imagem seguindo
+     o cursor, dando impressao de que a imagem se moveu. O drag legitimo
+     do BeforeAfter usa o divider button, nao as <img>, entao seguro. */
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
 }
 
 /* ------------ Premium motion utilities ------------ */

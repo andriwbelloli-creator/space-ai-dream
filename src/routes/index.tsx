@@ -1018,7 +1018,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
             {emptyRooms.map((r) => (
               <article
                 key={r.title}
-                className="group snap-start shrink-0 w-[78%] sm:w-auto rounded-3xl overflow-hidden bg-card border hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500"
+                className="group snap-start shrink-0 w-[78%] sm:w-auto rounded-3xl overflow-hidden bg-card border hover:shadow-xl transition-shadow duration-500"
               >
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <img
@@ -1184,7 +1184,7 @@ function HowItWorks({ onDemo }: { onDemo: () => void }) {
           {steps.map((s) => (
             <div
               key={s.n}
-              className="relative rounded-3xl border bg-card p-6 hover:-translate-y-0.5 hover:shadow-lg transition"
+              className="relative rounded-3xl border bg-card p-6 hover:shadow-lg transition-shadow"
             >
               <div className="flex items-center justify-between">
                 <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent grid place-items-center">
@@ -1463,7 +1463,7 @@ function InspirationGallery({
           {visible.map((g) => (
             <article
               key={g.title}
-              className="group rounded-3xl overflow-hidden border bg-card hover:-translate-y-0.5 hover:shadow-xl transition-all duration-500 flex flex-col"
+              className="group rounded-3xl overflow-hidden border bg-card hover:shadow-xl transition-shadow duration-500 flex flex-col"
             >
               <div className="relative aspect-[5/4] overflow-hidden">
                 <img
@@ -1556,7 +1556,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
           {ranking.map((r) => (
             <article
               key={r.title}
-              className="group relative rounded-3xl overflow-hidden border bg-card hover:-translate-y-0.5 hover:shadow-xl transition-all duration-500"
+              className="group relative rounded-3xl overflow-hidden border bg-card hover:shadow-xl transition-shadow duration-500"
             >
               <div className="relative aspect-[5/4] overflow-hidden">
                 <img
