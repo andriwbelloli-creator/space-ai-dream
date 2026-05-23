@@ -859,7 +859,7 @@ function Hero({
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-10 sm:pt-20 pb-20 sm:pb-24 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center relative">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center relative">
         <div className="lg:col-span-6 is-fade-up">
           <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" /> Design de
@@ -1027,7 +1027,7 @@ function SectionHead({
 
 function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
   return (
-    <section id="ambientes" className="py-20 sm:py-28">
+    <section id="ambientes" className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -1102,7 +1102,7 @@ function StylesCarousel({
   onUpload: () => void;
 }) {
   return (
-    <section id="estilos" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+    <section id="estilos" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -1196,7 +1196,7 @@ function HowItWorks({ onDemo }: { onDemo: () => void }) {
     },
   ];
   return (
-    <section id="criar" className="py-20 sm:py-28">
+    <section id="criar" className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -1216,7 +1216,7 @@ function HowItWorks({ onDemo }: { onDemo: () => void }) {
             <PlayCircle className="h-4 w-4 mr-1.5" /> Ver demonstração
           </Button>
         </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {steps.map((s) => (
             <div
               key={s.n}
@@ -1244,7 +1244,7 @@ function HowItWorks({ onDemo }: { onDemo: () => void }) {
 
 function FeaturedBeforeAfter() {
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-5 order-2 lg:order-1">
           <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
@@ -1294,7 +1294,7 @@ function ResultShowcase({
   onReward: (k: RewardKind) => void;
 }) {
   return (
-    <section className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+    <section className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHead
           kicker="Tela de resultado"
@@ -1307,7 +1307,7 @@ function ResultShowcase({
           sub="Imagem como protagonista, lista de compras ao lado e orçamento a um clique."
         />
 
-        <div className="mt-12 grid lg:grid-cols-[1fr_360px] gap-6 items-start">
+        <div className="mt-10 grid lg:grid-cols-[1fr_360px] gap-6 items-start">
           <div className="rounded-3xl overflow-hidden border bg-card">
             <div className="p-3 sm:p-4 flex items-center gap-2 border-b flex-wrap">
               <Badge
@@ -1457,7 +1457,7 @@ function InspirationGallery({
   };
 
   return (
-    <section id="galeria" className="py-20 sm:py-28">
+    <section id="galeria" className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -1586,7 +1586,7 @@ function InspirationGallery({
 
 function RankingStrip({ onUpload }: { onUpload: () => void }) {
   return (
-    <section id="ranking" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+    <section id="ranking" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -1690,7 +1690,7 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
   ];
 
   return (
-    <section id="pro" className="py-20 sm:py-28">
+    <section id="pro" className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 rounded-[2rem] bg-foreground text-background p-8 sm:p-14 relative overflow-hidden">
         <div
           aria-hidden
@@ -1779,7 +1779,7 @@ function Pricing({
   onLead: (planInterest: string) => void;
 }) {
   return (
-    <section id="planos" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+    <section id="planos" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="text-center">
           <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Assinatura</div>
@@ -1813,7 +1813,7 @@ function Pricing({
           ))}
         </div>
 
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
           {PLANS.map((p) => (
             <div
               key={p.id}
@@ -1915,7 +1915,7 @@ function Trust() {
     },
   ];
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHead
           kicker="Segurança e privacidade"
@@ -1946,7 +1946,7 @@ function Trust() {
 
 function FAQ() {
   return (
-    <section className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
+    <section className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <SectionHead kicker="Perguntas frequentes" title={<>FAQ</>} />
         <Accordion type="single" collapsible className="mt-8">
