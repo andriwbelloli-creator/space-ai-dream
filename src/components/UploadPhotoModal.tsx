@@ -171,7 +171,15 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const cameraInput = useRef<HTMLInputElement>(null);
   const abortRef = useRef<{ cancelled: boolean } | null>(null);
 
-  const [emblaRef, embla] = useEmblaCarousel({ loop: false, align: "start" });
+  // `watchDrag: false` desativa o swipe horizontal do Embla. Sem isso, o
+  // carousel captura o pointerdown antes do BeforeAfter dentro dele e o
+  // slider 'antes/depois' nunca recebia o drag. Navegacao entre variations
+  // continua funcionando pelos botoes ChevronLeft/ChevronRight.
+  const [emblaRef, embla] = useEmblaCarousel({
+    loop: false,
+    align: "start",
+    watchDrag: false,
+  });
   const [waOpen, setWaOpen] = useState(false);
   // Lote 8 — upsell "Salvar Imagem em HD".
   const [hdLeadOpen, setHdLeadOpen] = useState(false);
