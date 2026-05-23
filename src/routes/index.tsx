@@ -1084,19 +1084,21 @@ function StylesCarousel({
         </div>
       </div>
 
-      <div className="relative mt-10">
+      <div className="relative mt-10 -mx-4 sm:mx-0">
         {/* Scroll horizontal nativo com snap — mobile-friendly via touch, sem
-            JS extra. Antes era marquee infinita (is-marquee-slow) que nao
-            pausava em mobile e tornava cards desconfortaveis pra clicar. */}
+            JS extra. Tamanho dos cards casado com o EmptyRoomsCarousel:
+            no mobile cada card ocupa 78% da viewport (snap decisivo, sensacao
+            de carrossel "encorpado"); no desktop card maior pra ter presenca
+            editorial sem ficar magrinho. */}
         <div className="overflow-x-auto snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex gap-5 px-4 sm:px-6 pr-12 pb-2">
+          <div className="flex gap-5 px-4 sm:px-6 pr-8 sm:pr-12 pb-2">
             {styles.map((s, i) => (
               <button
                 key={s.styleId ?? i}
                 type="button"
                 onClick={() => onPickStyle(s.styleId)}
                 aria-label={`Aplicar estilo ${s.name}`}
-                className="group snap-start shrink-0 w-[240px] sm:w-[280px] rounded-3xl overflow-hidden bg-card border text-left hover:shadow-xl transition-shadow"
+                className="group snap-start shrink-0 w-[78%] sm:w-[280px] lg:w-[320px] rounded-3xl overflow-hidden bg-card border text-left hover:shadow-xl transition-shadow"
               >
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <img
