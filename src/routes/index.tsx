@@ -2093,7 +2093,7 @@ function MobileBottomNav({
     onClick,
     primary = false,
   }: {
-    icon: typeof Camera;
+    icon: React.ComponentType<{ className?: string }>;
     label: string;
     onClick: () => void;
     primary?: boolean;
@@ -2118,9 +2118,9 @@ function MobileBottomNav({
     >
       <div className="pointer-events-auto mx-2 mb-[max(env(safe-area-inset-bottom),0.5rem)] rounded-3xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl">
         <div className="flex items-stretch px-1 py-1">
-          <Item icon={Camera} label="Criar" onClick={onUpload} primary />
           <Item icon={Sparkles} label="Estilos" onClick={() => scrollTo("estilos")} />
           <Item icon={ImageIcon} label="Galeria" onClick={() => scrollTo("galeria")} />
+          <Item icon={Camera} label="Criar" onClick={onUpload} primary />
           <Item icon={ShoppingBag} label="Compras" onClick={onShopping} />
         </div>
       </div>
