@@ -37,7 +37,7 @@ import {
 import { transformImage } from "@/lib/transform.functions";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
-import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
+import { getShoppingFallback, estimateTotal, sortByPriority } from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
 import { FileDown, ShoppingBag, RefreshCw, Download, Lock } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
@@ -1254,7 +1254,10 @@ function ShoppingPanel({
   const vid = variation?.id;
   const aiItems = vid ? cache[vid] : undefined;
   const usingFallback = !aiItems;
-  const items: ReadonlyArray<BudgetItem> = aiItems ?? getShoppingFallback(roomType);
+  // Ordena por prioridade da tag (Essencial > Recomendado > Opcional) tanto
+  // pra UI quanto pro PDF, garantindo que os itens de maior impacto visual
+  // aparecam primeiro e maximizem a chance de clique afiliado.
+  const items: ReadonlyArray<BudgetItem> = sortByPriority(aiItems ?? getShoppingFallback(roomType));
 
   const fetchList = async () => {
     if (!variation?.url || !vid) return;
@@ -1307,10 +1310,14 @@ function ShoppingPanel({
 
   // Lote 6A — registra a intenção de clique de afiliado antes de redirecionar.
   // Fire-and-forget: o tracking nunca bloqueia nem atrasa a abertura do link.
+  // `tag` e `position` ajudam a entender quais sao as faixas que convertem mais
+  // (essencial costuma converter melhor que opcional, primeiros itens melhor
+  // que os de baixo).
   const handleAffiliateClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     item: BudgetItem,
     url: string,
+    position: number,
   ) => {
     // Cliques modificados (ctrl/cmd/shift/alt) seguem o comportamento nativo.
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
@@ -1325,6 +1332,8 @@ function ShoppingPanel({
           productUrl: url,
           roomType: roomType ?? undefined,
           style: styleId || undefined,
+          tag: item.tag,
+          position: String(position + 1),
           source: "shopping_list",
         },
       },
@@ -1333,6 +1342,25 @@ function ShoppingPanel({
     });
     // window.open síncrono (dentro do gesto) — evita bloqueio de pop-up.
     window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  // Lote affiliate-conversion: registra quando o usuario expande a lista
+  // (clica em "Ver mais N itens"). Sinal forte de interesse, ajuda a calibrar
+  // a quantidade de itens visiveis na primeira dobra.
+  const onExpand = () => {
+    setUnlocked(true);
+    void track({
+      data: {
+        event: "shopping_list_expanded",
+        props: {
+          roomType: roomType ?? undefined,
+          style: styleId || undefined,
+          totalItems: String(items.length),
+        },
+      },
+    }).catch(() => {
+      /* falha de log nao bloqueia o expand */
+    });
   };
 
   const onDownload = () => {
@@ -1390,30 +1418,34 @@ function ShoppingPanel({
                 <div className="mt-2 h-2.5 w-1/3 rounded bg-muted/60" />
               </li>
             ))
-          : visibleItems.map((it) => (
+          : visibleItems.map((it, idx) => (
               <li key={it.name}>
                 <a
                   href={buyUrl(it.name)}
                   target="_blank"
                   rel="sponsored noopener noreferrer"
-                  onClick={(e) => handleAffiliateClick(e, it, buyUrl(it.name))}
+                  onClick={(e) => handleAffiliateClick(e, it, buyUrl(it.name), idx)}
                   className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60"
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
                       <span
-                        className={`text-[9px] uppercase tracking-widest rounded-full px-1.5 py-0.5 ${tagStyles[it.tag]}`}
+                        className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 ${tagStyles[it.tag]}`}
                       >
                         {it.tag}
                       </span>
-                      <span className="text-sm font-medium truncate">{it.name}</span>
+                      <span
+                        className={`text-sm truncate ${it.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+                      >
+                        {it.name}
+                      </span>
                     </div>
                     <div className="text-[11px] text-muted-foreground mt-0.5">{it.cat}</div>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-0.5">
                     <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
                     <span className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent">
-                      Comprar <ArrowUpRight className="h-3 w-3" />
+                      Ver na loja <ArrowUpRight className="h-3 w-3" />
                     </span>
                   </div>
                 </a>
@@ -1422,13 +1454,14 @@ function ShoppingPanel({
       </ul>
 
       <p className="mt-2 px-1 text-[10px] leading-relaxed text-muted-foreground">
-        Tocar num produto abre a busca em lojas parceiras. Alguns links podem gerar comissão para o
-        Ideal Space, sem custo a mais para você.
+        Sugestões aproximadas pelo estilo do ambiente, sem garantia de produto idêntico. Os links
+        levam para a busca em lojas parceiras e alguns podem gerar comissão para o Ideal Space, sem
+        custo a mais para você.
       </p>
 
       {!unlocked && items.length > visibleItems.length && (
         <button
-          onClick={() => setUnlocked(true)}
+          onClick={onExpand}
           className="mt-3 text-xs rounded-xl border border-dashed py-2 hover:bg-muted/60"
         >
           Ver mais {items.length - visibleItems.length} itens

@@ -123,6 +123,26 @@ function parseRange(price: string): [number, number] {
   return [a, b];
 }
 
+/**
+ * Ordem visual canonica das tags da lista de compras. Usada pra
+ * ordenar tanto a UI quanto o PDF, garantindo que itens essenciais
+ * apareçam primeiro e maximizem a chance de clique afiliado.
+ */
+export const TAG_PRIORITY: Record<BudgetItem["tag"], number> = {
+  Essencial: 0,
+  Recomendado: 1,
+  Opcional: 2,
+};
+
+/**
+ * Retorna uma copia da lista ordenada por prioridade da tag.
+ * Estavel: itens com a mesma tag preservam a ordem original
+ * (Array.sort em V8 é stable desde 2019).
+ */
+export function sortByPriority(items: ReadonlyArray<BudgetItem>): BudgetItem[] {
+  return [...items].sort((a, b) => TAG_PRIORITY[a.tag] - TAG_PRIORITY[b.tag]);
+}
+
 export function estimateTotal(items: ReadonlyArray<BudgetItem>): string {
   let min = 0;
   let max = 0;

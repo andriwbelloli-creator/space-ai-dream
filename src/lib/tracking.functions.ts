@@ -22,6 +22,9 @@ export const ALLOWED_EVENTS = [
   "style_selected",
   // Pos-geracao: usuario volta em /projetos e reabre um projeto.
   "project_detail_opened",
+  // Lista de compras: usuario clica em "Ver mais" e expande os itens
+  // que estavam ocultos atras do paywall leve.
+  "shopping_list_expanded",
 ] as const;
 
 export type FunnelEvent = (typeof ALLOWED_EVENTS)[number];
