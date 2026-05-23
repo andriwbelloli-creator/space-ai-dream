@@ -1087,14 +1087,6 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                   <Wand2 className="h-4 w-4 mr-1.5" />
                   {generating ? "Gerando…" : !user ? "Criar conta para gerar" : "Gerar com IA"}
                 </Button>
-                <Button
-                  onClick={() => generate(3, true)}
-                  disabled={!preview || generating || optimizing}
-                  variant="outline"
-                  className="h-11 rounded-full px-5 text-sm"
-                >
-                  <Layers className="h-4 w-4 mr-1.5" /> Gerar 3 variações
-                </Button>
               </>
             ) : (
               <>
@@ -1152,6 +1144,20 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
               Fechar
             </Button>
           </div>
+          {/* Opcao avancada (so na fase pre-resultado): gerar 3 versoes em
+              paralelo de uma vez. Link texto pra nao competir visualmente
+              com o CTA primario "Gerar com IA". */}
+          {variations.length === 0 && (
+            <button
+              type="button"
+              onClick={() => generate(3, true)}
+              disabled={!preview || generating || optimizing}
+              className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Layers className="h-3 w-3" />
+              Ou gere 3 versões em paralelo
+            </button>
+          )}
           {!user && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
               Conta gratuita · leva menos de 1 minuto · seu antes/depois fica salvo em Meus
