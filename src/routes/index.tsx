@@ -454,7 +454,7 @@ function Index() {
       />
       <Marquee />
       <EmptyRoomsCarousel onUpload={openUpload} />
-      <StylesCarousel onPickStyle={openUploadWithStyle} />
+      <StylesCarousel onPickStyle={openUploadWithStyle} onUpload={openUpload} />
       <HowItWorks onDemo={() => handlePresentation(true)} />
       <FeaturedBeforeAfter />
       <ResultShowcase
@@ -1058,63 +1058,69 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
 
 /* ----------------------------- STYLES ----------------------------- */
 
-function StylesCarousel({ onPickStyle }: { onPickStyle: (styleId: string) => void }) {
+function StylesCarousel({
+  onPickStyle,
+  onUpload,
+}: {
+  onPickStyle: (styleId: string) => void;
+  onUpload: () => void;
+}) {
   return (
-    <section
-      id="estilos"
-      className="py-20 sm:py-28 bg-card/40 border-y border-border/60 is-pause-hover overflow-hidden"
-    >
+    <section id="estilos" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <SectionHead
-          kicker="Estilos"
-          title={
-            <>
-              Defina a <span className="font-serif italic font-normal">estética</span> do projeto
-            </>
-          }
-          sub="A IA aplica o estilo escolhido ao ambiente selecionado, preservando proporção, janelas e estrutura."
-        />
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <SectionHead
+            kicker="Estilos"
+            title={
+              <>
+                Defina a <span className="font-serif italic font-normal">estética</span> do projeto
+              </>
+            }
+            sub="A IA aplica o estilo escolhido ao ambiente, preservando proporção e estrutura."
+          />
+          <Button onClick={onUpload} variant="outline" className="rounded-full h-11 px-5 text-sm">
+            <Camera className="h-4 w-4 mr-1.5" /> Enviar minha foto
+          </Button>
+        </div>
       </div>
 
-      <div className="mt-12 relative">
-        <div className="flex gap-5 is-marquee-slow whitespace-nowrap will-change-transform">
-          {[...styles, ...styles].map((s, i) => (
-            <div
-              key={i}
-              className="shrink-0 w-[260px] sm:w-[300px] rounded-3xl overflow-hidden bg-card border"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden">
-                <img
-                  src={s.img}
-                  alt={s.name}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  loading="lazy"
-                />
-                <span className="absolute bottom-3 left-3 rounded-full bg-background/85 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1">
-                  {s.name}
-                </span>
-              </div>
-              <div className="p-4 flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">{s.sub}</div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-xs"
-                  onClick={() => onPickStyle(s.styleId)}
-                >
-                  Usar estilo →
-                </Button>
-              </div>
-            </div>
-          ))}
+      <div className="relative mt-10">
+        {/* Scroll horizontal nativo com snap — mobile-friendly via touch, sem
+            JS extra. Antes era marquee infinita (is-marquee-slow) que nao
+            pausava em mobile e tornava cards desconfortaveis pra clicar. */}
+        <div className="overflow-x-auto snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-5 px-4 sm:px-6 pr-12 pb-2">
+            {styles.map((s, i) => (
+              <button
+                key={s.styleId ?? i}
+                type="button"
+                onClick={() => onPickStyle(s.styleId)}
+                aria-label={`Aplicar estilo ${s.name}`}
+                className="group snap-start shrink-0 w-[240px] sm:w-[280px] rounded-3xl overflow-hidden bg-card border text-left hover:shadow-xl transition-shadow"
+              >
+                <div className="relative aspect-[4/5] overflow-hidden">
+                  <img
+                    src={s.img}
+                    alt={s.name}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+                  />
+                  <span className="absolute bottom-3 left-3 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 font-medium">
+                    {s.name}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
+        {/* Fades laterais — so desktop, deixam claro que ha mais conteudo. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent"
+          className="pointer-events-none absolute inset-y-0 left-0 hidden w-24 bg-gradient-to-r from-background to-transparent sm:block"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent"
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-l from-background to-transparent sm:block"
         />
       </div>
     </section>
