@@ -118,7 +118,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Plataforma de design de interiores com IA: gere ambientes decorados em 2D, evolua para planejamento 5D com orçamento e lista de compras, e veja recursos de planta baixa e projeto arquitetônico para designers, arquitetos e imobiliárias.",
+          "Design de interiores com IA. Gere ambientes decorados em 2D a partir de uma foto, com lista de compras e orçamento estimado. Recursos de planejamento 5D e planta baixa em breve.",
       },
       {
         name: "keywords",

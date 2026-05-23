@@ -75,14 +75,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Plataforma de design de interiores com IA: transforme ambientes vazios em espaços decorados e veja o antes e depois do seu cômodo em segundos.",
+          "Plataforma de design de interiores com IA. Transforme ambientes vazios em espaços decorados e veja o antes e depois do seu cômodo em poucos minutos.",
       },
       { name: "author", content: "Ideal Space" },
       { property: "og:title", content: "Ideal Space | Design de interiores com IA" },
       {
         property: "og:description",
         content:
-          "Plataforma de design de interiores com IA: transforme ambientes vazios em espaços decorados e veja o antes e depois do seu cômodo em segundos.",
+          "Envie a foto do seu ambiente e receba uma versão decorada com IA, com lista de compras e orçamento estimado.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://idealspace.com.br" },
@@ -91,7 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "twitter:description",
         content:
-          "Plataforma de design de interiores com IA: transforme ambientes vazios em espaços decorados e veja o antes e depois do seu cômodo em segundos.",
+          "Decoração com IA: foto antes e depois, lista de compras e orçamento estimado para o seu ambiente.",
       },
       { property: "og:image", content: "https://idealspace.com.br/og-image.jpg" },
       { property: "og:image:type", content: "image/jpeg" },

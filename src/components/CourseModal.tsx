@@ -43,7 +43,7 @@ const MODULES = [
     title: "Do 2D ao 5D: planejamento e medidas",
     duration: "2h 10min",
     lessons: 9,
-    desc: "Use planta baixa, layout funcional e estudo 5D para validar circulação, mobiliário e iluminação.",
+    desc: "Aprenda planta baixa, layout funcional e planejamento ampliado para validar circulação, mobiliário e iluminação dos seus projetos.",
   },
   {
     icon: <ShoppingBag className="h-4 w-4" />,

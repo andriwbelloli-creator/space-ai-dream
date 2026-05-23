@@ -40,11 +40,11 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Planos para criar projetos 2D, 5D e planta baixa com IA. Módulos profissionais para designers de interiores, arquitetos e imobiliárias.",
+          "Planos para criar projetos 2D com IA, com lista de compras e orçamento estimado. Módulos profissionais e recursos de 5D e planta baixa em breve, para designers, arquitetos e imobiliárias.",
       },
       {
         property: "og:title",
-        content: "Planos Ideal Space: IA para projetos 2D, 5D e planta baixa",
+        content: "Planos Ideal Space: IA para projetos 2D, com 5D e planta baixa em breve",
       },
       {
         property: "og:description",

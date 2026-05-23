@@ -16,7 +16,7 @@ const modalFallback = (
 
 const TITLE = "Módulo de Inteligência Artificial para Arquitetos | Ideal Space";
 const DESCRIPTION =
-  "Acelere estudos preliminares com IA: do briefing ao anteprojeto compatível com CAD/BIM e render 5D para o cliente aprovar. Módulo do Arquiteto do Ideal Space.";
+  "Módulo do Arquiteto do Ideal Space, em desenvolvimento: anteprojeto compatível com CAD/BIM e render 5D para o cliente aprovar. Cadastre-se na lista de espera para acessar quando estiver disponível.";
 
 export const Route = createFileRoute("/para-arquitetos")({
   head: () => ({
