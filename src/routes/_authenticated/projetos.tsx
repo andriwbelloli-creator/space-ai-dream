@@ -2,7 +2,22 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
-import { Loader2, ImageIcon } from "lucide-react";
+import { Loader2, ImageIcon, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { BeforeAfter } from "@/components/BeforeAfter";
+import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
+
+/**
+ * Snapshot do que o detalhe do projeto precisa exibir. `ai_response` traz
+ * { roomType, variant, style } persistido na geracao (ver transform.functions);
+ * usado pra escolher o fallback de lista de produtos coerente com o comodo.
+ * Mantemos tipagem leve aqui — schema completo vive em supabase/types.
+ */
+type ProjectAiResponse = {
+  roomType?: string;
+  variant?: string | null;
+  style?: string;
+};
 
 type ProjectRow = {
   id: string;
@@ -11,6 +26,7 @@ type ProjectRow = {
   before_url: string | null;
   after_url: string | null;
   created_at: string;
+  ai_response: ProjectAiResponse | null;
 };
 
 /** Rótulos legíveis para os slugs persistidos em projects.style_slug. */
@@ -41,13 +57,15 @@ export const Route = createFileRoute("/_authenticated/projetos")({
 function ProjetosPage() {
   const [projects, setProjects] = useState<ProjectRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Projeto selecionado para abrir no modal de detalhe. `null` = modal fechado.
+  const [selected, setSelected] = useState<ProjectRow | null>(null);
 
   useEffect(() => {
     let active = true;
     (async () => {
       const { data, error } = await supabase
         .from("projects")
-        .select("id, title, style_slug, before_url, after_url, created_at")
+        .select("id, title, style_slug, before_url, after_url, created_at, ai_response")
         .order("created_at", { ascending: false });
       if (!active) return;
       if (error) {
@@ -122,9 +140,12 @@ function ProjetosPage() {
         ) : (
           <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3">
             {projects.map((p) => (
-              <div
+              <button
                 key={p.id}
-                className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+                type="button"
+                onClick={() => setSelected(p)}
+                aria-label={`Ver detalhes do ${p.title ?? "projeto"}`}
+                className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <div className="relative aspect-[4/3] bg-muted">
                   {p.after_url && (
@@ -169,11 +190,143 @@ function ProjetosPage() {
                     <span>{new Date(p.created_at).toLocaleDateString("pt-BR")}</span>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         )}
       </main>
+
+      <ProjectDetailDialog project={selected} onOpenChange={(open) => !open && setSelected(null)} />
     </div>
+  );
+}
+
+/**
+ * Modal de detalhe do projeto — abre ao clicar num card de `/projetos`.
+ * Reusa BeforeAfter (slider antes/depois) e a lista fallback estatica de
+ * compras coerente com o cômodo (via ai_response.roomType). Nao chama a IA
+ * de novo nem gasta créditos.
+ *
+ * Drafts interrompidos vivem em localStorage do UploadPhotoModal — nao
+ * passam por aqui. Esse modal só lida com `projects` (Supabase).
+ */
+function ProjectDetailDialog({
+  project,
+  onOpenChange,
+}: {
+  project: ProjectRow | null;
+  onOpenChange: (open: boolean) => void;
+}) {
+  // Mantém o `project` durante a animação de fechamento — evita "flash" vazio.
+  const open = !!project;
+  const items = getShoppingFallback(project?.ai_response?.roomType);
+  const total = estimateTotal(items);
+  const dateLabel = project ? new Date(project.created_at).toLocaleDateString("pt-BR") : "";
+  const styleName = project?.style_slug != null ? styleLabel(project.style_slug) : null;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[calc(100vw-1.5rem)] sm:max-w-3xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto">
+        {/* sr-only description cobre o warning de a11y do Radix Dialog */}
+        <DialogDescription className="sr-only">
+          Detalhe do projeto com antes/depois e lista sugerida de produtos.
+        </DialogDescription>
+
+        {/* Botão fechar customizado (canto superior direito) */}
+        <button
+          type="button"
+          onClick={() => onOpenChange(false)}
+          aria-label="Fechar"
+          className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/85 backdrop-blur hover:bg-background transition"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {project && (
+          <>
+            {/* Header */}
+            <div className="px-5 pt-6 pb-3 sm:px-7">
+              <DialogTitle className="text-lg sm:text-xl font-semibold tracking-tight pr-10">
+                {project.title ?? "Projeto"}
+              </DialogTitle>
+              <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                {styleName && (
+                  <>
+                    <span className="text-foreground">{styleName}</span>
+                    <span aria-hidden>·</span>
+                  </>
+                )}
+                <span>{dateLabel}</span>
+              </div>
+            </div>
+
+            {/* Antes / Depois */}
+            <div className="px-5 sm:px-7">
+              {project.before_url && project.after_url ? (
+                <BeforeAfter
+                  before={project.before_url}
+                  after={project.after_url}
+                  alt={project.title ?? "Antes e depois"}
+                  className="aspect-[4/3] w-full"
+                />
+              ) : project.after_url ? (
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl">
+                  <img
+                    src={project.after_url}
+                    alt={project.title ?? "Projeto"}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-[4/3] w-full rounded-3xl bg-muted grid place-items-center text-sm text-muted-foreground">
+                  Sem imagem disponível
+                </div>
+              )}
+            </div>
+
+            {/* Lista de compras (fallback estatico coerente com o ambiente) */}
+            <div className="px-5 sm:px-7 pt-6 pb-6">
+              <div className="flex items-baseline justify-between">
+                <h3 className="text-sm font-medium text-foreground">Sugestões para o ambiente</h3>
+                <span className="text-xs text-muted-foreground">{items.length} itens</span>
+              </div>
+              <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2.5">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  Estimativa total
+                </div>
+                <div className="text-base font-medium text-foreground">{total}</div>
+              </div>
+              <ul className="mt-3 divide-y divide-border/60">
+                {items.map((it) => (
+                  <li key={it.name} className="py-2.5 flex items-start gap-3">
+                    <span
+                      className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] uppercase tracking-wider ${
+                        it.tag === "Essencial"
+                          ? "bg-accent/15 text-accent"
+                          : it.tag === "Recomendado"
+                            ? "bg-foreground/10 text-foreground"
+                            : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {it.tag}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium text-foreground truncate">{it.name}</div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {it.cat} · {it.price}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-[10px] text-muted-foreground">
+                Lista sugerida com base no cômodo. Para uma seleção curada com links de compra, gere
+                um novo projeto pela página inicial.
+              </p>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
