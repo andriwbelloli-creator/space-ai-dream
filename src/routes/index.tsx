@@ -21,7 +21,14 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -720,6 +727,9 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                   <IdealSpaceLogo />
                 </Link>
               </SheetTitle>
+              <SheetDescription className="sr-only">
+                Menu de navegação móvel do Ideal Space.
+              </SheetDescription>
             </SheetHeader>
             <div className="mt-6 flex flex-col gap-1 text-base">
               {[

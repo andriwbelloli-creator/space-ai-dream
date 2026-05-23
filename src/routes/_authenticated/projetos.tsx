@@ -227,6 +227,7 @@ function ProjectDetailDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[calc(100vw-1.5rem)] sm:max-w-3xl rounded-3xl p-0 overflow-hidden border-0 shadow-2xl max-h-[92vh] overflow-y-auto">
+        <DialogTitle className="sr-only">Detalhes do Projeto</DialogTitle>
         {/* sr-only description cobre o warning de a11y do Radix Dialog */}
         <DialogDescription className="sr-only">
           Detalhe do projeto com antes/depois e lista sugerida de produtos.
@@ -246,9 +247,9 @@ function ProjectDetailDialog({
           <>
             {/* Header */}
             <div className="px-5 pt-6 pb-3 sm:px-7">
-              <DialogTitle className="text-lg sm:text-xl font-semibold tracking-tight pr-10">
+              <div className="text-lg sm:text-xl font-semibold tracking-tight pr-10 text-foreground">
                 {project.title ?? "Projeto"}
-              </DialogTitle>
+              </div>
               <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                 {styleName && (
                   <>
