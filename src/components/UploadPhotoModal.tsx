@@ -351,7 +351,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
         /* ignore */
       }
       void track({ data: { event: "start_project_blocked_by_auth" } }).catch(() => {});
-      toast.error("Crie sua conta grátis para gerar — leva 30 segundos.");
+      toast.error("Crie sua conta grátis para gerar. Leva 30 segundos.");
       navigate({ to: "/login", search: { redirect: "/", mode: "signup" } });
       return;
     }
@@ -680,7 +680,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                 ))}
               </div>
               <p className="mt-2 text-[10px] text-muted-foreground">
-                Rascunhos ficam neste navegador/aparelho — retome a qualquer momento, mesmo offline.
+                Rascunhos ficam neste navegador/aparelho. Retome a qualquer momento, mesmo offline.
               </p>
             </div>
           )}
@@ -1175,7 +1175,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           {user && credits && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
               {credits.unlimited
-                ? "Plano ilimitado — gere à vontade."
+                ? "Plano ilimitado. Gere à vontade."
                 : `Você tem ${credits.balance} ${credits.balance === 1 ? "crédito" : "créditos"} · cada geração usa 1.`}
             </p>
           )}
@@ -1189,7 +1189,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           )}
           <p className="mt-2 text-[10px] text-muted-foreground">
             Reduzimos a imagem para {MAX_DIMENSION}px e qualidade {Math.round(JPEG_QUALITY * 100)}%
-            antes do envio — uploads até 5× mais rápidos. Suas fotos são privadas.
+            antes do envio. Uploads até 5× mais rápidos. Suas fotos são privadas.
           </p>
         </div>
       </DialogContent>
@@ -1356,7 +1356,7 @@ function ShoppingPanel({
             {isLoading
               ? "Analisando o ambiente com IA…"
               : hasError
-                ? "Não conseguimos analisar — exibindo sugestão padrão."
+                ? "Não conseguimos analisar. Exibindo sugestão padrão."
                 : usingFallback
                   ? "Sugestão padrão"
                   : "Gerada a partir do seu ambiente"}

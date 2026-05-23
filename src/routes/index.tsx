@@ -114,7 +114,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Ideal Space — Design de interiores com IA, projeto 2D, 5D e planta baixa" },
+      { title: "Ideal Space | Design de interiores com IA, projeto 2D, 5D e planta baixa" },
       {
         name: "description",
         content:
@@ -369,7 +369,7 @@ const faqs = [
   },
   {
     q: "Já existe cobrança ou assinatura paga?",
-    a: "Ainda não. Nesta etapa o uso é gratuito — os planos pagos serão liberados no lançamento, sem cobrança agora.",
+    a: "Ainda não. Nesta etapa o uso é gratuito. Os planos pagos serão liberados no lançamento, sem cobrança agora.",
   },
 ];
 
@@ -656,7 +656,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link to="/" aria-label="Ideal Space — página inicial">
+        <Link to="/" aria-label="Ideal Space, página inicial">
           <IdealSpaceLogo />
         </Link>
         <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
@@ -745,7 +745,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           <SheetContent side="right" className="w-[86%] sm:w-[380px]">
             <SheetHeader>
               <SheetTitle>
-                <Link to="/" aria-label="Ideal Space — página inicial">
+                <Link to="/" aria-label="Ideal Space, página inicial">
                   <IdealSpaceLogo />
                 </Link>
               </SheetTitle>
@@ -871,7 +871,7 @@ function Hero({
             com IA.
           </h1>
           <p className="mt-4 text-[15px] sm:text-lg text-muted-foreground max-w-xl">
-            Envie a foto do seu ambiente, escolha um estilo e veja a IA decorar em segundos — com
+            Envie a foto do seu ambiente, escolha um estilo e veja a IA decorar em segundos, com
             lista de compras e orçamento estimado de produtos reais para comprar.
           </p>
 
@@ -912,7 +912,7 @@ function Hero({
               after={decoratedLiving}
               auto
               priority
-              alt="Antes e depois — sala decorada com IA"
+              alt="Antes e depois: sala decorada com IA"
               className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5"
             />
 
@@ -1038,7 +1038,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
                 transformar
               </>
             }
-            sub="Quarto, cozinha, banheiro, home office, studio e jantar — todos prontos para receber um projeto 2D em segundos."
+            sub="Quarto, cozinha, banheiro, home office, studio e jantar. Todos prontos para receber um projeto 2D em segundos."
           />
           <Button
             onClick={onUpload}
@@ -1068,7 +1068,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
                   </span>
                   <button
                     onClick={onUpload}
-                    aria-label={`Criar projeto — ${r.title}`}
+                    aria-label={`Criar projeto: ${r.title}`}
                     className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-foreground text-background grid place-items-center opacity-0 group-hover:opacity-100 transition"
                   >
                     <ArrowUpRight className="h-4 w-4" />
@@ -1256,7 +1256,7 @@ function FeaturedBeforeAfter() {
           </h2>
           <p className="mt-4 text-muted-foreground max-w-md">
             Arraste o controle e veja a estrutura preservada, a iluminação trabalhada e o mobiliário
-            sugerido pela IA — pronto para virar lista de compras e orçamento.
+            sugerido pela IA, pronto para virar lista de compras e orçamento.
           </p>
           <ul className="mt-6 space-y-2.5 text-sm">
             {[
@@ -1468,7 +1468,7 @@ function InspirationGallery({
                 <span className="font-serif italic font-normal">2D, 5D e planta baixa</span>
               </>
             }
-            sub="Variações reais geradas pela plataforma — filtre por tipo de projeto."
+            sub="Variações reais geradas pela plataforma. Filtre por tipo de projeto."
           />
           <Button
             onClick={onUpload}
@@ -1574,7 +1574,7 @@ function InspirationGallery({
 
         {visible.length === 0 && (
           <p className="mt-10 text-center text-sm text-muted-foreground">
-            Nada por aqui ainda — novos projetos chegam toda semana.
+            Nada por aqui ainda. Novos projetos chegam toda semana.
           </p>
         )}
       </div>
@@ -1788,7 +1788,7 @@ function Pricing({
             <span className="font-serif italic font-normal">projetos com IA</span>.
           </h2>
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-            Comece grátis e evolua quando precisar — do 2D rápido aos recursos profissionais.
+            Comece grátis e evolua quando precisar, do 2D rápido aos recursos profissionais.
           </p>
           <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-xs font-medium text-accent">
             <Sparkles className="h-3.5 w-3.5" /> Planos a partir de R$ 29,90/mês

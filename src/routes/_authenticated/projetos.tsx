@@ -51,7 +51,7 @@ function styleLabel(slug: string): string {
 
 export const Route = createFileRoute("/_authenticated/projetos")({
   head: () => ({
-    meta: [{ title: "Meus projetos — Ideal Space" }],
+    meta: [{ title: "Meus projetos | Ideal Space" }],
   }),
   component: ProjetosPage,
 });
@@ -88,7 +88,7 @@ function ProjetosPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 md:px-8">
-          <Link to="/" aria-label="Ideal Space — início">
+          <Link to="/" aria-label="Ideal Space, início">
             <IdealSpaceLogo />
           </Link>
           <Link

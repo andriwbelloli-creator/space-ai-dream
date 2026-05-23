@@ -40,7 +40,7 @@ export const Route = createFileRoute("/login")({
   },
   head: () => ({
     meta: [
-      { title: "Entrar — Ideal Space" },
+      { title: "Entrar | Ideal Space" },
       {
         name: "description",
         content:

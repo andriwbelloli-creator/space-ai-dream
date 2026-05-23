@@ -10,7 +10,7 @@ import { Loader2, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
-    meta: [{ title: "Nova senha — Ideal Space" }, { name: "robots", content: "noindex,nofollow" }],
+    meta: [{ title: "Nova senha | Ideal Space" }, { name: "robots", content: "noindex,nofollow" }],
   }),
   component: ResetPasswordPage,
 });

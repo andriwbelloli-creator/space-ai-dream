@@ -14,7 +14,7 @@ const modalFallback = (
   </div>
 );
 
-const TITLE = "Virtual Staging com IA para Anúncios Imobiliários — Ideal Space";
+const TITLE = "Virtual Staging com IA para Anúncios Imobiliários | Ideal Space";
 const DESCRIPTION =
   "Virtual staging ultra-rápido com IA para imobiliárias: decore imóveis vazios em lote e aumente as visualizações dos seus anúncios nos portais.";
 
@@ -36,7 +36,7 @@ const PROMISES = [
   {
     icon: Layers,
     title: "Decoração em lote",
-    desc: "Suba as fotos de todos os cômodos de um imóvel — ou de uma carteira inteira — e receba os ambientes decorados em segundos, sem fila.",
+    desc: "Suba as fotos de todos os cômodos de um imóvel, ou de uma carteira inteira, e receba os ambientes decorados em segundos, sem fila.",
   },
   {
     icon: TrendingUp,
@@ -102,7 +102,7 @@ function ParaImobiliariasPage() {
 
           <p className="mt-6 text-muted-foreground text-lg leading-relaxed">
             Imóvel vazio espanta comprador. Com o Ideal Space, a sua equipe transforma fotos de
-            ambientes vazios em espaços decorados que vendem mais rápido — em lote, na escala da sua
+            ambientes vazios em espaços decorados que vendem mais rápido, em lote, na escala da sua
             carteira de anúncios.
           </p>
 

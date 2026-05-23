@@ -48,7 +48,7 @@ const CONFIGS: Record<RewardKind, RewardConfig> = {
     icon: BookmarkPlus,
     badge: "Salvar projeto",
     title: "Salve este projeto para acessar depois",
-    subtitle: "Crie sua conta gratuita em segundos — sem cartão, sem complicação.",
+    subtitle: "Crie sua conta gratuita em segundos. Sem cartão, sem complicação.",
   },
   shopping_list: {
     icon: ShoppingBag,

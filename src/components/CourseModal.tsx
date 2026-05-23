@@ -119,7 +119,7 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
               </h2>
               <p className="mt-3 text-background/70 max-w-xl text-sm sm:text-base">
                 Em 5 módulos práticos você aprende a transformar a Ideal Space numa máquina de
-                projetos — do estudo visual ao orçamento aprovado pelo cliente.
+                projetos, do estudo visual ao orçamento aprovado pelo cliente.
               </p>
               <div className="mt-5 flex flex-wrap gap-2 text-xs text-background/80">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/15 px-3 py-1.5">

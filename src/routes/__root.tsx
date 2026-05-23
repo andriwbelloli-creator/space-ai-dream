@@ -71,14 +71,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ideal Space — Design de interiores com IA" },
+      { title: "Ideal Space | Design de interiores com IA" },
       {
         name: "description",
         content:
           "Plataforma de design de interiores com IA: transforme ambientes vazios em espaços decorados e veja o antes e depois do seu cômodo em segundos.",
       },
       { name: "author", content: "Ideal Space" },
-      { property: "og:title", content: "Ideal Space — Design de interiores com IA" },
+      { property: "og:title", content: "Ideal Space | Design de interiores com IA" },
       {
         property: "og:description",
         content:
@@ -87,7 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://idealspace.com.br" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Ideal Space — Design de interiores com IA" },
+      { name: "twitter:title", content: "Ideal Space | Design de interiores com IA" },
       {
         name: "twitter:description",
         content:
@@ -97,11 +97,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "Ideal Space — Design de interiores com IA" },
+      { property: "og:image:alt", content: "Ideal Space | Design de interiores com IA" },
       { property: "og:site_name", content: "Ideal Space" },
       { property: "og:locale", content: "pt_BR" },
       { name: "twitter:image", content: "https://idealspace.com.br/og-image.jpg" },
-      { name: "twitter:image:alt", content: "Ideal Space — Design de interiores com IA" },
+      { name: "twitter:image:alt", content: "Ideal Space | Design de interiores com IA" },
     ],
     links: [
       {

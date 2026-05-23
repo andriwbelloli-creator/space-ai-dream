@@ -17,7 +17,7 @@ import { getAdminLeads, type AdminLeadRow, type AdminLeadsKpis } from "@/lib/adm
 export const Route = createFileRoute("/admin/leads")({
   head: () => ({
     meta: [
-      { title: "Leads — Admin Ideal Space" },
+      { title: "Leads | Admin Ideal Space" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -239,7 +239,7 @@ function AdminLeadsPage() {
           )}
 
           <p className="mt-3 text-xs text-muted-foreground">
-            Exibindo até {state.rows.length} lead(s) mais recente(s). Dados pessoais — uso restrito
+            Exibindo até {state.rows.length} lead(s) mais recente(s). Dados pessoais, uso restrito
             conforme a LGPD.
           </p>
         </>

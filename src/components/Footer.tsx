@@ -77,7 +77,7 @@ export function Footer() {
         <div className="grid lg:grid-cols-[1.4fr_3fr] gap-10">
           <div>
             <div className="text-background">
-              <Link to="/" aria-label="Ideal Space — página inicial">
+              <Link to="/" aria-label="Ideal Space, página inicial">
                 <IdealSpaceLogo />
               </Link>
             </div>

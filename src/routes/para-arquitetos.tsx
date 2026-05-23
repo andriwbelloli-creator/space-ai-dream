@@ -14,7 +14,7 @@ const modalFallback = (
   </div>
 );
 
-const TITLE = "Módulo de Inteligência Artificial para Arquitetos — Ideal Space";
+const TITLE = "Módulo de Inteligência Artificial para Arquitetos | Ideal Space";
 const DESCRIPTION =
   "Acelere estudos preliminares com IA: do briefing ao anteprojeto compatível com CAD/BIM e render 5D para o cliente aprovar. Módulo do Arquiteto do Ideal Space.";
 
@@ -46,7 +46,7 @@ const PROMISES = [
   {
     icon: FileText,
     title: "Render 5D para aprovar",
-    desc: "Apresente acabamentos, iluminação e estimativa de custo num render 5D — o cliente decide mais rápido e o anteprojeto avança sem retrabalho.",
+    desc: "Apresente acabamentos, iluminação e estimativa de custo num render 5D. O cliente decide mais rápido e o anteprojeto avança sem retrabalho.",
   },
 ];
 

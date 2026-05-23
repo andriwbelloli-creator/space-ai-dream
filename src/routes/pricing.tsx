@@ -36,7 +36,7 @@ const modalFallback = (
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Planos e módulos profissionais — Ideal Space" },
+      { title: "Planos e módulos profissionais | Ideal Space" },
       {
         name: "description",
         content:
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/pricing")({
       },
       {
         property: "og:title",
-        content: "Planos Ideal Space — IA para projetos 2D, 5D e planta baixa",
+        content: "Planos Ideal Space: IA para projetos 2D, 5D e planta baixa",
       },
       {
         property: "og:description",
@@ -117,7 +117,7 @@ const DIFFERENTIALS = [
   {
     icon: Sparkles,
     t: "IA dedicada a interiores",
-    d: "Modelo afinado para preservar a estrutura real do ambiente — paredes, janelas, perspectiva.",
+    d: "Modelo afinado para preservar a estrutura real do ambiente: paredes, janelas, perspectiva.",
   },
   {
     icon: Zap,
@@ -149,7 +149,7 @@ const DIFFERENTIALS = [
 const FAQ = [
   {
     q: "Já existe cobrança nos planos?",
-    a: "Não. Nesta etapa o uso é gratuito. Os planos pagos serão liberados no lançamento — crie sua conta agora para garantir acesso antecipado.",
+    a: "Não. Nesta etapa o uso é gratuito. Os planos pagos serão liberados no lançamento. Crie sua conta agora para garantir acesso antecipado.",
   },
   {
     q: "Vou poder trocar de plano depois?",
@@ -235,13 +235,13 @@ function PricingPage() {
             <span className="font-serif italic font-normal">projeto completo</span>.
           </h1>
           <p className="mt-5 text-muted-foreground text-lg max-w-2xl mx-auto">
-            Escolha o plano certo para você — pessoa, designer, arquiteto ou imobiliária. Sem
+            Escolha o plano certo para você: pessoa, designer, arquiteto ou imobiliária. Sem
             fidelidade.
           </p>
 
           <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-muted-foreground">
             Os planos pagos estão <span className="font-medium text-foreground">em breve</span>.
-            Nesta etapa não há cobrança — crie sua conta para garantir acesso antecipado.
+            Nesta etapa não há cobrança. Crie sua conta para garantir acesso antecipado.
           </div>
 
           {/* Toggle */}

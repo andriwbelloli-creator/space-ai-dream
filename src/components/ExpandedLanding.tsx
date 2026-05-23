@@ -28,7 +28,7 @@ const modalFallback = (
 const DEFAULT_STEPS: LandingStep[] = [
   {
     t: "Envie uma foto do ambiente",
-    d: "Use a foto que você já tem — do celular ou do computador.",
+    d: "Use a foto que você já tem, do celular ou do computador.",
   },
   {
     t: "Escolha um estilo ou proposta",

@@ -99,7 +99,7 @@ export function WhatsAppShareDialog({
     const msg =
       `Olá! Acabei de gerar um projeto no Ideal Space: ${projectName}. ` +
       `Veja o antes e depois decorado pela IA. ` +
-      `(Imagem em anexo — basta tocar no clipe 📎 e selecionar o arquivo baixado.)`;
+      `(Imagem em anexo: basta tocar no clipe 📎 e selecionar o arquivo baixado.)`;
     const url = `https://wa.me/${encodeURIComponent(digits)}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     onOpenChange(false);

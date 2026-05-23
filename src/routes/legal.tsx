@@ -16,7 +16,7 @@ const SECTIONS = [
 export const Route = createFileRoute("/legal")({
   head: () => ({
     meta: [
-      { title: "Termos e políticas — Ideal Space" },
+      { title: "Termos e políticas | Ideal Space" },
       {
         name: "description",
         content:
@@ -185,7 +185,7 @@ function LegalPage() {
           </p>
           <p>
             Suas fotos e os ambientes gerados a partir delas são{" "}
-            <strong className="text-foreground">privados por padrão</strong> — não os publicamos nem
+            <strong className="text-foreground">privados por padrão</strong>. Não os publicamos nem
             os exibimos a outras pessoas sem a sua autorização explícita.
           </p>
           <p>
@@ -199,7 +199,7 @@ function LegalPage() {
           </p>
         </Section>
 
-        <Section id="lgpd" title="LGPD — Lei Geral de Proteção de Dados">
+        <Section id="lgpd" title="LGPD: Lei Geral de Proteção de Dados">
           <p>O tratamento de dados pessoais pelo Ideal Space segue a Lei nº 13.709/2018 (LGPD).</p>
           <p>
             <strong className="text-foreground">Bases legais.</strong> Tratamos seus dados para a
@@ -232,7 +232,7 @@ function LegalPage() {
           </p>
           <p>
             Alguns links para produtos podem gerar uma comissão para nós quando você realiza uma
-            compra — <strong className="text-foreground">sem custo adicional para você</strong>.
+            compra, <strong className="text-foreground">sem custo adicional para você</strong>.
             Essas comissões ajudam a manter o plano gratuito da plataforma.
           </p>
           <p>
@@ -251,9 +251,8 @@ function LegalPage() {
             ilustrativo e de inspiração.
           </p>
           <p>
-            A IA busca preservar a estrutura do ambiente original — paredes, janelas e perspectiva
-            —, mas pode introduzir imprecisões. Proporções, medidas e itens exibidos são
-            aproximados.
+            A IA busca preservar a estrutura do ambiente original (paredes, janelas e perspectiva),
+            mas pode introduzir imprecisões. Proporções, medidas e itens exibidos são aproximados.
           </p>
           <p>
             O resultado <strong className="text-foreground">não substitui</strong> um projeto

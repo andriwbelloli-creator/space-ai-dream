@@ -183,7 +183,7 @@ export const transformImage = createServerFn({ method: "POST" })
           await refund("invalid_photo");
           const baseReason = parsed?.reason || "envie uma foto de um cômodo da sua casa.";
           return {
-            error: `Essa foto não parece um ambiente interno: ${baseReason} Envie a foto de um cômodo — sala, quarto, cozinha, escritório, etc.`,
+            error: `Essa foto não parece um ambiente interno: ${baseReason} Envie a foto de um cômodo (sala, quarto, cozinha, escritório, etc).`,
             imageDataUrl: null,
             creditsLeft,
           };

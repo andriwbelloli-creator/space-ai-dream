@@ -62,7 +62,7 @@ export const PLANS: Plan[] = [
       "Histórico na nuvem (até 10 projetos)",
     ],
     notIncluded: ["Variações da IA", "Orçamento em PDF"],
-    footnote: "Planos pagos em breve — sem cobrança nesta etapa.",
+    footnote: "Planos pagos em breve. Sem cobrança nesta etapa.",
   },
   {
     id: "premium",
@@ -83,7 +83,7 @@ export const PLANS: Plan[] = [
       "Histórico ilimitado na nuvem",
       "Suporte prioritário por e-mail",
     ],
-    footnote: "Planos pagos em breve — sem cobrança nesta etapa.",
+    footnote: "Planos pagos em breve. Sem cobrança nesta etapa.",
   },
   {
     id: "pro",

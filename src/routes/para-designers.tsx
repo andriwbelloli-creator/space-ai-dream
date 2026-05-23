@@ -14,7 +14,7 @@ const modalFallback = (
   </div>
 );
 
-const TITLE = "Estúdio de IA para Designers de Interiores — Ideal Space";
+const TITLE = "Estúdio de IA para Designers de Interiores | Ideal Space";
 const DESCRIPTION =
   "O copiloto de IA para designers de interiores: gere moodboards, variações de estilo e propostas em PDF com a sua marca. Estúdio do Designer do Ideal Space.";
 
@@ -36,7 +36,7 @@ const PROMISES = [
   {
     icon: Palette,
     title: "Moodboards automáticos",
-    desc: "Envie uma foto do ambiente e a IA monta moodboards de paleta, materiais e mobília coerentes — pronto para o seu olhar autoral refinar.",
+    desc: "Envie uma foto do ambiente e a IA monta moodboards de paleta, materiais e mobília coerentes, prontos para o seu olhar autoral refinar.",
   },
   {
     icon: Layers,
@@ -46,7 +46,7 @@ const PROMISES = [
   {
     icon: FileText,
     title: "Propostas com a sua marca",
-    desc: "Exporte propostas em PDF com o seu logo, as suas cores e a sua lista de compras — uma entrega profissional que valoriza o seu trabalho.",
+    desc: "Exporte propostas em PDF com o seu logo, as suas cores e a sua lista de compras. Uma entrega profissional que valoriza o seu trabalho.",
   },
 ];
 
@@ -100,7 +100,7 @@ function ParaDesignersPage() {
           </h1>
 
           <p className="mt-6 text-muted-foreground text-lg leading-relaxed">
-            A IA do Ideal Space não substitui o seu olhar — ela acelera a parte repetitiva. Crie
+            A IA do Ideal Space não substitui o seu olhar. Ela acelera a parte repetitiva. Crie
             moodboards, teste estilos e entregue propostas com a sua marca para conquistar o cliente
             na primeira reunião.
           </p>
