@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { BeforeAfter } from "@/components/BeforeAfter";
@@ -1065,48 +1065,6 @@ function StylesCarousel({
   onPickStyle: (styleId: string) => void;
   onUpload: () => void;
 }) {
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const resumeTimerRef = useRef<number | null>(null);
-  const [paused, setPaused] = useState(false);
-
-  // Pausa o auto-scroll quando o usuario interage e retoma apos 6s de
-  // inatividade. clearTimeout em todo trigger pra nao acumular timers.
-  const pauseForUser = () => {
-    setPaused(true);
-    if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
-    resumeTimerRef.current = window.setTimeout(() => setPaused(false), 6000);
-  };
-
-  // Auto-scroll discreto: avanca 1 card a cada 5s enquanto idle.
-  // Respeita prefers-reduced-motion e pausa quando paused === true.
-  useEffect(() => {
-    if (paused) return;
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => {
-      const node = scrollerRef.current;
-      if (!node) return;
-      const maxScroll = node.scrollWidth - node.clientWidth;
-      if (maxScroll <= 4) return;
-      const card = node.querySelector("[data-style-card]") as HTMLElement | null;
-      const step = (card?.offsetWidth ?? 280) + 20; // 20px = gap-5
-      if (node.scrollLeft >= maxScroll - 8) {
-        node.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        node.scrollBy({ left: step, behavior: "smooth" });
-      }
-    }, 5000);
-    return () => window.clearInterval(id);
-  }, [paused]);
-
-  // Cleanup do resume timer no unmount.
-  useEffect(
-    () => () => {
-      if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
-    },
-    [],
-  );
-
   return (
     <section id="estilos" className="py-20 sm:py-28 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -1127,24 +1085,15 @@ function StylesCarousel({
       </div>
 
       <div className="relative mt-10 -mx-4 sm:mx-0">
-        {/* Scroll horizontal nativo com snap — mobile-friendly via touch, sem
-            JS extra. Tamanho dos cards casado com o EmptyRoomsCarousel:
-            no mobile cada card ocupa 78% da viewport (snap decisivo, sensacao
-            de carrossel "encorpado"); no desktop card maior pra ter presenca
-            editorial sem ficar magrinho. */}
-        <div
-          ref={scrollerRef}
-          onPointerEnter={pauseForUser}
-          onPointerDown={pauseForUser}
-          onWheel={pauseForUser}
-          onFocusCapture={pauseForUser}
-          className="overflow-x-auto snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          <div className="flex gap-5 px-4 sm:px-6 pr-8 sm:pr-12 pb-2">
-            {styles.map((s, i) => (
+        {/* Marquee continua — scroll fluido em loop, sem pausas. Cards
+            duplicados pra fechar o loop seamlessly. 30s por ciclo (mais
+            rapida que a versao antiga de 70s, mas com tempo de leitura).
+            Em prefers-reduced-motion cai pra scroll manual com snap. */}
+        <div className="overflow-hidden motion-reduce:overflow-x-auto motion-reduce:snap-x motion-reduce:snap-mandatory motion-reduce:scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex w-max gap-5 pl-4 sm:pl-6 pb-2 whitespace-nowrap will-change-transform [animation:is-marquee_30s_linear_infinite] motion-reduce:[animation:none] motion-reduce:w-auto motion-reduce:pr-8 motion-reduce:sm:pr-12">
+            {[...styles, ...styles].map((s, i) => (
               <button
-                key={s.styleId ?? i}
-                data-style-card
+                key={`${s.styleId ?? "s"}-${i}`}
                 type="button"
                 onClick={() => onPickStyle(s.styleId)}
                 aria-label={`Aplicar estilo ${s.name}`}
