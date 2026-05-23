@@ -127,6 +127,16 @@ type Variation = {
   roomType?: string;
 };
 
+/** Mensagens rotativas exibidas no overlay durante stage === "generating". */
+const GENERATING_MESSAGES = [
+  "Analisando estrutura…",
+  "Aplicando estilo…",
+  "Posicionando mobiliário…",
+  "Ajustando iluminação…",
+  "Gerando lista de produtos…",
+  "Finalizando…",
+] as const;
+
 export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -143,6 +153,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const [progress, setProgress] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
   const [doneCount, setDoneCount] = useState(0);
+  const [msgIdx, setMsgIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<{
     original: number;
@@ -253,6 +264,19 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
     upsertDraft(draft);
     setDrafts(listDrafts());
   }, [preview, variations, style, stage, progress, meta, draftId, activeIdx]);
+
+  // Mensagens rotativas durante a geração: ciclam a cada 450ms enquanto
+  // stage === "generating". Reseta o índice ao sair do estado de geração.
+  useEffect(() => {
+    if (stage !== "generating") {
+      setMsgIdx(0);
+      return;
+    }
+    const id = window.setInterval(() => {
+      setMsgIdx((i) => (i + 1) % GENERATING_MESSAGES.length);
+    }, 450);
+    return () => window.clearInterval(id);
+  }, [stage]);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -715,13 +739,28 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                     {(generating || optimizing) && (
                       <div className="absolute inset-0 bg-foreground/45 backdrop-blur-[2px] grid place-items-center text-background px-6">
                         <div className="w-full max-w-xs text-center">
+                          {/* 5 faixas shimmer — sinal visual de "IA processando". */}
+                          {stage === "generating" && (
+                            <div className="mx-auto mb-4 max-w-[200px] space-y-1.5">
+                              <div className="is-shimmer h-2 w-full rounded bg-background/15" />
+                              <div className="is-shimmer h-2 w-[90%] rounded bg-background/15" />
+                              <div className="is-shimmer h-2 w-[75%] rounded bg-background/15" />
+                              <div className="is-shimmer h-2 w-[85%] rounded bg-background/15" />
+                              <div className="is-shimmer h-2 w-[60%] rounded bg-background/15" />
+                            </div>
+                          )}
                           <div className="flex items-center justify-center gap-2 text-sm">
                             {stage === "generating" ? (
-                              <Sparkles className="h-4 w-4 animate-pulse text-accent" />
+                              <div
+                                className="h-5 w-5 shrink-0 rounded-full border-[3px] border-accent/30 border-t-accent animate-spin"
+                                style={{ animationDuration: "0.8s" }}
+                              />
                             ) : (
                               <Loader2 className="h-4 w-4 animate-spin text-accent" />
                             )}
-                            {stageLabel}
+                            <span aria-live="polite">
+                              {stage === "generating" ? GENERATING_MESSAGES[msgIdx] : stageLabel}
+                            </span>
                           </div>
                           <Progress value={progress} className="h-1.5 mt-3 bg-background/30" />
                           <div className="mt-1.5 text-[10px] text-background/70">

@@ -273,6 +273,19 @@ const GALLERY_META: Record<
     cta: "Gerar parecido",
   },
 };
+
+/** Mapeia o nome PT dos estilos do image-catalog para o id en usado no
+ * UploadPhotoModal (props.initialStyle / state `style`). */
+const STYLE_NAME_TO_ID: Record<string, string> = {
+  moderno: "modern",
+  japandi: "japandi",
+  industrial: "industrial",
+  natural: "natural",
+  luxo: "luxe",
+  minimalista: "minimal",
+  escandinavo: "minimal",
+};
+
 const gallery: ReadonlyArray<{
   img: string;
   title: string;
@@ -280,10 +293,12 @@ const gallery: ReadonlyArray<{
   tags: ReadonlyArray<GalleryFilter>;
   cta: string;
   soon?: boolean;
+  style?: string;
 }> = imagesFor("gallery").map((i) => {
   const meta = GALLERY_META[i.id];
   if (!meta) throw new Error(`[index] Missing gallery meta for ${i.id}`);
-  return { img: i.src, ...meta };
+  const styleId = i.style ? STYLE_NAME_TO_ID[i.style] : undefined;
+  return { img: i.src, ...meta, style: styleId };
 });
 
 const RANKING_META: Record<string, { title: string; sub: string }> = {
@@ -447,7 +462,7 @@ function Index() {
         onAffiliate={setAffiliateOpen}
         onReward={openReward}
       />
-      <InspirationGallery onUpload={openUpload} />
+      <InspirationGallery onUpload={openUpload} onPickStyle={openUploadWithStyle} />
       <RankingStrip onUpload={openUpload} />
       <Professionals onUpload={openUpload} onCourse={() => setCourseOpen(true)} />
       <Pricing
@@ -1376,7 +1391,13 @@ function TagBadge({ tag }: { tag: string }) {
 
 /* ----------------------------- INSPIRATION GALLERY ----------------------------- */
 
-function InspirationGallery({ onUpload }: { onUpload: () => void }) {
+function InspirationGallery({
+  onUpload,
+  onPickStyle,
+}: {
+  onUpload: () => void;
+  onPickStyle: (styleId: string) => void;
+}) {
   const [active, setActive] = useState<GalleryFilter>("Todos");
   const visible = active === "Todos" ? gallery : gallery.filter((g) => g.tags.includes(active));
 
@@ -1451,6 +1472,19 @@ function InspirationGallery({ onUpload }: { onUpload: () => void }) {
                   <span className="absolute top-3 right-3 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-widest px-2.5 py-1 text-muted-foreground">
                     Em breve
                   </span>
+                )}
+                {g.style && !g.soon && (
+                  <button
+                    type="button"
+                    onClick={() => onPickStyle(g.style!)}
+                    aria-label={`Gerar projeto parecido com ${g.title}`}
+                    className="absolute inset-0 z-10 flex items-center justify-center bg-foreground/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  >
+                    <span className="inline-flex items-center gap-2 rounded-full bg-background text-foreground h-11 px-5 text-sm font-medium shadow-xl">
+                      <Wand2 className="h-4 w-4 text-accent" />
+                      Gerar parecido
+                    </span>
+                  </button>
                 )}
               </div>
               <div className="p-5 flex items-start justify-between gap-3">
