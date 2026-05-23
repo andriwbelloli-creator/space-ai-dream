@@ -11,6 +11,7 @@ import { buildAffiliateLinks } from "@/lib/affiliate";
 import { logEvent } from "@/lib/tracking.functions";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
+import { useCredits } from "@/hooks/use-credits";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -21,6 +22,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Accordion,
   AccordionContent,
@@ -44,6 +52,7 @@ import {
   Briefcase,
   HomeIcon,
   Stethoscope,
+  ChevronDown,
   ChevronRight,
   Zap,
   PlayCircle,
@@ -588,7 +597,14 @@ function Index() {
 /* ----------------------------- HEADER ----------------------------- */
 
 function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void }) {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const { credits } = useCredits();
+  // Display name e inicial: user_metadata.full_name/name (Google OAuth) →
+  // fallback no local-part do e-mail. Computado fora do JSX pra não duplicar
+  // entre o cluster desktop e a seção mobile.
+  const meta = (user?.user_metadata ?? {}) as { full_name?: string; name?: string };
+  const displayName = meta.full_name || meta.name || user?.email?.split("@")[0] || "Conta";
+  const initial = (displayName || "?").trim().charAt(0).toUpperCase() || "?";
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -614,17 +630,53 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           <Link to="/pricing" className="hover:text-foreground transition">
             Planos
           </Link>
-          {user && (
-            <Link to="/projetos" className="hover:text-foreground transition">
-              Meus Projetos
-            </Link>
-          )}
         </nav>
         <div className="hidden lg:flex items-center gap-2">
           {!user && (
             <Button asChild variant="ghost" className="text-sm">
               <Link to="/login">Entrar</Link>
             </Button>
+          )}
+          {user && (
+            <>
+              <Link
+                to="/projetos"
+                className="text-sm text-muted-foreground hover:text-foreground transition px-2"
+              >
+                Meus Projetos
+              </Link>
+              {credits && (
+                <span className="text-xs px-2.5 py-1 rounded-full bg-muted text-foreground whitespace-nowrap">
+                  {credits.unlimited
+                    ? "Ilimitado"
+                    : `${credits.balance} ${credits.balance === 1 ? "crédito" : "créditos"}`}
+                </span>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 h-9 pl-1 pr-2 rounded-full hover:bg-muted/60 transition"
+                    aria-label="Menu do usuário"
+                  >
+                    <span className="inline-flex h-7 w-7 rounded-full bg-accent text-accent-foreground items-center justify-center text-xs font-semibold">
+                      {initial}
+                    </span>
+                    <span className="text-sm text-foreground max-w-[140px] truncate">
+                      {displayName}
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-[220px]">
+                  <div className="px-2 py-1.5 text-xs text-muted-foreground truncate">
+                    {user.email}
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => void signOut()}>Sair</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
           <Button
             onClick={onUpload}
@@ -691,6 +743,33 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
               <Button asChild variant="outline" className="mt-2 w-full h-11 rounded-xl">
                 <Link to="/login">Entrar</Link>
               </Button>
+            )}
+            {user && (
+              <div className="mt-6 border-t border-border/60 pt-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="inline-flex h-9 w-9 shrink-0 rounded-full bg-accent text-accent-foreground items-center justify-center text-sm font-semibold">
+                    {initial}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium truncate">{displayName}</div>
+                    <div className="text-[11px] text-muted-foreground truncate">{user.email}</div>
+                  </div>
+                </div>
+                {credits && (
+                  <div className="mt-3 inline-flex text-xs px-2.5 py-1 rounded-full bg-muted text-foreground">
+                    {credits.unlimited
+                      ? "Plano ilimitado"
+                      : `${credits.balance} ${credits.balance === 1 ? "crédito" : "créditos"}`}
+                  </div>
+                )}
+                <Button
+                  onClick={() => void signOut()}
+                  variant="outline"
+                  className="mt-3 w-full h-11 rounded-xl"
+                >
+                  Sair
+                </Button>
+              </div>
             )}
           </SheetContent>
         </Sheet>
