@@ -1,12 +1,18 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Sparkles, ChevronDown, Camera } from "lucide-react";
+import { ArrowRight, Check, Sparkles, ChevronDown, Camera, Upload, Wand2 } from "lucide-react";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { Footer } from "@/components/Footer";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { resolveLandingImage } from "@/lib/seo-landing-images";
-import type { LandingBenefit, LandingFaq, LandingImages } from "@/lib/seo-landing-shared";
+import type {
+  LandingBenefit,
+  LandingFaq,
+  LandingImages,
+  LandingRelatedLink,
+  LandingStep,
+} from "@/lib/seo-landing-shared";
 
 const LeadFormModal = lazy(() =>
   import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
@@ -18,6 +24,22 @@ const modalFallback = (
   </div>
 );
 
+/** Steps default — usado quando a landing nao define `steps` proprio. */
+const DEFAULT_STEPS: LandingStep[] = [
+  {
+    t: "Envie uma foto do ambiente",
+    d: "Use a foto que você já tem — do celular ou do computador.",
+  },
+  {
+    t: "Escolha um estilo ou proposta",
+    d: "A IA aplica a estética escolhida ao seu espaço, mantendo a estrutura real.",
+  },
+  {
+    t: "Veja antes/depois e lista de compras",
+    d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+  },
+];
+
 type Props = {
   /** Kicker pequeno acima do H1 (ex: "Decoração com IA"). */
   kicker?: string;
@@ -27,12 +49,24 @@ type Props = {
   promise: string;
   /** Texto do CTA primário (LeadFormModal). */
   cta: string;
+  /** Microcopy curto abaixo do CTA primario. */
+  trustText?: string;
   /** Bullets de benefícios — render como cards com check icon. */
   benefits: LandingBenefit[];
+  /** Passos do "Como funciona" — fallback pra DEFAULT_STEPS se ausente. */
+  steps?: LandingStep[];
+  /** Titulo do bloco visual. */
+  visualTitle?: string;
+  /** Descricao breve do bloco visual. */
+  visualDescription?: string;
   /** Q&A no fim da landing. */
   faq: LandingFaq[];
   /** Imagens (before/after + galeria). */
   images: LandingImages;
+  /** CTA do sub-bloco final. */
+  finalCta?: string;
+  /** Links internos relacionados. */
+  relatedLinks?: LandingRelatedLink[];
   /** Source pro LeadFormModal (`estilos-japandi`, `ambientes-sala` etc.). */
   source: string;
   /** Estilo default opcional pro LeadFormModal. */
@@ -56,21 +90,28 @@ function renderHeadline(text: string) {
 
 /**
  * Layout expandido das landings programaticas. Substitui o single-screen
- * anterior (so hero) por estrutura completa com bullets, antes/depois,
- * galeria, FAQ, sub-CTA e Footer. Usado em /estilos/$slug e /ambientes/$slug.
+ * anterior (so hero) por estrutura completa: hero + bullets + como funciona
+ * + antes/depois + galeria + FAQ + sub-CTA + related links + Footer.
  *
- * Imagens reutilizam assets ja existentes em src/assets/ via mapa lookup
- * (LANDING_IMAGES). CTA principal abre LeadFormModal; sub-CTA no fim leva
- * direto pro fluxo de geracao via deeplink /?upload=1.
+ * Usado em /estilos/$slug e /ambientes/$slug. Imagens reutilizam assets
+ * existentes em src/assets/ via mapa lookup (LANDING_IMAGES). CTA primario
+ * abre LeadFormModal; sub-CTA leva direto pro fluxo de geracao via deeplink
+ * /?upload=1.
  */
 export function ExpandedLanding({
   kicker = "Decoração com IA",
   h1,
   promise,
   cta,
+  trustText,
   benefits,
+  steps = DEFAULT_STEPS,
+  visualTitle,
+  visualDescription,
   faq,
   images,
+  finalCta,
+  relatedLinks,
   source,
   defaultStyle,
   defaultRoomType,
@@ -113,7 +154,7 @@ export function ExpandedLanding({
         </div>
       </header>
 
-      {/* HERO — kicker + h1 + parágrafo + CTA primário */}
+      {/* HERO — kicker + h1 + parágrafo + CTA primário + trust microcopy */}
       <section className="pt-16 sm:pt-24 pb-16 sm:pb-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
           <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-accent">
@@ -133,10 +174,11 @@ export function ExpandedLanding({
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
           </div>
+          {trustText && <p className="mt-3 text-xs text-muted-foreground">{trustText}</p>}
         </div>
       </section>
 
-      {/* BENEFITS — 4 cards com check icon */}
+      {/* BENEFITS — 3-5 cards com check icon */}
       <section className="py-12 sm:py-16 border-t border-border/60 bg-card/40">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           <div className="text-[11px] uppercase tracking-[0.22em] text-accent text-center">
@@ -158,21 +200,59 @@ export function ExpandedLanding({
         </div>
       </section>
 
+      {/* COMO FUNCIONA — 3 passos */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="text-center">
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Como funciona</div>
+            <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl tracking-[-0.02em] font-semibold">
+              Em <span className="font-serif italic font-normal">3 passos</span>, da foto à
+              inspiração
+            </h2>
+          </div>
+          <div className="mt-10 grid sm:grid-cols-3 gap-5">
+            {steps.map((step, idx) => {
+              const Icon = idx === 0 ? Upload : idx === 1 ? Wand2 : Sparkles;
+              return (
+                <div
+                  key={step.t}
+                  className="relative rounded-3xl border border-border/60 bg-card/40 p-6"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="h-10 w-10 rounded-xl bg-accent/15 text-accent grid place-items-center">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="font-serif text-3xl text-muted-foreground/60">{idx + 1}</div>
+                  </div>
+                  <div className="mt-5 text-base font-medium leading-tight">{step.t}</div>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{step.d}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* BEFORE / AFTER — só renderiza se temos os 2 assets */}
       {beforeUrl && afterUrl && (
-        <section className="py-16 sm:py-20">
+        <section className="py-16 sm:py-20 border-t border-border/60 bg-card/40">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center">
               <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
                 Antes e depois
               </div>
               <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl tracking-[-0.02em] font-semibold">
-                Arraste para <span className="font-serif italic font-normal">comparar</span>
+                {visualTitle ?? (
+                  <>
+                    Arraste para <span className="font-serif italic font-normal">comparar</span>
+                  </>
+                )}
               </h2>
-              <p className="mt-3 text-sm text-muted-foreground max-w-xl mx-auto">
-                Resultado real do tipo de transformação que a IA do Ideal Space entrega — sem mexer
-                em paredes, janelas ou perspectiva.
-              </p>
+              {visualDescription && (
+                <p className="mt-3 text-sm text-muted-foreground max-w-xl mx-auto">
+                  {visualDescription}
+                </p>
+              )}
             </div>
             <div className="mt-10">
               <BeforeAfter
@@ -188,7 +268,7 @@ export function ExpandedLanding({
 
       {/* GALERIA — 3 imagens de inspiração relacionadas */}
       {galleryUrls.length > 0 && (
-        <section className="py-16 sm:py-20 border-t border-border/60 bg-card/40">
+        <section className="py-16 sm:py-20">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center">
               <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
@@ -218,7 +298,7 @@ export function ExpandedLanding({
       )}
 
       {/* FAQ — accordion simples */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20 border-t border-border/60 bg-card/40">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <div className="text-center">
             <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Perguntas</div>
@@ -254,22 +334,23 @@ export function ExpandedLanding({
         </div>
       </section>
 
-      {/* SUB-CTA — leva direto pro fluxo de geração via deeplink */}
+      {/* SUB-CTA — fundo escuro, fecha o funil */}
       <section className="py-16 sm:py-20 border-t border-border/60 bg-foreground text-background">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl tracking-[-0.02em] font-semibold leading-tight">
-            Pronto para ver o seu ambiente{" "}
-            <span className="font-serif italic font-normal text-accent">decorado</span>?
+            Comece pela{" "}
+            <span className="font-serif italic font-normal text-accent">foto do seu ambiente</span>
           </h2>
           <p className="mt-4 text-background/70 text-sm sm:text-base leading-relaxed">
-            Envie uma foto e veja o resultado em segundos. Sem cartão, sem instalação.
+            Use a IA como ponto de partida para decidir melhor. Sem cadastro pra ver a primeira
+            ideia.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Button
               onClick={() => setLeadOpen(true)}
               className="h-12 rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
             >
-              {cta}
+              {finalCta ?? cta}
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
             <Link
@@ -282,6 +363,28 @@ export function ExpandedLanding({
           </div>
         </div>
       </section>
+
+      {/* RELATED LINKS — distribui autoridade SEO entre landings irmãs */}
+      {relatedLinks && relatedLinks.length > 0 && (
+        <section className="py-12 sm:py-16">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+              Explore também
+            </div>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+              {relatedLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="inline-flex items-center rounded-full border border-border/60 bg-card px-4 h-9 text-sm hover:bg-muted transition"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
 

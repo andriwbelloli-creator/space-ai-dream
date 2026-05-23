@@ -70,9 +70,15 @@ function AmbientePage() {
       h1={room.h1}
       promise={room.promise}
       cta={room.cta}
+      trustText={room.trustText}
       benefits={room.benefits}
+      steps={room.steps}
+      visualTitle={room.visualTitle}
+      visualDescription={room.visualDescription}
       faq={room.faq}
       images={room.images}
+      finalCta={room.finalCta}
+      relatedLinks={room.relatedLinks}
       source={`ambientes-${roomSlug}`}
       defaultRoomType={room.defaultRoomType}
     />

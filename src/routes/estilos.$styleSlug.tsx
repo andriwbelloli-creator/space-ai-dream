@@ -61,9 +61,15 @@ function EstiloPage() {
       h1={style.h1}
       promise={style.promise}
       cta={style.cta}
+      trustText={style.trustText}
       benefits={style.benefits}
+      steps={style.steps}
+      visualTitle={style.visualTitle}
+      visualDescription={style.visualDescription}
       faq={style.faq}
       images={style.images}
+      finalCta={style.finalCta}
+      relatedLinks={style.relatedLinks}
       source={`estilos-${styleSlug}`}
       defaultStyle={style.defaultStyle}
     />
