@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, Sparkles, ChevronDown, Camera, Upload, Wand2 } from "lucide-react";
@@ -67,6 +67,10 @@ type Props = {
   finalCta?: string;
   /** Links internos relacionados. */
   relatedLinks?: LandingRelatedLink[];
+  /** Bullets de "Por que escolher", exibidos depois da galeria. */
+  whyChoose?: string[];
+  /** Title customizado da seção whyChoose. Default genérico se ausente. */
+  whyChooseTitle?: ReactNode;
   /** Source pro LeadFormModal (`estilos-japandi`, `ambientes-sala` etc.). */
   source: string;
   /** Estilo default opcional pro LeadFormModal. */
@@ -112,6 +116,8 @@ export function ExpandedLanding({
   images,
   finalCta,
   relatedLinks,
+  whyChoose,
+  whyChooseTitle,
   source,
   defaultStyle,
   defaultRoomType,
@@ -290,6 +296,36 @@ export function ExpandedLanding({
                     className="absolute inset-0 h-full w-full object-cover"
                     loading="lazy"
                   />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* POR QUE ESCOLHER — bloco de bullets com argumentos extras de venda */}
+      {whyChoose && whyChoose.length > 0 && (
+        <section className="py-16 sm:py-20 border-t border-border/60">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6">
+            <div className="text-center">
+              <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
+                Por que vale
+              </div>
+              <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl tracking-[-0.02em] font-semibold">
+                {whyChooseTitle ?? (
+                  <>
+                    Razões para <span className="font-serif italic font-normal">testar agora</span>
+                  </>
+                )}
+              </h2>
+            </div>
+            <div className="mt-10 grid sm:grid-cols-2 gap-x-8 gap-y-5">
+              {whyChoose.map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                    <Sparkles className="h-3 w-3" />
+                  </span>
+                  <p className="text-sm leading-relaxed text-foreground/85">{item}</p>
                 </div>
               ))}
             </div>

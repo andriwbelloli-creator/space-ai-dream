@@ -70,6 +70,12 @@ function EstiloPage() {
       images={style.images}
       finalCta={style.finalCta}
       relatedLinks={style.relatedLinks}
+      whyChoose={style.whyChoose}
+      whyChooseTitle={
+        <>
+          Por que escolher <span className="font-serif italic font-normal">{style.name}</span>
+        </>
+      }
       source={`estilos-${styleSlug}`}
       defaultStyle={style.defaultStyle}
     />

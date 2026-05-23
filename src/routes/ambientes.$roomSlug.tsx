@@ -79,6 +79,12 @@ function AmbientePage() {
       images={room.images}
       finalCta={room.finalCta}
       relatedLinks={room.relatedLinks}
+      whyChoose={room.whyChoose}
+      whyChooseTitle={
+        <>
+          Por que decorar com <span className="font-serif italic font-normal">IA</span>
+        </>
+      }
       source={`ambientes-${roomSlug}`}
       defaultRoomType={room.defaultRoomType}
     />

@@ -57,6 +57,8 @@ export interface StyleSeoData {
   relatedLinks?: LandingRelatedLink[];
   /** Refs a imagens existentes (chaves no LANDING_IMAGES). */
   images: LandingImages;
+  /** 4-6 bullets de "Por que escolher" exibidos depois da galeria. Opcional. */
+  whyChoose?: string[];
 }
 
 /** Mapa estático de cada estilo conhecido para o seu conteúdo de SEO. */
@@ -65,23 +67,27 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     name: "Japandi",
     title: "Decoração Japandi com Inteligência Artificial | Ideal Space",
     description:
-      "Veja seu ambiente decorado no estilo Japandi. Envie uma foto, escolha o estilo e receba uma inspiração visual com lista de compras sugerida.",
+      "Veja seu ambiente decorado no estilo Japandi. Envie uma foto, escolha o estilo e receba uma inspiração visual com lista de compras sugerida e orçamento estimado.",
     h1: "Veja seu ambiente no estilo *Japandi*",
     promise:
-      "Madeira clara, linho, cerâmica artesanal e uma paleta calma. Envie uma foto do ambiente como ele está hoje e veja como ele pode ficar com toques Japandi: móveis e decoração que cabem no seu espaço, com uma lista de compras sugerida.",
+      "Madeira clara, linho, cerâmica artesanal e uma paleta calma. Envie uma foto do ambiente como ele está hoje e veja como ele pode ficar com toques Japandi: móveis e decoração que cabem no seu espaço real, sem virar showroom frio nem caricatura do estilo. Recebe uma lista de compras sugerida para começar.",
     cta: "Testar Japandi no meu ambiente",
     trustText: "Em poucos passos, a partir de uma foto comum.",
     defaultStyle: "japandi",
     benefits: [
       "Combine madeira clara, tons neutros e poucos elementos com equilíbrio",
-      "Crie uma estética calma, funcional e acolhedora",
-      "Veja como reduzir excessos sem deixar o ambiente frio",
+      "Crie uma estética calma, funcional e acolhedora ao mesmo tempo",
+      "Veja como reduzir excessos visuais sem deixar o ambiente frio",
       "Funciona em apartamentos pequenos e em ambientes amplos",
+      "Texturas naturais: linho, cerâmica, ratan, madeira clara, tatame",
+      "Paleta serena: bege, off-white, taupe, com toques pontuais escuros",
+      "Mobiliário baixo e proporcional, ar acolhedor sem virar minimalismo extremo",
+      "Lista de compras com itens reais, do tapete à luminária",
     ],
     steps: [
       {
         t: "Envie uma foto do ambiente",
-        d: "Use a foto que você já tem, do celular ou do computador.",
+        d: "Use a foto que você já tem, do celular ou do computador. Iluminação natural ajuda.",
       },
       {
         t: "Aplicamos o estilo Japandi",
@@ -89,12 +95,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         t: "Veja antes/depois e lista de compras",
-        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
       },
     ],
     visualTitle: "Veja como uma sala simples pode ficar",
     visualDescription:
-      "Exemplo de transformação visual no estilo Japandi a partir de uma foto comum. Arraste para comparar.",
+      "Exemplo de transformação visual no estilo Japandi a partir de uma foto comum. Arraste para comparar antes e depois.",
     faq: [
       {
         q: "Preciso contratar um arquiteto para usar?",
@@ -106,19 +112,45 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         q: "Posso usar uma foto de celular?",
-        a: "Sim. Foto comum de celular já funciona, desde que o ambiente esteja visível. Não precisa de equipamento especial.",
+        a: "Sim. Foto comum de celular já funciona, desde que o ambiente esteja visível e razoavelmente iluminado. Sem app, sem equipamento.",
       },
       {
         q: "Posso testar outros estilos no mesmo ambiente?",
-        a: "Sim. A mesma foto pode receber Japandi, natural, minimalista ou contemporâneo. Compare as versões e decida o que combina mais com você.",
+        a: "Sim. A mesma foto pode receber Japandi, natural, minimalista, contemporâneo ou luxo discreto. Compare as versões e decida o que combina mais.",
+      },
+      {
+        q: "Qual a diferença entre Japandi e minimalista puro?",
+        a: "O Japandi tem mais calor (texturas naturais, cerâmica artesanal, linho) e menos sterilidade. Minimalista puro é mais branco e geométrico. Use a IA para comparar.",
+      },
+      {
+        q: "Funciona em ambiente já mobiliado?",
+        a: "Sim. A IA preserva a estrutura visível e propõe substituições ou complementos. Você decide o que vale trocar e o que mantém.",
+      },
+      {
+        q: "Combina com clima brasileiro?",
+        a: "Sim. A leveza, ventilação visual e cores claras do Japandi funcionam muito bem em clima tropical. Plantas e fibras naturais reforçam a sensação.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "Você tem 3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
       },
     ],
     finalCta: "Ver meu ambiente em Japandi",
     relatedLinks: [
       { label: "Minimalista", to: "/estilos/minimalista" },
       { label: "Natural", to: "/estilos/natural" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
       { label: "Sala", to: "/ambientes/sala" },
       { label: "Quarto", to: "/ambientes/quarto" },
+      { label: "Home office", to: "/ambientes/home-office" },
+    ],
+    whyChoose: [
+      "Equilíbrio raro: tem a calma japonesa e o aconchego escandinavo na mesma proposta",
+      "Estética que envelhece bem, não vira moda passageira em 2 anos",
+      "Funciona em apartamento alugado, sala compartilhada, casa nova ou quarto único",
+      "A IA respeita a estrutura real, propõe Japandi viável para o seu espaço",
+      "Sugestões de produtos por categoria (madeira clara, linho, cerâmica) com faixa de preço",
+      "Sem cadastro para ver a primeira ideia, sem cartão para começar",
     ],
     images: {
       before: "empty-living",
@@ -130,18 +162,22 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     name: "Contemporâneo",
     title: "Decoração Contemporânea com Inteligência Artificial | Ideal Space",
     description:
-      "Veja seu ambiente decorado no estilo contemporâneo. Envie uma foto e receba uma inspiração visual com sugestões de móveis e lista de compras.",
+      "Veja seu ambiente decorado no estilo contemporâneo. Envie uma foto e receba uma inspiração visual com sugestões de móveis, paleta e lista de compras estimada.",
     h1: "Veja seu ambiente no estilo *Contemporâneo*",
     promise:
-      "Linhas atuais, mistura de texturas e equilíbrio entre conforto e sofisticação. Envie uma foto do seu ambiente e veja como ele pode ficar com toques contemporâneos: móveis elegantes, paleta sóbria e composição moderna sem exagero.",
+      "Linhas atuais, mistura de texturas e equilíbrio entre conforto e sofisticação. Envie uma foto do seu ambiente e veja como ele pode ficar com toques contemporâneos: móveis elegantes, paleta sóbria, composição moderna sem exagero. Estilo que envelhece bem e funciona em casa de família, ambiente de trabalho ou imóvel para mostrar.",
     cta: "Testar Contemporâneo no meu ambiente",
     trustText: "Em poucos passos, com a foto que você já tem.",
     defaultStyle: "contemporaneo",
     benefits: [
       "Equilíbrio entre conforto e sofisticação no mesmo ambiente",
       "Linhas atuais e mistura de texturas em proporções harmônicas",
-      "Móveis elegantes com presença sem virar moda passageira",
+      "Móveis elegantes com presença, sem virar moda passageira",
       "Visual moderno sem exagero, fácil de manter no dia a dia",
+      "Paleta sóbria que aceita acentos pontuais de cor ou metal",
+      "Funciona em sala, quarto, home office e ambientes integrados",
+      "Mistura de materiais: madeira, tecido, metal, pedra com critério",
+      "Lista de compras com itens reais e faixas de preço acessíveis",
     ],
     steps: [
       {
@@ -154,12 +190,12 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         t: "Veja antes/depois e lista de compras",
-        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+        d: "Receba a inspiração visual com sugestões de produtos e faixa de preço estimada.",
       },
     ],
     visualTitle: "Uma sala simples ganhando ar contemporâneo",
     visualDescription:
-      "Exemplo de transformação visual no estilo contemporâneo a partir de uma foto comum. Arraste para comparar.",
+      "Exemplo de transformação visual no estilo contemporâneo a partir de uma foto comum. Arraste para comparar antes e depois.",
     faq: [
       {
         q: "Preciso contratar um arquiteto?",
@@ -175,15 +211,41 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         q: "Posso testar outros estilos depois?",
-        a: "Sim. A mesma foto pode ganhar versões em Japandi, minimalista, luxo discreto. Compare lado a lado.",
+        a: "Sim. A mesma foto pode ganhar versões em Japandi, minimalista, natural, luxo discreto ou industrial. Compare lado a lado e decida.",
+      },
+      {
+        q: "Qual a diferença entre contemporâneo e moderno?",
+        a: "Moderno se refere ao movimento do século XX (linhas retas, funcionalismo). Contemporâneo é o que acontece agora, mais flexível e quente. A IA propõe um contemporâneo brasileiro e acessível.",
+      },
+      {
+        q: "Combina com casa de família com crianças?",
+        a: "Sim. A IA pode propor variações com tecidos mais resistentes, paleta menos sensível a marcas e mobília robusta. Você pede a versão que faz sentido.",
+      },
+      {
+        q: "Posso usar em imóvel para venda ou aluguel?",
+        a: "Sim. O contemporâneo neutro e elegante funciona bem em virtual staging de portais imobiliários. Para anúncios em escala, veja o módulo para imobiliárias.",
+      },
+      {
+        q: "É grátis para testar?",
+        a: "Você tem 3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
       },
     ],
     finalCta: "Ver meu ambiente em Contemporâneo",
     relatedLinks: [
       { label: "Minimalista", to: "/estilos/minimalista" },
       { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Japandi", to: "/estilos/japandi" },
       { label: "Sala", to: "/ambientes/sala" },
       { label: "Quarto", to: "/ambientes/quarto" },
+      { label: "Home office", to: "/ambientes/home-office" },
+    ],
+    whyChoose: [
+      "Estilo flexível, casa bem com personalidade própria, fotos de família e itens herdados",
+      "Funciona tanto para casa de morar quanto para imóvel mostrar ou anunciar",
+      "Não exige reforma grande: paleta, têxteis e mobília principal já transformam",
+      "A IA propõe uma versão equilibrada do contemporâneo, sem virar revista fria",
+      "Sugestões de produtos por categoria com faixa de preço para guiar o orçamento",
+      "Compare com Japandi ou luxo discreto na mesma foto, decida o que combina com você",
     ],
     images: {
       before: "empty-living",
@@ -195,18 +257,22 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     name: "Minimalista",
     title: "Decoração Minimalista com Inteligência Artificial | Ideal Space",
     description:
-      "Veja seu ambiente decorado no estilo minimalista. Envie uma foto e receba uma inspiração visual com lista de compras sugerida.",
+      "Veja seu ambiente decorado no estilo minimalista. Envie uma foto e receba uma inspiração visual com poucos elementos, paleta clara e lista de compras estimada.",
     h1: "Veja seu ambiente no estilo *Minimalista*",
     promise:
-      "Linhas limpas, paleta neutra, poucos elementos e respiro visual. Envie uma foto do seu ambiente e veja como ele pode ficar com toques minimalistas: organização, funcionalidade e sugestões do que vale realmente comprar.",
+      "Linhas limpas, paleta neutra, poucos elementos e respiro visual. Envie uma foto do seu ambiente e veja como ele pode ficar com toques minimalistas: organização, funcionalidade e sugestões do que realmente vale comprar. Estilo que ajuda quem quer ambiente calmo e menos coisa para limpar.",
     cta: "Testar Minimalista no meu ambiente",
-    trustText: "Em poucos passos, sem precisar de cadastro pra ver a primeira ideia.",
+    trustText: "Em poucos passos, sem precisar de cadastro para ver a primeira ideia.",
     defaultStyle: "minimalista",
     benefits: [
       "Menos excesso visual, com cada item tendo um motivo claro",
       "Linhas limpas e paleta neutra que ampliam o espaço",
       "Organização e respiro visual no dia a dia",
       "Composição que envelhece bem, sem virar moda passageira",
+      "Funciona em apartamentos pequenos, onde respiro vale ouro",
+      "Ajuda quem tem dificuldade com excesso visual ou ansiedade do bagunçado",
+      "Mobília multifuncional e proporcionalmente bem escolhida",
+      "Lista de compras focada no essencial, sem itens que viram poeira",
     ],
     steps: [
       {
@@ -219,36 +285,62 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         t: "Veja antes/depois e lista de compras",
-        d: "Receba uma inspiração visual e sugestões de produtos para investir só no essencial.",
+        d: "Receba a inspiração visual com sugestões de produtos para investir só no essencial.",
       },
     ],
     visualTitle: "Um quarto comum ganhando ar minimalista",
     visualDescription:
-      "Exemplo de transformação visual no estilo minimalista a partir de uma foto comum. Arraste para comparar.",
+      "Exemplo de transformação visual no estilo minimalista a partir de uma foto comum. Arraste para comparar antes e depois.",
     faq: [
       {
         q: "Minimalismo significa ficar com pouca coisa?",
-        a: "Significa manter o que você de fato usa. A IA propõe uma composição onde cada item tem propósito, sem virar ambiente vazio.",
+        a: "Significa manter o que você de fato usa. A IA propõe uma composição onde cada item tem propósito, sem virar ambiente vazio ou esterilizado.",
       },
       {
         q: "É um projeto arquitetônico?",
-        a: "Não. É uma inspiração visual gerada por IA, não um render técnico nem um projeto pronto para obra.",
+        a: "Não. É uma inspiração visual gerada por IA, não um render técnico nem um projeto pronto para obra. Serve para decidir antes de gastar.",
       },
       {
         q: "Foto de celular funciona?",
-        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado. Não precisa de equipamento especial.",
       },
       {
         q: "Posso ver o mesmo cômodo em outros estilos?",
-        a: "Sim. A mesma foto pode receber Japandi, natural ou contemporâneo. Compare lado a lado antes de decidir.",
+        a: "Sim. A mesma foto pode receber Japandi, natural, contemporâneo ou luxo discreto. Compare lado a lado antes de decidir.",
+      },
+      {
+        q: "Combina com quem tem família e crianças?",
+        a: "Sim. O minimalismo doméstico não é o mesmo do feed do Instagram. A IA propõe versões com móveis robustos, tecidos práticos e organização visual, sem perder funcionalidade.",
+      },
+      {
+        q: "Vou ter que jogar fora as minhas coisas?",
+        a: "Não. A inspiração é visual. Você decide o que entra e sai. A IA serve como referência, não como manual de descarte.",
+      },
+      {
+        q: "Funciona em ambiente já bagunçado?",
+        a: "Sim. A IA mostra como o mesmo ambiente fica organizado, com paleta limpa e poucos itens visíveis. Boa para inspirar a organização do que você já tem.",
+      },
+      {
+        q: "Tem custo para testar?",
+        a: "Você tem 3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
       },
     ],
     finalCta: "Ver meu ambiente em Minimalista",
     relatedLinks: [
       { label: "Japandi", to: "/estilos/japandi" },
       { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Natural", to: "/estilos/natural" },
       { label: "Quarto", to: "/ambientes/quarto" },
       { label: "Home office", to: "/ambientes/home-office" },
+      { label: "Sala", to: "/ambientes/sala" },
+    ],
+    whyChoose: [
+      "Visualize seu cômodo sem o excesso atual, ajuda a decidir o que sai e o que fica",
+      "Estilo que combina com vida prática, casas com crianças e rotina apertada",
+      "Reduz o impulso de comprar décor que não acrescenta no dia a dia",
+      "A IA mostra o minimalismo viável para a sua casa, não o do feed inalcançável",
+      "Sugestões priorizando o que ocupa pouco espaço visual e cumpre mais função",
+      "Compare com Japandi ou natural se sentir frieza, decida o ponto certo",
     ],
     images: {
       before: "empty-bedroom",
@@ -260,10 +352,10 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     name: "Natural",
     title: "Decoração Natural com Inteligência Artificial | Ideal Space",
     description:
-      "Veja seu ambiente decorado no estilo natural. Envie uma foto e receba uma inspiração visual com madeira, fibras, plantas e tons claros.",
+      "Veja seu ambiente decorado no estilo natural. Envie uma foto e receba uma inspiração visual com madeira, fibras, plantas, tons claros e lista de compras estimada.",
     h1: "Veja seu ambiente no estilo *Natural*",
     promise:
-      "Madeira, fibras, plantas e tons claros que trazem leveza e bem-estar. Envie uma foto do seu ambiente e veja como ele pode ficar com toques naturais: composição leve, sensação acolhedora e sugestões de produtos.",
+      "Madeira, fibras, plantas e tons claros que trazem leveza e bem-estar. Envie uma foto do seu ambiente e veja como ele pode ficar com toques naturais: composição leve, sensação acolhedora, ar livre dentro de casa. Funciona muito bem em apartamento urbano, casa de praia, varanda ou quarto.",
     cta: "Testar Natural no meu ambiente",
     trustText: "Em poucos passos, a partir da foto que você já tem.",
     defaultStyle: "natural",
@@ -272,6 +364,10 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       "Tons claros que aquecem o ambiente sem deixar pesado",
       "Sensação de leveza e bem-estar no dia a dia",
       "Funciona em apartamentos e casas, mesmo sem reforma grande",
+      "Combina com clima tropical e quente, ajuda na ventilação visual",
+      "Texturas naturais: ratan, palha, juta, linho, madeira clara",
+      "Plantas em proporção realista, do vaso pequeno ao destaque grande",
+      "Lista de compras com itens reais, de tapete a luminária de fibra",
     ],
     steps: [
       {
@@ -284,36 +380,62 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         t: "Veja antes/depois e lista de compras",
-        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+        d: "Receba a inspiração visual com sugestões de produtos e faixa de preço estimada.",
       },
     ],
     visualTitle: "Um ambiente comum ganhando textura e leveza",
     visualDescription:
-      "Exemplo de transformação visual no estilo natural a partir de uma foto comum. Arraste para comparar.",
+      "Exemplo de transformação visual no estilo natural a partir de uma foto comum. Arraste para comparar antes e depois.",
     faq: [
       {
         q: "Esse estilo é o mesmo que rústico?",
-        a: "Não. O natural usa materiais orgânicos com acabamento mais contemporâneo. Rústico é mais cru. A IA propõe a versão mais leve do estilo.",
+        a: "Não. O natural usa materiais orgânicos com acabamento mais contemporâneo. Rústico é mais cru, com madeira de demolição e tijolo aparente. A IA propõe a versão mais leve do estilo.",
       },
       {
-        q: "Combina com apartamento?",
-        a: "Sim. Funciona muito bem em espaços urbanos. Madeira, plantas e fibras quebram a rigidez de paredes brancas e piso liso.",
+        q: "Combina com apartamento urbano?",
+        a: "Sim. Funciona muito bem em espaços urbanos. Madeira, plantas e fibras quebram a rigidez de paredes brancas e piso liso, sem precisar de varanda gourmet.",
       },
       {
         q: "Preciso comprar muitas plantas?",
-        a: "Não. Você pode pedir mais ou menos vegetação na composição. A inspiração se ajusta ao que você consegue manter no dia a dia.",
+        a: "Não. Você pode pedir mais ou menos vegetação na composição. A inspiração se ajusta ao que você consegue manter, do mini vaso ao destaque grande.",
       },
       {
         q: "Posso ver outros estilos no mesmo cômodo?",
-        a: "Sim. A mesma foto pode receber Japandi, minimalista ou contemporâneo. Use as variações para decidir o que combina mais.",
+        a: "Sim. A mesma foto pode receber Japandi, minimalista, contemporâneo ou industrial. Use as variações para decidir o que combina mais com você.",
+      },
+      {
+        q: "É o mesmo que estilo boho?",
+        a: "Não. Boho é mais colorido, com camadas de têxteis e décor étnico. Natural é mais sereno, foco nas texturas neutras e na vegetação. A IA propõe a versão calma.",
+      },
+      {
+        q: "Funciona em quarto e home office?",
+        a: "Sim. Quarto natural ajuda no relaxamento. Home office natural reduz a frieza da tela e do escritório formal. Texturas e plantas combinam muito bem nos dois.",
+      },
+      {
+        q: "Combina com mobília que eu já tenho?",
+        a: "Sim. A IA preserva o que está visível na foto e propõe complementos. Madeira clara, ratan e plantas costumam casar bem com mobília existente.",
+      },
+      {
+        q: "É grátis para testar?",
+        a: "Você tem 3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
       },
     ],
     finalCta: "Ver meu ambiente em Natural",
     relatedLinks: [
       { label: "Japandi", to: "/estilos/japandi" },
       { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
       { label: "Sala", to: "/ambientes/sala" },
       { label: "Quarto", to: "/ambientes/quarto" },
+      { label: "Home office", to: "/ambientes/home-office" },
+    ],
+    whyChoose: [
+      "Traz a sensação de ar livre para dentro do apartamento ou casa, sem reforma",
+      "Estilo que combina muito bem com clima brasileiro, ventilação visual e cores claras",
+      "Compre menos vasos: a IA mostra plantas em proporção realista, do que você consegue cuidar",
+      "Funciona em quase qualquer cômodo: sala, quarto, home office, banheiro, varanda",
+      "Sugestões de produtos por categoria (fibra natural, madeira clara, vegetação) com faixa de preço",
+      "Compare com Japandi se quiser ar mais minimalista, ou natural puro se quiser camadas",
     ],
     images: {
       before: "empty-bedroom",
@@ -325,10 +447,10 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     name: "Industrial",
     title: "Decoração Industrial com Inteligência Artificial | Ideal Space",
     description:
-      "Veja seu ambiente decorado no estilo industrial. Envie uma foto e receba uma inspiração visual com metal, madeira escura e tijolo aparente.",
+      "Veja seu ambiente decorado no estilo industrial. Envie uma foto e receba uma inspiração visual com metal, madeira escura, tijolo aparente e lista de compras estimada.",
     h1: "Veja seu ambiente no estilo *Industrial*",
     promise:
-      "Metal, madeira escura, concreto, tijolo aparente e iluminação marcante. Envie uma foto do ambiente e veja como ele pode ficar com um ar urbano: composição cheia de personalidade, sem virar galpão.",
+      "Metal, madeira escura, concreto, tijolo aparente e iluminação marcante. Envie uma foto do ambiente e veja como ele pode ficar com um ar urbano: composição cheia de personalidade, sem virar galpão frio nem cenário de bar temático. Funciona muito bem em cozinha, sala, home office e loft.",
     cta: "Testar Industrial no meu ambiente",
     trustText: "Em poucos passos, com a foto que você já tem.",
     defaultStyle: "industrial",
@@ -337,6 +459,10 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       "Iluminação marcante que define o caráter do ambiente",
       "Visual urbano sem cair em frieza ou ar de galpão",
       "Personalidade forte que combina com sala, cozinha e home office",
+      "Combina muito bem com pé-direito alto, loft ou cobertura",
+      "Pode ser suavizado com têxteis quentes e iluminação amarela",
+      "Sugestões de luminárias pendentes Edison e arandelas pretas",
+      "Lista de compras separando estrutural (metal, madeira) e décor (têxtil, luz)",
     ],
     steps: [
       {
@@ -349,20 +475,20 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         t: "Veja antes/depois e lista de compras",
-        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+        d: "Receba a inspiração visual com sugestões de produtos e faixa de preço estimada.",
       },
     ],
     visualTitle: "Uma cozinha simples ganhando ar urbano",
     visualDescription:
-      "Exemplo de transformação visual no estilo industrial a partir de uma foto comum. Arraste para comparar.",
+      "Exemplo de transformação visual no estilo industrial a partir de uma foto comum. Arraste para comparar antes e depois.",
     faq: [
       {
         q: "Industrial fica frio?",
-        a: "Pode ficar se não for equilibrado. A IA combina materiais crus com têxteis, iluminação amarela e detalhes que dão atmosfera, sem virar galpão.",
+        a: "Pode ficar se não for equilibrado. A IA combina materiais crus com têxteis, iluminação amarela e detalhes quentes, sem virar galpão sem alma.",
       },
       {
         q: "Preciso quebrar parede para ter tijolo aparente?",
-        a: "Não. Você pode usar revestimentos que imitam tijolo ou aplicar o estilo em outros pontos do ambiente, sem reforma estrutural.",
+        a: "Não. Você pode usar revestimentos que imitam tijolo, papel de parede ou aplicar o estilo em outros pontos do ambiente, sem reforma estrutural.",
       },
       {
         q: "Foto comum de celular funciona?",
@@ -370,15 +496,41 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         q: "Posso suavizar o estilo?",
-        a: "Sim. A IA propõe variações mais soft ou mais densas. Compare as versões e escolha a intensidade que combina com você.",
+        a: "Sim. A IA propõe variações mais soft ou mais densas. Compare as versões e escolha a intensidade que combina com a sua rotina.",
+      },
+      {
+        q: "Funciona em apartamento padrão, sem pé-direito alto?",
+        a: "Sim. A IA adapta a proposta ao espaço real. Em pé-direito normal, o estilo aparece pelos materiais (metal, madeira escura, luminária), não pela altura.",
+      },
+      {
+        q: "Combina com cozinha integrada à sala?",
+        a: "Sim. Industrial funciona muito bem em cozinha americana. A IA propõe paleta coerente entre os dois ambientes, sem destoar.",
+      },
+      {
+        q: "Tem ar masculino demais?",
+        a: "Não precisa ter. A IA pode propor versões com mais plantas, têxteis claros e madeira clara para equilibrar a paleta. Você pede o ajuste.",
+      },
+      {
+        q: "Tem custo para testar?",
+        a: "Você tem 3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
       },
     ],
     finalCta: "Ver meu ambiente em Industrial",
     relatedLinks: [
       { label: "Contemporâneo", to: "/estilos/contemporaneo" },
       { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Minimalista", to: "/estilos/minimalista" },
       { label: "Cozinha", to: "/ambientes/cozinha" },
+      { label: "Sala", to: "/ambientes/sala" },
       { label: "Home office", to: "/ambientes/home-office" },
+    ],
+    whyChoose: [
+      "Estilo com personalidade forte para quem quer fugir do branco-bege padrão",
+      "Funciona em cozinha americana, sala social, home office e loft, especialmente em pé-direito alto",
+      "Você decide a intensidade: industrial soft com madeira clara ou denso com concreto e metal",
+      "A IA equilibra os materiais crus com têxteis e iluminação quente, sem virar galpão",
+      "Sugestões de luminárias pendentes Edison, arandelas pretas e décor metálico",
+      "Compare com contemporâneo ou luxo discreto na mesma foto, decida a intensidade certa",
     ],
     images: {
       before: "empty-kitchen",
@@ -390,10 +542,10 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
     name: "Luxo discreto",
     title: "Decoração de Luxo Discreto com Inteligência Artificial | Ideal Space",
     description:
-      "Veja seu ambiente decorado no estilo luxo discreto. Envie uma foto e receba uma inspiração visual com materiais nobres e composição elegante.",
+      "Veja seu ambiente decorado no estilo luxo discreto. Envie uma foto e receba uma inspiração visual com materiais nobres, composição elegante e lista de compras estimada.",
     h1: "Veja seu ambiente em *Luxo Discreto*",
     promise:
-      "Materiais nobres, iluminação cuidadosa e composição elegante, sem exagero. Envie uma foto do seu ambiente e veja como ele pode ganhar um visual premium, com sugestões de produtos para decidir onde investir.",
+      "Materiais nobres, iluminação cuidadosa e composição elegante, sem exagero. Envie uma foto do seu ambiente e veja como ele pode ganhar um visual premium e atemporal, com sugestões de produtos para decidir onde investir. Estilo que combina com quem prefere sofisticação calma a brilho de ostentação.",
     cta: "Testar Luxo Discreto no meu ambiente",
     trustText: "Em poucos passos, sem promessa de obra ou render técnico.",
     defaultStyle: "luxo",
@@ -402,6 +554,10 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       "Iluminação pontual que valoriza os detalhes certos",
       "Visual premium sem cair em ostentação",
       "Cuidado para não parecer artificial, com refinamento na medida certa",
+      "Texturas marcantes: mármore, veludo, latão escovado, madeira nobre",
+      "Paleta neutra escura ou clara, com acentos pontuais metálicos",
+      "Funciona em sala, banheiro, quarto principal e closet",
+      "Lista de compras priorizando o que tem mais impacto visual",
     ],
     steps: [
       {
@@ -414,16 +570,16 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         t: "Veja antes/depois e lista de compras",
-        d: "Receba uma inspiração visual e sugestões de produtos para investir com clareza.",
+        d: "Receba a inspiração visual com sugestões de produtos para investir com clareza.",
       },
     ],
     visualTitle: "Um banheiro simples ganhando ar premium",
     visualDescription:
-      "Exemplo de transformação visual em luxo discreto a partir de uma foto comum. Arraste para comparar.",
+      "Exemplo de transformação visual em luxo discreto a partir de uma foto comum. Arraste para comparar antes e depois.",
     faq: [
       {
-        q: "Preciso de um arquiteto pra usar?",
-        a: "Não. Serve como ponto de partida visual. Você pode usar sozinho ou levar a inspiração para um profissional se quiser aprofundar.",
+        q: "Preciso de um arquiteto para usar?",
+        a: "Não. Serve como ponto de partida visual. Você pode usar sozinho ou levar a inspiração para um profissional se quiser aprofundar o projeto.",
       },
       {
         q: "É um projeto técnico de obra?",
@@ -431,19 +587,45 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       },
       {
         q: "Luxo discreto exige orçamento alto?",
-        a: "É um estilo, não um orçamento fixo. A lista de compras vem com sugestões em diferentes faixas, e você escolhe onde priorizar.",
+        a: "É um estilo, não um orçamento fixo. A lista de compras vem com sugestões em diferentes faixas, e você escolhe onde priorizar. Dá para começar pela iluminação, que costuma ter o maior impacto.",
       },
       {
         q: "Posso aplicar gradualmente?",
-        a: "Sim. Comece pelos pontos com maior impacto visual: iluminação, móveis principais, depois acabamentos. A lista ajuda a ordenar.",
+        a: "Sim. Comece pelos pontos com maior impacto visual: iluminação, móveis principais, depois acabamentos. A lista ajuda a ordenar por prioridade.",
+      },
+      {
+        q: "Funciona em apartamento padrão?",
+        a: "Sim. O luxo discreto é estética, não tamanho do imóvel. A IA propõe versões que cabem em sala média, sem precisar de pé-direito alto nem metragem nobre.",
+      },
+      {
+        q: "Combina com casa de família com crianças?",
+        a: "Sim. A IA pode propor versões com tecidos resistentes (linho misto, microfibra) e paleta menos sensível, mantendo o ar refinado.",
+      },
+      {
+        q: "Como diferenciar luxo discreto de luxo clássico?",
+        a: "O discreto evita ouro brilhante, lustres pomposos e estampas pesadas. Foca em materialidade, iluminação calma e composição limpa. A IA propõe a versão contemporânea.",
+      },
+      {
+        q: "É grátis para testar?",
+        a: "Você tem 3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
       },
     ],
     finalCta: "Ver meu ambiente em Luxo Discreto",
     relatedLinks: [
       { label: "Contemporâneo", to: "/estilos/contemporaneo" },
       { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Industrial", to: "/estilos/industrial" },
       { label: "Sala", to: "/ambientes/sala" },
+      { label: "Quarto", to: "/ambientes/quarto" },
       { label: "Banheiro", to: "/ambientes/banheiro" },
+    ],
+    whyChoose: [
+      "Sofisticação calma, sem brilho de ostentação nem caricatura de luxo",
+      "Funciona em apartamento padrão, não exige imóvel grande nem pé-direito nobre",
+      "Compare uma versão clara mais leve e uma escura mais densa na mesma foto",
+      "Sugestões de produtos em diferentes faixas, dá para começar pela iluminação e ir somando",
+      "A IA prioriza materialidade e composição, não preço de etiqueta nem marca de grife",
+      "Estilo que envelhece bem, não vira datado em poucos anos",
     ],
     images: {
       before: "empty-bathroom-suite",
