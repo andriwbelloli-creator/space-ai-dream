@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { GoogleButton } from "@/components/GoogleButton";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react";
 
@@ -80,8 +81,20 @@ function passwordStrength(pw: string): { score: 0 | 1 | 2 | 3 | 4; label: string
 function LoginPage() {
   const navigate = useNavigate();
   const track = useServerFn(logEvent);
+  const { user } = useAuth();
   const { redirect: redirectTo, mode: initialMode } = Route.useSearch();
   const dest = redirectTo ?? "/";
+
+  // Belt-and-suspenders ao beforeLoad: em SSR e race de hidratação,
+  // supabase.auth.getSession() pode retornar null mesmo com sessão válida
+  // no localStorage. Quando o AuthProvider termina de restaurar e `user`
+  // materializa, redireciona pro destino — com guard explícito contra
+  // /login pra impedir loop.
+  useEffect(() => {
+    if (!user) return;
+    const target = dest && !dest.startsWith("/login") ? dest : "/";
+    navigate({ to: target });
+  }, [user, dest, navigate]);
 
   const [mode, setMode] = useState<Mode>(initialMode ?? "signin");
   const [email, setEmail] = useState("");

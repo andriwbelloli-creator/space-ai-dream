@@ -424,6 +424,11 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
       setError(message);
       setStage("error");
       setProgress(0);
+    } finally {
+      // Para o tick animado: ele checa ticket.cancelled antes de chamar
+      // setStage. Sem isso, em gerações rápidas (Gemini < 5-7s) o tick
+      // sobrescreve o setStage("done") e deixa o botão "Gerando…" preso.
+      ticket.cancelled = true;
     }
   };
 
