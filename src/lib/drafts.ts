@@ -2,7 +2,13 @@ const KEY = "ideal_space_drafts_v1";
 const MAX_DRAFTS = 6;
 const MAX_VERSIONS = 8;
 
-export type DraftStatus = "draft" | "generating" | "done";
+/**
+ * "interrupted" cobre drafts que ficaram presos em "generating" — modal foi
+ * fechado/refresh durante a geracao e o autosave nao teve chance de promover
+ * o status. Marcamos como interrompido no proximo mount do modal (ver
+ * UploadPhotoModal: load drafts effect).
+ */
+export type DraftStatus = "draft" | "generating" | "interrupted" | "done";
 
 export type DraftVersionResult = {
   url: string;

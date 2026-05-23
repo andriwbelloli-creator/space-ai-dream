@@ -214,6 +214,18 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   // Load drafts whenever the modal opens
   useEffect(() => {
     if (open) {
+      // Promove drafts presos em "generating" ha mais de 2min para
+      // "interrupted". Acontece quando o user fecha o modal/navegador
+      // durante a geracao — o autosave gravou status="generating" e
+      // nada nunca atualizou. Sem isso, o card aparece "Gerando" pra
+      // sempre, confundindo o usuario.
+      const STALE_MS = 2 * 60 * 1000;
+      const now = Date.now();
+      listDrafts().forEach((d) => {
+        if (d.status === "generating" && now - d.updatedAt > STALE_MS) {
+          upsertDraft({ ...d, status: "interrupted" });
+        }
+      });
       setDrafts(listDrafts());
       void track({ data: { event: "start_project" } }).catch(() => {});
     }
@@ -628,6 +640,11 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                           ) : d.status === "generating" ? (
                             <>
                               <Loader2 className="h-2.5 w-2.5 animate-spin text-accent" /> Gerando
+                            </>
+                          ) : d.status === "interrupted" ? (
+                            <>
+                              <Clock className="h-2.5 w-2.5 text-muted-foreground" /> Geração
+                              interrompida
                             </>
                           ) : (
                             <>
