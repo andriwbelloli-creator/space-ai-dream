@@ -6,7 +6,13 @@
  * markdown (`*trecho*`) e argumentos de venda específicos da estética.
  */
 
-import type { LandingBenefit, LandingFaq, LandingImages } from "./seo-landing-shared";
+import type {
+  LandingBenefit,
+  LandingFaq,
+  LandingImages,
+  LandingRelatedLink,
+  LandingStep,
+} from "./seo-landing-shared";
 
 /** Slugs de estilos com landing page dedicada. */
 export type StyleSlug =
@@ -29,14 +35,26 @@ export interface StyleSeoData {
   h1: string;
   /** Parágrafo de venda detalhado e específico do estilo. */
   promise: string;
-  /** Texto comercial do botão de conversão. */
+  /** Texto comercial do botão de conversão (CTA primario do hero). */
   cta: string;
+  /** Microcopy curto abaixo do CTA primario — sinal de confianca leve. */
+  trustText?: string;
   /** Estilo pré-selecionado no formulário de leads. */
   defaultStyle: string;
-  /** 4 bullets curtos de valor — exibidos abaixo do hero. */
+  /** 3-5 bullets curtos de valor — exibidos abaixo do hero. */
   benefits: LandingBenefit[];
+  /** 3 passos do "Como funciona" — opcional, fallback pra default global. */
+  steps?: LandingStep[];
+  /** Titulo da secao visual (antes/depois ou galeria). */
+  visualTitle?: string;
+  /** Descricao breve da secao visual. */
+  visualDescription?: string;
   /** 4 Q&A exibidos na secao de FAQ no fim da landing. */
   faq: LandingFaq[];
+  /** CTA do sub-bloco final — frase diferente do hero, mesma intencao. */
+  finalCta?: string;
+  /** Links internos relacionados pra distribuir autoridade SEO. */
+  relatedLinks?: LandingRelatedLink[];
   /** Refs a imagens existentes (chaves no LANDING_IMAGES). */
   images: LandingImages;
 }
@@ -45,37 +63,62 @@ export interface StyleSeoData {
 export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   japandi: {
     name: "Japandi",
-    title: "Decoração Japandi com Inteligência Artificial - Ideal Space",
+    title: "Decoração Japandi com Inteligência Artificial — Ideal Space",
     description:
-      "Veja seu ambiente no estilo Japandi com IA. Envie uma foto e receba uma decoração que une o minimalismo japonês ao aconchego escandinavo em segundos.",
-    h1: "Decore no estilo *Japandi* com IA",
+      "Veja seu ambiente decorado no estilo Japandi. Envie uma foto, escolha o estilo e receba uma inspiração visual com lista de compras sugerida.",
+    h1: "Veja seu ambiente no estilo *Japandi*",
     promise:
-      "O Japandi une o minimalismo japonês ao aconchego escandinavo: madeira clara, linho, cerâmica artesanal, plantas e uma paleta neutra que transmite calma. Visualizar esse equilíbrio antes de comprar móveis é a parte difícil. Com o Ideal Space, você envia uma foto do ambiente como ele está hoje e a inteligência artificial preserva paredes, janelas e a perspectiva real, devolvendo um espaço Japandi completo — com mobiliário de linhas limpas, iluminação suave e têxteis naturais que combinam de verdade. Compare variações lado a lado e receba uma lista de compras com faixas de preço para tirar o projeto do papel.",
-    cta: "Decorar no Estilo Japandi",
+      "Madeira clara, linho, cerâmica artesanal e uma paleta calma. Envie uma foto do ambiente como ele está hoje e veja como ele pode ficar com toques Japandi — móveis e decoração que cabem no seu espaço, com uma lista de compras sugerida.",
+    cta: "Testar Japandi no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
     defaultStyle: "japandi",
     benefits: [
-      "Madeira clara, linho e cerâmica artesanal em proporções equilibradas",
-      "Paleta neutra que transmite calma sem deixar o ambiente impessoal",
-      "Iluminação suave e pontual, com elementos naturais como referência",
-      "Funciona em apartamentos pequenos e em projetos amplos",
+      "Combine madeira clara, tons neutros e poucos elementos com equilíbrio",
+      "Crie uma estética calma, funcional e acolhedora",
+      "Veja como reduzir excessos sem deixar o ambiente frio",
+      "Funciona em apartamentos pequenos e em ambientes amplos",
     ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem — do celular ou do computador.",
+      },
+      {
+        t: "Aplicamos o estilo Japandi",
+        d: "A IA mantém a estrutura real e propõe móveis, paleta e composição com toques Japandi.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+      },
+    ],
+    visualTitle: "Veja como uma sala simples pode ficar",
+    visualDescription:
+      "Exemplo de transformação visual no estilo Japandi a partir de uma foto comum. Arraste para comparar.",
     faq: [
       {
-        q: "O que define um ambiente Japandi?",
-        a: "É a junção do minimalismo japonês com o aconchego escandinavo. Espaços limpos, madeira clara, têxteis naturais, plantas e uma paleta de cores neutras que valorizam a luz natural.",
+        q: "Preciso contratar um arquiteto para usar?",
+        a: "Não. O Ideal Space serve como ponto de partida visual. Você pode usar a inspiração sozinho ou levar para um profissional, se quiser aprofundar.",
       },
       {
-        q: "Preciso comprar móveis novos para ter um quarto Japandi?",
-        a: "Não necessariamente. O Ideal Space mostra o resultado preservando a estrutura do seu ambiente — você decide quais peças trocar e em que ordem investir.",
+        q: "A imagem gerada é um projeto técnico?",
+        a: "Não. É uma inspiração visual, não um render técnico nem um projeto arquitetônico. Ajuda a decidir antes de comprar móveis e itens.",
       },
       {
-        q: "Combina com quartos pequenos?",
-        a: "Sim. O Japandi nasceu pensando em otimizar espaço. A IA propõe móveis de linhas limpas e organização eficiente que aproveitam cada metro.",
+        q: "Posso usar uma foto de celular?",
+        a: "Sim. Foto comum de celular já funciona, desde que o ambiente esteja visível. Não precisa de equipamento especial.",
       },
       {
-        q: "Posso testar variações antes de decidir?",
-        a: "Sim. Gere quantas versões quiser, compare lado a lado e refine a composição até chegar no equilíbrio que faz sentido para você.",
+        q: "Posso testar outros estilos no mesmo ambiente?",
+        a: "Sim. A mesma foto pode receber Japandi, natural, minimalista ou contemporâneo — compare as versões para decidir o que combina mais com você.",
       },
+    ],
+    finalCta: "Ver meu ambiente em Japandi",
+    relatedLinks: [
+      { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Quarto", to: "/ambientes/quarto" },
     ],
     images: {
       before: "empty-living",
@@ -85,37 +128,62 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   contemporaneo: {
     name: "Contemporâneo",
-    title: "Decoração Contemporânea com Inteligência Artificial - Ideal Space",
+    title: "Decoração Contemporânea com Inteligência Artificial — Ideal Space",
     description:
-      "Transforme seu ambiente no estilo contemporâneo com IA. Envie uma foto e veja linhas suaves, texturas e arte em uma decoração atual, em segundos.",
-    h1: "Crie um ambiente *Contemporâneo* com IA",
+      "Veja seu ambiente decorado no estilo contemporâneo. Envie uma foto e receba uma inspiração visual com sugestões de móveis e lista de compras.",
+    h1: "Veja seu ambiente no estilo *Contemporâneo*",
     promise:
-      "O estilo contemporâneo aposta em linhas suaves, mistura equilibrada de texturas, arte na parede e uma paleta sóbria com pontos de cor bem colocados — um visual atual, sem modismos passageiros. O desafio é imaginar esse conjunto pronto no seu espaço. O Ideal Space resolve isso: envie uma foto do ambiente atual e a inteligência artificial mantém a estrutura real e propõe mobiliário, iluminação e composição contemporâneos em segundos. Teste diferentes versões, ajuste os detalhes e leve para o seu projeto uma referência clara, acompanhada de uma lista de compras com faixas de preço.",
-    cta: "Decorar no Estilo Contemporâneo",
+      "Linhas atuais, mistura de texturas e equilíbrio entre conforto e sofisticação. Envie uma foto do seu ambiente e veja como ele pode ficar com toques contemporâneos — móveis elegantes, paleta sóbria e composição moderna sem exagero.",
+    cta: "Testar Contemporâneo no meu ambiente",
+    trustText: "Em poucos passos, com a foto que você já tem.",
     defaultStyle: "contemporaneo",
     benefits: [
-      "Linhas suaves e paleta sóbria com pontos de cor bem escolhidos",
-      "Mistura equilibrada de texturas, arte e mobiliário no ambiente",
-      "Atemporal — sem riscos de virar moda passageira",
-      "Funciona em apartamentos recém-entregues ou em reformas amplas",
+      "Equilíbrio entre conforto e sofisticação no mesmo ambiente",
+      "Linhas atuais e mistura de texturas em proporções harmônicas",
+      "Móveis elegantes com presença sem virar moda passageira",
+      "Visual moderno sem exagero, fácil de manter no dia a dia",
     ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem — do celular ou do computador.",
+      },
+      {
+        t: "Aplicamos o estilo Contemporâneo",
+        d: "A IA mantém a estrutura real e propõe mobiliário, paleta e composição com cara contemporânea.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+      },
+    ],
+    visualTitle: "Uma sala simples ganhando ar contemporâneo",
+    visualDescription:
+      "Exemplo de transformação visual no estilo contemporâneo a partir de uma foto comum. Arraste para comparar.",
     faq: [
       {
-        q: "Qual a diferença entre contemporâneo e moderno?",
-        a: "Moderno se refere a um movimento estético do século XX. Contemporâneo é o que faz sentido hoje: mistura referências atuais, materiais novos e composições mais soltas, sem a rigidez do modernismo.",
+        q: "Preciso contratar um arquiteto?",
+        a: "Não. A inspiração serve como ponto de partida. Você pode usar sozinho ou compartilhar com um profissional, se quiser aprofundar o projeto.",
       },
       {
-        q: "Esse estilo combina com famílias com crianças?",
-        a: "Sim. O contemporâneo prioriza materiais práticos e versáteis. A IA propõe combinações resistentes ao uso diário sem perder em estética.",
+        q: "É um projeto técnico ou render fiel?",
+        a: "Não. É uma inspiração visual gerada por IA, não um render arquitetônico nem aprovação técnica. Use para decidir antes de comprar.",
       },
       {
-        q: "Preciso reformar a casa toda?",
-        a: "Não. O Ideal Space mostra o ambiente decorado com a mesma estrutura que você tem hoje. Você decide o que renovar e em que ordem.",
+        q: "Funciona em ambientes pequenos?",
+        a: "Sim. A IA adapta a proposta ao tamanho real do ambiente, mantendo a perspectiva e a estrutura visível na foto.",
       },
       {
-        q: "A lista de compras vem com preços?",
-        a: "Sim. Cada produto sugerido vem com faixa de preço estimada para você comparar antes de comprar.",
+        q: "Posso testar outros estilos depois?",
+        a: "Sim. A mesma foto pode ganhar versões em Japandi, minimalista, luxo discreto. Compare lado a lado.",
       },
+    ],
+    finalCta: "Ver meu ambiente em Contemporâneo",
+    relatedLinks: [
+      { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Quarto", to: "/ambientes/quarto" },
     ],
     images: {
       before: "empty-living",
@@ -125,37 +193,62 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   minimalista: {
     name: "Minimalista",
-    title: "Decoração Minimalista com Inteligência Artificial - Ideal Space",
+    title: "Decoração Minimalista com Inteligência Artificial — Ideal Space",
     description:
-      "Decore seu espaço no estilo minimalista com IA. Envie uma foto e veja um ambiente limpo, funcional e sem excessos em segundos, antes de comprar.",
-    h1: "Transforme seu espaço em *Minimalista* com IA",
+      "Veja seu ambiente decorado no estilo minimalista. Envie uma foto e receba uma inspiração visual com lista de compras sugerida.",
+    h1: "Veja seu ambiente no estilo *Minimalista*",
     promise:
-      "O estilo minimalista vive da ideia de que menos é mais: poucos móveis bem escolhidos, paleta clara, linhas retas e espaço para respirar. O risco de errar está no excesso — comprar peças que poluem o ambiente em vez de organizá-lo. Com o Ideal Space, você envia uma foto do seu cômodo e a inteligência artificial preserva a arquitetura real e devolve uma versão minimalista funcional, com cada elemento cumprindo um papel. Compare alternativas, refine a composição e receba uma lista de compras com faixas de preço para investir apenas no essencial.",
-    cta: "Decorar no Estilo Minimalista",
+      "Linhas limpas, paleta neutra, poucos elementos e respiro visual. Envie uma foto do seu ambiente e veja como ele pode ficar com toques minimalistas — organização, funcionalidade e sugestões do que vale realmente comprar.",
+    cta: "Testar Minimalista no meu ambiente",
+    trustText: "Em poucos passos, sem precisar de cadastro pra ver a primeira ideia.",
     defaultStyle: "minimalista",
     benefits: [
-      "Poucos móveis bem escolhidos, cada um com função clara",
-      "Paleta clara e linhas retas que maximizam a sensação de espaço",
-      "Ideal para reduzir excessos e organizar a casa",
-      "Composição que cresce com o tempo, sem virar moda passageira",
+      "Menos excesso visual, com cada item tendo um motivo claro",
+      "Linhas limpas e paleta neutra que ampliam o espaço",
+      "Organização e respiro visual no dia a dia",
+      "Composição que envelhece bem, sem virar moda passageira",
     ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem — do celular ou do computador.",
+      },
+      {
+        t: "Aplicamos o estilo Minimalista",
+        d: "A IA mantém a estrutura real e propõe poucos móveis bem escolhidos, com paleta clara.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual e sugestões de produtos para investir só no essencial.",
+      },
+    ],
+    visualTitle: "Um quarto comum ganhando ar minimalista",
+    visualDescription:
+      "Exemplo de transformação visual no estilo minimalista a partir de uma foto comum. Arraste para comparar.",
     faq: [
       {
-        q: "Minimalismo significa ter pouca coisa?",
-        a: "Significa ter o que você realmente usa. A IA propõe uma composição onde cada item tem propósito — você não fica com um ambiente vazio nem cheio demais.",
+        q: "Minimalismo significa ficar com pouca coisa?",
+        a: "Significa manter o que você de fato usa. A IA propõe uma composição onde cada item tem propósito — não vira ambiente vazio.",
       },
       {
-        q: "Combina com casa cheia de gente?",
-        a: "Sim. O minimalismo prioriza organização. Móveis com armazenamento integrado e composições limpas funcionam bem em famílias.",
+        q: "É um projeto arquitetônico?",
+        a: "Não. É uma inspiração visual gerada por IA, não um render técnico nem um projeto pronto para obra.",
       },
       {
-        q: "O ambiente minimalista parece frio?",
-        a: "Depende da execução. A IA equilibra cores neutras com texturas e plantas para dar acolhimento sem encher o ambiente.",
+        q: "Foto de celular funciona?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
       },
       {
-        q: "Posso comparar com outros estilos?",
-        a: "Sim. Gere versões em Japandi, natural ou contemporâneo a partir do mesmo cômodo e veja qual funciona melhor para você.",
+        q: "Posso ver o mesmo cômodo em outros estilos?",
+        a: "Sim. A mesma foto pode receber Japandi, natural ou contemporâneo. Compare lado a lado antes de decidir.",
       },
+    ],
+    finalCta: "Ver meu ambiente em Minimalista",
+    relatedLinks: [
+      { label: "Japandi", to: "/estilos/japandi" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Quarto", to: "/ambientes/quarto" },
+      { label: "Home office", to: "/ambientes/home-office" },
     ],
     images: {
       before: "empty-bedroom",
@@ -165,37 +258,62 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   natural: {
     name: "Natural",
-    title: "Decoração Natural com Inteligência Artificial - Ideal Space",
+    title: "Decoração Natural com Inteligência Artificial — Ideal Space",
     description:
-      "Veja seu ambiente no estilo natural com IA. Envie uma foto e receba uma decoração com madeira, fibras, plantas e tons terrosos em segundos.",
-    h1: "Decore com o estilo *Natural* usando IA",
+      "Veja seu ambiente decorado no estilo natural. Envie uma foto e receba uma inspiração visual com madeira, fibras, plantas e tons claros.",
+    h1: "Veja seu ambiente no estilo *Natural*",
     promise:
-      "O estilo natural traz o ar livre para dentro de casa: madeira, fibras como rattan e juta, plantas, cerâmica e uma paleta de tons terrosos que aquece o ambiente. Combinar todos esses materiais sem deixar o espaço pesado exige visão de projeto. O Ideal Space ajuda nessa etapa: envie uma foto do ambiente como ele está e a inteligência artificial mantém a perspectiva real e propõe mobiliário, texturas e vegetação em harmonia, em segundos. Compare as variações, ajuste o que quiser e receba uma lista de compras com faixas de preço para executar com segurança.",
-    cta: "Decorar no Estilo Natural",
+      "Madeira, fibras, plantas e tons claros que trazem leveza e bem-estar. Envie uma foto do seu ambiente e veja como ele pode ficar com toques naturais — composição leve, sensação acolhedora e sugestões de produtos.",
+    cta: "Testar Natural no meu ambiente",
+    trustText: "Em poucos passos, a partir da foto que você já tem.",
     defaultStyle: "natural",
     benefits: [
-      "Madeira, rattan, juta e cerâmica trazendo o ar livre para dentro",
-      "Tons terrosos que aquecem o ambiente sem pesar visualmente",
-      "Plantas e vegetação como parte integrada do mobiliário",
-      "Combina texturas naturais sem cair em rusticidade exagerada",
+      "Fibras naturais, madeira e plantas trazendo o ar livre para dentro",
+      "Tons claros que aquecem o ambiente sem deixar pesado",
+      "Sensação de leveza e bem-estar no dia a dia",
+      "Funciona em apartamentos e casas, mesmo sem reforma grande",
     ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem — do celular ou do computador.",
+      },
+      {
+        t: "Aplicamos o estilo Natural",
+        d: "A IA mantém a estrutura real e propõe madeira, fibras, plantas e paleta clara.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+      },
+    ],
+    visualTitle: "Um ambiente comum ganhando textura e leveza",
+    visualDescription:
+      "Exemplo de transformação visual no estilo natural a partir de uma foto comum. Arraste para comparar.",
     faq: [
       {
         q: "Esse estilo é o mesmo que rústico?",
-        a: "Não. O natural usa materiais orgânicos com acabamento contemporâneo. O rústico é mais cru. A IA propõe a versão refinada do estilo.",
+        a: "Não. O natural usa materiais orgânicos com acabamento mais contemporâneo. Rústico é mais cru. A IA propõe a versão mais leve do estilo.",
       },
       {
         q: "Combina com apartamento?",
-        a: "Sim. Funciona muito bem em espaços urbanos — trazer madeira, plantas e fibras quebra a rigidez de paredes brancas e piso liso.",
+        a: "Sim. Funciona muito bem em espaços urbanos — madeira, plantas e fibras quebram a rigidez de paredes brancas e piso liso.",
       },
       {
-        q: "Plantas exigem cuidado constante?",
-        a: "A IA pode sugerir plantas de fácil manutenção. Você pode pedir mais ou menos vegetação na composição conforme a sua rotina.",
+        q: "Preciso comprar muitas plantas?",
+        a: "Não. Você pode pedir mais ou menos vegetação na composição. A inspiração se ajusta ao que você consegue manter no dia a dia.",
       },
       {
-        q: "Posso usar em ambientes pequenos?",
-        a: "Sim. O Ideal Space adapta a proposta ao tamanho real do seu ambiente, preservando a perspectiva.",
+        q: "Posso ver outros estilos no mesmo cômodo?",
+        a: "Sim. A mesma foto pode receber Japandi, minimalista ou contemporâneo. Use as variações para decidir o que combina mais.",
       },
+    ],
+    finalCta: "Ver meu ambiente em Natural",
+    relatedLinks: [
+      { label: "Japandi", to: "/estilos/japandi" },
+      { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Quarto", to: "/ambientes/quarto" },
     ],
     images: {
       before: "empty-bedroom",
@@ -205,37 +323,62 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   industrial: {
     name: "Industrial",
-    title: "Decoração Industrial com Inteligência Artificial - Ideal Space",
+    title: "Decoração Industrial com Inteligência Artificial — Ideal Space",
     description:
-      "Dê um ar industrial ao seu ambiente com IA. Envie uma foto e veja tijolo, metal, concreto e couro em uma decoração urbana, em segundos.",
-    h1: "Dê um ar *Industrial* ao seu ambiente com IA",
+      "Veja seu ambiente decorado no estilo industrial. Envie uma foto e receba uma inspiração visual com metal, madeira escura e tijolo aparente.",
+    h1: "Veja seu ambiente no estilo *Industrial*",
     promise:
-      "O estilo industrial nasce dos antigos galpões urbanos: tijolo aparente, metal, concreto, couro e estrutura à mostra, numa paleta escura e cheia de personalidade. Equilibrar esses elementos para o espaço ficar marcante, e não frio, é o ponto sensível. Com o Ideal Space, você envia uma foto do ambiente atual e a inteligência artificial preserva paredes e layout reais, propondo mobiliário, iluminação e acabamentos industriais que conversam entre si. Teste versões mais claras ou mais densas, refine os detalhes e receba uma lista de compras com faixas de preço para colocar o projeto em prática.",
-    cta: "Decorar no Estilo Industrial",
+      "Metal, madeira escura, concreto, tijolo aparente e iluminação marcante. Envie uma foto do ambiente e veja como ele pode ficar com um ar urbano — composição cheia de personalidade, sem virar galpão.",
+    cta: "Testar Industrial no meu ambiente",
+    trustText: "Em poucos passos, com a foto que você já tem.",
     defaultStyle: "industrial",
     benefits: [
-      "Tijolo aparente, metal escovado, concreto e couro como elementos principais",
-      "Paleta escura com personalidade marcante, sem cair em frieza",
-      "Estrutura à mostra valorizada, não escondida pela decoração",
-      "Equilíbrio entre crueza urbana e conforto residencial",
+      "Metal, madeira escura, concreto e tijolo aparente em equilíbrio",
+      "Iluminação marcante que define o caráter do ambiente",
+      "Visual urbano sem cair em frieza ou ar de galpão",
+      "Personalidade forte que combina com sala, cozinha e home office",
     ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem — do celular ou do computador.",
+      },
+      {
+        t: "Aplicamos o estilo Industrial",
+        d: "A IA mantém a estrutura real e propõe metal, madeira escura, paleta urbana e iluminação marcante.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual e sugestões de produtos como ponto de partida.",
+      },
+    ],
+    visualTitle: "Uma cozinha simples ganhando ar urbano",
+    visualDescription:
+      "Exemplo de transformação visual no estilo industrial a partir de uma foto comum. Arraste para comparar.",
     faq: [
       {
         q: "Industrial fica frio?",
-        a: "Pode ficar, se não for equilibrado. A IA combina materiais crus com têxteis, iluminação amarela e plantas para criar atmosfera — não galpão.",
+        a: "Pode ficar se não for equilibrado. A IA combina materiais crus com têxteis, iluminação amarela e detalhes que dão atmosfera — não galpão.",
       },
       {
         q: "Preciso quebrar parede para ter tijolo aparente?",
-        a: "Não. Você pode usar revestimentos que imitam tijolo ou aplicar o estilo em outras peças e materiais visíveis do ambiente.",
+        a: "Não. Você pode usar revestimentos que imitam tijolo ou aplicar o estilo em outros pontos do ambiente, sem reforma estrutural.",
       },
       {
-        q: "Combina com pé direito baixo?",
-        a: "Sim, mas a IA ajusta a proposta. Em pés direito altos, o estilo brilha; em apartamentos comuns, foca em mobília, cores e acabamentos.",
+        q: "Foto comum de celular funciona?",
+        a: "Sim. Foto de celular já serve, desde que o ambiente esteja visível na imagem. Não precisa de equipamento especial.",
       },
       {
-        q: "É um estilo marcado?",
-        a: "Funciona em várias intensidades. A IA propõe variações mais soft ou mais densas conforme você quiser ajustar.",
+        q: "Posso suavizar o estilo?",
+        a: "Sim. A IA propõe variações mais soft ou mais densas. Compare as versões e escolha a intensidade que combina com você.",
       },
+    ],
+    finalCta: "Ver meu ambiente em Industrial",
+    relatedLinks: [
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Cozinha", to: "/ambientes/cozinha" },
+      { label: "Home office", to: "/ambientes/home-office" },
     ],
     images: {
       before: "empty-kitchen",
@@ -245,37 +388,62 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
   },
   luxo: {
     name: "Luxo discreto",
-    title: "Decoração de Luxo Discreto com Inteligência Artificial - Ideal Space",
+    title: "Decoração de Luxo Discreto com Inteligência Artificial — Ideal Space",
     description:
-      "Eleve seu ambiente com o estilo luxo discreto e IA. Envie uma foto e veja materiais nobres e acabamentos sofisticados em segundos.",
-    h1: "Eleve seu espaço com *Luxo Discreto* e IA",
+      "Veja seu ambiente decorado no estilo luxo discreto. Envie uma foto e receba uma inspiração visual com materiais nobres e composição elegante.",
+    h1: "Veja seu ambiente em *Luxo Discreto*",
     promise:
-      "O luxo discreto troca a ostentação pela sofisticação silenciosa: materiais nobres como mármore, latão e veludo, iluminação pontual e uma paleta refinada em que cada acabamento é escolhido com cuidado. Acertar esse refinamento sem exageros é o que separa o elegante do carregado. O Ideal Space mostra o caminho: envie uma foto do seu ambiente e a inteligência artificial mantém a estrutura real e propõe mobiliário, texturas e iluminação de alto padrão, em segundos. Compare as variações, ajuste o resultado e receba uma lista de compras com faixas de preço para investir com clareza.",
-    cta: "Decorar no Estilo Luxo Discreto",
+      "Materiais nobres, iluminação cuidadosa e composição elegante, sem exagero. Envie uma foto do seu ambiente e veja como ele pode ganhar um visual premium — com sugestões de produtos para decidir onde investir.",
+    cta: "Testar Luxo Discreto no meu ambiente",
+    trustText: "Em poucos passos, sem promessa de obra ou render técnico.",
     defaultStyle: "luxo",
     benefits: [
-      "Materiais nobres como mármore, latão e veludo aplicados com critério",
-      "Iluminação pontual e dramática nos detalhes certos",
-      "Paleta refinada — elegância sem cair em ostentação",
-      "Mobiliário discreto, com presença pela qualidade dos acabamentos",
+      "Composição elegante com materiais nobres aplicados com critério",
+      "Iluminação pontual que valoriza os detalhes certos",
+      "Visual premium sem cair em ostentação",
+      "Cuidado para não parecer artificial — refinamento na medida certa",
     ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem — do celular ou do computador.",
+      },
+      {
+        t: "Aplicamos o estilo Luxo Discreto",
+        d: "A IA mantém a estrutura real e propõe materiais nobres, iluminação e composição refinada.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual e sugestões de produtos para investir com clareza.",
+      },
+    ],
+    visualTitle: "Um banheiro simples ganhando ar premium",
+    visualDescription:
+      "Exemplo de transformação visual em luxo discreto a partir de uma foto comum. Arraste para comparar.",
     faq: [
       {
-        q: "Luxo discreto é caro?",
-        a: "É um estilo, não um orçamento. A IA mostra a composição visual; você decide quanto investir em cada item. A lista de compras vem com faixas de preço para orientação.",
+        q: "Preciso de um arquiteto pra usar?",
+        a: "Não. Serve como ponto de partida visual. Você pode usar sozinho ou levar a inspiração para um profissional se quiser aprofundar.",
       },
       {
-        q: "Combina com casa simples?",
-        a: "Sim. O luxo discreto não depende do tamanho da casa — depende da escolha de poucos materiais nobres bem aplicados em pontos certos.",
+        q: "É um projeto técnico de obra?",
+        a: "Não. É uma inspiração visual gerada por IA, não um render arquitetônico nem aprovação técnica. Ajuda a decidir antes de comprar.",
       },
       {
-        q: "Tem como aplicar gradualmente?",
-        a: "Sim. Comece pelas peças com maior impacto visual: iluminação, móveis principais, depois detalhes. A lista de compras ajuda a priorizar.",
+        q: "Luxo discreto exige orçamento alto?",
+        a: "É um estilo, não um orçamento fixo. A lista de compras vem com sugestões em diferentes faixas — você escolhe onde priorizar.",
       },
       {
-        q: "Posso ver comparações com outros estilos?",
-        a: "Sim. Gere o mesmo ambiente em contemporâneo, natural ou minimalista para comparar antes de fechar uma direção.",
+        q: "Posso aplicar gradualmente?",
+        a: "Sim. Comece pelos pontos com maior impacto visual: iluminação, móveis principais, depois acabamentos. A lista ajuda a ordenar.",
       },
+    ],
+    finalCta: "Ver meu ambiente em Luxo Discreto",
+    relatedLinks: [
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Banheiro", to: "/ambientes/banheiro" },
     ],
     images: {
       before: "empty-bathroom-suite",

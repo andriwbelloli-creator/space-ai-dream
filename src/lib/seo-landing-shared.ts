@@ -11,6 +11,19 @@ export type LandingBenefit = string;
 export type LandingFaq = { q: string; a: string };
 
 /**
+ * Passo do "Como funciona" — 3 etapas curtas que explicam o fluxo.
+ * `t` = titulo (1 linha), `d` = descricao breve (1-2 linhas).
+ */
+export type LandingStep = { t: string; d: string };
+
+/**
+ * Link interno relacionado — exibido no fim da landing pra distribuir
+ * autoridade entre paginas SEO programaticas. `to` aceita `/estilos/X`
+ * ou `/ambientes/X`.
+ */
+export type LandingRelatedLink = { label: string; to: string };
+
+/**
  * Imagens da landing — chaves referem a assets ja existentes em
  * `src/assets/`. O mapa key → URL importada vive em
  * `src/lib/seo-landing-images.ts` (pra evitar import de binario nos data
