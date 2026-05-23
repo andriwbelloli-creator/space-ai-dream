@@ -1088,9 +1088,11 @@ function StylesCarousel({
         {/* Marquee continua — scroll fluido em loop, sem pausas. Cards
             duplicados pra fechar o loop seamlessly. 30s por ciclo (mais
             rapida que a versao antiga de 70s, mas com tempo de leitura).
-            Em prefers-reduced-motion cai pra scroll manual com snap. */}
+            Pausa em hover + focus-within pra deixar o usuario clicar
+            sem o card "fugir". Em prefers-reduced-motion cai pra scroll
+            manual com snap. */}
         <div className="overflow-hidden motion-reduce:overflow-x-auto motion-reduce:snap-x motion-reduce:snap-mandatory motion-reduce:scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex w-max gap-5 pl-4 sm:pl-6 pb-2 whitespace-nowrap will-change-transform [animation:is-marquee_30s_linear_infinite] motion-reduce:[animation:none] motion-reduce:w-auto motion-reduce:pr-8 motion-reduce:sm:pr-12">
+          <div className="flex w-max gap-5 pl-4 sm:pl-6 pb-2 whitespace-nowrap will-change-transform [animation:is-marquee_30s_linear_infinite] hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] motion-reduce:[animation:none] motion-reduce:w-auto motion-reduce:pr-8 motion-reduce:sm:pr-12">
             {[...styles, ...styles].map((s, i) => (
               <button
                 key={`${s.styleId ?? "s"}-${i}`}
