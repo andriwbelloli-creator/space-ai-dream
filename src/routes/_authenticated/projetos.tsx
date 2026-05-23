@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Loader2, ImageIcon, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
+import { logEvent } from "@/lib/tracking.functions";
 
 /**
  * Snapshot do que o detalhe do projeto precisa exibir. `ai_response` traz
@@ -59,6 +61,7 @@ function ProjetosPage() {
   const [error, setError] = useState<string | null>(null);
   // Projeto selecionado para abrir no modal de detalhe. `null` = modal fechado.
   const [selected, setSelected] = useState<ProjectRow | null>(null);
+  const track = useServerFn(logEvent);
 
   useEffect(() => {
     let active = true;
@@ -143,7 +146,17 @@ function ProjetosPage() {
               <button
                 key={p.id}
                 type="button"
-                onClick={() => setSelected(p)}
+                onClick={() => {
+                  setSelected(p);
+                  // Funil pos-geracao: usuario voltou em /projetos e reabriu
+                  // o detalhe de um projeto antigo. Fire-and-forget.
+                  void track({
+                    data: {
+                      event: "project_detail_opened",
+                      props: { projectId: p.id, style: p.style_slug ?? "" },
+                    },
+                  }).catch(() => {});
+                }}
                 aria-label={`Ver detalhes do ${p.title ?? "projeto"}`}
                 className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm text-left transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >

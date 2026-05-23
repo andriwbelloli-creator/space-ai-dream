@@ -18,6 +18,10 @@ export const ALLOWED_EVENTS = [
   "project_saved",
   "demo_viewed",
   "start_project_blocked_by_auth",
+  // Decisao de estilo no modal de upload — momento critico do funil.
+  "style_selected",
+  // Pos-geracao: usuario volta em /projetos e reabre um projeto.
+  "project_detail_opened",
 ] as const;
 
 export type FunnelEvent = (typeof ALLOWED_EVENTS)[number];

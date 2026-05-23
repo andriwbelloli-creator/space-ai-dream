@@ -1055,7 +1055,14 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
                 return (
                   <button
                     key={s.id}
-                    onClick={() => setStyle(s.id)}
+                    onClick={() => {
+                      setStyle(s.id);
+                      // Evento de funil: decisao de estilo é o gatilho do
+                      // "começou de verdade" — separado de start_project (abrir modal).
+                      void track({
+                        data: { event: "style_selected", props: { style: s.id } },
+                      }).catch(() => {});
+                    }}
                     className={`text-left rounded-xl border px-3 py-2.5 transition ${
                       active ? "border-accent bg-accent/8 ring-1 ring-accent" : "hover:bg-muted/60"
                     }`}
