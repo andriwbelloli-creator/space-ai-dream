@@ -165,7 +165,9 @@ export function BeforeAfter({
           onKeyDown={onKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          onPointerDown={(e) => e.stopPropagation()}
+          // Sem stopPropagation: o pointerdown precisa bubble pro container
+          // pra iniciar o drag. Sem isso, clicar no proprio handle nao
+          // arrastava — so funcionava ao clicar fora dele.
           className={`pointer-events-auto absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-white shadow-xl flex items-center justify-center cursor-ew-resize outline-none transition ${
             focused ? "ring-2 ring-accent ring-offset-2 ring-offset-background" : ""
           }`}
