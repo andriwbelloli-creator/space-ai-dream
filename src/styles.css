@@ -142,6 +142,14 @@
     border-color: var(--color-border);
   }
 
+  /* Reserva espaço pra scrollbar mesmo quando ela some. Evita o "layout
+     shift" lateral (~12-15px) quando um modal full-screen (Radix Dialog)
+     seta body { overflow: hidden } — sem isso, cards parecem "saltar"
+     para a direita quando o modal abre e voltar quando fecha. */
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);

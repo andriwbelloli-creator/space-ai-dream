@@ -89,14 +89,28 @@ export function BeforeAfter({
   return (
     <div
       ref={ref}
-      className={`relative overflow-hidden rounded-3xl select-none touch-none ${className}`}
+      className={`relative overflow-hidden rounded-3xl select-none touch-pan-y ${className}`}
       onPointerDown={(e) => {
+        // Captura o ponteiro — garante que pointermove/up continuam chegando
+        // mesmo se o cursor sair do container durante o drag.
+        e.currentTarget.setPointerCapture(e.pointerId);
         setDragging(true);
         move(e.clientX);
       }}
       onPointerMove={(e) => dragging && move(e.clientX)}
-      onPointerUp={() => setDragging(false)}
-      onPointerLeave={() => setDragging(false)}
+      onPointerUp={(e) => {
+        setDragging(false);
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+      }}
+      onPointerCancel={(e) => {
+        // Cancelamento do browser (chamada, gesture do SO) — solta o drag.
+        setDragging(false);
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+      }}
       onDoubleClick={() => setPos(50)}
     >
       <img
@@ -157,6 +171,7 @@ export function BeforeAfter({
             className="relative flex-1 h-1.5 rounded-full bg-white/30 backdrop-blur cursor-pointer pointer-events-auto"
             onPointerDown={(e) => {
               e.stopPropagation();
+              e.currentTarget.setPointerCapture(e.pointerId);
               setDragging(true);
               move(e.clientX);
             }}
@@ -164,6 +179,15 @@ export function BeforeAfter({
             onPointerUp={(e) => {
               e.stopPropagation();
               setDragging(false);
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              }
+            }}
+            onPointerCancel={(e) => {
+              setDragging(false);
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              }
             }}
           >
             {[25, 50, 75].map((m) => (
