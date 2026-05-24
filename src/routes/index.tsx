@@ -1068,34 +1068,6 @@ function Hero({
               </div>
             </div>
 
-            <div
-              className="absolute right-3 sm:-right-4 bottom-6 w-[200px] sm:w-[240px] bg-card/95 backdrop-blur rounded-2xl shadow-xl border p-3 sm:p-4 is-float"
-              style={{ animationDelay: "1.2s" }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                  Lista de compras
-                </div>
-                <ShoppingBag className="h-3.5 w-3.5 text-muted-foreground" />
-              </div>
-              <div className="space-y-2">
-                {shoppingList.slice(0, 3).map((i) => (
-                  <div key={i.name} className="flex items-center justify-between text-xs">
-                    <span className="truncate pr-2">{i.name}</span>
-                    <span className="text-muted-foreground whitespace-nowrap">
-                      {i.price.split("–")[0]}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => onAffiliate("Sofá 3 lugares")}
-                className="mt-3 w-full text-[11px] font-medium text-foreground/80 hover:text-foreground inline-flex items-center justify-between border-t pt-2"
-              >
-                Ver lista completa <ArrowRight className="h-3 w-3" />
-              </button>
-            </div>
-
             <button
               onClick={onBudget}
               className="absolute -bottom-5 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 rounded-full bg-accent text-accent-foreground text-xs font-medium px-4 py-2 shadow-lg hover:opacity-95"
