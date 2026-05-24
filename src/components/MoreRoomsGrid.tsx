@@ -8,12 +8,15 @@
  */
 import { PremiumVerticalCard } from "@/components/ui/premium-cards";
 
-import decoratedDining from "@/assets/decorated-dining.jpg";
+// Cada cômodo aponta pra um asset único quando possível, evitando déjà vu
+// visual com EditorialCollections e MoreStylesGrid.
+// Repetição justificada: galleryVaranda — única foto de varanda existente.
+import galleryLoft from "@/assets/gallery-loft.jpg";
 import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
 import galleryVaranda from "@/assets/gallery-varanda.jpg";
-import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
+import styleJapandi from "@/assets/style-japandi.jpg";
 import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
-import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
+import styleIndustrial from "@/assets/style-industrial.jpg";
 
 type RoomItem = {
   slug: string;
@@ -29,8 +32,8 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     slug: "sala-jantar",
     name: "Sala de jantar",
     description: "Mesa central, iluminação certa, paleta coerente com a sala de estar.",
-    src: decoratedDining,
-    alt: "Sala de jantar decorada com mesa e iluminação central",
+    src: galleryLoft,
+    alt: "Sala de jantar integrada com mesa central e iluminação",
     tags: [{ label: "Para receber", tone: "gold" }],
   },
   {
@@ -53,8 +56,8 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     slug: "quarto-infantil",
     name: "Quarto infantil",
     description: "Funcional pra dormir, brincar e estudar. Cresce com a criança.",
-    src: decoratedBedroom,
-    alt: "Quarto infantil decorado com cama e organização",
+    src: styleJapandi,
+    alt: "Quarto infantil com paleta serena e composição minimal",
     tags: [{ label: "Infantil", tone: "gold" }],
   },
   {
@@ -69,8 +72,8 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     slug: "sala-tv",
     name: "Sala de TV",
     description: "Conforto pra assistir, beleza pra receber. Sofá, painel, iluminação.",
-    src: decoratedLivingWarm,
-    alt: "Sala de TV decorada com sofá e painel",
+    src: styleIndustrial,
+    alt: "Sala de TV com sofá, painel e iluminação ambiente",
     tags: [{ label: "Conforto", tone: "gold" }],
   },
 ] as const;

@@ -16,13 +16,16 @@ import {
 } from "@/components/ui/premium-cards";
 
 // Reutilizando imagens existentes (não troca nem regera nada).
+// Cada card aponta pra um asset único pra evitar déjà vu visual entre seções.
 import livingWarm from "@/assets/decorated-living-warm.jpg";
 import bedroom from "@/assets/decorated-bedroom.jpg";
-import diningDecorated from "@/assets/decorated-dining.jpg";
+import kitchenIsland from "@/assets/decorated-kitchen-island.jpg";
 import kitchenDecorated from "@/assets/decorated-kitchen.jpg";
 import office from "@/assets/gallery-office.jpg";
 import varanda from "@/assets/gallery-varanda.jpg";
 import bathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
+import moodboardPro from "@/assets/moodboard-pro.jpg";
+import styleScandi from "@/assets/style-scandi.jpg";
 
 const COLLECTIONS = {
   feature: {
@@ -57,24 +60,24 @@ const COLLECTIONS = {
     to: "/ambientes/quarto",
   },
   dining: {
-    src: diningDecorated,
-    alt: "Sala de jantar integrada com luz natural",
+    src: kitchenIsland,
+    alt: "Cozinha com ilha integrada à sala de jantar e luz natural",
     kicker: "Para receber",
     title: "Salas de jantar para conviver",
     description: "Mesa central, paleta neutra, iluminação certa.",
     to: "/ambientes/sala-jantar",
   },
   bohoChic: {
-    src: bedroom,
-    alt: "Quarto em estilo boho chic com camadas de textura natural",
+    src: moodboardPro,
+    alt: "Moodboard com paleta quente e elementos boho",
     kicker: "Estilo",
     title: "Boho chic com curadoria",
     description: "Camadas de tecidos, plantas e tons quentes em uma proposta acolhedora.",
     to: "/estilos/boho-chic",
   },
   midCentury: {
-    src: livingWarm,
-    alt: "Sala em estilo mid-century modern com madeira morna",
+    src: styleScandi,
+    alt: "Ambiente sereno com linhas mid-century",
     kicker: "Estilo",
     title: "Mid-century atemporal",
     description: "Linhas limpas, madeira morna e acentos pontuais de cor.",

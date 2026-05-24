@@ -9,10 +9,12 @@
  */
 import { PremiumVerticalCard } from "@/components/ui/premium-cards";
 
-import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
-import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
-import decoratedKitchen from "@/assets/decorated-kitchen.jpg";
-import decoratedBathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
+// Cada estilo aponta pra um asset único, evitando déjà vu visual com
+// EditorialCollections e MoreRoomsGrid.
+import styleNatural from "@/assets/style-natural.jpg";
+import styleModern from "@/assets/style-modern.jpg";
+import decoratedLiving from "@/assets/decorated-living.jpg";
+import styleLuxo from "@/assets/style-luxo.jpg";
 import decoratedDining from "@/assets/decorated-dining.jpg";
 
 type StyleItem = {
@@ -29,7 +31,7 @@ const STYLES: ReadonlyArray<StyleItem> = [
     slug: "boho-chic",
     name: "Boho chic",
     description: "Camadas naturais, plantas e tons quentes com curadoria atenta.",
-    src: decoratedBedroom,
+    src: styleNatural,
     alt: "Ambiente em estilo boho chic com texturas naturais",
     tags: [{ label: "Acolhedor", tone: "gold" }],
   },
@@ -37,7 +39,7 @@ const STYLES: ReadonlyArray<StyleItem> = [
     slug: "mid-century",
     name: "Mid-century modern",
     description: "Linhas limpas, madeira morna e elegância atemporal em peças ícones.",
-    src: decoratedLivingWarm,
+    src: styleModern,
     alt: "Sala em estilo mid-century modern com madeira morna",
     tags: [{ label: "Atemporal", tone: "gold" }],
   },
@@ -45,16 +47,16 @@ const STYLES: ReadonlyArray<StyleItem> = [
     slug: "mediterraneo",
     name: "Mediterrâneo",
     description: "Paleta clara, cerâmica artesanal e luz natural como protagonista.",
-    src: decoratedKitchen,
-    alt: "Cozinha em estilo mediterrâneo com paleta clara",
+    src: decoratedLiving,
+    alt: "Ambiente em estilo mediterrâneo com paleta clara e luz natural",
     tags: [{ label: "Luminoso", tone: "gold" }],
   },
   {
     slug: "art-deco",
     name: "Art déco",
     description: "Geometria sofisticada e materiais nobres com glamour controlado.",
-    src: decoratedBathroomSuite,
-    alt: "Lavabo em estilo art déco com materiais nobres",
+    src: styleLuxo,
+    alt: "Ambiente em estilo art déco com materiais nobres",
     tags: [{ label: "Escultural", tone: "gold" }],
   },
   {
