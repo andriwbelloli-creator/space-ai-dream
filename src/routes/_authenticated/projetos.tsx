@@ -3,11 +3,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
-import { Loader2, ImageIcon, X } from "lucide-react";
+import { Loader2, ImageIcon, X, Share2, Globe } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import { Button } from "@/components/ui/button";
 import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
 import { logEvent } from "@/lib/tracking.functions";
+import { ShareProjectDialog } from "@/components/ShareProjectDialog";
 
 /**
  * Snapshot do que o detalhe do projeto precisa exibir. `ai_response` traz
@@ -29,6 +31,7 @@ type ProjectRow = {
   after_url: string | null;
   created_at: string;
   ai_response: ProjectAiResponse | null;
+  is_public: boolean | null;
 };
 
 /** Rótulos legíveis para os slugs persistidos em projects.style_slug. */
@@ -61,6 +64,8 @@ function ProjetosPage() {
   const [error, setError] = useState<string | null>(null);
   // Projeto selecionado para abrir no modal de detalhe. `null` = modal fechado.
   const [selected, setSelected] = useState<ProjectRow | null>(null);
+  // Projeto selecionado para o dialog de compartilhamento.
+  const [shareTarget, setShareTarget] = useState<ProjectRow | null>(null);
   const track = useServerFn(logEvent);
 
   useEffect(() => {
@@ -68,7 +73,7 @@ function ProjetosPage() {
     (async () => {
       const { data, error } = await supabase
         .from("projects")
-        .select("id, title, style_slug, before_url, after_url, created_at, ai_response")
+        .select("id, title, style_slug, before_url, after_url, created_at, ai_response, is_public")
         .order("created_at", { ascending: false });
       if (!active) return;
       if (error) {
@@ -83,6 +88,15 @@ function ProjetosPage() {
       active = false;
     };
   }, []);
+
+  // Sincroniza estado is_public de um projeto apos toggle vir do server fn.
+  const updateProjectPublic = (id: string, isPublic: boolean) => {
+    setProjects((cur) =>
+      cur ? cur.map((p) => (p.id === id ? { ...p, is_public: isPublic } : p)) : cur,
+    );
+    setSelected((cur) => (cur && cur.id === id ? { ...cur, is_public: isPublic } : cur));
+    setShareTarget((cur) => (cur && cur.id === id ? { ...cur, is_public: isPublic } : cur));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -190,6 +204,11 @@ function ProjetosPage() {
                       Antes / Depois
                     </span>
                   )}
+                  {p.is_public && (
+                    <span className="absolute top-2 right-2 inline-flex items-center gap-1 rounded-full bg-accent text-accent-foreground px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                      <Globe className="h-2.5 w-2.5" /> Público
+                    </span>
+                  )}
                 </div>
                 <div className="p-3">
                   <div className="truncate text-sm font-medium text-foreground">
@@ -211,7 +230,22 @@ function ProjetosPage() {
         )}
       </main>
 
-      <ProjectDetailDialog project={selected} onOpenChange={(open) => !open && setSelected(null)} />
+      <ProjectDetailDialog
+        project={selected}
+        onOpenChange={(open) => !open && setSelected(null)}
+        onShare={(p) => setShareTarget(p)}
+      />
+
+      {shareTarget && (
+        <ShareProjectDialog
+          open={!!shareTarget}
+          onOpenChange={(open) => !open && setShareTarget(null)}
+          projectId={shareTarget.id}
+          projectName={shareTarget.title ?? "Projeto"}
+          initialIsPublic={!!shareTarget.is_public}
+          onPublicChange={(next) => updateProjectPublic(shareTarget.id, next)}
+        />
+      )}
     </div>
   );
 }
@@ -228,9 +262,11 @@ function ProjetosPage() {
 function ProjectDetailDialog({
   project,
   onOpenChange,
+  onShare,
 }: {
   project: ProjectRow | null;
   onOpenChange: (open: boolean) => void;
+  onShare: (p: ProjectRow) => void;
 }) {
   // Mantém o `project` durante a animação de fechamento — evita "flash" vazio.
   const open = !!project;
@@ -261,19 +297,37 @@ function ProjectDetailDialog({
         {project && (
           <>
             {/* Header */}
-            <div className="px-5 pt-6 pb-3 sm:px-7">
-              <div className="text-lg sm:text-xl font-semibold tracking-tight pr-10 text-foreground">
-                {project.title ?? "Projeto"}
+            <div className="px-5 pt-6 pb-3 sm:px-7 flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-lg sm:text-xl font-semibold tracking-tight pr-2 text-foreground">
+                  {project.title ?? "Projeto"}
+                </div>
+                <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+                  {styleName && (
+                    <>
+                      <span className="text-foreground">{styleName}</span>
+                      <span aria-hidden>·</span>
+                    </>
+                  )}
+                  <span>{dateLabel}</span>
+                  {project.is_public && (
+                    <>
+                      <span aria-hidden>·</span>
+                      <span className="inline-flex items-center gap-1 text-accent font-medium">
+                        <Globe className="h-3 w-3" /> Público
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                {styleName && (
-                  <>
-                    <span className="text-foreground">{styleName}</span>
-                    <span aria-hidden>·</span>
-                  </>
-                )}
-                <span>{dateLabel}</span>
-              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onShare(project)}
+                className="shrink-0 h-9 rounded-full px-3 text-xs"
+              >
+                <Share2 className="h-3.5 w-3.5 mr-1.5" /> Compartilhar
+              </Button>
             </div>
 
             {/* Antes / Depois */}

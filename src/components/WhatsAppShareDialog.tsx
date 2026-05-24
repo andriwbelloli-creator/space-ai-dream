@@ -19,6 +19,13 @@ type Props = {
   projectName: string;
   imageUrl?: string;
   downloadName?: string;
+  /**
+   * Quando presente, a mensagem do WhatsApp inclui o link publico do
+   * projeto em vez de instrucao pra anexar imagem. Usado pelo fluxo
+   * de compartilhamento publico (ShareProjectDialog) — projeto vira
+   * landing read-only acessivel sem login.
+   */
+  publicUrl?: string;
 };
 
 // Brazilian phone: 10–11 digits (DDD + número), aceita também com 55 prefixo
@@ -56,6 +63,7 @@ export function WhatsAppShareDialog({
   projectName,
   imageUrl,
   downloadName,
+  publicUrl,
 }: Props) {
   const [phone, setPhone] = useState("");
   const [consent, setConsent] = useState(false);
@@ -96,10 +104,12 @@ export function WhatsAppShareDialog({
       /* ignore */
     }
 
-    const msg =
-      `Olá! Acabei de gerar um projeto no Ideal Space: ${projectName}. ` +
-      `Veja o antes e depois decorado pela IA. ` +
-      `(Imagem em anexo: basta tocar no clipe 📎 e selecionar o arquivo baixado.)`;
+    const msg = publicUrl
+      ? `Olha o ambiente que fiz no Ideal Space (${projectName}). ` +
+        `Veja o antes e depois e a lista de produtos sugeridos: ${publicUrl}`
+      : `Olá! Acabei de gerar um projeto no Ideal Space: ${projectName}. ` +
+        `Veja o antes e depois decorado pela IA. ` +
+        `(Imagem em anexo: basta tocar no clipe 📎 e selecionar o arquivo baixado.)`;
     const url = `https://wa.me/${encodeURIComponent(digits)}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank", "noopener,noreferrer");
     onOpenChange(false);
@@ -121,7 +131,7 @@ export function WhatsAppShareDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {imageUrl && (
+        {imageUrl && !publicUrl && (
           <div className="rounded-2xl border bg-muted/40 p-3 flex items-center gap-3">
             <img src={imageUrl} alt="" className="h-14 w-20 rounded-lg object-cover border" />
             <div className="text-xs text-muted-foreground leading-relaxed flex-1">
@@ -135,6 +145,13 @@ export function WhatsAppShareDialog({
             >
               <Download className="h-3 w-3" /> Baixar
             </a>
+          </div>
+        )}
+
+        {publicUrl && (
+          <div className="rounded-2xl border bg-muted/40 p-3 text-xs text-muted-foreground leading-relaxed">
+            A mensagem vai incluir o link público do projeto. Quem receber abre direto no Ideal
+            Space, sem precisar criar conta.
           </div>
         )}
 

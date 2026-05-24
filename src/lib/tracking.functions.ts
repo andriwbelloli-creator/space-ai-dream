@@ -25,6 +25,12 @@ export const ALLOWED_EVENTS = [
   // Lista de compras: usuario clica em "Ver mais" e expande os itens
   // que estavam ocultos atras do paywall leve.
   "shopping_list_expanded",
+  // Growth loop: compartilhamento publico de projeto.
+  "project_made_public",
+  "project_made_private",
+  "share_link_copied",
+  "public_project_viewed",
+  "public_project_cta_click",
 ] as const;
 
 export type FunnelEvent = (typeof ALLOWED_EVENTS)[number];
