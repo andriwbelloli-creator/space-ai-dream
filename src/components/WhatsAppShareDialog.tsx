@@ -106,7 +106,7 @@ export function WhatsAppShareDialog({
 
     const msg = publicUrl
       ? `Olha o ambiente que fiz no Ideal Space (${projectName}). ` +
-        `Veja o antes e depois e a lista de produtos sugeridos: ${publicUrl}`
+        `Veja o ambiente decorado pela IA e a lista de produtos sugeridos: ${publicUrl}`
       : `Olá! Acabei de gerar um projeto no Ideal Space: ${projectName}. ` +
         `Veja o antes e depois decorado pela IA. ` +
         `(Imagem em anexo: basta tocar no clipe 📎 e selecionar o arquivo baixado.)`;
