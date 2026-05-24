@@ -20,7 +20,8 @@ export function Tipos2D5D() {
           <div className="max-w-2xl">
             <span className="is-kicker">Visualizações</span>
             <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
-              Projetos <span className="italic">2D, 5D e planta baixa</span>.
+              Do <span className="italic">conceito visual</span> à{" "}
+              <span className="italic">planta baixa</span>.
             </h2>
           </div>
           <p className="max-w-sm text-sm text-muted-foreground sm:text-base">

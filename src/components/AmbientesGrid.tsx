@@ -1,11 +1,12 @@
 /**
- * Qual ambiente você quer transformar? — UMA seção consolidada na home
- * mostrando 10 cômodos em grid 5x2 desktop (3 cols ≤1024, 2 cols ≤640).
- * Uniforme (sem destaque grande) pra dar ritmo editorial e reduzir scroll.
+ * Escolha o ambiente para transformar — UMA seção consolidada na home
+ * mostrando 8 cômodos principais em grid 4x2 desktop (3 cols ≤1024, 2
+ * cols ≤640). Uniforme, sem destaque grande, pra dar ritmo editorial.
  *
- * As 11 rotas /ambientes/<slug> continuam acessíveis; só limito a presença
- * visual na home a 10 (deixo "sala-tv" de fora pra cair em 5x2 exato).
- * sala-tv segue acessível via cross-links nas páginas relacionadas.
+ * As 11 rotas /ambientes/<slug> continuam acessíveis; quarto-infantil,
+ * lavabo e sala-tv ficam fora do grid pra evitar imagens muito parecidas
+ * (já cobrimos quarto e banheiro no grid principal). Eles seguem acessíveis
+ * via cross-links em páginas relacionadas e via URL direta.
  *
  * Imagens reaproveitam assets existentes (sem trocar nem regerar).
  */
@@ -19,8 +20,6 @@ import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
 import galleryLoft from "@/assets/gallery-loft.jpg";
 import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
 import galleryVaranda from "@/assets/gallery-varanda.jpg";
-import styleJapandi from "@/assets/style-japandi.jpg";
-import decoratedBathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
 
 type RoomItem = {
   slug: string;
@@ -87,20 +86,6 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     src: rankMinimalBedroom,
     alt: "Closet organizado com iluminação direta",
   },
-  {
-    slug: "quarto-infantil",
-    name: "Quarto infantil",
-    description: "Funcional pra dormir, brincar e estudar.",
-    src: styleJapandi,
-    alt: "Quarto infantil com paleta serena",
-  },
-  {
-    slug: "lavabo",
-    name: "Lavabo",
-    description: "Aceita ousadia: papel de parede, cuba esculpida.",
-    src: decoratedBathroomSuite,
-    alt: "Lavabo decorado com materiais nobres",
-  },
 ] as const;
 
 export function AmbientesGrid() {
@@ -127,8 +112,8 @@ export function AmbientesGrid() {
           </p>
         </div>
 
-        {/* Grid uniforme 5x2 desktop, 3 sm, 2 mobile. */}
-        <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
+        {/* Grid uniforme 4x2 desktop, 3 sm, 2 mobile. */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
           {ROOMS.map((room) => (
             <PremiumOverlayCard
               key={room.slug}

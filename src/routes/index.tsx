@@ -570,8 +570,8 @@ function Index() {
         onDemo={() => handlePresentation(true)}
         onUpload={openUpload}
       />
-      <StylesCarousel onUpload={openUpload} />
       <HowItWorks onDemo={() => handlePresentation(true)} />
+      <StylesCarousel onUpload={openUpload} />
       <AmbientesGrid />
       <Tipos2D5D />
       <EditorialCollections />
@@ -1238,13 +1238,14 @@ function StylesCarousel({ onUpload }: { onUpload: () => void }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
-            kicker="Estilos"
+            kicker="Estilos de decoração"
             title={
               <>
-                Defina a <span className="font-serif italic font-normal">estética</span> do projeto
+                Escolha um <span className="font-serif italic font-normal">estilo</span> para seu
+                projeto
               </>
             }
-            sub="A IA aplica o estilo escolhido ao ambiente, preservando proporção e estrutura. Onze direções estéticas com landing dedicada."
+            sub="A IA aplica o estilo escolhido ao ambiente, preservando proporção e estrutura."
           />
           <Button onClick={onUpload} variant="outline" className="rounded-full h-11 px-5 text-sm">
             <Camera className="h-4 w-4 mr-1.5" /> Enviar minha foto
