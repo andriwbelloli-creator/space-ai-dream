@@ -21,7 +21,12 @@ export type StyleSlug =
   | "minimalista"
   | "natural"
   | "industrial"
-  | "luxo";
+  | "luxo"
+  | "boho-chic"
+  | "mid-century"
+  | "mediterraneo"
+  | "art-deco"
+  | "maximalista";
 
 /** Conteúdo de SEO + copy de conversão de uma landing page de estilo. */
 export interface StyleSeoData {
@@ -631,6 +636,481 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       before: "empty-bathroom-suite",
       after: "decorated-bathroom-suite",
       gallery: ["style-luxo", "decorated-living", "decorated-bathroom"],
+    },
+  },
+  "boho-chic": {
+    name: "Boho chic",
+    title: "Decoração Boho Chic com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja seu ambiente decorado no estilo boho chic. Envie uma foto, escolha o estilo e receba uma inspiração visual com lista de compras sugerida e orçamento estimado.",
+    h1: "Veja seu ambiente no estilo *Boho chic*",
+    promise:
+      "Texturas naturais, camadas de tecidos, plantas e tons quentes em uma proposta livre, mas com curadoria. Envie uma foto do seu ambiente e veja como ele pode ficar com toques boho chic: ratan, macramê, tapetes étnicos e madeira em camadas que parecem coleção, não bagunça. Recebe sugestões de produtos reais para começar.",
+    cta: "Testar Boho chic no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "boho-chic",
+    benefits: [
+      "Camadas de tecidos, tapetes e almofadas com paleta quente e harmônica",
+      "Texturas naturais: ratan, macramê, juta, madeira, cerâmica artesanal",
+      "Plantas como protagonistas, sem virar selva visual desorganizada",
+      "Mistura confiante de padrões étnicos e étnicos, com critério",
+      "Funciona em apartamento pequeno, casa de praia ou sala compartilhada",
+      "Estilo livre, mas com composição curada (não improvisada)",
+      "Acentos vintage e peças únicas valorizam o ambiente sem custar caro",
+      "Lista de compras com itens reais para construir as camadas aos poucos",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem, do celular ou do computador. Iluminação natural ajuda.",
+      },
+      {
+        t: "Aplicamos o estilo Boho chic",
+        d: "A IA mantém a estrutura real e propõe camadas de textura, paleta quente e elementos naturais.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Veja como o ambiente ganha alma boho",
+    visualDescription:
+      "Exemplo de transformação no estilo boho chic a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Boho chic não fica bagunçado?",
+        a: "Não, quando tem curadoria. A IA propõe camadas com proporção (tapete + almofadas + planta + arte), evitando excesso. Você escolhe quantas camadas ativar.",
+      },
+      {
+        q: "Funciona em apartamento pequeno?",
+        a: "Sim. O segredo é poucas camadas de qualidade, não muitas peças. A IA respeita a escala do ambiente e propõe combinações proporcionais.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim. Foto comum de celular já funciona, desde que o ambiente esteja visível e razoavelmente iluminado.",
+      },
+      {
+        q: "Combina com móveis modernos que eu já tenho?",
+        a: "Combina, sim. Boho chic moderno funciona com base neutra (sofá cinza, mesa de madeira clara) recebendo as camadas de textura, cor e plantas.",
+      },
+      {
+        q: "Tem opção mais sóbria do boho?",
+        a: "Sim. A IA pode propor uma versão mais minimalista (Boho neutro) com paleta off-white, ratan e poucas plantas. Compare com a versão mais densa lado a lado.",
+      },
+      {
+        q: "Funciona em clima brasileiro?",
+        a: "Funciona muito bem. Tons quentes, fibras naturais e plantas tropicais combinam com o clima do Brasil e valorizam a luz natural.",
+      },
+      {
+        q: "Os produtos sugeridos são caros?",
+        a: "A lista organiza por categoria com faixa de preço estimada. Tem itens econômicos (tapete, almofada, planta) e investimentos maiores (peça vintage, móvel artesanal). Você decide por onde começar.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "Você tem 3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Boho chic",
+    relatedLinks: [
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Mediterrâneo", to: "/estilos/mediterraneo" },
+      { label: "Mid-century modern", to: "/estilos/mid-century" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Varanda gourmet", to: "/ambientes/varanda-gourmet" },
+      { label: "Quarto", to: "/ambientes/quarto" },
+    ],
+    whyChoose: [
+      "Estética acolhedora e cheia de personalidade, sem virar tema de festa",
+      "Funciona em apartamento alugado: tapete, plantas e almofadas vão com você",
+      "Camadas que dá pra construir aos poucos, não precisa fazer tudo de uma vez",
+      "A IA respeita a estrutura real e propõe boho viável para o seu espaço",
+      "Sugestões de produtos em diferentes faixas, do tapete econômico ao vintage",
+      "Compare a versão densa de camadas e a versão sóbria na mesma foto",
+    ],
+    images: {
+      before: "empty-bedroom",
+      after: "decorated-bedroom",
+      gallery: ["gallery-varanda", "decorated-living-warm", "style-natural"],
+    },
+  },
+  "mid-century": {
+    name: "Mid-century modern",
+    title: "Decoração Mid-Century Modern com IA | Ideal Space",
+    description:
+      "Veja seu ambiente decorado no estilo mid-century modern. Envie uma foto e receba uma inspiração visual com móveis ícones do estilo, paleta e lista de compras.",
+    h1: "Veja seu ambiente em *Mid-century modern*",
+    promise:
+      "Móveis com linhas limpas e pernas afuniladas, madeira morna, paleta sóbria com acentos pontuais de mostarda, terracota ou verde-musgo. Envie uma foto do seu ambiente e veja como ele pode ganhar a elegância atemporal do mid-century: peças ícones, proporção e funcionalidade em harmonia.",
+    cta: "Testar Mid-century no meu ambiente",
+    trustText: "Em poucos passos, com a foto que você já tem.",
+    defaultStyle: "mid-century",
+    benefits: [
+      "Móveis com pernas afuniladas, linhas limpas e proporção elegante",
+      "Madeira morna (nogueira, teca) como base e acentos em metal escovado",
+      "Paleta sóbria com toques pontuais de mostarda, terracota ou verde-musgo",
+      "Funcional sem sacrificar beleza: design ícone do meio do século 20",
+      "Funciona em sala, quarto, home office ou ambiente integrado",
+      "Estilo atemporal: envelhece bem, não vira moda passageira",
+      "Mistura de texturas: madeira, couro, lã, vidro com critério",
+      "Lista de compras com sugestões de peças com inspiração mid-century",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem, do celular ou do computador. Iluminação natural ajuda.",
+      },
+      {
+        t: "Aplicamos o estilo Mid-century",
+        d: "A IA mantém a estrutura real e propõe móveis com linhas mid-century, paleta sóbria e acentos vintage.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Veja como o ambiente ganha elegância atemporal",
+    visualDescription:
+      "Exemplo de transformação no estilo mid-century modern a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Mid-century não é só sofá de pé palito?",
+        a: "Não. O estilo é um sistema: linhas limpas, madeira morna, paleta sóbria, mistura de texturas e algumas peças ícones (poltrona, luminária, aparador). A IA propõe a composição inteira.",
+      },
+      {
+        q: "Funciona em apartamento pequeno?",
+        a: "Funciona muito bem. As peças mid-century costumam ter base leve (pernas finas, design ventilado), o que cria sensação de respiro em ambientes compactos.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim. Foto comum do celular serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "Combina com móveis modernos que eu já tenho?",
+        a: "Combina. O mid-century é flexível: você pode misturar com peças contemporâneas mantendo a paleta e a coerência visual.",
+      },
+      {
+        q: "Os móveis ícones são caros?",
+        a: "Os originais sim, mas existem peças com inspiração mid-century em diferentes faixas de preço. A lista organiza por categoria pra você escolher por onde começar.",
+      },
+      {
+        q: "Funciona em ambiente comercial?",
+        a: "Funciona. Cafés, salas de espera, consultórios e coworkings ganham personalidade com o mid-century sem perder profissionalismo.",
+      },
+      {
+        q: "Posso testar versões mais sóbrias ou mais coloridas?",
+        a: "Sim. A IA pode propor uma versão minimal (apenas madeira e neutros) ou uma com mais cor (mostarda, verde, terracota). Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito para começar.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Mid-century modern",
+    relatedLinks: [
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Art déco", to: "/estilos/art-deco" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Home office", to: "/ambientes/home-office" },
+      { label: "Sala de TV", to: "/ambientes/sala-tv" },
+    ],
+    whyChoose: [
+      "Elegância atemporal: peças ícones que continuam atuais 70 anos depois",
+      "Funciona em apartamento padrão, não exige imóvel grande nem pé-direito nobre",
+      "Mistura bem com contemporâneo, escandinavo e até japandi sem brigar",
+      "A IA propõe composição inteira, não só uma poltrona ícone solta",
+      "Sugestões de peças em diferentes faixas, com inspiração no estilo",
+      "Compare a versão mais sóbria e a versão com acentos coloridos lado a lado",
+    ],
+    images: {
+      before: "empty-living",
+      after: "decorated-living",
+      gallery: ["decorated-bedroom", "style-modern", "gallery-loft"],
+    },
+  },
+  mediterraneo: {
+    name: "Mediterrâneo",
+    title: "Decoração Mediterrânea com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja seu ambiente decorado no estilo mediterrâneo. Envie uma foto e receba uma inspiração visual com paleta clara, madeira clara, cerâmica e cortinas naturais.",
+    h1: "Veja seu ambiente no estilo *Mediterrâneo*",
+    promise:
+      "Paredes claras, madeira clara, cerâmica artesanal, plantas em vasos terracota e luz natural como protagonista. Envie uma foto do seu ambiente e veja como ele pode ganhar a leveza mediterrânea: tons quentes claros, texturas rústicas e acolhimento sem perder elegância.",
+    cta: "Testar Mediterrâneo no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "mediterraneo",
+    benefits: [
+      "Paleta clara e quente: off-white, areia, terracota suave, oliva",
+      "Madeira clara e cerâmica artesanal como bases naturais",
+      "Tecidos leves: linho, algodão cru, cortinas que dançam com o vento",
+      "Plantas em vasos terracota e composição com folhagens mediterrâneas",
+      "Luz natural valorizada, sem cortinas pesadas ou cores escuras",
+      "Funciona em apartamento, casa de praia ou ambiente integrado",
+      "Sensação de férias dentro de casa, sem virar pastiche tropical",
+      "Lista de compras com itens reais para começar pela paleta e plantas",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem, do celular ou do computador. Iluminação natural ajuda muito.",
+      },
+      {
+        t: "Aplicamos o estilo Mediterrâneo",
+        d: "A IA mantém a estrutura real e propõe paleta clara, madeira clara, cerâmica e plantas.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Veja como o ambiente ganha luz e leveza",
+    visualDescription:
+      "Exemplo de transformação no estilo mediterrâneo a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Mediterrâneo funciona no clima brasileiro?",
+        a: "Funciona muito bem. Tons quentes claros, texturas rústicas e plantas mediterrâneas combinam com a luz natural intensa do Brasil.",
+      },
+      {
+        q: "Preciso de uma casa antiga ou rústica?",
+        a: "Não. O estilo se adapta a apartamento moderno: paleta, materiais e plantas fazem o trabalho. Funciona em ambiente novo, antigo, alugado ou próprio.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim. Foto comum do celular já funciona, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "Combina com móveis modernos que eu já tenho?",
+        a: "Combina. Móveis modernos em tons neutros (cinza, preto, madeira clara) recebem bem as camadas de textura e cor mediterrâneas.",
+      },
+      {
+        q: "Mediterrâneo é a mesma coisa que boho?",
+        a: "Não. Mediterrâneo é mais sóbrio, paleta mais clara e foco na luz natural. Boho tem camadas mais densas, padrões étnicos e mais cor. Compare lado a lado.",
+      },
+      {
+        q: "Funciona em quarto, sala e cozinha?",
+        a: "Funciona em todos. Em quarto traz aconchego luminoso, em sala cria leveza, em cozinha valoriza azulejos e cerâmica artesanal.",
+      },
+      {
+        q: "Os produtos sugeridos são caros?",
+        a: "A lista organiza por categoria. Cerâmica, plantas e tecidos leves são acessíveis. Madeira clara e azulejo artesanal são investimentos maiores. Você decide por onde começar.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Mediterrâneo",
+    relatedLinks: [
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Boho chic", to: "/estilos/boho-chic" },
+      { label: "Japandi", to: "/estilos/japandi" },
+      { label: "Cozinha", to: "/ambientes/cozinha" },
+      { label: "Varanda gourmet", to: "/ambientes/varanda-gourmet" },
+      { label: "Sala", to: "/ambientes/sala" },
+    ],
+    whyChoose: [
+      "Leveza luminosa: ambiente parece arejado mesmo em apartamento padrão",
+      "Funciona em casa de praia, apartamento urbano ou casa de família",
+      "Paleta clara que combina com a luz natural intensa do Brasil",
+      "A IA respeita a estrutura real e propõe mediterrâneo viável pra você",
+      "Sugestões de produtos em diferentes faixas, de cerâmica a tecidos",
+      "Compare uma versão mais sóbria e uma com mais terracota lado a lado",
+    ],
+    images: {
+      before: "empty-kitchen",
+      after: "decorated-kitchen",
+      gallery: ["gallery-varanda", "decorated-living-warm", "style-natural"],
+    },
+  },
+  "art-deco": {
+    name: "Art déco",
+    title: "Decoração Art Déco com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja seu ambiente decorado no estilo art déco. Envie uma foto e receba uma inspiração visual com geometria sofisticada, materiais nobres e acabamento glamoroso.",
+    h1: "Veja seu ambiente no estilo *Art déco*",
+    promise:
+      "Geometria sofisticada, materiais nobres como mármore, latão e veludo, acabamentos com brilho controlado e um glamour que não cai em ostentação. Envie uma foto do seu ambiente e veja como ele pode ganhar a presença escultural do art déco: padrões geométricos, simetria e mobiliário com personalidade.",
+    cta: "Testar Art déco no meu ambiente",
+    trustText: "Em poucos passos, com a foto que você já tem.",
+    defaultStyle: "art-deco",
+    benefits: [
+      "Geometria sofisticada: padrões em leques, ziguezagues e simetria escultural",
+      "Materiais nobres: mármore, latão, veludo, espelhos com moldura ornamental",
+      "Paleta densa com acentos metálicos e cores ricas (esmeralda, bordô, dourado)",
+      "Mobiliário com presença escultural, não decoração de fundo",
+      "Funciona em sala, lavabo, quarto principal ou ambiente de receber",
+      "Glamour com critério, sem cair em ostentação de showroom",
+      "Estilo atemporal: traz personalidade sem virar tema kitsch",
+      "Lista de compras com peças que conseguem o efeito sem precisar de fortuna",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem, do celular ou do computador. Iluminação natural ajuda.",
+      },
+      {
+        t: "Aplicamos o estilo Art déco",
+        d: "A IA mantém a estrutura real e propõe geometria, materiais nobres e mobiliário escultural.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Veja como o ambiente ganha presença escultural",
+    visualDescription:
+      "Exemplo de transformação no estilo art déco a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Art déco não fica datado ou exagerado?",
+        a: "Depende da curadoria. O art déco contemporâneo trabalha geometria e materiais nobres com restrição, sem caricatura dos anos 30. A IA propõe versão equilibrada.",
+      },
+      {
+        q: "Funciona em apartamento padrão?",
+        a: "Funciona. O segredo é usar art déco em pontos estratégicos (papel de parede, espelho, luminária, mesa de centro) sem encher o ambiente.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim. Foto comum do celular serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "Combina com móveis modernos que eu já tenho?",
+        a: "Combina. Art déco contemporâneo aceita base moderna (sofá neutro, mesa minimalista) recebendo acentos esculturais como luminária ou espelho.",
+      },
+      {
+        q: "Os materiais nobres não são muito caros?",
+        a: "O efeito pode vir de detalhes: latão em luminária, veludo em almofada, espelho com moldura ornamental. A lista organiza por categoria com faixas diferentes.",
+      },
+      {
+        q: "Onde art déco brilha mais?",
+        a: "Em lavabo, sala de receber, quarto principal, escritório executivo. Ambientes que comportam o impacto visual sem virar excesso no dia a dia.",
+      },
+      {
+        q: "Posso testar versão mais sóbria?",
+        a: "Sim. A IA pode propor Art déco neutro (geometria + madeira + acentos metálicos discretos) e Art déco clássico (cores ricas + materiais densos). Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Art déco",
+    relatedLinks: [
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Maximalista elegante", to: "/estilos/maximalista" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Lavabo", to: "/ambientes/lavabo" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Quarto", to: "/ambientes/quarto" },
+    ],
+    whyChoose: [
+      "Personalidade escultural: o ambiente ganha presença sem mobiliário extra",
+      "Funciona em apartamento padrão usando pontos estratégicos, não excesso",
+      "Compare versão sóbria contemporânea e versão clássica densa lado a lado",
+      "A IA propõe art déco viável: glamour com critério, não ostentação",
+      "Sugestões de peças em diferentes faixas, do espelho ao mobiliário ícone",
+      "Estilo que envelhece bem, traz autoria sem virar tema datado",
+    ],
+    images: {
+      before: "empty-bathroom-suite",
+      after: "decorated-bathroom-suite",
+      gallery: ["style-luxo", "decorated-dining", "decorated-bathroom"],
+    },
+  },
+  maximalista: {
+    name: "Maximalista elegante",
+    title: "Decoração Maximalista Elegante com IA | Ideal Space",
+    description:
+      "Veja seu ambiente decorado no estilo maximalista elegante. Envie uma foto e receba uma inspiração com camadas ricas, padrões e cor com curadoria.",
+    h1: "Veja seu ambiente no estilo *Maximalista elegante*",
+    promise:
+      "Camadas ricas de cor, padrão, textura e arte, costuradas por uma curadoria atenta. O maximalismo elegante não é excesso, é abundância controlada. Envie uma foto do seu ambiente e veja como ele pode ganhar personalidade densa sem virar bagunça visual.",
+    cta: "Testar Maximalista no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "maximalista",
+    benefits: [
+      "Camadas de cor, padrão e textura combinadas com curadoria atenta",
+      "Personalidade densa sem virar bagunça visual ou museu desorganizado",
+      "Arte, livros, objetos e plantas como narrativas pessoais do ambiente",
+      "Paleta confiante: tons profundos como bordô, esmeralda, mostarda e azul-petróleo",
+      "Materiais nobres misturados com peças vintage e achados pessoais",
+      "Funciona em sala, biblioteca, quarto principal ou ambiente de receber",
+      "Antídoto ao branco-corporativo: ambiente que conta uma história",
+      "Lista de compras pra construir o cenário aos poucos, com critério",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do ambiente",
+        d: "Use a foto que você já tem, do celular ou do computador. Iluminação natural ajuda.",
+      },
+      {
+        t: "Aplicamos o estilo Maximalista",
+        d: "A IA mantém a estrutura real e propõe camadas de cor, padrão, arte e objetos com curadoria.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Veja como o ambiente ganha densidade e personalidade",
+    visualDescription:
+      "Exemplo de transformação no estilo maximalista elegante a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Maximalista não fica poluído?",
+        a: "Não, quando tem curadoria. Maximalismo elegante segue regras: paleta coerente, camadas com proporção, materiais que conversam. A IA propõe a composição inteira, não acúmulo aleatório.",
+      },
+      {
+        q: "Funciona em apartamento pequeno?",
+        a: "Funciona com cuidado. Em ambiente compacto, o maximalismo se concentra em uma parede ou canto (galeria de arte, estante curada) sem invadir todo o espaço.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim. Foto comum do celular serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "Combina com móveis modernos que eu já tenho?",
+        a: "Combina. Móveis modernos viram base neutra que sustenta as camadas de cor, padrão e arte do maximalismo.",
+      },
+      {
+        q: "Maximalismo é a mesma coisa que bagunça organizada?",
+        a: "Não. Bagunça é falta de critério. Maximalismo é abundância intencional: cada camada tem motivo (cor, textura, narrativa) e proporção.",
+      },
+      {
+        q: "Como começar sem virar excesso?",
+        a: "Comece por uma parede galeria, uma estante curada ou um sofá com almofadas em camadas. A IA propõe gradação: do maximalismo leve ao denso, você escolhe.",
+      },
+      {
+        q: "Funciona em ambiente comercial?",
+        a: "Funciona muito bem em consultórios criativos, bistrôs, escritórios autorais. Em ambiente corporativo padrão pode ser ousado demais.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Maximalista elegante",
+    relatedLinks: [
+      { label: "Art déco", to: "/estilos/art-deco" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Boho chic", to: "/estilos/boho-chic" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Sala de jantar", to: "/ambientes/sala-jantar" },
+      { label: "Quarto", to: "/ambientes/quarto" },
+    ],
+    whyChoose: [
+      "Personalidade densa que conta uma história, antídoto ao branco-corporativo",
+      "Funciona em casa de família, escritório criativo ou ambiente autoral",
+      "Compare a versão leve (maximalismo neutro) e densa (cores profundas) lado a lado",
+      "A IA propõe camadas com curadoria, não acúmulo aleatório de objetos",
+      "Sugestões de produtos pra construir o cenário aos poucos, com critério",
+      "Estilo que evolui com a vida: novos achados se somam, não destoam",
+    ],
+    images: {
+      before: "empty-living",
+      after: "decorated-dining",
+      gallery: ["style-luxo", "decorated-bedroom", "decorated-living-warm"],
     },
   },
 };
