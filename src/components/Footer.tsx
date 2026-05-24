@@ -40,6 +40,10 @@ export function Footer() {
         { label: "Imobiliárias", href: "#pro" },
         { label: "Clínicas", href: "#pro" },
         { label: "Corretores", href: "#pro" },
+        // Página comparativa pra profissionais que usam Planner 5D.
+        // Página está com noindex até pricing pro estar definido —
+        // descoberta interna via footer já é suficiente.
+        { label: "Comparar com Planner 5D", href: "/vs/planner-5d" },
       ],
     },
     {
