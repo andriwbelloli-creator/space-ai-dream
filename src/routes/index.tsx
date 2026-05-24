@@ -74,6 +74,7 @@ import {
   LayoutGrid,
   Compass,
   Pencil,
+  CreditCard,
 } from "lucide-react";
 
 // All marketing imagery — single source of truth, one image per section.
@@ -746,16 +747,22 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                     {user.email}
                   </div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/minha-conta">
+                      <CreditCard className="h-4 w-4 mr-2" /> Minha assinatura
+                    </Link>
+                  </DropdownMenuItem>
                   {isAdmin && (
                     <>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
                         <Link to="/admin/insights">
                           <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
                     </>
                   )}
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => void signOut()}>Sair</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -848,6 +855,11 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                       : `${credits.balance} ${credits.balance === 1 ? "crédito" : "créditos"}`}
                   </div>
                 )}
+                <Button asChild variant="outline" className="mt-3 w-full h-11 rounded-xl">
+                  <Link to="/minha-conta">
+                    <CreditCard className="h-4 w-4 mr-2" /> Minha assinatura
+                  </Link>
+                </Button>
                 {isAdmin && (
                   <Button asChild variant="outline" className="mt-3 w-full h-11 rounded-xl">
                     <Link to="/admin/insights">

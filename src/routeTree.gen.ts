@@ -33,6 +33,7 @@ import { Route as AdminInsightsRouteImport } from './routes/admin.insights'
 import { Route as AdminCreditosRouteImport } from './routes/admin.creditos'
 import { Route as AdminAfiliadosRouteImport } from './routes/admin.afiliados'
 import { Route as AuthenticatedProjetosRouteImport } from './routes/_authenticated/projetos'
+import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -154,6 +155,11 @@ const AuthenticatedProjetosRoute = AuthenticatedProjetosRouteImport.update({
   path: '/projetos',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedMinhaContaRoute = AuthenticatedMinhaContaRouteImport.update({
+  id: '/minha-conta',
+  path: '/minha-conta',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/para-imobiliarias': typeof ParaImobiliariasRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/projetos': typeof AuthenticatedProjetosRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/creditos': typeof AdminCreditosRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/para-imobiliarias': typeof ParaImobiliariasRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/projetos': typeof AuthenticatedProjetosRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/creditos': typeof AdminCreditosRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/para-imobiliarias': typeof ParaImobiliariasRoute
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/_authenticated/projetos': typeof AuthenticatedProjetosRoute
   '/admin/afiliados': typeof AdminAfiliadosRoute
   '/admin/creditos': typeof AdminCreditosRoute
@@ -244,6 +253,7 @@ export interface FileRouteTypes {
     | '/para-imobiliarias'
     | '/pricing'
     | '/reset-password'
+    | '/minha-conta'
     | '/projetos'
     | '/admin/afiliados'
     | '/admin/creditos'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/para-imobiliarias'
     | '/pricing'
     | '/reset-password'
+    | '/minha-conta'
     | '/projetos'
     | '/admin/afiliados'
     | '/admin/creditos'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/para-imobiliarias'
     | '/pricing'
     | '/reset-password'
+    | '/_authenticated/minha-conta'
     | '/_authenticated/projetos'
     | '/admin/afiliados'
     | '/admin/creditos'
@@ -497,14 +509,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjetosRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/minha-conta': {
+      id: '/_authenticated/minha-conta'
+      path: '/minha-conta'
+      fullPath: '/minha-conta'
+      preLoaderRoute: typeof AuthenticatedMinhaContaRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedMinhaContaRoute: typeof AuthenticatedMinhaContaRoute
   AuthenticatedProjetosRoute: typeof AuthenticatedProjetosRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedMinhaContaRoute: AuthenticatedMinhaContaRoute,
   AuthenticatedProjetosRoute: AuthenticatedProjetosRoute,
 }
 
