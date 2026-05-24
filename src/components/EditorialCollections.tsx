@@ -1,8 +1,9 @@
 /**
- * Coleções editoriais — 6 curadorias temáticas que apontam pra páginas
- * reais (/ambientes/<slug>, /estilos/<slug>). Layout asymmetric: feature
- * card grande à esquerda + 2 collection cards à direita no desktop,
- * stack vertical no mobile.
+ * Coleções editoriais — curadorias temáticas que apontam pra páginas reais
+ * (/ambientes/<slug>, /estilos/<slug>). Layout asymmetric: feature card
+ * grande à esquerda + 2 collection cards à direita no desktop, stack
+ * vertical no mobile. Bloco de baixo expõe 6 overlay cards (2 fileiras de
+ * 3 desktop) com novos estilos e ambientes do repertório expandido.
  *
  * Não usa imagens novas: reaproveita assets já presentes em src/assets/
  * importando diretamente (fora do image-catalog pra evitar conflito com
@@ -20,7 +21,8 @@ import bedroom from "@/assets/decorated-bedroom.jpg";
 import diningDecorated from "@/assets/decorated-dining.jpg";
 import kitchenDecorated from "@/assets/decorated-kitchen.jpg";
 import office from "@/assets/gallery-office.jpg";
-import loft from "@/assets/gallery-loft.jpg";
+import varanda from "@/assets/gallery-varanda.jpg";
+import bathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
 
 const COLLECTIONS = {
   feature: {
@@ -34,7 +36,7 @@ const COLLECTIONS = {
     ),
     description:
       "Ambientes compactos que ganharam respiro, foco e personalidade. Inspiração curada por estilo e função.",
-    meta: "8 ambientes · estilo a estilo",
+    meta: "11 ambientes · estilo a estilo",
     to: "/ambientes/sala",
     ctaLabel: "Ver coleção",
   },
@@ -43,7 +45,7 @@ const COLLECTIONS = {
     alt: "Home office com madeira e iluminação natural",
     title: "Home office produtivo",
     description: "Setups para foco, calls e ergonomia, do compacto ao executivo.",
-    count: "6 estilos",
+    count: "11 estilos",
     to: "/ambientes/home-office",
   },
   cozyBedroom: {
@@ -51,7 +53,7 @@ const COLLECTIONS = {
     alt: "Quarto japandi com tons quentes e textura natural",
     title: "Quartos aconchegantes",
     description: "Texturas, paleta neutra e iluminação suave pra desacelerar.",
-    count: "5 estilos",
+    count: "11 estilos",
     to: "/ambientes/quarto",
   },
   dining: {
@@ -60,7 +62,39 @@ const COLLECTIONS = {
     kicker: "Para receber",
     title: "Salas de jantar para conviver",
     description: "Mesa central, paleta neutra, iluminação certa.",
-    to: "/ambientes/sala",
+    to: "/ambientes/sala-jantar",
+  },
+  bohoChic: {
+    src: bedroom,
+    alt: "Quarto em estilo boho chic com camadas de textura natural",
+    kicker: "Estilo",
+    title: "Boho chic com curadoria",
+    description: "Camadas de tecidos, plantas e tons quentes em uma proposta acolhedora.",
+    to: "/estilos/boho-chic",
+  },
+  midCentury: {
+    src: livingWarm,
+    alt: "Sala em estilo mid-century modern com madeira morna",
+    kicker: "Estilo",
+    title: "Mid-century atemporal",
+    description: "Linhas limpas, madeira morna e acentos pontuais de cor.",
+    to: "/estilos/mid-century",
+  },
+  varandaGourmet: {
+    src: varanda,
+    alt: "Varanda gourmet com plantas e mesa para receber",
+    kicker: "Ambiente",
+    title: "Varanda gourmet pra receber",
+    description: "Mesa, churrasqueira, plantas e iluminação no ritmo certo.",
+    to: "/ambientes/varanda-gourmet",
+  },
+  artDeco: {
+    src: bathroomSuite,
+    alt: "Lavabo em estilo art déco com materiais nobres",
+    kicker: "Estilo",
+    title: "Art déco escultural",
+    description: "Geometria sofisticada, materiais nobres, glamour com critério.",
+    to: "/estilos/art-deco",
   },
   luxoDiscreto: {
     src: kitchenDecorated,
@@ -69,14 +103,6 @@ const COLLECTIONS = {
     title: "Luxo discreto",
     description: "Materiais nobres, paleta restrita, acabamentos refinados.",
     to: "/estilos/luxo",
-  },
-  japandi: {
-    src: loft,
-    alt: "Loft em estilo japandi com paleta sóbria",
-    kicker: "Estilo",
-    title: "Japandi sereno",
-    description: "Encontro entre o silêncio japonês e o conforto escandinavo.",
-    to: "/estilos/japandi",
   },
 } as const;
 
@@ -104,7 +130,7 @@ export function EditorialCollections() {
           </p>
         </div>
 
-        {/* Desktop: 12-col asymmetric grid. Mobile: stack. */}
+        {/* Linha 1: feature card grande + 2 collections stacked. */}
         <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <EditorialFeatureCard
@@ -138,7 +164,7 @@ export function EditorialCollections() {
           </div>
         </div>
 
-        {/* Segundo bloco — 3 overlay cards equivalentes. */}
+        {/* Linha 2: 6 overlay cards (2 fileiras desktop) — repertório expandido. */}
         <div className="mt-5 grid grid-cols-1 gap-5 sm:mt-6 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <PremiumOverlayCard
             src={COLLECTIONS.dining.src}
@@ -151,6 +177,46 @@ export function EditorialCollections() {
             ctaLabel="Ver inspirações"
           />
           <PremiumOverlayCard
+            src={COLLECTIONS.bohoChic.src}
+            alt={COLLECTIONS.bohoChic.alt}
+            kicker={COLLECTIONS.bohoChic.kicker}
+            title={COLLECTIONS.bohoChic.title}
+            description={COLLECTIONS.bohoChic.description}
+            aspect="tall"
+            to={COLLECTIONS.bohoChic.to}
+            ctaLabel="Ver estilo"
+          />
+          <PremiumOverlayCard
+            src={COLLECTIONS.midCentury.src}
+            alt={COLLECTIONS.midCentury.alt}
+            kicker={COLLECTIONS.midCentury.kicker}
+            title={COLLECTIONS.midCentury.title}
+            description={COLLECTIONS.midCentury.description}
+            aspect="tall"
+            to={COLLECTIONS.midCentury.to}
+            ctaLabel="Ver estilo"
+          />
+          <PremiumOverlayCard
+            src={COLLECTIONS.varandaGourmet.src}
+            alt={COLLECTIONS.varandaGourmet.alt}
+            kicker={COLLECTIONS.varandaGourmet.kicker}
+            title={COLLECTIONS.varandaGourmet.title}
+            description={COLLECTIONS.varandaGourmet.description}
+            aspect="tall"
+            to={COLLECTIONS.varandaGourmet.to}
+            ctaLabel="Ver inspirações"
+          />
+          <PremiumOverlayCard
+            src={COLLECTIONS.artDeco.src}
+            alt={COLLECTIONS.artDeco.alt}
+            kicker={COLLECTIONS.artDeco.kicker}
+            title={COLLECTIONS.artDeco.title}
+            description={COLLECTIONS.artDeco.description}
+            aspect="tall"
+            to={COLLECTIONS.artDeco.to}
+            ctaLabel="Ver estilo"
+          />
+          <PremiumOverlayCard
             src={COLLECTIONS.luxoDiscreto.src}
             alt={COLLECTIONS.luxoDiscreto.alt}
             kicker={COLLECTIONS.luxoDiscreto.kicker}
@@ -158,16 +224,6 @@ export function EditorialCollections() {
             description={COLLECTIONS.luxoDiscreto.description}
             aspect="tall"
             to={COLLECTIONS.luxoDiscreto.to}
-            ctaLabel="Ver estilo"
-          />
-          <PremiumOverlayCard
-            src={COLLECTIONS.japandi.src}
-            alt={COLLECTIONS.japandi.alt}
-            kicker={COLLECTIONS.japandi.kicker}
-            title={COLLECTIONS.japandi.title}
-            description={COLLECTIONS.japandi.description}
-            aspect="tall"
-            to={COLLECTIONS.japandi.to}
             ctaLabel="Ver estilo"
           />
         </div>
