@@ -1,18 +1,9 @@
-import { lazy, Suspense, useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Ruler, Layers, FileText, Check } from "lucide-react";
-
-const LeadFormModal = lazy(() =>
-  import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
-);
-
-/** Fallback leve enquanto o chunk do modal carrega sob demanda. */
-const modalFallback = (
-  <div className="fixed inset-0 z-50 grid place-items-center bg-background/40">
-    <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
-  </div>
-);
+import { createFileRoute } from "@tanstack/react-router";
+import { Ruler, Layers, FileText } from "lucide-react";
+import {
+  ProfessionalLanding,
+  type ProfessionalPromise,
+} from "@/components/landing/ProfessionalLanding";
 
 const TITLE = "Módulo de Inteligência Artificial para Arquitetos | Ideal Space";
 const DESCRIPTION =
@@ -32,7 +23,7 @@ export const Route = createFileRoute("/para-arquitetos")({
 });
 
 /** Pilares de venda do módulo — anteprojetos CAD/BIM e render 5D. */
-const PROMISES = [
+const PROMISES: ProfessionalPromise[] = [
   {
     icon: Ruler,
     title: "Anteprojetos em minutos",
@@ -51,151 +42,37 @@ const PROMISES = [
 ];
 
 function ParaArquitetosPage() {
-  const [leadOpen, setLeadOpen] = useState(false);
-  // Monta o modal lazy só na 1ª abertura e o mantém montado (preserva animações).
-  const [leadMounted, setLeadMounted] = useState(false);
-  useEffect(() => {
-    if (leadOpen) setLeadMounted(true);
-  }, [leadOpen]);
-
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Header — navegação padrão */}
-      <header className="border-b border-border/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-            <span className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center text-xs">
-              IS
-            </span>
-            Ideal Space
-          </Link>
-          <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground transition">
-              Início
-            </Link>
-            <Link to="/pricing" className="hover:text-foreground transition">
-              Planos
-            </Link>
-          </nav>
-          <Link
-            to="/"
-            className="text-sm rounded-full border h-9 px-4 inline-flex items-center hover:bg-muted"
-          >
-            Voltar
-          </Link>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="pt-16 sm:pt-24 pb-12">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
-          <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-accent">
-            <Sparkles className="h-3.5 w-3.5" />
-            Módulo do Arquiteto
-          </div>
-
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl tracking-[-0.02em] font-semibold leading-[1.05]">
-            Acelerador de{" "}
-            <span className="font-serif italic font-normal text-accent">Estudos Preliminares</span>{" "}
-            para Arquitetos
-          </h1>
-
-          <p className="mt-6 text-muted-foreground text-lg leading-relaxed">
-            Transforme uma foto ou planta do terreno em estudos preliminares com rapidez. A IA do
-            Ideal Space cuida do partido inicial, do estudo de layout e da apresentação 5D para que
-            você dedique o seu tempo ao que importa: o projeto executivo.
-          </p>
-
-          <div className="mt-9">
-            <Button
-              onClick={() => setLeadOpen(true)}
-              className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
-            >
-              Solicitar Módulo do Arquiteto
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Promessas — anteprojetos CAD/BIM e render 5D */}
-      <section className="py-16 sm:py-20 bg-card/40 border-y border-border/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
-              Pensado para o escritório
-            </div>
-            <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold">
-              Do briefing ao anteprojeto,{" "}
-              <span className="font-serif italic font-normal">sem retrabalho</span>.
-            </h2>
-          </div>
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {PROMISES.map((p) => (
-              <div key={p.title} className="rounded-3xl border bg-background p-6">
-                <div className="h-10 w-10 rounded-xl bg-accent/15 text-accent grid place-items-center">
-                  <p.icon className="h-5 w-5" />
-                </div>
-                <div className="mt-4 font-medium">{p.title}</div>
-                <div className="text-sm text-muted-foreground mt-1">{p.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA final */}
-      <section className="py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="rounded-3xl border bg-foreground text-background p-8 sm:p-12 flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
-            <div className="max-w-xl">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
-                Fale com nosso time de Projetos
-              </div>
-              <h2 className="mt-3 text-2xl sm:text-3xl tracking-[-0.02em] font-semibold">
-                Leve a IA para o seu escritório de arquitetura.
-              </h2>
-              <p className="mt-3 text-background/70 text-sm">
-                Conte sobre os seus projetos e montamos uma demonstração do Módulo do Arquiteto sob
-                medida para a sua rotina.
-              </p>
-            </div>
-            <ul className="space-y-2 text-sm shrink-0">
-              {[
-                "Estudo de layout assistido",
-                "Exportação amigável a CAD/BIM",
-                "Render 5D com estimativa de custo",
-              ].map((item) => (
-                <li key={item} className="flex gap-2">
-                  <Check className="h-4 w-4 mt-0.5 text-accent shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="mt-6 text-center">
-            <Button
-              onClick={() => setLeadOpen(true)}
-              className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
-            >
-              Solicitar Módulo do Arquiteto
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {leadMounted && (
-        <Suspense fallback={modalFallback}>
-          <LeadFormModal
-            open={leadOpen}
-            onOpenChange={setLeadOpen}
-            source="para-arquitetos"
-            planInterest="pro"
-            title="Fale com nosso time de Projetos"
-          />
-        </Suspense>
-      )}
-    </div>
+    <ProfessionalLanding
+      heroKicker="Módulo do Arquiteto"
+      heroHeading={
+        <>
+          Acelerador de{" "}
+          <span className="font-serif italic font-normal text-accent">Estudos Preliminares</span>{" "}
+          para Arquitetos
+        </>
+      }
+      heroSubtitle="Transforme uma foto ou planta do terreno em estudos preliminares com rapidez. A IA do Ideal Space cuida do partido inicial, do estudo de layout e da apresentação 5D para que você dedique o seu tempo ao que importa: o projeto executivo."
+      ctaLabel="Solicitar Módulo do Arquiteto"
+      promisesKicker="Pensado para o escritório"
+      promisesHeading={
+        <>
+          Do briefing ao anteprojeto,{" "}
+          <span className="font-serif italic font-normal">sem retrabalho</span>.
+        </>
+      }
+      promises={PROMISES}
+      finalKicker="Fale com nosso time de Projetos"
+      finalHeading="Leve a IA para o seu escritório de arquitetura."
+      finalDescription="Conte sobre os seus projetos e montamos uma demonstração do Módulo do Arquiteto sob medida para a sua rotina."
+      finalBullets={[
+        "Estudo de layout assistido",
+        "Exportação amigável a CAD/BIM",
+        "Render 5D com estimativa de custo",
+      ]}
+      leadSource="para-arquitetos"
+      leadPlanInterest="pro"
+      leadTitle="Fale com nosso time de Projetos"
+    />
   );
 }
