@@ -21,6 +21,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VsPlanner5dRouteImport } from './routes/vs.planner-5d'
 import { Route as PProjectIdRouteImport } from './routes/p.$projectId'
 import { Route as EstilosStyleSlugRouteImport } from './routes/estilos.$styleSlug'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -94,6 +95,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const VsPlanner5dRoute = VsPlanner5dRouteImport.update({
+  id: '/vs/planner-5d',
+  path: '/vs/planner-5d',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PProjectIdRoute = PProjectIdRouteImport.update({
   id: '/p/$projectId',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
   '/p/$projectId': typeof PProjectIdRoute
+  '/vs/planner-5d': typeof VsPlanner5dRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
   '/p/$projectId': typeof PProjectIdRoute
+  '/vs/planner-5d': typeof VsPlanner5dRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
   '/p/$projectId': typeof PProjectIdRoute
+  '/vs/planner-5d': typeof VsPlanner5dRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
+    | '/vs/planner-5d'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
+    | '/vs/planner-5d'
     | '/admin'
   id:
     | '__root__'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
+    | '/vs/planner-5d'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -337,6 +349,7 @@ export interface RootRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
   EstilosStyleSlugRoute: typeof EstilosStyleSlugRoute
   PProjectIdRoute: typeof PProjectIdRoute
+  VsPlanner5dRoute: typeof VsPlanner5dRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -424,6 +437,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/vs/planner-5d': {
+      id: '/vs/planner-5d'
+      path: '/vs/planner-5d'
+      fullPath: '/vs/planner-5d'
+      preLoaderRoute: typeof VsPlanner5dRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/p/$projectId': {
       id: '/p/$projectId'
@@ -573,6 +593,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
   EstilosStyleSlugRoute: EstilosStyleSlugRoute,
   PProjectIdRoute: PProjectIdRoute,
+  VsPlanner5dRoute: VsPlanner5dRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
