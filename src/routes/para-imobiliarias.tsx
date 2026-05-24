@@ -69,9 +69,55 @@ function ParaImobiliariasPage() {
         "Modo lote para vários cômodos",
         "Marca d'água da imobiliária opcional",
       ]}
+      faq={FAQ}
+      internalLinks={INTERNAL_LINKS}
       leadSource="para-imobiliarias"
       leadPlanInterest="pro"
       leadTitle="Solicitar Proposta Comercial"
     />
   );
 }
+
+/** FAQ específica de imobiliária. Foco em volume, portais e venda. */
+const FAQ = [
+  {
+    q: "Funciona em imóvel vazio?",
+    a: "Sim. O caso de uso principal é exatamente esse: foto de ambiente vazio entra, ambiente decorado sai. A IA preserva a geometria (paredes, janelas, piso) e adiciona mobília e decoração coerentes com o estilo escolhido.",
+  },
+  {
+    q: "Posso processar uma carteira inteira de uma vez?",
+    a: "O modo lote está sendo liberado pra equipes da lista de espera. Você sobe um pacote de fotos e recebe os ambientes decorados em fila, sem ter que processar um por um.",
+  },
+  {
+    q: "As imagens saem no formato dos portais (Zap, OLX, ImovelWeb)?",
+    a: "As imagens saem em 4:3, formato padrão dos principais portais imobiliários do Brasil. Você baixa direto e sobe no seu anúncio sem precisar cortar.",
+  },
+  {
+    q: "Tem marca d'água da minha imobiliária?",
+    a: "Sim, opcional. Você pode subir o seu logo e habilitar a marca d'água em todas as imagens geradas. Quem só quer a imagem limpa também pode desligar.",
+  },
+  {
+    q: "Os móveis nas imagens existem no imóvel?",
+    a: "Não. Por LGPD e transparência, recomendamos identificar no anúncio que a decoração é virtual staging, gerada por IA. Os móveis não estão fisicamente no imóvel.",
+  },
+  {
+    q: "Quanto custa pra uma equipe de corretores?",
+    a: "Tem plano individual no /pricing e proposta dedicada para equipes com volume. Use o formulário pra contar a quantidade de anúncios e a gente desenha pacote por imóvel ou licença por equipe.",
+  },
+  {
+    q: "Vocês fazem retoque manual depois?",
+    a: "Não. A entrega é 100% gerada por IA. Se precisar de retoque artístico ou produção fotográfica tradicional, recomendamos combinar com um fotógrafo especializado.",
+  },
+];
+
+/** Cross-links pra distribuir PageRank. Foco em cômodos vendíveis e estilos populares. */
+const INTERNAL_LINKS = [
+  { label: "Arquitetos", to: "/para-arquitetos" },
+  { label: "Designers", to: "/para-designers" },
+  { label: "Sala", to: "/ambientes/sala" },
+  { label: "Quarto", to: "/ambientes/quarto" },
+  { label: "Cozinha", to: "/ambientes/cozinha" },
+  { label: "Estilo Contemporâneo", to: "/estilos/contemporaneo" },
+  { label: "Estilo Natural", to: "/estilos/natural" },
+  { label: "Planos", to: "/pricing" },
+];

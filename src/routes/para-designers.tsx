@@ -69,9 +69,55 @@ function ParaDesignersPage() {
         "Variações 2D por estilo e paleta",
         "PDF de proposta com a sua marca",
       ]}
+      faq={FAQ}
+      internalLinks={INTERNAL_LINKS}
       leadSource="para-designers"
       leadPlanInterest="premium"
       leadTitle="Acessar Estúdio do Designer"
     />
   );
 }
+
+/** FAQ específica do designer. Foco em autoria, branding e cliente final. */
+const FAQ = [
+  {
+    q: "A IA decide o estilo no meu lugar?",
+    a: "Não. Você escolhe o estilo, o cômodo e o orçamento; a IA propõe variações dentro do escopo. O olhar autoral e a curadoria final continuam sendo seus.",
+  },
+  {
+    q: "Posso editar antes de mandar pro cliente?",
+    a: "Sim. A versão 2D é o ponto de partida. Você pode gerar variações, salvar projetos, montar moodboards e exportar PDF com a sua identidade visual antes de apresentar.",
+  },
+  {
+    q: "O PDF leva o meu logo e as minhas cores?",
+    a: "Sim. O PDF de proposta inclui o seu logo, paleta e descrição. A entrega chega no cliente com a sua marca, não com a marca do Ideal Space.",
+  },
+  {
+    q: "Funciona pra projetos comerciais e residenciais?",
+    a: "Funciona em ambos. Residencial é o foco principal, mas pequenos comerciais como cafés, salas de espera e consultórios também rodam bem por usar a mesma lógica de cômodo + estilo.",
+  },
+  {
+    q: "Os produtos sugeridos são reais?",
+    a: "São aproximações pelo estilo escolhido, sem garantia de produto idêntico ou disponibilidade. Use como referência de orçamento e ponto de partida pra curadoria do seu fornecedor.",
+  },
+  {
+    q: "Quantas variações eu posso gerar?",
+    a: "Depende do plano. O plano free traz 3 gerações grátis por mês; o premium libera volume e variações lado a lado pra apresentação A/B.",
+  },
+  {
+    q: "A IA substitui meu papel de designer?",
+    a: "Não. A IA cuida da parte repetitiva (moodboard inicial, paleta, lista de compras de referência) pra você dedicar tempo à conceituação, especificação e relacionamento com o cliente.",
+  },
+];
+
+/** Cross-links pra distribuir PageRank. Foco em estilos populares e perfis vizinhos. */
+const INTERNAL_LINKS = [
+  { label: "Arquitetos", to: "/para-arquitetos" },
+  { label: "Imobiliárias", to: "/para-imobiliarias" },
+  { label: "Estilo Japandi", to: "/estilos/japandi" },
+  { label: "Estilo Minimalista", to: "/estilos/minimalista" },
+  { label: "Estilo Natural", to: "/estilos/natural" },
+  { label: "Sala", to: "/ambientes/sala" },
+  { label: "Quarto", to: "/ambientes/quarto" },
+  { label: "Planos", to: "/pricing" },
+];

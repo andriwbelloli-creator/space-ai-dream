@@ -1,6 +1,15 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Sparkles, Check, type LucideIcon } from "lucide-react";
+import {
+  ArrowRight,
+  Sparkles,
+  Check,
+  ChevronDown,
+  ShieldCheck,
+  ShoppingBag,
+  Info,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const LeadFormModal = lazy(() =>
@@ -24,6 +33,44 @@ export type ProfessionalPromise = {
   desc: string;
 };
 
+/** Pergunta + resposta exibida no accordion de FAQ. */
+export type ProfessionalLandingFaq = { q: string; a: string };
+
+/** Link interno exibido na seção "Veja também". */
+export type ProfessionalLandingLink = { label: string; to: string };
+
+/**
+ * Bloco de transparência exibido em todas as landings profissionais. Cobre
+ * 4 pontos: o que está disponível hoje (2D), como tratar a lista de
+ * produtos, o que a IA é (proposta visual) e o que a IA NÃO substitui
+ * (projeto técnico), e privacidade/LGPD.
+ *
+ * Conteúdo igual em todas as 3 landings — repetir é um sinal pra Google
+ * que estes 4 pontos são parte estável do produto, não promessa solta.
+ */
+const TRUST_ITEMS = [
+  {
+    icon: Sparkles,
+    title: "2D disponível agora",
+    desc: "Geramos hoje a versão 2D do ambiente, com lista de compras e estimativa de orçamento. Render 5D e planta baixa estão em desenvolvimento como acesso antecipado.",
+  },
+  {
+    icon: ShoppingBag,
+    title: "Produtos como referência",
+    desc: "A lista de compras sugere produtos aproximados pelo estilo, sem garantia de produto idêntico ou disponibilidade no marketplace.",
+  },
+  {
+    icon: Info,
+    title: "Proposta visual, não projeto técnico",
+    desc: "Os resultados são propostas visuais geradas por IA. Não substituem projeto executivo de arquitetura, ART/RRT ou aprovação de obra.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Privacidade e LGPD",
+    desc: "As fotos enviadas ficam privadas por padrão. Você decide quando, e se, compartilhar cada projeto.",
+  },
+];
+
 /**
  * Props do template usado pelas 3 landings de perfis profissionais:
  * /para-arquitetos, /para-designers, /para-imobiliarias.
@@ -32,8 +79,8 @@ export type ProfessionalPromise = {
  * em itálico serif accent dentro do H1/H2 (ex: "Acelerador de
  * <em>Estudos Preliminares</em>").
  *
- * Não inclui FAQ, trust block, internal links nem disclaimer 2D — esses
- * blocos vêm no Lote SEO Engine Fase B.
+ * Trust block (transparência 2D/produtos/IA/LGPD) é shared — não vem como
+ * prop, é renderizado igual nas 3 páginas.
  */
 export type ProfessionalLandingProps = {
   /** Texto curto exibido como chip do hero (com ícone Sparkles). */
@@ -50,6 +97,10 @@ export type ProfessionalLandingProps = {
   promisesHeading: React.ReactNode;
   /** 3 cards de promessa exibidos em grid. */
   promises: ProfessionalPromise[];
+  /** Perguntas frequentes específicas do perfil (accordion). */
+  faq: ProfessionalLandingFaq[];
+  /** Links internos pra outras landings relacionadas. */
+  internalLinks: ProfessionalLandingLink[];
   /** Kicker do bloco preto de CTA final. */
   finalKicker: string;
   /** Heading do bloco preto de CTA final. */
@@ -79,6 +130,8 @@ export function ProfessionalLanding({
   promisesKicker,
   promisesHeading,
   promises,
+  faq,
+  internalLinks,
   finalKicker,
   finalHeading,
   finalDescription,
@@ -93,6 +146,8 @@ export function ProfessionalLanding({
   useEffect(() => {
     if (leadOpen) setLeadMounted(true);
   }, [leadOpen]);
+  // Accordion da FAQ — apenas 1 item aberto por vez. null = todos fechados.
+  const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -168,6 +223,96 @@ export function ProfessionalLanding({
                 <div className="mt-4 font-medium">{p.title}</div>
                 <div className="text-sm text-muted-foreground mt-1">{p.desc}</div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust / Disclaimers — shared em todas as landings profissionais */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto">
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Transparência</div>
+            <h2 className="mt-3 text-2xl sm:text-3xl tracking-[-0.02em] font-semibold">
+              Sobre o nosso <span className="font-serif italic font-normal">jeito de entregar</span>
+            </h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              O que está disponível hoje, o que vem em breve e o que esperar de cada entrega.
+            </p>
+          </div>
+          <div className="mt-10 grid sm:grid-cols-2 gap-4">
+            {TRUST_ITEMS.map((item) => (
+              <div key={item.title} className="rounded-3xl border bg-card/40 p-5 flex gap-4">
+                <span className="h-10 w-10 shrink-0 rounded-xl bg-accent/15 text-accent grid place-items-center">
+                  <item.icon className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <div className="font-medium text-sm">{item.title}</div>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ — accordion específico do perfil */}
+      <section className="py-16 sm:py-20 border-t border-border/60 bg-card/40">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <div className="text-center">
+            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Perguntas</div>
+            <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl tracking-[-0.02em] font-semibold">
+              Tire suas <span className="font-serif italic font-normal">dúvidas</span>
+            </h2>
+          </div>
+          <div className="mt-10 divide-y divide-border/60">
+            {faq.map((item, idx) => {
+              const open = openFaqIdx === idx;
+              return (
+                <div key={item.q} className="py-1">
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIdx(open ? null : idx)}
+                    aria-expanded={open}
+                    className="w-full flex items-center justify-between gap-4 py-4 text-left hover:text-foreground transition"
+                  >
+                    <span className="text-base font-medium">{item.q}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+                        open ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  {open && (
+                    <div className="pb-5 -mt-1">
+                      <p className="text-sm leading-relaxed text-muted-foreground">{item.a}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Internal links — distribui PageRank pra outras landings */}
+      <section className="py-12 border-t border-border/60">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-accent text-center">
+            Veja também
+          </div>
+          <h2 className="mt-2 text-xl sm:text-2xl tracking-[-0.02em] font-semibold text-center">
+            Outras páginas que podem interessar
+          </h2>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {internalLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="inline-flex h-9 items-center rounded-full border border-border bg-background px-4 text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition"
+              >
+                {link.label}
+              </Link>
             ))}
           </div>
         </div>
