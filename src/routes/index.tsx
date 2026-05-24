@@ -6,7 +6,6 @@ import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
-import { EstilosGrid } from "@/components/EstilosGrid";
 import { PresentationModal } from "@/components/PresentationModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
@@ -82,6 +81,14 @@ import {
 
 // All marketing imagery — single source of truth, one image per section.
 import { imagesFor, pair, img } from "@/lib/image-catalog";
+
+// Assets adicionais pros 5 estilos novos (R2) que entram no StylesCarousel
+// sem estar no image-catalog (que zela só pelas seções principais).
+import styleBoho from "@/assets/moodboard-pro.jpg";
+import styleMidCentury from "@/assets/decorated-living.jpg";
+import styleMediterraneo from "@/assets/decorated-living-warm.jpg";
+import styleArtDeco from "@/assets/decorated-bathroom-suite.jpg";
+import styleMaximalista from "@/assets/decorated-dining.jpg";
 
 const heroPair = pair("hero-living");
 const emptyLiving = heroPair.empty!.src;
@@ -198,20 +205,96 @@ const emptyRooms = imagesFor("empty-carousel").map((i) => ({
   sub: ROOM_META[i.id]?.sub ?? "",
 }));
 
-const STYLE_META: Record<string, { name: string; sub: string; styleId: string }> = {
-  "style-japandi": { name: "Japandi", sub: "Calma, oak e linho", styleId: "japandi" },
-  "style-scandi": { name: "Escandinavo", sub: "Claro, leve, neutro", styleId: "minimal" },
-  "style-modern": { name: "Contemporâneo", sub: "Linhas suaves e arte", styleId: "modern" },
-  "style-industrial": { name: "Industrial", sub: "Tijolo, metal e couro", styleId: "industrial" },
-  "style-luxo": { name: "Luxo discreto", sub: "Nobreza e brass", styleId: "luxe" },
-  "style-natural": { name: "Natural", sub: "Fibras, plantas, cerâmica", styleId: "natural" },
+const STYLE_META: Record<string, { name: string; sub: string; styleId: string; slug: string }> = {
+  "style-japandi": {
+    name: "Japandi",
+    sub: "Calma, oak e linho",
+    styleId: "japandi",
+    slug: "japandi",
+  },
+  "style-scandi": {
+    name: "Minimalista",
+    sub: "Claro, leve, neutro",
+    styleId: "minimal",
+    slug: "minimalista",
+  },
+  "style-modern": {
+    name: "Contemporâneo",
+    sub: "Linhas suaves e arte",
+    styleId: "modern",
+    slug: "contemporaneo",
+  },
+  "style-industrial": {
+    name: "Industrial",
+    sub: "Tijolo, metal e couro",
+    styleId: "industrial",
+    slug: "industrial",
+  },
+  "style-luxo": {
+    name: "Luxo discreto",
+    sub: "Nobreza e brass",
+    styleId: "luxe",
+    slug: "luxo",
+  },
+  "style-natural": {
+    name: "Natural",
+    sub: "Fibras, plantas, cerâmica",
+    styleId: "natural",
+    slug: "natural",
+  },
 };
-const styles = imagesFor("style-carousel").map((i) => ({
-  img: i.src,
-  name: STYLE_META[i.id]?.name ?? i.alt,
-  sub: STYLE_META[i.id]?.sub ?? "",
-  styleId: STYLE_META[i.id]?.styleId ?? "japandi",
-}));
+
+/** Styles do marquee — 6 originais do catalog + 5 novos (R2) com slug pra rota. */
+const styles: ReadonlyArray<{
+  img: string;
+  name: string;
+  sub: string;
+  styleId: string;
+  slug: string;
+}> = [
+  ...imagesFor("style-carousel").map((i) => ({
+    img: i.src,
+    name: STYLE_META[i.id]?.name ?? i.alt,
+    sub: STYLE_META[i.id]?.sub ?? "",
+    styleId: STYLE_META[i.id]?.styleId ?? "japandi",
+    slug: STYLE_META[i.id]?.slug ?? "japandi",
+  })),
+  {
+    img: styleBoho,
+    name: "Boho chic",
+    sub: "Camadas e tons quentes",
+    styleId: "boho",
+    slug: "boho-chic",
+  },
+  {
+    img: styleMidCentury,
+    name: "Mid-century",
+    sub: "Linhas atemporais",
+    styleId: "mid-century",
+    slug: "mid-century",
+  },
+  {
+    img: styleMediterraneo,
+    name: "Mediterrâneo",
+    sub: "Luz natural, cerâmica",
+    styleId: "mediterraneo",
+    slug: "mediterraneo",
+  },
+  {
+    img: styleArtDeco,
+    name: "Art déco",
+    sub: "Geometria sofisticada",
+    styleId: "art-deco",
+    slug: "art-deco",
+  },
+  {
+    img: styleMaximalista,
+    name: "Maximalista",
+    sub: "Camadas autorais",
+    styleId: "maximalista",
+    slug: "maximalista",
+  },
+];
 
 const shoppingList = [
   { tag: "Essencial", name: "Sofá 3 lugares", cat: "Móveis principais", price: "R$ 1.200–3.500" },
@@ -487,10 +570,10 @@ function Index() {
         onUpload={openUpload}
       />
       <Marquee />
+      <StylesCarousel onUpload={openUpload} />
       <FeaturedBeforeAfter />
       <HowItWorks onDemo={() => handlePresentation(true)} />
       <AmbientesGrid />
-      <EstilosGrid />
       <EditorialCollections />
       <ResultShowcase
         onBudget={() => openReward("budget")}
@@ -502,7 +585,6 @@ function Index() {
         onPickStyle={openUploadWithStyle}
         onLead={(title) => setLead({ planInterest: "pro", title })}
       />
-      <RankingStrip onUpload={openUpload} />
       <Professionals onUpload={openUpload} onCourse={() => setCourseOpen(true)} />
       <Pricing
         onReward={openReward}
@@ -1152,13 +1234,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
 
 /* ----------------------------- STYLES ----------------------------- */
 
-function StylesCarousel({
-  onPickStyle,
-  onUpload,
-}: {
-  onPickStyle: (styleId: string) => void;
-  onUpload: () => void;
-}) {
+function StylesCarousel({ onUpload }: { onUpload: () => void }) {
   return (
     <section id="estilos" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -1170,7 +1246,7 @@ function StylesCarousel({
                 Defina a <span className="font-serif italic font-normal">estética</span> do projeto
               </>
             }
-            sub="A IA aplica o estilo escolhido ao ambiente, preservando proporção e estrutura."
+            sub="A IA aplica o estilo escolhido ao ambiente, preservando proporção e estrutura. Onze direções estéticas com landing dedicada."
           />
           <Button onClick={onUpload} variant="outline" className="rounded-full h-11 px-5 text-sm">
             <Camera className="h-4 w-4 mr-1.5" /> Enviar minha foto
@@ -1179,21 +1255,18 @@ function StylesCarousel({
       </div>
 
       <div className="relative mt-10 -mx-4 sm:mx-0">
-        {/* Marquee continua — scroll fluido em loop, sem pausas. Cards
-            duplicados pra fechar o loop seamlessly. 30s por ciclo (mais
-            rapida que a versao antiga de 70s, mas com tempo de leitura).
-            Pausa em hover + focus-within pra deixar o usuario clicar
-            sem o card "fugir". Em prefers-reduced-motion cai pra scroll
-            manual com snap. */}
+        {/* Marquee — scroll fluido em loop. Cards duplicados pra fechar o
+            loop seamlessly. 35s por ciclo (com tempo de leitura pros 11 estilos).
+            Pausa em hover + focus-within. Em prefers-reduced-motion cai pra
+            scroll manual com snap. Cada card linka pra /estilos/<slug>. */}
         <div className="overflow-hidden motion-reduce:overflow-x-auto motion-reduce:snap-x motion-reduce:snap-mandatory motion-reduce:scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex w-max gap-5 pl-4 sm:pl-6 pb-2 whitespace-nowrap will-change-transform [animation:is-marquee_30s_linear_infinite] hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] motion-reduce:[animation:none] motion-reduce:w-auto motion-reduce:pr-8 motion-reduce:sm:pr-12">
+          <div className="flex w-max gap-5 pl-4 sm:pl-6 pb-2 whitespace-nowrap will-change-transform [animation:is-marquee_35s_linear_infinite] hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] motion-reduce:[animation:none] motion-reduce:w-auto motion-reduce:pr-8 motion-reduce:sm:pr-12">
             {[...styles, ...styles].map((s, i) => (
-              <button
+              <Link
                 key={`${s.styleId ?? "s"}-${i}`}
-                type="button"
-                onClick={() => onPickStyle(s.styleId)}
-                aria-label={`Aplicar estilo ${s.name}`}
-                className="group snap-start shrink-0 w-[78%] sm:w-[280px] lg:w-[320px] rounded-3xl overflow-hidden bg-card border text-left hover:shadow-xl transition-shadow"
+                to={`/estilos/${s.slug}`}
+                aria-label={`Ver estilo ${s.name}`}
+                className="group snap-start shrink-0 w-[78%] sm:w-[280px] lg:w-[320px] rounded-3xl overflow-hidden bg-card border hover:shadow-xl transition-shadow"
               >
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <img
@@ -1206,7 +1279,7 @@ function StylesCarousel({
                     {s.name}
                   </span>
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
         </div>

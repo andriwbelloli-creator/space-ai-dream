@@ -1,6 +1,6 @@
 /**
  * Coleções editoriais — curadorias TEMÁTICAS (não estilos ou ambientes
- * individuais — esses têm suas próprias seções AmbientesGrid e EstilosGrid
+ * individuais — ambientes ficam em AmbientesGrid; estilos no StylesCarousel
  * mais acima na home).
  *
  * Cada coleção responde a uma necessidade/contexto do usuário: "tenho um

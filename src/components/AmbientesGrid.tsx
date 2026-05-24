@@ -1,14 +1,15 @@
 /**
- * Ambientes para transformar — UMA seção consolidada na home com todos
- * os 11 ambientes que têm landing dedicada em /ambientes/<slug>. Substitui
- * EmptyRoomsCarousel + MoreRoomsGrid (eliminados pra evitar redundância).
+ * Ambientes para transformar — UMA seção consolidada na home mostrando 8
+ * ambientes principais + CTA pros 3 restantes. As 11 rotas /ambientes/<slug>
+ * continuam acessíveis; só limito a presença visual na home pra evitar
+ * scroll longo. Cards menos representados (lavabo, quarto-infantil, sala-tv)
+ * ficam disponíveis via landing direta + cross-links nas páginas de estilo.
  *
- * Layout: grid editorial com 1 destaque grande (col-span-2) + 10 cards
- * regulares. Mobile 1 col, sm 2 cols, lg 4 cols. Cada card é PremiumOverlayCard
- * apontando pra /ambientes/<slug>, com aspect tall pra dar peso visual.
- *
- * Imagens reaproveitam assets já existentes (sem trocar nem regerar).
+ * Layout: grid editorial 1 destaque grande + 7 cards regulares. Mobile 1
+ * col, sm 2, lg 4. Cada card é PremiumOverlayCard apontando pra rota.
  */
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
 
 import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
@@ -19,9 +20,6 @@ import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
 import galleryLoft from "@/assets/gallery-loft.jpg";
 import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
 import galleryVaranda from "@/assets/gallery-varanda.jpg";
-import styleJapandi from "@/assets/style-japandi.jpg";
-import decoratedBathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
-import styleIndustrial from "@/assets/style-industrial.jpg";
 
 type RoomItem = {
   slug: string;
@@ -90,27 +88,6 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     src: galleryVaranda,
     alt: "Varanda gourmet com plantas e mesa de receber",
   },
-  {
-    slug: "quarto-infantil",
-    name: "Quarto infantil",
-    description: "Funcional pra dormir, brincar e estudar. Cresce com a criança.",
-    src: styleJapandi,
-    alt: "Quarto infantil com paleta serena e composição minimal",
-  },
-  {
-    slug: "lavabo",
-    name: "Lavabo",
-    description: "Aceita ousadia: papel de parede, cuba esculpida, espelho ornamental.",
-    src: decoratedBathroomSuite,
-    alt: "Lavabo decorado com materiais nobres",
-  },
-  {
-    slug: "sala-tv",
-    name: "Sala de TV",
-    description: "Conforto pra assistir, beleza pra receber.",
-    src: styleIndustrial,
-    alt: "Sala de TV com sofá, painel e iluminação ambiente",
-  },
 ] as const;
 
 export function AmbientesGrid() {
@@ -124,18 +101,17 @@ export function AmbientesGrid() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-10 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            <span className="is-kicker">Ambientes para transformar</span>
+            <span className="is-kicker">Qual ambiente você quer transformar?</span>
             <h2
               id="ambientes-heading"
               className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl"
             >
-              Onze cômodos com <span className="italic">landing dedicada</span>, do quarto ao
-              lavabo.
+              Comece pelo cômodo que faz <span className="italic">a maior diferença</span>.
             </h2>
           </div>
           <p className="max-w-sm text-sm text-muted-foreground sm:text-base">
-            Cada ambiente abre uma página com benefícios, FAQ, sugestões de estilo e lista de
-            compras de referência.
+            Cada ambiente abre uma página com benefícios, FAQ, estilos sugeridos e lista de compras
+            de referência.
           </p>
         </div>
 
@@ -168,6 +144,34 @@ export function AmbientesGrid() {
               ctaLabel="Decorar"
             />
           ))}
+        </div>
+
+        {/* CTA "Ver todos" — 11 ambientes total, 8 em destaque acima. */}
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-6 sm:mt-10">
+          <p className="text-sm text-muted-foreground">
+            Também temos landings dedicadas pra quarto infantil, lavabo e sala de TV.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to="/ambientes/quarto-infantil"
+              className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors"
+            >
+              Quarto infantil
+            </Link>
+            <Link
+              to="/ambientes/lavabo"
+              className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors"
+            >
+              Lavabo
+            </Link>
+            <Link
+              to="/ambientes/sala-tv"
+              className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors"
+            >
+              Sala de TV
+              <ArrowRight className="size-3" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>
