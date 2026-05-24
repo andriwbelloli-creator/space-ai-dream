@@ -8,7 +8,10 @@
  * (já cobrimos quarto e banheiro no grid principal). Eles seguem acessíveis
  * via cross-links em páginas relacionadas e via URL direta.
  *
- * Imagens reaproveitam assets existentes (sem trocar nem regerar).
+ * Imagens majoritariamente reaproveitadas dos assets existentes. Duas
+ * novas adicionadas pelo dono em src/assets/:
+ *   - decorated-closet.jpg (closet com armários abertos e ilha)
+ *   - decorated-varanda-gourmet.jpg (varanda com churrasqueira e mesa)
  */
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
 
@@ -18,8 +21,8 @@ import decoratedKitchen from "@/assets/decorated-kitchen.jpg";
 import galleryOffice from "@/assets/gallery-office.jpg";
 import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
 import galleryLoft from "@/assets/gallery-loft.jpg";
-import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
-import galleryVaranda from "@/assets/gallery-varanda.jpg";
+import decoratedCloset from "@/assets/decorated-closet.jpg";
+import decoratedVarandaGourmet from "@/assets/decorated-varanda-gourmet.jpg";
 
 type RoomItem = {
   slug: string;
@@ -75,16 +78,17 @@ const ROOMS: ReadonlyArray<RoomItem> = [
   {
     slug: "varanda-gourmet",
     name: "Varanda gourmet",
-    description: "Receba bem em escala proporcional ao seu espaço.",
-    src: galleryVaranda,
-    alt: "Varanda gourmet com plantas e mesa de receber",
+    description: "Mesa, bancada, churrasqueira e plantas. Extensão da sala como área social.",
+    src: decoratedVarandaGourmet,
+    alt: "Varanda gourmet com churrasqueira, mesa de madeira e vista urbana",
   },
   {
     slug: "closet",
     name: "Closet",
-    description: "Organização modular e iluminação que valorizam.",
-    src: rankMinimalBedroom,
-    alt: "Closet organizado com iluminação direta",
+    description:
+      "Roupas, sapatos e acessórios organizados e visíveis. Cômodo dedicado ou integrado.",
+    src: decoratedCloset,
+    alt: "Closet com armários abertos, ilha central e iluminação direta",
   },
 ] as const;
 
