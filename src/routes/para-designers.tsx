@@ -4,6 +4,7 @@ import {
   ProfessionalLanding,
   type ProfessionalPromise,
 } from "@/components/landing/ProfessionalLanding";
+import { faqPageJsonLd } from "@/lib/structured-data";
 
 const TITLE = "Estúdio de IA para Designers de Interiores | Ideal Space";
 const DESCRIPTION =
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/para-designers")({
       { property: "og:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: "https://idealspace.com.br/para-designers" }],
+    scripts: [faqPageJsonLd(FAQ)],
   }),
   component: ParaDesignersPage,
 });

@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { SEO_ROOMS, type RoomSlug } from "@/lib/seo-rooms-data";
 import { ExpandedLanding } from "@/components/ExpandedLanding";
+import { faqPageJsonLd } from "@/lib/structured-data";
 
 /** Type guard: o slug recebido é um cômodo conhecido do mapa de SEO. */
 function isRoomSlug(slug: string): slug is RoomSlug {
@@ -55,6 +56,8 @@ export const Route = createFileRoute("/ambientes/$roomSlug")({
             ],
           }),
         },
+        // FAQPage Schema — habilita rich snippets de FAQ no Google.
+        faqPageJsonLd(room.faq),
       ],
     };
   },

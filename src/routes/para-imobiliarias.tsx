@@ -4,6 +4,7 @@ import {
   ProfessionalLanding,
   type ProfessionalPromise,
 } from "@/components/landing/ProfessionalLanding";
+import { faqPageJsonLd } from "@/lib/structured-data";
 
 const TITLE = "Virtual Staging com IA para Anúncios Imobiliários | Ideal Space";
 const DESCRIPTION =
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/para-imobiliarias")({
       { property: "og:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: "https://idealspace.com.br/para-imobiliarias" }],
+    scripts: [faqPageJsonLd(FAQ)],
   }),
   component: ParaImobiliariasPage,
 });

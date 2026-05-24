@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { SEO_STYLES, type StyleSlug } from "@/lib/seo-styles-data";
 import { ExpandedLanding } from "@/components/ExpandedLanding";
+import { faqPageJsonLd } from "@/lib/structured-data";
 
 /** Type guard: o slug recebido é um estilo conhecido do mapa de SEO. */
 function isStyleSlug(slug: string): slug is StyleSlug {
@@ -46,6 +47,8 @@ export const Route = createFileRoute("/estilos/$styleSlug")({
             ],
           }),
         },
+        // FAQPage Schema — habilita rich snippets de FAQ no Google.
+        faqPageJsonLd(style.faq),
       ],
     };
   },
