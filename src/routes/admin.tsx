@@ -29,9 +29,24 @@ function AdminShell({ children }: { children: React.ReactNode }) {
               IS
             </span>
             <span className="text-sm font-semibold tracking-tight">Admin · Ideal Space</span>
-            <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-              Leads
-            </span>
+            <nav className="ml-1 flex items-center gap-0.5">
+              <Link
+                to="/admin/leads"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Leads
+              </Link>
+              <Link
+                to="/admin/insights"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Funil
+              </Link>
+            </nav>
           </div>
           <Link
             to="/"

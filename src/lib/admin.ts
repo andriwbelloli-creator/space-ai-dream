@@ -121,3 +121,179 @@ export const getAdminLeads = createServerFn({ method: "GET" })
       return { ok: false, reason: "error", message: "Erro inesperado ao carregar os leads." };
     }
   });
+
+// ─── Insights / Funil ───────────────────────────────────────────────────────
+
+const STYLE_LABELS_INSIGHTS: Record<string, string> = {
+  japandi: "Japandi",
+  modern: "Contemporâneo",
+  contemporaneo: "Contemporâneo",
+  minimal: "Minimalista",
+  minimalista: "Minimalista",
+  natural: "Natural",
+  industrial: "Industrial",
+  luxe: "Luxo discreto",
+  escandinavo: "Escandinavo",
+};
+
+const ROOM_LABELS_INSIGHTS: Record<string, string> = {
+  sala: "Sala",
+  quarto: "Quarto",
+  cozinha: "Cozinha",
+  "home-office": "Home office",
+  banheiro: "Banheiro",
+  outro: "Outro",
+};
+
+const ADMIN_FUNNEL_STEPS: ReadonlyArray<{ event: string; label: string }> = [
+  { event: "start_project", label: "Iniciou projeto" },
+  { event: "image_uploaded", label: "Enviou foto" },
+  { event: "image_generated", label: "Gerou imagem" },
+  { event: "shopping_list_loaded", label: "Viu lista" },
+  { event: "affiliate_click", label: "Clicou afiliado" },
+  { event: "project_made_public", label: "Compartilhou" },
+];
+
+const MAX_EVENTS_INSIGHTS = 10_000;
+const MAX_PROJECTS_INSIGHTS = 2_000;
+
+export type AdminRankedItem = { slug: string; label: string; count: number };
+
+export type AdminFunnelStep = {
+  event: string;
+  label: string;
+  count: number;
+  pct: number;
+};
+
+export type AdminInsights = {
+  projectsTotal: number;
+  projectsPublic: number;
+  projectsLast7: number;
+  topStyles: AdminRankedItem[];
+  topRooms: AdminRankedItem[];
+  funnel: AdminFunnelStep[];
+  eventCounts: Array<{ event: string; count: number }>;
+};
+
+export type AdminInsightsResult =
+  | { ok: true; leadsTotal: number; insights: AdminInsights }
+  | { ok: false; reason: "forbidden" | "error"; message?: string };
+
+/**
+ * Agrega dados do funil de produto para o painel admin. Read-only.
+ * Consulta em paralelo: events, projects e leads (count).
+ *
+ * Nota: a tabela `events` pode ter a coluna nomeada como `event_name`
+ * (schema atual) ou `event` (schema legado). A query tenta ambas e
+ * normaliza defensivamente — ver comentário em tracking.functions.ts.
+ */
+export const getAdminInsights = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminInsightsResult> => {
+    if (!(await isUserAdmin(context.userId))) {
+      return { ok: false, reason: "forbidden" };
+    }
+
+    try {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabaseAdmin as any;
+
+      const [eventsRes, projectsRes, leadsRes] = await Promise.all([
+        db
+          .from("events")
+          .select("event_name, event, props, created_at")
+          .order("created_at", { ascending: false })
+          .limit(MAX_EVENTS_INSIGHTS),
+        db
+          .from("projects")
+          .select("id, style_slug, is_public, created_at, ai_response")
+          .order("created_at", { ascending: false })
+          .limit(MAX_PROJECTS_INSIGHTS),
+        db.from("leads").select("id", { count: "exact", head: true }),
+      ]);
+
+      // Normaliza coluna event_name (schema atual) ou event (legado).
+      type RawEvent = Record<string, unknown>;
+      const events: Array<{ event: string; props: Record<string, unknown> }> = (
+        (eventsRes.data ?? []) as RawEvent[]
+      ).map((row) => ({
+        event: String(row["event_name"] ?? row["event"] ?? ""),
+        props: (typeof row["props"] === "object" && row["props"] !== null
+          ? row["props"]
+          : {}) as Record<string, unknown>,
+      }));
+
+      type ProjectRow = {
+        id: string;
+        style_slug: string;
+        is_public: boolean;
+        created_at: string;
+        ai_response: { roomType?: string } | null;
+      };
+      const projects = (projectsRes.data ?? []) as unknown[] as ProjectRow[];
+
+      const leadsTotal: number = typeof leadsRes.count === "number" ? leadsRes.count : 0;
+
+      // Contagem por tipo de evento
+      const eventCountMap: Record<string, number> = {};
+      for (const e of events) {
+        if (e.event) eventCountMap[e.event] = (eventCountMap[e.event] ?? 0) + 1;
+      }
+
+      // Funil: cada step relativo ao primeiro (start_project = 100%)
+      const baseline = eventCountMap["start_project"] ?? 0;
+      const funnel: AdminFunnelStep[] = ADMIN_FUNNEL_STEPS.map((step) => {
+        const count = eventCountMap[step.event] ?? 0;
+        return {
+          event: step.event,
+          label: step.label,
+          count,
+          pct: baseline > 0 ? Math.round((count / baseline) * 100) : 0,
+        };
+      });
+
+      // Top estilos (dos projetos)
+      const styleCounts: Record<string, number> = {};
+      for (const p of projects) {
+        if (p.style_slug) styleCounts[p.style_slug] = (styleCounts[p.style_slug] ?? 0) + 1;
+      }
+      const topStyles: AdminRankedItem[] = Object.entries(styleCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8)
+        .map(([slug, count]) => ({ slug, label: STYLE_LABELS_INSIGHTS[slug] ?? slug, count }));
+
+      // Top ambientes (de ai_response.roomType nos projetos)
+      const roomCounts: Record<string, number> = {};
+      for (const p of projects) {
+        const ai = p.ai_response as { roomType?: string } | null;
+        const room = ai?.roomType;
+        if (room) roomCounts[room] = (roomCounts[room] ?? 0) + 1;
+      }
+      const topRooms: AdminRankedItem[] = Object.entries(roomCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8)
+        .map(([slug, count]) => ({ slug, label: ROOM_LABELS_INSIGHTS[slug] ?? slug, count }));
+
+      return {
+        ok: true,
+        leadsTotal,
+        insights: {
+          projectsTotal: projects.length,
+          projectsPublic: projects.filter((p) => p.is_public).length,
+          projectsLast7: projects.filter((p) => p.created_at >= sevenDaysAgo).length,
+          topStyles,
+          topRooms,
+          funnel,
+          eventCounts: Object.entries(eventCountMap)
+            .sort((a, b) => b[1] - a[1])
+            .map(([event, count]) => ({ event, count })),
+        },
+      };
+    } catch (e) {
+      console.error("[admin] getAdminInsights — exceção:", e);
+      return { ok: false, reason: "error", message: "Erro inesperado ao carregar os dados." };
+    }
+  });
