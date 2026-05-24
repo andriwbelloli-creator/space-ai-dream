@@ -5,6 +5,8 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { EditorialCollections } from "@/components/EditorialCollections";
+import { MoreStylesGrid } from "@/components/MoreStylesGrid";
+import { MoreRoomsGrid } from "@/components/MoreRoomsGrid";
 import { PresentationModal } from "@/components/PresentationModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
@@ -486,7 +488,9 @@ function Index() {
       />
       <Marquee />
       <EmptyRoomsCarousel onUpload={openUpload} />
+      <MoreRoomsGrid />
       <StylesCarousel onPickStyle={openUploadWithStyle} onUpload={openUpload} />
+      <MoreStylesGrid />
       <EditorialCollections />
       <HowItWorks onDemo={() => handlePresentation(true)} />
       <FeaturedBeforeAfter />
