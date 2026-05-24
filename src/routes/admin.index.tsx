@@ -1,61 +1,63 @@
 import { useCallback, useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
   Loader2,
+  Users,
   FolderOpen,
   Globe,
-  CalendarClock,
-  Users,
+  Mail,
+  CreditCard,
+  Activity,
   ShoppingBag,
-  Eye,
   AlertCircle,
   ShieldAlert,
   RefreshCw,
+  ChevronRight,
 } from "lucide-react";
-import { getAdminInsights, type AdminInsights } from "@/lib/admin";
+import { getAdminOverview, type AdminOverview } from "@/lib/admin";
 import { StatCard } from "@/components/admin/StatCard";
 import { StatusBlock } from "@/components/admin/StatusBlock";
 import { RankedList } from "@/components/admin/RankedList";
 import { FunnelRow } from "@/components/admin/FunnelRow";
 
-export const Route = createFileRoute("/admin/insights")({
+export const Route = createFileRoute("/admin/")({
   head: () => ({
     meta: [
-      { title: "Funil | Admin Ideal Space" },
+      { title: "Visão geral | Admin Ideal Space" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: AdminInsightsPage,
+  component: AdminOverviewPage,
 });
 
 type PageState =
   | { status: "loading" }
   | { status: "forbidden" }
   | { status: "error"; message: string }
-  | { status: "ready"; leadsTotal: number; insights: AdminInsights };
+  | { status: "ready"; overview: AdminOverview };
 
-function AdminInsightsPage() {
-  const fetchInsights = useServerFn(getAdminInsights);
+function AdminOverviewPage() {
+  const fetchOverview = useServerFn(getAdminOverview);
   const [state, setState] = useState<PageState>({ status: "loading" });
 
   const load = useCallback(async () => {
     setState({ status: "loading" });
     try {
-      const res = await fetchInsights({});
+      const res = await fetchOverview({});
       if (!res.ok) {
         setState(
           res.reason === "forbidden"
             ? { status: "forbidden" }
-            : { status: "error", message: res.message ?? "Falha ao carregar os dados." },
+            : { status: "error", message: res.message ?? "Falha ao carregar a visão geral." },
         );
         return;
       }
-      setState({ status: "ready", leadsTotal: res.leadsTotal, insights: res.insights });
+      setState({ status: "ready", overview: res.overview });
     } catch {
-      setState({ status: "error", message: "Não foi possível carregar os dados." });
+      setState({ status: "error", message: "Não foi possível carregar a visão geral." });
     }
-  }, [fetchInsights]);
+  }, [fetchOverview]);
 
   useEffect(() => {
     void load();
@@ -65,9 +67,9 @@ function AdminInsightsPage() {
     <div>
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Funil e métricas</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Visão geral</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Projetos gerados, eventos do funil e estilos mais usados. Somente leitura.
+            Saúde do produto, últimos 7 dias para eventos. Somente leitura.
           </p>
         </div>
         <button
@@ -85,7 +87,7 @@ function AdminInsightsPage() {
 
       {state.status === "loading" && (
         <div className="mt-12 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" /> Carregando dados…
+          <Loader2 className="h-4 w-4 animate-spin" /> Carregando…
         </div>
       )}
 
@@ -118,64 +120,80 @@ function AdminInsightsPage() {
 
       {state.status === "ready" && (
         <>
-          {/* KPIs */}
-          <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-3">
+          {/* KPIs principais */}
+          <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <StatCard
+              icon={<Users className="h-4 w-4" />}
+              label="Usuários"
+              value={state.overview.totals.users}
+            />
             <StatCard
               icon={<FolderOpen className="h-4 w-4" />}
-              label="Projetos gerados"
-              value={state.insights.projectsTotal}
-              sub={`${state.insights.projectsLast7} nos últimos 7 dias`}
+              label="Projetos"
+              value={state.overview.totals.projects}
+              sub={`${state.overview.totals.projectsPublic} públicos`}
+            />
+            <StatCard
+              icon={<Mail className="h-4 w-4" />}
+              label="Leads"
+              value={state.overview.totals.leads}
+            />
+            <StatCard
+              icon={<CreditCard className="h-4 w-4" />}
+              label="Assinaturas ativas"
+              value={state.overview.totals.activeSubs}
+            />
+            <StatCard
+              icon={<Activity className="h-4 w-4" />}
+              label="Eventos (7 dias)"
+              value={state.overview.totals.events7d}
+            />
+            <StatCard
+              icon={<ShoppingBag className="h-4 w-4" />}
+              label="Cliques afiliados (7d)"
+              value={state.overview.totals.affiliateClicks7d}
             />
             <StatCard
               icon={<Globe className="h-4 w-4" />}
               label="Projetos públicos"
-              value={state.insights.projectsPublic}
-            />
-            <StatCard
-              icon={<CalendarClock className="h-4 w-4" />}
-              label="Projetos (7 dias)"
-              value={state.insights.projectsLast7}
-            />
-            <StatCard
-              icon={<Users className="h-4 w-4" />}
-              label="Leads capturados"
-              value={state.leadsTotal}
-            />
-            <StatCard
-              icon={<ShoppingBag className="h-4 w-4" />}
-              label="Cliques afiliados"
-              value={
-                state.insights.eventCounts.find((e) => e.event === "affiliate_click")?.count ?? 0
-              }
-            />
-            <StatCard
-              icon={<Eye className="h-4 w-4" />}
-              label="Páginas públicas vistas"
-              value={
-                state.insights.eventCounts.find((e) => e.event === "public_project_viewed")
-                  ?.count ?? 0
-              }
+              value={state.overview.totals.projectsPublic}
+              sub={`${
+                state.overview.totals.projects > 0
+                  ? Math.round(
+                      (state.overview.totals.projectsPublic / state.overview.totals.projects) * 100,
+                    )
+                  : 0
+              }% do total`}
             />
           </div>
 
-          {/* Funil */}
+          {/* Funil compacto */}
           <section className="mt-8">
-            <h2 className="text-base font-semibold tracking-tight">Funil de geração</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Contagem bruta de eventos — um usuário pode gerar múltiplos eventos. Percentual
-              relativo a "Iniciou projeto".
-            </p>
-            {state.insights.funnel[0]?.count === 0 ? (
+            <div className="flex items-baseline justify-between">
+              <div>
+                <h2 className="text-base font-semibold tracking-tight">Funil (últimos 7 dias)</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Eventos relativos a "Iniciou projeto".
+                </p>
+              </div>
+              <Link
+                to="/admin/insights"
+                className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground transition"
+              >
+                Ver detalhes <ChevronRight className="h-3 w-3 ml-0.5" />
+              </Link>
+            </div>
+            {state.overview.funnel[0]?.count === 0 ? (
               <p className="mt-4 text-xs text-muted-foreground">
-                Nenhum evento registrado ainda. Verifique se o tracking está ativo.
+                Nenhum evento nos últimos 7 dias.
               </p>
             ) : (
               <div className="mt-4 rounded-2xl border border-border bg-card p-4 space-y-3">
-                {state.insights.funnel.map((step) => (
+                {state.overview.funnel.map((step) => (
                   <FunnelRow
                     key={step.event}
                     step={step}
-                    baseline={state.insights.funnel[0]?.count ?? 1}
+                    baseline={state.overview.funnel[0]?.count ?? 1}
                   />
                 ))}
               </div>
@@ -185,58 +203,31 @@ function AdminInsightsPage() {
           {/* Top estilos + ambientes */}
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <section>
-              <h2 className="text-base font-semibold tracking-tight">Estilos mais usados</h2>
+              <h2 className="text-base font-semibold tracking-tight">Top 5 estilos</h2>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Baseado nos projetos gerados (primeiros{" "}
-                {state.insights.projectsTotal > MAX_DISPLAY
-                  ? MAX_DISPLAY.toLocaleString("pt-BR")
-                  : state.insights.projectsTotal}
-                ).
+                Baseado nos projetos gerados mais recentes.
               </p>
               <div className="mt-3 rounded-2xl border border-border bg-card p-4">
                 <RankedList
-                  items={state.insights.topStyles}
+                  items={state.overview.topStyles}
                   empty="Nenhum projeto com estilo registrado."
                 />
               </div>
             </section>
 
             <section>
-              <h2 className="text-base font-semibold tracking-tight">Ambientes mais usados</h2>
+              <h2 className="text-base font-semibold tracking-tight">Top 5 ambientes</h2>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Baseado no cômodo detectado pela IA em cada projeto.
+                Cômodo detectado pela IA em cada projeto.
               </p>
               <div className="mt-3 rounded-2xl border border-border bg-card p-4">
                 <RankedList
-                  items={state.insights.topRooms}
+                  items={state.overview.topRooms}
                   empty="Nenhum projeto com ambiente registrado."
                 />
               </div>
             </section>
           </div>
-
-          {/* Todos os eventos */}
-          {state.insights.eventCounts.length > 0 && (
-            <section className="mt-8">
-              <h2 className="text-base font-semibold tracking-tight">Todos os eventos</h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Contagem total por tipo de evento, em ordem decrescente.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {state.insights.eventCounts.map(({ event, count }) => (
-                  <div
-                    key={event}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-1.5 text-xs"
-                  >
-                    <span className="font-semibold tabular-nums">
-                      {count.toLocaleString("pt-BR")}
-                    </span>
-                    <span className="text-muted-foreground">{event}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
 
           <p className="mt-6 text-xs text-muted-foreground">
             Dados pessoais não exibidos. Uso restrito conforme a LGPD.
@@ -246,6 +237,3 @@ function AdminInsightsPage() {
     </div>
   );
 }
-
-/** Limite de projetos consultados — só para o texto informativo da UI. */
-const MAX_DISPLAY = 2_000;

@@ -297,3 +297,149 @@ export const getAdminInsights = createServerFn({ method: "GET" })
       return { ok: false, reason: "error", message: "Erro inesperado ao carregar os dados." };
     }
   });
+
+// ─── Visão Geral / Overview ─────────────────────────────────────────────────
+
+export type AdminOverviewTotals = {
+  users: number;
+  projects: number;
+  projectsPublic: number;
+  leads: number;
+  activeSubs: number;
+  events7d: number;
+  affiliateClicks7d: number;
+};
+
+export type AdminOverview = {
+  totals: AdminOverviewTotals;
+  funnel: AdminFunnelStep[];
+  topStyles: AdminRankedItem[];
+  topRooms: AdminRankedItem[];
+};
+
+export type AdminOverviewResult =
+  | { ok: true; overview: AdminOverview }
+  | { ok: false; reason: "forbidden" | "error"; message?: string };
+
+/**
+ * Visão geral do produto pro painel raiz `/admin`. Agrega contagens das
+ * principais tabelas em paralelo. Read-only, gateado por admin.
+ *
+ * Counts via `head: true, count: "exact"` — não traz linhas, só o número.
+ * Mais eficiente que `getAdminInsights` que pulla dados pra ranking.
+ */
+export const getAdminOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminOverviewResult> => {
+    if (!(await isUserAdmin(context.userId))) {
+      return { ok: false, reason: "forbidden" };
+    }
+
+    try {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabaseAdmin as any;
+
+      const [
+        usersRes,
+        projectsTotalRes,
+        projectsPublicRes,
+        leadsRes,
+        activeSubsRes,
+        events7dRes,
+        affiliateClicks7dRes,
+        eventsForFunnelRes,
+        projectsForRankingRes,
+      ] = await Promise.all([
+        db.from("profiles").select("id", { count: "exact", head: true }),
+        db.from("projects").select("id", { count: "exact", head: true }),
+        db.from("projects").select("id", { count: "exact", head: true }).eq("is_public", true),
+        db.from("leads").select("id", { count: "exact", head: true }),
+        db
+          .from("stripe_subscriptions")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "active"),
+        db
+          .from("events")
+          .select("id", { count: "exact", head: true })
+          .gte("created_at", sevenDaysAgo),
+        db
+          .from("events")
+          .select("id", { count: "exact", head: true })
+          .eq("event", "affiliate_click")
+          .gte("created_at", sevenDaysAgo),
+        // Eventos do funil — limitamos a 7d pra deixar a Visão Geral viva.
+        db
+          .from("events")
+          .select("event")
+          .gte("created_at", sevenDaysAgo)
+          .limit(MAX_EVENTS_INSIGHTS),
+        // Projetos pra ranking de top styles/rooms (todos, cap em 2k).
+        db
+          .from("projects")
+          .select("style_slug, ai_response")
+          .order("created_at", { ascending: false })
+          .limit(MAX_PROJECTS_INSIGHTS),
+      ]);
+
+      const totals: AdminOverviewTotals = {
+        users: usersRes.count ?? 0,
+        projects: projectsTotalRes.count ?? 0,
+        projectsPublic: projectsPublicRes.count ?? 0,
+        leads: leadsRes.count ?? 0,
+        activeSubs: activeSubsRes.count ?? 0,
+        events7d: events7dRes.count ?? 0,
+        affiliateClicks7d: affiliateClicks7dRes.count ?? 0,
+      };
+
+      // Funil compacto pros eventos das últimas 7d
+      type RawEvent = { event: string | null };
+      const events = (eventsForFunnelRes.data ?? []) as RawEvent[];
+      const eventCountMap: Record<string, number> = {};
+      for (const e of events) {
+        if (e.event) eventCountMap[e.event] = (eventCountMap[e.event] ?? 0) + 1;
+      }
+      const baseline = eventCountMap["start_project"] ?? 0;
+      const funnel: AdminFunnelStep[] = ADMIN_FUNNEL_STEPS.map((step) => {
+        const count = eventCountMap[step.event] ?? 0;
+        return {
+          event: step.event,
+          label: step.label,
+          count,
+          pct: baseline > 0 ? Math.round((count / baseline) * 100) : 0,
+        };
+      });
+
+      // Top estilos + ambientes
+      type ProjectRow = { style_slug: string | null; ai_response: { roomType?: string } | null };
+      const projects = (projectsForRankingRes.data ?? []) as unknown[] as ProjectRow[];
+
+      const styleCounts: Record<string, number> = {};
+      for (const p of projects) {
+        if (p.style_slug) styleCounts[p.style_slug] = (styleCounts[p.style_slug] ?? 0) + 1;
+      }
+      const topStyles: AdminRankedItem[] = Object.entries(styleCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([slug, count]) => ({ slug, label: STYLE_LABELS_INSIGHTS[slug] ?? slug, count }));
+
+      const roomCounts: Record<string, number> = {};
+      for (const p of projects) {
+        const ai = p.ai_response as { roomType?: string } | null;
+        const room = ai?.roomType;
+        if (room) roomCounts[room] = (roomCounts[room] ?? 0) + 1;
+      }
+      const topRooms: AdminRankedItem[] = Object.entries(roomCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([slug, count]) => ({ slug, label: ROOM_LABELS_INSIGHTS[slug] ?? slug, count }));
+
+      return {
+        ok: true,
+        overview: { totals, funnel, topStyles, topRooms },
+      };
+    } catch (e) {
+      console.error("[admin] getAdminOverview — exceção:", e);
+      return { ok: false, reason: "error", message: "Erro inesperado ao carregar a visão geral." };
+    }
+  });

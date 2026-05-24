@@ -20,6 +20,7 @@ import { Route as LegalRouteImport } from './routes/legal'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PProjectIdRouteImport } from './routes/p.$projectId'
 import { Route as EstilosStyleSlugRouteImport } from './routes/estilos.$styleSlug'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -83,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const PProjectIdRoute = PProjectIdRouteImport.update({
   id: '/p/$projectId',
   path: '/p/$projectId',
@@ -137,10 +143,10 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
   '/p/$projectId': typeof PProjectIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
@@ -156,6 +162,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
   '/p/$projectId': typeof PProjectIdRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -177,6 +184,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
   '/p/$projectId': typeof PProjectIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -198,10 +206,10 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/legal'
     | '/login'
     | '/orcamento-design-interiores'
@@ -217,6 +225,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -237,6 +246,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -336,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/p/$projectId': {
       id: '/p/$projectId'
       path: '/p/$projectId'
@@ -403,11 +420,13 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminInsightsRoute: typeof AdminInsightsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminInsightsRoute: AdminInsightsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

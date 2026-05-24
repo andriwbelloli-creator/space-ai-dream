@@ -13,6 +13,9 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { getAdminLeads, type AdminLeadRow, type AdminLeadsKpis } from "@/lib/admin";
+import { StatCard } from "@/components/admin/StatCard";
+import { StatusBlock } from "@/components/admin/StatusBlock";
+import { cell, formatDate } from "@/components/admin/formatters";
 
 export const Route = createFileRoute("/admin/leads")({
   head: () => ({
@@ -29,66 +32,6 @@ type PageState =
   | { status: "forbidden" }
   | { status: "error"; message: string }
   | { status: "ready"; kpis: AdminLeadsKpis; rows: AdminLeadRow[] };
-
-/** Formata um campo opcional — vazio/nulo vira travessão. */
-function cell(value: string | null | undefined): string {
-  const v = value?.trim();
-  return v ? v : "—";
-}
-
-/** Formata a data do lead em pt-BR (data + hora curtas). */
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
-}
-
-/** Card de indicador do topo do dashboard. */
-function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-4">
-      <div className="flex items-center gap-2">
-        <span className="grid h-8 w-8 place-items-center rounded-xl bg-accent/15 text-accent">
-          {icon}
-        </span>
-        <span className="text-xs text-muted-foreground">{label}</span>
-      </div>
-      <div className="mt-3 text-2xl font-semibold tracking-tight">{value}</div>
-    </div>
-  );
-}
-
-/** Bloco centralizado de estado (vazio / erro / sem permissão). */
-function StatusBlock({
-  icon,
-  tone,
-  title,
-  text,
-  action,
-}: {
-  icon: React.ReactNode;
-  tone: "destructive" | "muted";
-  title: string;
-  text: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <div className="mt-6 rounded-3xl border border-border bg-card p-10 text-center">
-      <div
-        className={`mx-auto flex h-12 w-12 items-center justify-center rounded-2xl ${
-          tone === "destructive"
-            ? "bg-destructive/10 text-destructive"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {icon}
-      </div>
-      <p className="mt-4 text-sm font-semibold">{title}</p>
-      <p className="mt-1 text-sm text-muted-foreground">{text}</p>
-      {action}
-    </div>
-  );
-}
 
 function AdminLeadsPage() {
   const fetchLeads = useServerFn(getAdminLeads);

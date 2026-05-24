@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { checkAdminAccess } from "@/lib/admin";
 
 export const Route = createFileRoute("/admin")({
-  // /admin é apenas um ponto de entrada — redireciona para o dashboard.
-  beforeLoad: ({ location }) => {
-    if (location.pathname === "/admin" || location.pathname === "/admin/") {
-      throw redirect({ to: "/admin/leads" });
-    }
-  },
+  // /admin agora renderiza a Visão Geral via admin.index.tsx — sem redirect.
   head: () => ({
     meta: [{ title: "Admin | Ideal Space" }, { name: "robots", content: "noindex, nofollow" }],
   }),
@@ -30,6 +25,14 @@ function AdminShell({ children }: { children: React.ReactNode }) {
             </span>
             <span className="text-sm font-semibold tracking-tight">Admin · Ideal Space</span>
             <nav className="ml-1 flex items-center gap-0.5">
+              <Link
+                to="/admin"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Visão
+              </Link>
               <Link
                 to="/admin/leads"
                 activeOptions={{ exact: true }}
@@ -86,7 +89,7 @@ function AdminLayout() {
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      navigate({ to: "/login", search: { redirect: "/admin/leads" } });
+      navigate({ to: "/login", search: { redirect: "/admin" } });
       return;
     }
     let active = true;
