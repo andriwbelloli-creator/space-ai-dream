@@ -7,21 +7,54 @@ import { uploadImageToStorage } from "@/lib/storage.server";
 const MODEL_TEXT = "gemini-2.5-flash-lite";
 const MODEL_IMAGE = "gemini-2.5-flash-image";
 
+// Prompts canônicos por slug do catálogo SEO. Cobre os 6 estilos originais
+// (renomeados de modern/minimal/luxe → contemporaneo/minimalista/luxo, pra
+// alinhar com o catálogo público) e os 5 estilos novos adicionados em
+// 2026-05 (boho-chic, mid-century, mediterraneo, art-deco, maximalista).
+// STYLE_ALIASES logo abaixo mantém compatibilidade com projetos e drafts
+// antigos persistidos com os slugs internos legados.
 const STYLE_PROMPTS: Record<string, string> = {
   japandi:
     "Japandi interior: warm oak wood, linen textiles, paper lamps, calm neutral palette, minimal decor, soft natural light.",
-  modern:
+  contemporaneo:
     "Contemporary interior: clean lines, curated art, soft curves, warm neutrals with one accent color, designer furniture.",
-  minimal:
+  minimalista:
     "Minimalist interior: white walls, very few objects, hidden storage, light wood floor, monochrome palette, soft daylight.",
   natural:
     "Natural interior: light wood, rattan and jute fibers, lots of greenery, beige and cream tones, organic textures.",
   industrial:
     "Industrial interior: exposed brick, black steel, leather sofa, vintage Edison bulbs, concrete floor, moody warm light.",
-  luxe: "Quiet luxury interior: travertine, brushed brass, bouclé fabric, marble accents, deep neutral palette, ambient lighting.",
+  luxo: "Quiet luxury interior: travertine, brushed brass, bouclé fabric, marble accents, deep neutral palette, ambient lighting.",
+  "boho-chic":
+    "Bohemian eclectic interior: layered textiles, macramé, rattan, vintage rugs, plants, warm earthy palette, eclectic art, golden hour light.",
+  "mid-century":
+    "Mid-century modern interior: walnut wood, tapered legs, mustard and olive accents, geometric patterns, atomic-era lighting, warm wood floor.",
+  mediterraneo:
+    "Mediterranean interior: whitewashed walls, terracotta floor, blue accents, arched openings, woven textures, olive branches, warm coastal light.",
+  "art-deco":
+    "Art deco interior: bold geometric patterns, brass and gold accents, velvet upholstery, marble and lacquer, jewel tones, dramatic lighting.",
+  maximalista:
+    "Maximalist interior: vivid colors, mixed patterns, gallery walls, layered textures, statement pieces, eclectic curation, abundant decor.",
 };
 
-export type TransformInput = { imageDataUrl: string; style: string; variant?: number };
+// Retrocompat: drafts e projetos persistidos antes da padronização podem ter
+// slugs internos antigos. Convertem pra slug canônico SEO antes do lookup.
+const STYLE_ALIASES: Record<string, string> = {
+  modern: "contemporaneo",
+  minimal: "minimalista",
+  luxe: "luxo",
+};
+
+export type TransformInput = {
+  imageDataUrl: string;
+  style: string;
+  variant?: number;
+  // Hint opcional do cômodo, vindo da rota /ambientes/<slug>. Quando presente
+  // e reconhecido por normalizeRoomType(), prevalece sobre a inferência da IA
+  // na resposta final — não entra no prompt de geração (evita viés caso a
+  // foto não bata com o hint).
+  roomTypeHint?: string;
+};
 export type TransformOutput = {
   error: string | null;
   imageDataUrl: string | null;
@@ -195,9 +228,21 @@ export const transformImage = createServerFn({ method: "POST" })
       }
     }
 
-    // 3) Gera a imagem decorada com o prompt forte de preservação de geometria.
-    const styleName = data.style.charAt(0).toUpperCase() + data.style.slice(1);
-    const stylePrompt = STYLE_PROMPTS[data.style] ?? STYLE_PROMPTS.modern;
+    // 3) Resolve o estilo: aceita slug canônico SEO ou alias antigo. Slug
+    //    desconhecido é erro acionável (refund + mensagem clara), nunca
+    //    fallback silencioso — usuário não pode pagar 1 crédito por algo
+    //    que ele não pediu.
+    const canonicalStyle = STYLE_ALIASES[data.style] ?? data.style;
+    const stylePrompt = STYLE_PROMPTS[canonicalStyle];
+    if (!stylePrompt) {
+      await refund("unknown_style");
+      return {
+        error: `Estilo "${data.style}" não está disponível. Escolha um estilo do catálogo.`,
+        imageDataUrl: null,
+        creditsLeft,
+      };
+    }
+    const styleName = canonicalStyle.charAt(0).toUpperCase() + canonicalStyle.slice(1);
 
     const variantHints = [
       "Variation A: balanced and neutral layout, classic furniture proportions, soft daylight.",
@@ -304,20 +349,27 @@ export const transformImage = createServerFn({ method: "POST" })
     // Fallback do "depois": o próprio data URL, pra não perder a geração.
     const storedUrl = storedAfter ?? imageRes.dataUrl;
 
-    // 5) Persiste o projeto na tabela `projects` (best-effort).
+    // Resolução do cômodo: hint da rota (/ambientes/<slug>) tem prioridade
+    // quando reconhecido. Senão, cai na inferência da IA. Senão, "outro".
+    const hintedRoom = data.roomTypeHint ? normalizeRoomType(data.roomTypeHint) : undefined;
+    const inferredRoom = normalizeRoomType(parsed?.room_type);
+    const finalRoomType: RoomType = hintedRoom ?? inferredRoom ?? "outro";
+
+    // 5) Persiste o projeto na tabela `projects` (best-effort). Grava slug
+    //    canônico (não alias) pra manter o banco coerente em projetos novos.
     try {
       const { error: persistErr } = await context.supabase.from("projects").insert({
         user_id: context.userId,
         title: `Projeto ${styleName}`,
-        style_slug: data.style,
+        style_slug: canonicalStyle,
         before_url: storedBefore,
         after_url: storedUrl,
         ai_prompt: editPrompt,
         ai_model: MODEL_IMAGE,
         ai_response: {
-          style: data.style,
+          style: canonicalStyle,
           variant: data.variant ?? null,
-          roomType: normalizeRoomType(parsed?.room_type) ?? "outro",
+          roomType: finalRoomType,
         },
       });
       if (persistErr) {
@@ -330,7 +382,7 @@ export const transformImage = createServerFn({ method: "POST" })
           .insert({
             event: "project_saved",
             user_id: context.userId,
-            props: { style: data.style },
+            props: { style: canonicalStyle },
           })
           .then(undefined, () => {});
       }
@@ -343,6 +395,6 @@ export const transformImage = createServerFn({ method: "POST" })
       error: null,
       imageDataUrl: imageRes.dataUrl,
       creditsLeft,
-      roomType: normalizeRoomType(parsed?.room_type),
+      roomType: finalRoomType,
     };
   });

@@ -17,6 +17,9 @@ import type {
 const LeadFormModal = lazy(() =>
   import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
 );
+const UploadPhotoModal = lazy(() =>
+  import("@/components/UploadPhotoModal").then((m) => ({ default: m.UploadPhotoModal })),
+);
 
 const modalFallback = (
   <div className="fixed inset-0 z-50 grid place-items-center bg-background/40">
@@ -124,9 +127,14 @@ export function ExpandedLanding({
 }: Props) {
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadMounted, setLeadMounted] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [uploadMounted, setUploadMounted] = useState(false);
   useEffect(() => {
     if (leadOpen) setLeadMounted(true);
   }, [leadOpen]);
+  useEffect(() => {
+    if (uploadOpen) setUploadMounted(true);
+  }, [uploadOpen]);
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
 
   const beforeUrl = resolveLandingImage(images.before);
@@ -171,14 +179,25 @@ export function ExpandedLanding({
             {renderHeadline(h1)}
           </h1>
           <p className="mt-6 text-muted-foreground text-lg leading-relaxed">{promise}</p>
-          <div className="mt-9">
+          <div className="mt-9 flex flex-col items-center gap-3">
+            {/* CTA primário acima da dobra: abre o fluxo de upload com o
+                ambiente/estilo da rota pré-selecionado. */}
             <Button
-              onClick={() => setLeadOpen(true)}
+              onClick={() => setUploadOpen(true)}
               className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
             >
-              {cta}
+              <Camera className="h-4 w-4 mr-2" /> {cta}
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
+            {/* CTA secundário discreto pra quem prefere receber proposta
+                por email em vez de uploadar foto agora. */}
+            <button
+              type="button"
+              onClick={() => setLeadOpen(true)}
+              className="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition"
+            >
+              Receber ideias por e-mail
+            </button>
           </div>
           {trustText && <p className="mt-3 text-xs text-muted-foreground">{trustText}</p>}
         </div>
@@ -381,21 +400,24 @@ export function ExpandedLanding({
             Use a IA como ponto de partida para decidir melhor. Sem cadastro pra ver a primeira
             ideia.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="mt-8 flex flex-col items-center gap-4">
+            {/* Sub-CTA primário (escuro) — mesmo destino do CTA da dobra:
+                abre upload com style/room pré-selecionado. */}
             <Button
-              onClick={() => setLeadOpen(true)}
+              onClick={() => setUploadOpen(true)}
               className="h-12 rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
             >
-              {finalCta ?? cta}
+              <Camera className="h-4 w-4 mr-2" /> {finalCta ?? cta}
               <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
-            <Link
-              to="/"
-              search={{ upload: "1" }}
-              className="h-12 inline-flex items-center justify-center rounded-full px-8 text-base bg-background/10 hover:bg-background/20 text-background border border-background/20 transition"
+            {/* Secundário discreto — captura lead pra quem não vai uploadar. */}
+            <button
+              type="button"
+              onClick={() => setLeadOpen(true)}
+              className="text-sm text-background/70 hover:text-background underline-offset-4 hover:underline transition"
             >
-              <Camera className="h-4 w-4 mr-2" /> Gerar agora com IA
-            </Link>
+              Receber ideias por e-mail
+            </button>
           </div>
         </div>
       </section>
@@ -424,6 +446,16 @@ export function ExpandedLanding({
 
       <Footer />
 
+      {uploadMounted && (
+        <Suspense fallback={modalFallback}>
+          <UploadPhotoModal
+            open={uploadOpen}
+            onOpenChange={setUploadOpen}
+            initialStyle={defaultStyle}
+            initialRoom={defaultRoomType}
+          />
+        </Suspense>
+      )}
       {leadMounted && (
         <Suspense fallback={modalFallback}>
           <LeadFormModal

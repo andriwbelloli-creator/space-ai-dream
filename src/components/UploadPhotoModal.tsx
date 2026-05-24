@@ -56,16 +56,54 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialStyle?: string;
+  // Cômodo pré-selecionado, vindo da rota /ambientes/<slug>. Vira chip
+  // visual no topo do modal e roomTypeHint enviado pro back.
+  initialRoom?: string;
 };
 
+// Catálogo do picker. IDs batem com slugs canônicos do catálogo SEO
+// (seo-styles-data.ts) e com STYLE_PROMPTS em transform.functions.ts.
 const STYLES = [
   { id: "japandi", name: "Japandi", sub: "Calmo, oak e linho" },
-  { id: "modern", name: "Contemporâneo", sub: "Linhas suaves e arte" },
-  { id: "minimal", name: "Minimalista", sub: "Menos é mais" },
+  { id: "contemporaneo", name: "Contemporâneo", sub: "Linhas suaves e arte" },
+  { id: "minimalista", name: "Minimalista", sub: "Menos é mais" },
   { id: "natural", name: "Natural", sub: "Madeira e fibras" },
   { id: "industrial", name: "Industrial", sub: "Tijolo e metal" },
-  { id: "luxe", name: "Luxo discreto", sub: "Materiais nobres" },
+  { id: "luxo", name: "Luxo discreto", sub: "Materiais nobres" },
+  { id: "boho-chic", name: "Boho chic", sub: "Eclético e acolhedor" },
+  { id: "mid-century", name: "Mid-century", sub: "Anos 50/60 quente" },
+  { id: "mediterraneo", name: "Mediterrâneo", sub: "Costeiro caiado" },
+  { id: "art-deco", name: "Art-déco", sub: "Geometria e brilho" },
+  { id: "maximalista", name: "Maximalista", sub: "Cor e camadas" },
 ];
+
+// Retrocompat: drafts/variations antigas podem ter slugs internos legados
+// (modern/minimal/luxe). Converte pro canônico SEO antes de usar — sem isso
+// o picker fica sem highlight quando carrega um draft antigo.
+const STYLE_ALIASES: Record<string, string> = {
+  modern: "contemporaneo",
+  minimal: "minimalista",
+  luxe: "luxo",
+};
+const normalizeStyle = (slug: string): string => STYLE_ALIASES[slug] ?? slug;
+
+// Label legível pro chip de ambiente. Slugs novos não estão em RoomType
+// canônico (closet, varanda-gourmet etc.), então mantém o slug formatado.
+const ROOM_LABELS: Record<string, string> = {
+  sala: "Sala de estar",
+  quarto: "Quarto",
+  cozinha: "Cozinha",
+  "home-office": "Home office",
+  banheiro: "Banheiro",
+  "sala-jantar": "Sala de jantar",
+  closet: "Closet",
+  "varanda-gourmet": "Varanda gourmet",
+  "quarto-infantil": "Quarto infantil",
+  lavabo: "Lavabo",
+  "sala-tv": "Sala de TV",
+};
+const labelForRoom = (slug: string): string =>
+  ROOM_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " ");
 
 const MAX_FILE_MB = 20;
 const MAX_DIMENSION = 1600;
@@ -137,7 +175,7 @@ const GENERATING_MESSAGES = [
   "Finalizando…",
 ] as const;
 
-export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
+export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { credits, setBalance } = useCredits();
@@ -146,9 +184,13 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
   const [variations, setVariations] = useState<Variation[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
   const [style, setStyle] = useState<string>("japandi");
+  const [roomHint, setRoomHint] = useState<string | undefined>(undefined);
   useEffect(() => {
-    if (open && initialStyle) setStyle(initialStyle);
+    if (open && initialStyle) setStyle(normalizeStyle(initialStyle));
   }, [open, initialStyle]);
+  useEffect(() => {
+    if (open) setRoomHint(initialRoom);
+  }, [open, initialRoom]);
   const [stage, setStage] = useState<Stage>("idle");
   const [progress, setProgress] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
@@ -389,7 +431,9 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
 
     try {
       const tasks = Array.from({ length: count }, (_, i) =>
-        transformImage({ data: { imageDataUrl: preview, style, variant: startIdx + i } })
+        transformImage({
+          data: { imageDataUrl: preview, style, variant: startIdx + i, roomTypeHint: roomHint },
+        })
           .then((out) => {
             if (ticket.cancelled) return null;
             if (out.creditsLeft !== null) setBalance(out.creditsLeft);
@@ -520,7 +564,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
     const restoredIdx = Math.min(Math.max(0, d.activeIdx ?? 0), Math.max(0, restored.length - 1));
     setActiveIdx(restoredIdx);
     pendingScrollIdx.current = restoredIdx;
-    setStyle(d.style);
+    setStyle(normalizeStyle(d.style));
     setMeta(d.meta ?? null);
     setDraftId(d.id);
     setVersions(d.versions ?? []);
@@ -554,7 +598,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
     const restoredIdx = Math.min(Math.max(0, v.activeIdx ?? 0), Math.max(0, restored.length - 1));
     setActiveIdx(restoredIdx);
     pendingScrollIdx.current = restoredIdx;
-    setStyle(v.style);
+    setStyle(normalizeStyle(v.style));
     // Persist active version pointer
     if (draftId) {
       const existing = listDrafts().find((d) => d.id === draftId);
@@ -614,6 +658,15 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle }: Props) {
           <p className="mt-1 text-sm text-muted-foreground">
             Tire uma foto ou envie uma imagem. Otimizamos antes de enviar para gerar mais rápido.
           </p>
+
+          {/* Chip de ambiente pré-selecionado — só aparece quando vem da rota
+              /ambientes/<slug>. Vira roomTypeHint enviado pro back. */}
+          {roomHint && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs">
+              <span className="text-muted-foreground">Ambiente:</span>
+              <span className="font-medium text-foreground">{labelForRoom(roomHint)}</span>
+            </div>
+          )}
 
           {/* Drafts strip — only when starting fresh */}
           {!preview && drafts.length > 0 && (
