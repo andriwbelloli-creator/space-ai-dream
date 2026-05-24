@@ -445,20 +445,15 @@ export const getAdminOverview = createServerFn({ method: "GET" })
   });
 
 // ─── Projetos ───────────────────────────────────────────────────────────────
-
-const BUDGET_LABELS: Record<string, string> = {
-  baixo: "Baixo",
-  medio: "Médio",
-  médio: "Médio",
-  alto: "Alto",
-};
+//
+// A tabela `projects` NÃO possui `category` nem `budget_range` — essas duas
+// dimensões vivem em `analyses` (que é outro modelo conceitual). Não tentamos
+// agregá-las aqui pra não fazer query em coluna inexistente.
 
 export type AdminProjectSample = {
   id: string;
   styleSlug: string | null;
   roomType: string | null;
-  category: string | null;
-  budgetRange: string | null;
   afterUrl: string | null;
   isPublic: boolean;
   createdAt: string;
@@ -471,8 +466,6 @@ export type AdminProjects = {
   uniqueStyles: number;
   topStyles: AdminRankedItem[];
   topRooms: AdminRankedItem[];
-  topCategories: AdminRankedItem[];
-  topBudgets: AdminRankedItem[];
   recent: AdminProjectSample[];
 };
 
@@ -481,9 +474,8 @@ export type AdminProjectsResult =
   | { ok: false; reason: "forbidden" | "error"; message?: string };
 
 /**
- * Lista projetos com breakdown por estilo, ambiente, categoria e orçamento.
- * Os primeiros 30 da consulta também voltam como amostra pra tabela.
- * Read-only, sem PII.
+ * Lista projetos com breakdown por estilo e ambiente. Os primeiros 30 voltam
+ * como amostra pra tabela. Read-only, sem PII.
  */
 export const getAdminProjects = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -506,9 +498,7 @@ export const getAdminProjects = createServerFn({ method: "GET" })
           .gte("created_at", sevenDaysAgo),
         db
           .from("projects")
-          .select(
-            "id, style_slug, category, budget_range, after_url, is_public, created_at, ai_response",
-          )
+          .select("id, style_slug, after_url, is_public, created_at, ai_response")
           .order("created_at", { ascending: false })
           .limit(MAX_PROJECTS_INSIGHTS),
       ]);
@@ -516,8 +506,6 @@ export const getAdminProjects = createServerFn({ method: "GET" })
       type ProjectRow = {
         id: string;
         style_slug: string | null;
-        category: string | null;
-        budget_range: string | null;
         after_url: string | null;
         is_public: boolean | null;
         created_at: string;
@@ -525,18 +513,13 @@ export const getAdminProjects = createServerFn({ method: "GET" })
       };
       const projects = (listRes.data ?? []) as unknown[] as ProjectRow[];
 
-      // Rankings (agregação JS — simples pro volume MVP).
       const styleCounts: Record<string, number> = {};
       const roomCounts: Record<string, number> = {};
-      const categoryCounts: Record<string, number> = {};
-      const budgetCounts: Record<string, number> = {};
 
       for (const p of projects) {
         if (p.style_slug) styleCounts[p.style_slug] = (styleCounts[p.style_slug] ?? 0) + 1;
         const room = (p.ai_response as { roomType?: string } | null)?.roomType;
         if (room) roomCounts[room] = (roomCounts[room] ?? 0) + 1;
-        if (p.category) categoryCounts[p.category] = (categoryCounts[p.category] ?? 0) + 1;
-        if (p.budget_range) budgetCounts[p.budget_range] = (budgetCounts[p.budget_range] ?? 0) + 1;
       }
 
       const rank = (
@@ -552,8 +535,6 @@ export const getAdminProjects = createServerFn({ method: "GET" })
         id: p.id,
         styleSlug: p.style_slug,
         roomType: (p.ai_response as { roomType?: string } | null)?.roomType ?? null,
-        category: p.category,
-        budgetRange: p.budget_range,
         afterUrl: p.after_url,
         isPublic: p.is_public === true,
         createdAt: p.created_at,
@@ -568,8 +549,6 @@ export const getAdminProjects = createServerFn({ method: "GET" })
           uniqueStyles: Object.keys(styleCounts).length,
           topStyles: rank(styleCounts, STYLE_LABELS_INSIGHTS),
           topRooms: rank(roomCounts, ROOM_LABELS_INSIGHTS),
-          topCategories: rank(categoryCounts, {}),
-          topBudgets: rank(budgetCounts, BUDGET_LABELS),
           recent,
         },
       };

@@ -201,26 +201,6 @@ function AdminProjectsPage() {
                 <RankedList items={state.projects.topRooms} empty="Sem ambiente detectado ainda." />
               </div>
             </section>
-
-            <section>
-              <h2 className="text-base font-semibold tracking-tight">Por categoria</h2>
-              <div className="mt-3 rounded-2xl border border-border bg-card p-4">
-                <RankedList
-                  items={state.projects.topCategories}
-                  empty="Categoria ainda não preenchida pelos projetos."
-                />
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-base font-semibold tracking-tight">Por orçamento</h2>
-              <div className="mt-3 rounded-2xl border border-border bg-card p-4">
-                <RankedList
-                  items={state.projects.topBudgets}
-                  empty="Orçamento ainda não preenchido pelos projetos."
-                />
-              </div>
-            </section>
           </div>
 
           {/* Tabela dos 30 mais recentes */}
@@ -236,7 +216,6 @@ function AdminProjectsPage() {
                     <th className="px-3 py-2.5 font-medium w-16">Imagem</th>
                     <th className="px-3 py-2.5 font-medium">Estilo</th>
                     <th className="px-3 py-2.5 font-medium">Ambiente</th>
-                    <th className="px-3 py-2.5 font-medium">Orçamento</th>
                     <th className="px-3 py-2.5 font-medium">Visibilidade</th>
                     <th className="px-3 py-2.5 font-medium">Criado</th>
                   </tr>
@@ -263,7 +242,6 @@ function AdminProjectsPage() {
                       </td>
                       <td className="px-3 py-2.5 font-medium">{styleLabel(p.styleSlug)}</td>
                       <td className="px-3 py-2.5 text-muted-foreground">{roomLabel(p.roomType)}</td>
-                      <td className="px-3 py-2.5 text-muted-foreground">{p.budgetRange ?? "—"}</td>
                       <td className="px-3 py-2.5">
                         {p.isPublic ? (
                           <Link
