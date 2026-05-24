@@ -443,3 +443,271 @@ export const getAdminOverview = createServerFn({ method: "GET" })
       return { ok: false, reason: "error", message: "Erro inesperado ao carregar a visão geral." };
     }
   });
+
+// ─── Projetos ───────────────────────────────────────────────────────────────
+
+const BUDGET_LABELS: Record<string, string> = {
+  baixo: "Baixo",
+  medio: "Médio",
+  médio: "Médio",
+  alto: "Alto",
+};
+
+export type AdminProjectSample = {
+  id: string;
+  styleSlug: string | null;
+  roomType: string | null;
+  category: string | null;
+  budgetRange: string | null;
+  afterUrl: string | null;
+  isPublic: boolean;
+  createdAt: string;
+};
+
+export type AdminProjects = {
+  total: number;
+  totalPublic: number;
+  totalLast7: number;
+  uniqueStyles: number;
+  topStyles: AdminRankedItem[];
+  topRooms: AdminRankedItem[];
+  topCategories: AdminRankedItem[];
+  topBudgets: AdminRankedItem[];
+  recent: AdminProjectSample[];
+};
+
+export type AdminProjectsResult =
+  | { ok: true; projects: AdminProjects }
+  | { ok: false; reason: "forbidden" | "error"; message?: string };
+
+/**
+ * Lista projetos com breakdown por estilo, ambiente, categoria e orçamento.
+ * Os primeiros 30 da consulta também voltam como amostra pra tabela.
+ * Read-only, sem PII.
+ */
+export const getAdminProjects = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminProjectsResult> => {
+    if (!(await isUserAdmin(context.userId))) {
+      return { ok: false, reason: "forbidden" };
+    }
+
+    try {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabaseAdmin as any;
+
+      const [totalRes, publicRes, last7Res, listRes] = await Promise.all([
+        db.from("projects").select("id", { count: "exact", head: true }),
+        db.from("projects").select("id", { count: "exact", head: true }).eq("is_public", true),
+        db
+          .from("projects")
+          .select("id", { count: "exact", head: true })
+          .gte("created_at", sevenDaysAgo),
+        db
+          .from("projects")
+          .select(
+            "id, style_slug, category, budget_range, after_url, is_public, created_at, ai_response",
+          )
+          .order("created_at", { ascending: false })
+          .limit(MAX_PROJECTS_INSIGHTS),
+      ]);
+
+      type ProjectRow = {
+        id: string;
+        style_slug: string | null;
+        category: string | null;
+        budget_range: string | null;
+        after_url: string | null;
+        is_public: boolean | null;
+        created_at: string;
+        ai_response: { roomType?: string } | null;
+      };
+      const projects = (listRes.data ?? []) as unknown[] as ProjectRow[];
+
+      // Rankings (agregação JS — simples pro volume MVP).
+      const styleCounts: Record<string, number> = {};
+      const roomCounts: Record<string, number> = {};
+      const categoryCounts: Record<string, number> = {};
+      const budgetCounts: Record<string, number> = {};
+
+      for (const p of projects) {
+        if (p.style_slug) styleCounts[p.style_slug] = (styleCounts[p.style_slug] ?? 0) + 1;
+        const room = (p.ai_response as { roomType?: string } | null)?.roomType;
+        if (room) roomCounts[room] = (roomCounts[room] ?? 0) + 1;
+        if (p.category) categoryCounts[p.category] = (categoryCounts[p.category] ?? 0) + 1;
+        if (p.budget_range) budgetCounts[p.budget_range] = (budgetCounts[p.budget_range] ?? 0) + 1;
+      }
+
+      const rank = (
+        counts: Record<string, number>,
+        labels: Record<string, string>,
+      ): AdminRankedItem[] =>
+        Object.entries(counts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([slug, count]) => ({ slug, label: labels[slug] ?? slug, count }));
+
+      const recent: AdminProjectSample[] = projects.slice(0, 30).map((p) => ({
+        id: p.id,
+        styleSlug: p.style_slug,
+        roomType: (p.ai_response as { roomType?: string } | null)?.roomType ?? null,
+        category: p.category,
+        budgetRange: p.budget_range,
+        afterUrl: p.after_url,
+        isPublic: p.is_public === true,
+        createdAt: p.created_at,
+      }));
+
+      return {
+        ok: true,
+        projects: {
+          total: totalRes.count ?? 0,
+          totalPublic: publicRes.count ?? 0,
+          totalLast7: last7Res.count ?? 0,
+          uniqueStyles: Object.keys(styleCounts).length,
+          topStyles: rank(styleCounts, STYLE_LABELS_INSIGHTS),
+          topRooms: rank(roomCounts, ROOM_LABELS_INSIGHTS),
+          topCategories: rank(categoryCounts, {}),
+          topBudgets: rank(budgetCounts, BUDGET_LABELS),
+          recent,
+        },
+      };
+    } catch (e) {
+      console.error("[admin] getAdminProjects — exceção:", e);
+      return { ok: false, reason: "error", message: "Erro inesperado ao carregar os projetos." };
+    }
+  });
+
+// ─── Usuários ───────────────────────────────────────────────────────────────
+
+const PLAN_LABELS: Record<string, string> = {
+  free: "Free",
+  pro: "Pro",
+  premium: "Premium",
+};
+
+export type AdminUserRow = {
+  id: string;
+  displayName: string | null;
+  plan: string | null;
+  credits: number | null;
+  projectCount: number;
+  createdAt: string;
+};
+
+export type AdminUsers = {
+  total: number;
+  newLast7: number;
+  activeLast7: number;
+  paid: number;
+  planBreakdown: AdminRankedItem[];
+  topByProjects: AdminUserRow[];
+};
+
+export type AdminUsersResult =
+  | { ok: true; users: AdminUsers }
+  | { ok: false; reason: "forbidden" | "error"; message?: string };
+
+/**
+ * Distribuição de usuários por plano + top 20 por # projetos. Usa events
+ * pra calcular ativos (distinct user_id em 7d). Não expõe email/phone.
+ * `display_name` é texto público escolhido pelo próprio usuário.
+ */
+export const getAdminUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminUsersResult> => {
+    if (!(await isUserAdmin(context.userId))) {
+      return { ok: false, reason: "forbidden" };
+    }
+
+    try {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabaseAdmin as any;
+
+      const [totalRes, newRes, paidRes, profilesRes, eventsRes, projectsRes] = await Promise.all([
+        db.from("profiles").select("id", { count: "exact", head: true }),
+        db
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .gte("created_at", sevenDaysAgo),
+        db
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .in("plan", ["pro", "premium"]),
+        db
+          .from("profiles")
+          .select("id, display_name, plan, credits, created_at")
+          .order("created_at", { ascending: false })
+          .limit(MAX_PROJECTS_INSIGHTS),
+        db
+          .from("events")
+          .select("user_id")
+          .gte("created_at", sevenDaysAgo)
+          .not("user_id", "is", null)
+          .limit(MAX_EVENTS_INSIGHTS),
+        db.from("projects").select("user_id").limit(MAX_EVENTS_INSIGHTS),
+      ]);
+
+      type ProfileRow = {
+        id: string;
+        display_name: string | null;
+        plan: string | null;
+        credits: number | null;
+        created_at: string;
+      };
+      const profiles = (profilesRes.data ?? []) as ProfileRow[];
+
+      // Ativos = usuários distintos em events nos últimos 7d
+      const activeIds = new Set<string>();
+      for (const e of (eventsRes.data ?? []) as Array<{ user_id: string | null }>) {
+        if (e.user_id) activeIds.add(e.user_id);
+      }
+
+      // Contagem de projetos por user_id
+      const projectCounts: Record<string, number> = {};
+      for (const p of (projectsRes.data ?? []) as Array<{ user_id: string | null }>) {
+        if (p.user_id) projectCounts[p.user_id] = (projectCounts[p.user_id] ?? 0) + 1;
+      }
+
+      // Breakdown por plano (null → "free" pra normalizar a visualização)
+      const planCounts: Record<string, number> = {};
+      for (const p of profiles) {
+        const plan = (p.plan ?? "free").toLowerCase();
+        planCounts[plan] = (planCounts[plan] ?? 0) + 1;
+      }
+      const planBreakdown: AdminRankedItem[] = Object.entries(planCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([slug, count]) => ({ slug, label: PLAN_LABELS[slug] ?? slug, count }));
+
+      // Top 20 por # projetos
+      const topByProjects: AdminUserRow[] = profiles
+        .map((p) => ({
+          id: p.id,
+          displayName: p.display_name,
+          plan: p.plan,
+          credits: p.credits,
+          projectCount: projectCounts[p.id] ?? 0,
+          createdAt: p.created_at,
+        }))
+        .filter((u) => u.projectCount > 0)
+        .sort((a, b) => b.projectCount - a.projectCount)
+        .slice(0, 20);
+
+      return {
+        ok: true,
+        users: {
+          total: totalRes.count ?? 0,
+          newLast7: newRes.count ?? 0,
+          activeLast7: activeIds.size,
+          paid: paidRes.count ?? 0,
+          planBreakdown,
+          topByProjects,
+        },
+      };
+    } catch (e) {
+      console.error("[admin] getAdminUsers — exceção:", e);
+      return { ok: false, reason: "error", message: "Erro inesperado ao carregar os usuários." };
+    }
+  });

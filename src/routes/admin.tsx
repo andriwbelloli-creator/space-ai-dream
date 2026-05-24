@@ -24,7 +24,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
               IS
             </span>
             <span className="text-sm font-semibold tracking-tight">Admin · Ideal Space</span>
-            <nav className="ml-1 flex items-center gap-0.5">
+            <nav className="ml-1 flex flex-wrap items-center gap-0.5">
               <Link
                 to="/admin"
                 activeOptions={{ exact: true }}
@@ -32,6 +32,22 @@ function AdminShell({ children }: { children: React.ReactNode }) {
                 className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
               >
                 Visão
+              </Link>
+              <Link
+                to="/admin/projetos"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Projetos
+              </Link>
+              <Link
+                to="/admin/usuarios"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Usuários
               </Link>
               <Link
                 to="/admin/leads"

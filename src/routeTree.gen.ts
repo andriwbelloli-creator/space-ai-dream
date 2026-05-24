@@ -25,6 +25,8 @@ import { Route as PProjectIdRouteImport } from './routes/p.$projectId'
 import { Route as EstilosStyleSlugRouteImport } from './routes/estilos.$styleSlug'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AmbientesRoomSlugRouteImport } from './routes/ambientes.$roomSlug'
+import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as AdminProjetosRouteImport } from './routes/admin.projetos'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminInsightsRouteImport } from './routes/admin.insights'
 import { Route as AuthenticatedProjetosRouteImport } from './routes/_authenticated/projetos'
@@ -109,6 +111,16 @@ const AmbientesRoomSlugRoute = AmbientesRoomSlugRouteImport.update({
   path: '/ambientes/$roomSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProjetosRoute = AdminProjetosRouteImport.update({
+  id: '/projetos',
+  path: '/projetos',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -139,6 +151,8 @@ export interface FileRoutesByFullPath {
   '/projetos': typeof AuthenticatedProjetosRoute
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/projetos': typeof AdminProjetosRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
@@ -158,6 +172,8 @@ export interface FileRoutesByTo {
   '/projetos': typeof AuthenticatedProjetosRoute
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/projetos': typeof AdminProjetosRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
@@ -180,6 +196,8 @@ export interface FileRoutesById {
   '/_authenticated/projetos': typeof AuthenticatedProjetosRoute
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/leads': typeof AdminLeadsRoute
+  '/admin/projetos': typeof AdminProjetosRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
@@ -202,6 +220,8 @@ export interface FileRouteTypes {
     | '/projetos'
     | '/admin/insights'
     | '/admin/leads'
+    | '/admin/projetos'
+    | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
     | '/estilos/$styleSlug'
@@ -221,6 +241,8 @@ export interface FileRouteTypes {
     | '/projetos'
     | '/admin/insights'
     | '/admin/leads'
+    | '/admin/projetos'
+    | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
     | '/estilos/$styleSlug'
@@ -242,6 +264,8 @@ export interface FileRouteTypes {
     | '/_authenticated/projetos'
     | '/admin/insights'
     | '/admin/leads'
+    | '/admin/projetos'
+    | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
     | '/estilos/$styleSlug'
@@ -381,6 +405,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AmbientesRoomSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/projetos': {
+      id: '/admin/projetos'
+      path: '/projetos'
+      fullPath: '/admin/projetos'
+      preLoaderRoute: typeof AdminProjetosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/leads': {
       id: '/admin/leads'
       path: '/leads'
@@ -420,12 +458,16 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminInsightsRoute: typeof AdminInsightsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminProjetosRoute: typeof AdminProjetosRoute
+  AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminInsightsRoute: AdminInsightsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
+  AdminProjetosRoute: AdminProjetosRoute,
+  AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
