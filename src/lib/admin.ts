@@ -184,9 +184,10 @@ export type AdminInsightsResult =
  * Agrega dados do funil de produto para o painel admin. Read-only.
  * Consulta em paralelo: events, projects e leads (count).
  *
- * Nota: a tabela `events` pode ter a coluna nomeada como `event_name`
- * (schema atual) ou `event` (schema legado). A query tenta ambas e
- * normaliza defensivamente — ver comentário em tracking.functions.ts.
+ * Nota: a coluna real da tabela `events` é `event` (ver migration
+ * 20260522120000_create_events.sql). O `types.ts` gerado está stale e
+ * mostra `event_name`, mas a coluna no Postgres se chama `event` mesmo
+ * — é por isso que `tracking.functions.ts` insere com a chave `event`.
  */
 export const getAdminInsights = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -204,7 +205,7 @@ export const getAdminInsights = createServerFn({ method: "GET" })
       const [eventsRes, projectsRes, leadsRes] = await Promise.all([
         db
           .from("events")
-          .select("event_name, event, props, created_at")
+          .select("event, props, created_at")
           .order("created_at", { ascending: false })
           .limit(MAX_EVENTS_INSIGHTS),
         db
@@ -215,12 +216,11 @@ export const getAdminInsights = createServerFn({ method: "GET" })
         db.from("leads").select("id", { count: "exact", head: true }),
       ]);
 
-      // Normaliza coluna event_name (schema atual) ou event (legado).
       type RawEvent = Record<string, unknown>;
       const events: Array<{ event: string; props: Record<string, unknown> }> = (
         (eventsRes.data ?? []) as RawEvent[]
       ).map((row) => ({
-        event: String(row["event_name"] ?? row["event"] ?? ""),
+        event: String(row["event"] ?? ""),
         props: (typeof row["props"] === "object" && row["props"] !== null
           ? row["props"]
           : {}) as Record<string, unknown>,
