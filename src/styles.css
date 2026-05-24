@@ -42,6 +42,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-foreground: var(--gold-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -82,6 +84,13 @@
   --muted-foreground: oklch(0.5 0.015 65);
   --accent: oklch(0.72 0.13 55); /* warm terracotta accent */
   --accent-foreground: oklch(0.99 0.005 80);
+  /* Secondary editorial accent — soft gold for premium kickers, dividers and badges. */
+  --gold-soft: oklch(0.78 0.085 78);
+  --gold-foreground: oklch(0.22 0.015 60);
+  /* Editorial shadow scale — softer than shadcn defaults, premium feel. */
+  --shadow-editorial-sm: 0 1px 1px rgb(0 0 0 / 0.03), 0 2px 6px rgb(0 0 0 / 0.04);
+  --shadow-editorial-md: 0 1px 1px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+  --shadow-editorial-lg: 0 2px 4px rgb(0 0 0 / 0.04), 0 16px 48px rgb(0 0 0 / 0.08);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.9 0.008 75);
@@ -117,6 +126,8 @@
   --muted-foreground: oklch(0.704 0.04 256.788);
   --accent: oklch(0.279 0.041 260.031);
   --accent-foreground: oklch(0.984 0.003 247.858);
+  --gold-soft: oklch(0.62 0.085 78);
+  --gold-foreground: oklch(0.985 0.005 80);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(1 0 0 / 10%);
@@ -256,4 +267,131 @@
   mix-blend-mode: multiply;
   pointer-events: none;
   opacity: 0.35;
+}
+
+/* ------------ Editorial premium utilities ------------ */
+
+/* Editorial kicker — small, tracked, gold-tinted label used above headings. */
+.is-kicker {
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--gold-soft);
+}
+
+/* Editorial thin divider — short horizontal rule for section breaks. */
+.is-divider-thin {
+  display: inline-block;
+  width: 2.5rem;
+  height: 1px;
+  background-color: var(--border);
+}
+
+/* Hover lift — gentle translate + shadow swap for premium cards. */
+.is-hover-lift {
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: var(--shadow-editorial-sm);
+}
+.is-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-editorial-lg);
+}
+.is-hover-lift:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+
+/* Image zoom — subtle scale on parent hover. Pair with `.is-image-zoom-host`. */
+.is-image-zoom-host {
+  overflow: hidden;
+}
+.is-image-zoom-host .is-image-zoom {
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.is-image-zoom-host:hover .is-image-zoom,
+.is-image-zoom-host:focus-within .is-image-zoom {
+  transform: scale(1.05);
+}
+
+/* Bottom-up gradient overlay for cards with text over imagery. */
+.is-gradient-overlay-b::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.72) 0%,
+    rgb(0 0 0 / 0.42) 28%,
+    rgb(0 0 0 / 0.08) 58%,
+    transparent 78%
+  );
+}
+.is-gradient-overlay-t::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.45) 0%,
+    rgb(0 0 0 / 0.15) 32%,
+    transparent 62%
+  );
+}
+
+/* Editorial shadow helpers — apply inline with class instead of full Tailwind tokens. */
+.is-shadow-sm {
+  box-shadow: var(--shadow-editorial-sm);
+}
+.is-shadow-md {
+  box-shadow: var(--shadow-editorial-md);
+}
+.is-shadow-lg {
+  box-shadow: var(--shadow-editorial-lg);
+}
+
+/* Viewport reveal — IntersectionObserver-free, uses `prefers-reduced-motion`. */
+@keyframes is-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.is-reveal {
+  animation: is-reveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.is-reveal-delay-1 {
+  animation-delay: 0.08s;
+}
+.is-reveal-delay-2 {
+  animation-delay: 0.16s;
+}
+.is-reveal-delay-3 {
+  animation-delay: 0.24s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-marquee,
+  .is-marquee-slow,
+  .is-float,
+  .is-shimmer,
+  .is-slider-auto,
+  .is-fade-up,
+  .is-reveal {
+    animation: none !important;
+  }
+  .is-hover-lift,
+  .is-image-zoom-host .is-image-zoom {
+    transition: none;
+  }
 }
