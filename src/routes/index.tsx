@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import { EditorialCollections } from "@/components/EditorialCollections";
 import { PresentationModal } from "@/components/PresentationModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
@@ -486,6 +487,7 @@ function Index() {
       <Marquee />
       <EmptyRoomsCarousel onUpload={openUpload} />
       <StylesCarousel onPickStyle={openUploadWithStyle} onUpload={openUpload} />
+      <EditorialCollections />
       <HowItWorks onDemo={() => handlePresentation(true)} />
       <FeaturedBeforeAfter />
       <ResultShowcase
