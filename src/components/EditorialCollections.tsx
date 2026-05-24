@@ -1,13 +1,16 @@
 /**
- * Coleções editoriais — curadorias temáticas que apontam pra páginas reais
- * (/ambientes/<slug>, /estilos/<slug>). Layout asymmetric: feature card
- * grande à esquerda + 2 collection cards à direita no desktop, stack
- * vertical no mobile. Bloco de baixo expõe 6 overlay cards (2 fileiras de
- * 3 desktop) com novos estilos e ambientes do repertório expandido.
+ * Coleções editoriais — curadorias TEMÁTICAS (não estilos ou ambientes
+ * individuais — esses têm suas próprias seções AmbientesGrid e EstilosGrid
+ * mais acima na home).
  *
- * Não usa imagens novas: reaproveita assets já presentes em src/assets/
- * importando diretamente (fora do image-catalog pra evitar conflito com
- * `assertNoOverlap`, que zela apenas pelas seções principais da home).
+ * Cada coleção responde a uma necessidade/contexto do usuário: "tenho um
+ * apto pequeno", "moro de aluguel", "quero home office produtivo", etc.
+ * Algumas linkam pra ambiente/estilo mais alinhado; outras apontam pro
+ * fluxo de upload direto.
+ *
+ * Layout: feature card grande à esquerda + 2 collection cards stacked à
+ * direita no desktop; depois 3 overlay cards equivalentes. Não duplica
+ * estilo nem cômodo específico — apenas temas curatoriais.
  */
 import {
   EditorialFeatureCard,
@@ -15,99 +18,12 @@ import {
   PremiumOverlayCard,
 } from "@/components/ui/premium-cards";
 
-// Reutilizando imagens existentes (não troca nem regera nada).
-// Cada card aponta pra um asset único pra evitar déjà vu visual entre seções.
 import livingWarm from "@/assets/decorated-living-warm.jpg";
+import office from "@/assets/gallery-office.jpg";
 import bedroom from "@/assets/decorated-bedroom.jpg";
 import kitchenIsland from "@/assets/decorated-kitchen-island.jpg";
-import kitchenDecorated from "@/assets/decorated-kitchen.jpg";
-import office from "@/assets/gallery-office.jpg";
-import varanda from "@/assets/gallery-varanda.jpg";
-import bathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
 import moodboardPro from "@/assets/moodboard-pro.jpg";
-import styleScandi from "@/assets/style-scandi.jpg";
-
-const COLLECTIONS = {
-  feature: {
-    src: livingWarm,
-    alt: "Sala de estar decorada em estilo moderno acolhedor",
-    kicker: "Coleção em destaque",
-    title: (
-      <>
-        Apartamentos pequenos com <span className="font-serif italic">presença grande</span>.
-      </>
-    ),
-    description:
-      "Ambientes compactos que ganharam respiro, foco e personalidade. Inspiração curada por estilo e função.",
-    meta: "11 ambientes · estilo a estilo",
-    to: "/ambientes/sala",
-    ctaLabel: "Ver coleção",
-  },
-  homeOffice: {
-    src: office,
-    alt: "Home office com madeira e iluminação natural",
-    title: "Home office produtivo",
-    description: "Setups para foco, calls e ergonomia, do compacto ao executivo.",
-    count: "11 estilos",
-    to: "/ambientes/home-office",
-  },
-  cozyBedroom: {
-    src: bedroom,
-    alt: "Quarto japandi com tons quentes e textura natural",
-    title: "Quartos aconchegantes",
-    description: "Texturas, paleta neutra e iluminação suave pra desacelerar.",
-    count: "11 estilos",
-    to: "/ambientes/quarto",
-  },
-  dining: {
-    src: kitchenIsland,
-    alt: "Cozinha com ilha integrada à sala de jantar e luz natural",
-    kicker: "Para receber",
-    title: "Salas de jantar para conviver",
-    description: "Mesa central, paleta neutra, iluminação certa.",
-    to: "/ambientes/sala-jantar",
-  },
-  bohoChic: {
-    src: moodboardPro,
-    alt: "Moodboard com paleta quente e elementos boho",
-    kicker: "Estilo",
-    title: "Boho chic com curadoria",
-    description: "Camadas de tecidos, plantas e tons quentes em uma proposta acolhedora.",
-    to: "/estilos/boho-chic",
-  },
-  midCentury: {
-    src: styleScandi,
-    alt: "Ambiente sereno com linhas mid-century",
-    kicker: "Estilo",
-    title: "Mid-century atemporal",
-    description: "Linhas limpas, madeira morna e acentos pontuais de cor.",
-    to: "/estilos/mid-century",
-  },
-  varandaGourmet: {
-    src: varanda,
-    alt: "Varanda gourmet com plantas e mesa para receber",
-    kicker: "Ambiente",
-    title: "Varanda gourmet pra receber",
-    description: "Mesa, churrasqueira, plantas e iluminação no ritmo certo.",
-    to: "/ambientes/varanda-gourmet",
-  },
-  artDeco: {
-    src: bathroomSuite,
-    alt: "Lavabo em estilo art déco com materiais nobres",
-    kicker: "Estilo",
-    title: "Art déco escultural",
-    description: "Geometria sofisticada, materiais nobres, glamour com critério.",
-    to: "/estilos/art-deco",
-  },
-  luxoDiscreto: {
-    src: kitchenDecorated,
-    alt: "Cozinha decorada em estilo luxo discreto",
-    kicker: "Estilo",
-    title: "Luxo discreto",
-    description: "Materiais nobres, paleta restrita, acabamentos refinados.",
-    to: "/estilos/luxo",
-  },
-} as const;
+import bathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
 
 export function EditorialCollections() {
   return (
@@ -123,13 +39,12 @@ export function EditorialCollections() {
               id="editorial-collections-heading"
               className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl"
             >
-              Inspire-se por <span className="italic">tipo de espaço</span>,{" "}
-              <span className="italic">estilo</span> e <span className="italic">intenção</span>.
+              Curadorias <span className="italic">por contexto de vida</span>, não por estilo.
             </h2>
           </div>
           <p className="max-w-sm text-sm text-muted-foreground sm:text-base">
-            Coleções curadas para você navegar sem perder tempo. Cada uma reúne ambientes, estilos e
-            referências reais para começar o seu projeto.
+            Coleções que respondem a uma situação real: apartamento pequeno, mudança recente, casa
+            de aluguel, orçamento curto, retrofit premium acessível.
           </p>
         </div>
 
@@ -137,97 +52,72 @@ export function EditorialCollections() {
         <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <EditorialFeatureCard
-              src={COLLECTIONS.feature.src}
-              alt={COLLECTIONS.feature.alt}
-              kicker={COLLECTIONS.feature.kicker}
-              title={COLLECTIONS.feature.title}
-              description={COLLECTIONS.feature.description}
-              meta={COLLECTIONS.feature.meta}
-              ctaLabel={COLLECTIONS.feature.ctaLabel}
-              to={COLLECTIONS.feature.to}
+              src={livingWarm}
+              alt="Sala de estar decorada com presença em apartamento compacto"
+              kicker="Coleção em destaque"
+              title={
+                <>
+                  Apartamentos pequenos com{" "}
+                  <span className="font-serif italic">presença grande</span>.
+                </>
+              }
+              description="Ambientes compactos que ganharam respiro, foco e identidade pessoal. Inspiração curada pra quem precisa otimizar cada metro sem virar showroom frio."
+              meta="11 ambientes · todos os estilos"
+              ctaLabel="Começar pela sala"
+              to="/ambientes/sala"
             />
           </div>
           <div className="grid gap-5 sm:gap-6 lg:col-span-5">
             <CollectionCard
-              src={COLLECTIONS.homeOffice.src}
-              alt={COLLECTIONS.homeOffice.alt}
-              title={COLLECTIONS.homeOffice.title}
-              description={COLLECTIONS.homeOffice.description}
-              count={COLLECTIONS.homeOffice.count}
-              to={COLLECTIONS.homeOffice.to}
+              src={office}
+              alt="Home office com madeira e iluminação natural"
+              title="Home office produtivo"
+              description="Setups pra foco, calls e ergonomia, do compacto ao executivo."
+              count="11 estilos disponíveis"
+              to="/ambientes/home-office"
             />
             <CollectionCard
-              src={COLLECTIONS.cozyBedroom.src}
-              alt={COLLECTIONS.cozyBedroom.alt}
-              title={COLLECTIONS.cozyBedroom.title}
-              description={COLLECTIONS.cozyBedroom.description}
-              count={COLLECTIONS.cozyBedroom.count}
-              to={COLLECTIONS.cozyBedroom.to}
+              src={bedroom}
+              alt="Quarto aconchegante com texturas naturais"
+              title="Mudou de casa? Comece pelo quarto"
+              description="O cômodo que mais influencia a sensação de chegou em casa."
+              count="Recomendado pra mudança"
+              to="/ambientes/quarto"
             />
           </div>
         </div>
 
-        {/* Linha 2: 6 overlay cards (2 fileiras desktop) — repertório expandido. */}
+        {/* Linha 2: 3 overlay cards de contextos curatoriais. */}
         <div className="mt-5 grid grid-cols-1 gap-5 sm:mt-6 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <PremiumOverlayCard
-            src={COLLECTIONS.dining.src}
-            alt={COLLECTIONS.dining.alt}
-            kicker={COLLECTIONS.dining.kicker}
-            title={COLLECTIONS.dining.title}
-            description={COLLECTIONS.dining.description}
+            src={kitchenIsland}
+            alt="Cozinha integrada com luz natural pra quem mora de aluguel"
+            kicker="Sem reforma"
+            title="Projetos pra alugar"
+            description="Decoração que vai com você no próximo apartamento, sem precisar de obra."
             aspect="tall"
-            to={COLLECTIONS.dining.to}
-            ctaLabel="Ver inspirações"
+            to="/orcamento-design-interiores"
+            ctaLabel="Quanto custaria"
           />
           <PremiumOverlayCard
-            src={COLLECTIONS.bohoChic.src}
-            alt={COLLECTIONS.bohoChic.alt}
-            kicker={COLLECTIONS.bohoChic.kicker}
-            title={COLLECTIONS.bohoChic.title}
-            description={COLLECTIONS.bohoChic.description}
+            src={bathroomSuite}
+            alt="Lavabo em estilo luxo discreto com materiais nobres"
+            kicker="Luxo acessível"
+            title="Premium em escala compacta"
+            description="Onde investir pouco e ter alto impacto: lavabo, hall, cabeceira, mesa de jantar."
             aspect="tall"
-            to={COLLECTIONS.bohoChic.to}
-            ctaLabel="Ver estilo"
+            to="/estilos/luxo"
+            ctaLabel="Ver estratégia"
           />
           <PremiumOverlayCard
-            src={COLLECTIONS.midCentury.src}
-            alt={COLLECTIONS.midCentury.alt}
-            kicker={COLLECTIONS.midCentury.kicker}
-            title={COLLECTIONS.midCentury.title}
-            description={COLLECTIONS.midCentury.description}
+            src={moodboardPro}
+            alt="Moodboard com paleta e materiais pra projeto autoral"
+            kicker="Inspiração por contexto"
+            title="Antes e depois real"
+            description="Foto comum do seu ambiente vira proposta visual com lista de compras."
             aspect="tall"
-            to={COLLECTIONS.midCentury.to}
-            ctaLabel="Ver estilo"
-          />
-          <PremiumOverlayCard
-            src={COLLECTIONS.varandaGourmet.src}
-            alt={COLLECTIONS.varandaGourmet.alt}
-            kicker={COLLECTIONS.varandaGourmet.kicker}
-            title={COLLECTIONS.varandaGourmet.title}
-            description={COLLECTIONS.varandaGourmet.description}
-            aspect="tall"
-            to={COLLECTIONS.varandaGourmet.to}
-            ctaLabel="Ver inspirações"
-          />
-          <PremiumOverlayCard
-            src={COLLECTIONS.artDeco.src}
-            alt={COLLECTIONS.artDeco.alt}
-            kicker={COLLECTIONS.artDeco.kicker}
-            title={COLLECTIONS.artDeco.title}
-            description={COLLECTIONS.artDeco.description}
-            aspect="tall"
-            to={COLLECTIONS.artDeco.to}
-            ctaLabel="Ver estilo"
-          />
-          <PremiumOverlayCard
-            src={COLLECTIONS.luxoDiscreto.src}
-            alt={COLLECTIONS.luxoDiscreto.alt}
-            kicker={COLLECTIONS.luxoDiscreto.kicker}
-            title={COLLECTIONS.luxoDiscreto.title}
-            description={COLLECTIONS.luxoDiscreto.description}
-            aspect="tall"
-            to={COLLECTIONS.luxoDiscreto.to}
-            ctaLabel="Ver estilo"
+            to="/"
+            ctaLabel="Como funciona"
           />
         </div>
       </div>

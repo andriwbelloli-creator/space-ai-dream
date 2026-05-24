@@ -5,8 +5,8 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { EditorialCollections } from "@/components/EditorialCollections";
-import { MoreStylesGrid } from "@/components/MoreStylesGrid";
-import { MoreRoomsGrid } from "@/components/MoreRoomsGrid";
+import { AmbientesGrid } from "@/components/AmbientesGrid";
+import { EstilosGrid } from "@/components/EstilosGrid";
 import { PresentationModal } from "@/components/PresentationModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
@@ -487,13 +487,11 @@ function Index() {
         onUpload={openUpload}
       />
       <Marquee />
-      <EmptyRoomsCarousel onUpload={openUpload} />
-      <MoreRoomsGrid />
-      <StylesCarousel onPickStyle={openUploadWithStyle} onUpload={openUpload} />
-      <MoreStylesGrid />
-      <EditorialCollections />
-      <HowItWorks onDemo={() => handlePresentation(true)} />
       <FeaturedBeforeAfter />
+      <HowItWorks onDemo={() => handlePresentation(true)} />
+      <AmbientesGrid />
+      <EstilosGrid />
+      <EditorialCollections />
       <ResultShowcase
         onBudget={() => openReward("budget")}
         onAffiliate={setAffiliateOpen}
