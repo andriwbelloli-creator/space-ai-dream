@@ -15,7 +15,18 @@ import type {
 } from "./seo-landing-shared";
 
 /** Slugs de cômodos com landing page dedicada. */
-export type RoomSlug = "sala" | "quarto" | "cozinha" | "home-office" | "banheiro";
+export type RoomSlug =
+  | "sala"
+  | "quarto"
+  | "cozinha"
+  | "home-office"
+  | "banheiro"
+  | "sala-jantar"
+  | "closet"
+  | "varanda-gourmet"
+  | "quarto-infantil"
+  | "lavabo"
+  | "sala-tv";
 
 /** Conteúdo de SEO + copy de conversão de uma landing page de ambiente. */
 export interface RoomSeoData {
@@ -523,6 +534,570 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
       before: "empty-bathroom",
       after: "decorated-bathroom",
       gallery: ["empty-bathroom-suite", "decorated-bathroom-suite", "decorated-living"],
+    },
+  },
+  "sala-jantar": {
+    title: "Decorar Sala de Jantar com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja sua sala de jantar decorada com IA. Envie uma foto, escolha o estilo e receba uma inspiração visual com mesa, iluminação, paleta e lista de compras.",
+    h1: "Veja sua *sala de jantar* decorada com IA",
+    promise:
+      "Envie uma foto da sala de jantar como ela está hoje e veja como ela pode ficar mais convidativa. Teste mesas, cadeiras, iluminação central e paletas em diferentes estilos. Recebe sugestões de produtos reais para montar a sua, sem depender só de inspirações genéricas de Pinterest.",
+    cta: "Ver minha sala de jantar decorada",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "sala-jantar",
+    benefits: [
+      "Teste mesas redondas, retangulares, ovais e proporção pra cadeiras",
+      "Visualize a iluminação central (pendente, lustre) antes de comprar",
+      "Compare versões em contemporâneo, mid-century, japandi e luxo discreto",
+      "Funciona em sala de jantar integrada ou em ambiente dedicado",
+      "Paleta e materiais coerentes com o resto da casa",
+      "Lista de compras com sugestões de produtos reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+      "Ponto de partida visual antes de gastar com móvel, mesa ou iluminação",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto da sala de jantar",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Contemporâneo, mid-century, japandi, art déco, natural ou maximalista. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Uma sala de jantar simples ganhando intenção",
+    visualDescription:
+      "Exemplo de transformação de uma sala de jantar a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "A imagem gerada é um projeto técnico?",
+        a: "Não. É uma inspiração visual gerada por IA, não um render arquitetônico nem um projeto pronto para obra.",
+      },
+      {
+        q: "Funciona com sala de jantar integrada à sala de estar?",
+        a: "Sim. Envie a foto que mostre o espaço integrado. A IA respeita o layout real e propõe uma proposta coerente entre os dois ambientes.",
+      },
+      {
+        q: "Posso testar mesas de tamanhos diferentes?",
+        a: "Sim. Gere variações com mesa para 4, 6 ou 8 lugares. A IA propõe proporções consistentes com o ambiente.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A lista de compras inclui iluminação central?",
+        a: "Sim. Pendentes, lustres e luminárias entram na lista quando fazem parte da proposta visual.",
+      },
+      {
+        q: "Funciona em apartamento pequeno?",
+        a: "Funciona. A IA propõe mesa proporcional e iluminação que valoriza o ambiente compacto sem encher o espaço.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+      {
+        q: "Posso comparar vários estilos na mesma sala de jantar?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado e decida.",
+      },
+    ],
+    finalCta: "Ver minha sala de jantar decorada",
+    relatedLinks: [
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Cozinha", to: "/ambientes/cozinha" },
+      { label: "Mid-century modern", to: "/estilos/mid-century" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Art déco", to: "/estilos/art-deco" },
+      { label: "Maximalista elegante", to: "/estilos/maximalista" },
+    ],
+    whyChoose: [
+      "Visualize a sala de jantar pronta antes de comprar mesa, cadeira ou pendente",
+      "Compare uma versão sóbria contemporânea e uma mid-century na mesma foto",
+      "Ideias para integrar sala de jantar à sala de estar sem brigar visualmente",
+      "A IA preserva o layout real, você decide o que entra e o que sai",
+      "Sugestões de produtos com faixa de preço, ponto de partida pro orçamento",
+      "Útil mesmo se a meta for só renovar (mesa nova, pendente novo)",
+    ],
+    images: {
+      before: "empty-living",
+      after: "decorated-dining",
+      gallery: ["decorated-dining", "decorated-living-warm", "gallery-loft"],
+    },
+  },
+  closet: {
+    title: "Decorar Closet com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja seu closet decorado com IA. Envie uma foto, escolha o estilo e receba uma inspiração visual com organização, iluminação e lista de compras estimada.",
+    h1: "Veja seu *closet* decorado com IA",
+    promise:
+      "Envie uma foto do closet como ele está hoje e veja como ele pode ficar mais funcional e bonito. Teste organização modular, iluminação, espelho e acabamentos em diferentes estilos. Recebe sugestões de produtos reais para começar a montar o seu, sem virar showroom frio.",
+    cta: "Ver meu closet decorado",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "closet",
+    benefits: [
+      "Visualize organização modular antes de comprar prateleiras e cabideiros",
+      "Teste iluminação direta e indireta sem instalar nada ainda",
+      "Compare versões em luxo discreto, contemporâneo e minimalista",
+      "Funciona em closet aberto (vestidor) ou em closet fechado",
+      "Espelho, banqueta e acabamentos com critério, sem ostentação",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Funciona em closet de apartamento padrão, não só mansão",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do closet",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Luxo discreto, contemporâneo, minimalista ou natural. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Um closet simples ganhando organização",
+    visualDescription:
+      "Exemplo de transformação de um closet a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Preciso ter um closet grande?",
+        a: "Não. A IA propõe organização proporcional ao seu espaço. Funciona em closet aberto pequeno, vestidor médio ou closet grande.",
+      },
+      {
+        q: "Funciona em closet aberto (vestidor)?",
+        a: "Sim. Envie a foto do espaço como está hoje. A IA propõe organização, iluminação e acabamento coerentes com closet aberto ou fechado.",
+      },
+      {
+        q: "A IA propõe marcenaria sob medida?",
+        a: "A inspiração mostra como uma marcenaria sob medida ficaria. Você leva a referência pra um marceneiro orçar e executar, se for o caso.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A lista inclui iluminação?",
+        a: "Sim. Pendentes, plafons e fitas LED entram quando fazem parte da proposta visual.",
+      },
+      {
+        q: "Funciona em apartamento alugado?",
+        a: "Funciona. A IA pode propor versão sem obra (cabideiros móveis, prateleiras independentes) que vão com você quando sair.",
+      },
+      {
+        q: "Posso comparar vários estilos no mesmo closet?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver meu closet decorado",
+    relatedLinks: [
+      { label: "Quarto", to: "/ambientes/quarto" },
+      { label: "Banheiro", to: "/ambientes/banheiro" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Natural", to: "/estilos/natural" },
+    ],
+    whyChoose: [
+      "Visualize o closet organizado antes de comprar marcenaria ou prateleiras",
+      "Compare uma versão luxo discreto e uma minimalista na mesma foto",
+      "Ideias para closet pequeno parecer maior, com iluminação e espelho certos",
+      "A IA respeita a estrutura real, você decide o que entra no orçamento",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Útil mesmo se a meta for só refrescar, sem obra grande",
+    ],
+    images: {
+      before: "empty-bedroom",
+      after: "decorated-bedroom",
+      gallery: ["rank-minimal-bedroom", "decorated-bedroom", "decorated-bathroom-suite"],
+    },
+  },
+  "varanda-gourmet": {
+    title: "Decorar Varanda Gourmet com IA | Ideal Space",
+    description:
+      "Veja sua varanda gourmet decorada com IA. Envie uma foto, escolha o estilo e receba uma inspiração visual com mesa, churrasqueira, plantas e lista de compras.",
+    h1: "Veja sua *varanda gourmet* decorada com IA",
+    promise:
+      "Envie uma foto da varanda como ela está hoje e veja como ela pode virar um ambiente de receber. Teste mesa, churrasqueira, iluminação, plantas e paleta em diferentes estilos. Recebe sugestões de produtos reais para começar a montar a sua, do mais econômico ao mais sofisticado.",
+    cta: "Ver minha varanda decorada",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "varanda-gourmet",
+    benefits: [
+      "Teste mesa, cadeiras, sofá de varanda e proporção pra receber",
+      "Visualize iluminação ambiente e ponto sem instalar nada ainda",
+      "Compare versões em mediterrâneo, contemporâneo, natural e boho chic",
+      "Plantas como protagonistas, sem virar selva visual",
+      "Funciona em varanda pequena, média ou ampla",
+      "Materiais resistentes a sol e chuva quando o ambiente exige",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto da varanda",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Mediterrâneo, natural, boho chic, contemporâneo ou luxo discreto. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Uma varanda simples virando ambiente de receber",
+    visualDescription:
+      "Exemplo de transformação de uma varanda gourmet a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Funciona em varanda pequena?",
+        a: "Sim. A IA propõe escala proporcional: mesa compacta, plantas estratégicas, iluminação que valoriza o ambiente sem encher o espaço.",
+      },
+      {
+        q: "A IA sugere materiais resistentes a sol e chuva?",
+        a: "Sim, quando o ambiente é aberto. A lista de compras pode incluir tecidos impermeáveis, madeira tratada e plantas tolerantes ao sol.",
+      },
+      {
+        q: "Posso ter churrasqueira na proposta?",
+        a: "Sim. Você pode pedir a versão com bancada de churrasqueira. A IA propõe layout e acabamento coerentes.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "Funciona em varanda fechada com vidro?",
+        a: "Funciona. A IA propõe layout, paleta e plantas adequadas ao ambiente fechado, com luz natural mas sem exposição direta.",
+      },
+      {
+        q: "A lista inclui plantas?",
+        a: "Sim, com sugestões de espécies tolerantes ao tipo de exposição (sol pleno, meia-sombra, sombra) e tamanho do vaso.",
+      },
+      {
+        q: "Posso comparar vários estilos na mesma varanda?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver minha varanda gourmet decorada",
+    relatedLinks: [
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Cozinha", to: "/ambientes/cozinha" },
+      { label: "Mediterrâneo", to: "/estilos/mediterraneo" },
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Boho chic", to: "/estilos/boho-chic" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+    ],
+    whyChoose: [
+      "Visualize a varanda pronta antes de comprar mesa, sofá ou churrasqueira",
+      "Compare uma versão mediterrânea clara e uma natural verde na mesma foto",
+      "Ideias para varanda pequena virar ambiente de receber sem perder espaço",
+      "A IA propõe escala proporcional, não enche o ambiente de móvel",
+      "Sugestões de plantas tolerantes ao tipo de exposição da sua varanda",
+      "Útil pra estimar orçamento antes de fechar com marceneiro ou loja",
+    ],
+    images: {
+      before: "empty-living",
+      after: "gallery-varanda",
+      gallery: ["gallery-varanda", "decorated-dining", "gallery-loft"],
+    },
+  },
+  "quarto-infantil": {
+    title: "Decorar Quarto Infantil com IA | Ideal Space",
+    description:
+      "Veja o quarto infantil decorado com IA. Envie uma foto, escolha o estilo e receba uma inspiração visual com cama, organização, paleta e lista de compras.",
+    h1: "Veja o *quarto infantil* decorado com IA",
+    promise:
+      "Envie uma foto do quarto da criança como ele está hoje e veja como ele pode ficar mais funcional e divertido sem virar quarto de tema. Teste cama, organização, paleta e acabamentos em diferentes estilos. Recebe sugestões de produtos reais para começar a montar.",
+    cta: "Ver quarto infantil decorado",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "quarto-infantil",
+    benefits: [
+      "Teste cama, mesa de estudo, organização e paleta antes de comprar",
+      "Visualize ambiente funcional pra dormir, brincar e estudar",
+      "Compare versões neutras (envelhece bem) e versões mais lúdicas",
+      "Materiais seguros e acabamentos resistentes ao uso de criança",
+      "Funciona em quarto pequeno, compartilhado ou ambiente único",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+      "Ponto de partida visual antes de gastar com móveis infantis",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do quarto",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Natural, escandinavo, minimalista ou contemporâneo. Versão neutra que cresce com a criança.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Um quarto infantil simples virando funcional",
+    visualDescription:
+      "Exemplo de transformação de um quarto infantil a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Vocês sugerem tema infantil (princesa, super-herói)?",
+        a: "A IA prioriza propostas que envelhecem bem (paleta neutra com acentos coloridos). Tema temático específico fica por conta da decoração final que você escolher.",
+      },
+      {
+        q: "Funciona em quarto compartilhado entre irmãos?",
+        a: "Sim. A IA propõe organização e mobiliário pra quarto compartilhado, com camas paralelas ou beliche e zonas individuais.",
+      },
+      {
+        q: "Os móveis sugeridos são seguros pra criança?",
+        a: "A lista organiza sugestões. Você confirma critérios de segurança (cantos arredondados, materiais sem componente tóxico) na loja antes de comprar.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "Posso pedir versão pra bebê?",
+        a: "Sim. A IA propõe layout com berço, trocador, poltrona de amamentação e organização proporcional ao quarto.",
+      },
+      {
+        q: "Funciona pra quarto de adolescente?",
+        a: "Funciona. Versão mais sóbria com mesa de estudo grande, paleta neutra e zona de descanso clara.",
+      },
+      {
+        q: "Posso comparar vários estilos no mesmo quarto?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver o quarto infantil decorado",
+    relatedLinks: [
+      { label: "Quarto", to: "/ambientes/quarto" },
+      { label: "Home office", to: "/ambientes/home-office" },
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Minimalista", to: "/estilos/minimalista" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Boho chic", to: "/estilos/boho-chic" },
+    ],
+    whyChoose: [
+      "Visualize o quarto pronto antes de comprar cama, mesa ou organização",
+      "Compare uma versão neutra (cresce com a criança) e uma lúdica na mesma foto",
+      "Ideias pra quarto compartilhado funcionar sem brigar visualmente",
+      "A IA propõe escala proporcional ao tamanho real do ambiente",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Útil mesmo se a meta for só refrescar, sem reforma grande",
+    ],
+    images: {
+      before: "empty-bedroom",
+      after: "decorated-bedroom",
+      gallery: ["decorated-bedroom", "rank-minimal-bedroom", "decorated-living-warm"],
+    },
+  },
+  lavabo: {
+    title: "Decorar Lavabo com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja seu lavabo decorado com IA. Envie uma foto, escolha o estilo e receba uma inspiração visual com cuba, espelho, papel de parede e lista de compras.",
+    h1: "Veja seu *lavabo* decorado com IA",
+    promise:
+      "Envie uma foto do lavabo como ele está hoje e veja como ele pode virar o ambiente mais impactante da casa. Lavabo aceita ousadia que outros banheiros não aceitam. Teste papel de parede, cuba esculpida, espelho ornamental e iluminação dramática em diferentes estilos.",
+    cta: "Ver meu lavabo decorado",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "lavabo",
+    benefits: [
+      "Lavabo aceita ousadia: papel de parede, cor densa e materiais nobres",
+      "Teste cubas esculpidas, espelhos ornamentais e iluminação dramática",
+      "Compare versões em art déco, luxo discreto, contemporâneo e maximalista",
+      "Funciona em lavabo pequeno (uso curto, impacto alto)",
+      "Materiais nobres em escala compacta: dá efeito sem custar fortuna",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Visualiza papel de parede antes de aplicar (não tem volta fácil)",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do lavabo",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Art déco, luxo discreto, contemporâneo ou maximalista. Lavabo aceita o ousado.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Um lavabo simples virando o ambiente mais impactante",
+    visualDescription:
+      "Exemplo de transformação de um lavabo a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Lavabo pequeno aceita papel de parede escuro?",
+        a: "Sim. Em lavabo (uso curto, impacto alto), papel de parede ousado funciona muito bem. A IA propõe versões pra você comparar.",
+      },
+      {
+        q: "Materiais nobres não ficam caros?",
+        a: "Em lavabo, a escala compacta ajuda: pouca cuba, pouco mármore, pouco papel de parede. Dá pra ter efeito premium com investimento menor que em outros ambientes.",
+      },
+      {
+        q: "Funciona em lavabo de apartamento padrão?",
+        a: "Funciona muito bem. A IA respeita a estrutura real e propõe acabamentos viáveis pro tamanho do seu lavabo.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A IA propõe troca de cuba e bancada?",
+        a: "Sim. A inspiração pode mostrar cuba esculpida, bancada de mármore ou alternativas. Você decide o que entra no orçamento.",
+      },
+      {
+        q: "Funciona com lavabo aberto pra sala?",
+        a: "Sim. A IA propõe acabamento coerente com a área social aberta, sem brigar com o restante da casa.",
+      },
+      {
+        q: "Posso comparar estilos diferentes no mesmo lavabo?",
+        a: "Sim. A mesma foto pode receber art déco, luxo discreto e contemporâneo. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver meu lavabo decorado",
+    relatedLinks: [
+      { label: "Banheiro", to: "/ambientes/banheiro" },
+      { label: "Art déco", to: "/estilos/art-deco" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Maximalista elegante", to: "/estilos/maximalista" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Sala", to: "/ambientes/sala" },
+    ],
+    whyChoose: [
+      "Lavabo é o ambiente que mais permite ousadia, com risco baixo de errar",
+      "Compare versão art déco densa e contemporânea sóbria na mesma foto",
+      "Visualize papel de parede antes de aplicar (decisão difícil de reverter)",
+      "A IA respeita a estrutura real (cuba, vaso, espelho), você decide o resto",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Investimento concentrado em escala compacta: efeito alto, custo controlado",
+    ],
+    images: {
+      before: "empty-bathroom",
+      after: "decorated-bathroom",
+      gallery: ["decorated-bathroom", "decorated-bathroom-suite", "style-luxo"],
+    },
+  },
+  "sala-tv": {
+    title: "Decorar Sala de TV com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja sua sala de TV decorada com IA. Envie uma foto, escolha o estilo e receba uma inspiração visual com sofá, painel de TV, iluminação e lista de compras.",
+    h1: "Veja sua *sala de TV* decorada com IA",
+    promise:
+      "Envie uma foto da sala de TV como ela está hoje e veja como ela pode virar um ambiente confortável e bonito ao mesmo tempo. Teste sofá, painel de TV, iluminação indireta e paleta em diferentes estilos. Recebe sugestões de produtos reais pra começar.",
+    cta: "Ver minha sala de TV decorada",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "sala-tv",
+    benefits: [
+      "Teste sofá, poltrona reclinável, puff e proporção pra assistir TV",
+      "Visualize painel de TV, prateleiras e iluminação indireta antes de comprar",
+      "Compare versões em contemporâneo, mid-century, industrial e luxo discreto",
+      "Funciona em sala dedicada, integrada ou ambiente pequeno",
+      "Acústica e iluminação pensadas pra reduzir reflexo na TV",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+      "Ponto de partida antes de gastar com sofá, painel ou home theater",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto da sala de TV",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Contemporâneo, mid-century, industrial, luxo discreto ou natural. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Uma sala de TV simples ganhando conforto",
+    visualDescription:
+      "Exemplo de transformação de uma sala de TV a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "A IA leva em conta o reflexo na TV?",
+        a: "A inspiração visual prioriza iluminação indireta e painel atrás da TV pra reduzir reflexo. Você confirma na execução final.",
+      },
+      {
+        q: "Funciona em sala de TV integrada à sala de estar?",
+        a: "Sim. A IA propõe layout coerente entre as duas zonas, mantendo a TV como ponto focal sem brigar com o restante.",
+      },
+      {
+        q: "Posso testar painel de TV de tamanhos diferentes?",
+        a: "Sim. Você pode pedir variações. A IA propõe proporções consistentes com o tamanho real do ambiente.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A lista inclui sofá reclinável e poltrona?",
+        a: "Sim, quando fazem parte da proposta visual. Você pode pedir versão minimal (só sofá) ou versão home theater (sofá + poltrona + puff).",
+      },
+      {
+        q: "Funciona em apartamento pequeno?",
+        a: "Funciona. A IA propõe escala proporcional: sofá compacto, painel slim, iluminação que valoriza o ambiente sem encher.",
+      },
+      {
+        q: "Posso comparar vários estilos na mesma sala?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver minha sala de TV decorada",
+    relatedLinks: [
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Home office", to: "/ambientes/home-office" },
+      { label: "Mid-century modern", to: "/estilos/mid-century" },
+      { label: "Industrial", to: "/estilos/industrial" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+    ],
+    whyChoose: [
+      "Visualize a sala de TV pronta antes de comprar sofá, painel ou TV nova",
+      "Compare uma versão mid-century quente e uma industrial fria na mesma foto",
+      "Ideias para sala de TV compacta funcionar sem virar puxado de quarto",
+      "A IA respeita a estrutura real, você decide o que entra no orçamento",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Útil mesmo se a meta for só renovar (sofá novo, painel novo)",
+    ],
+    images: {
+      before: "empty-living",
+      after: "decorated-living",
+      gallery: ["decorated-living-warm", "decorated-living", "gallery-loft"],
     },
   },
 };

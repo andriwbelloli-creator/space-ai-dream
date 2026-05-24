@@ -10,7 +10,14 @@ function isRoomSlug(slug: string): slug is RoomSlug {
 
 /** Nome curto do cômodo para uso no breadcrumb estruturado (JSON-LD). */
 function roomName(slug: RoomSlug): string {
-  return slug === "home-office" ? "Home office" : slug.charAt(0).toUpperCase() + slug.slice(1);
+  const overrides: Partial<Record<RoomSlug, string>> = {
+    "home-office": "Home office",
+    "sala-jantar": "Sala de jantar",
+    "varanda-gourmet": "Varanda gourmet",
+    "quarto-infantil": "Quarto infantil",
+    "sala-tv": "Sala de TV",
+  };
+  return overrides[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
 }
 
 export const Route = createFileRoute("/ambientes/$roomSlug")({
