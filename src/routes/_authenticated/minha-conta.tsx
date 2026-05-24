@@ -221,7 +221,9 @@ function MinhaContaPage() {
                   <div>
                     <h2 className="text-base font-semibold tracking-tight">Gerenciar assinatura</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Atualize plano, cartão ou veja faturas no portal seguro do Stripe.
+                      {state.summary.portalAvailable
+                        ? "Atualize plano, cartão ou veja faturas no portal seguro do Stripe."
+                        : "Quando o portal de assinatura estiver disponível, você poderá atualizar plano, cartão e consultar faturas com segurança."}
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 sm:items-center shrink-0">
