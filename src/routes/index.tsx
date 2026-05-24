@@ -10,6 +10,7 @@ import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { logEvent } from "@/lib/tracking.functions";
+import { checkAdminAccess } from "@/lib/admin";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
 import { useCredits } from "@/hooks/use-credits";
@@ -647,12 +648,36 @@ function Index() {
 function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void }) {
   const { user, signOut } = useAuth();
   const { credits } = useCredits();
+  const verifyAdmin = useServerFn(checkAdminAccess);
+  // Acesso ao painel interno aparece no menu de perfil apenas pra admins.
+  // Verificação server-side é a fonte da verdade — esta flag só controla a
+  // visibilidade do link. Não-admins nem veem o atalho.
+  const [isAdmin, setIsAdmin] = useState(false);
   // Display name e inicial: user_metadata.full_name/name (Google OAuth) →
   // fallback no local-part do e-mail. Computado fora do JSX pra não duplicar
   // entre o cluster desktop e a seção mobile.
   const meta = (user?.user_metadata ?? {}) as { full_name?: string; name?: string };
   const displayName = meta.full_name || meta.name || user?.email?.split("@")[0] || "Conta";
   const initial = (displayName || "?").trim().charAt(0).toUpperCase() || "?";
+
+  useEffect(() => {
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+    let active = true;
+    verifyAdmin({})
+      .then((res) => {
+        if (active) setIsAdmin(!!res?.isAdmin);
+      })
+      .catch(() => {
+        if (active) setIsAdmin(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [user, verifyAdmin]);
+
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -721,6 +746,16 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                     {user.email}
                   </div>
                   <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/insights">
+                          <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem onClick={() => void signOut()}>Sair</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -812,6 +847,13 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                       ? "Plano ilimitado"
                       : `${credits.balance} ${credits.balance === 1 ? "crédito" : "créditos"}`}
                   </div>
+                )}
+                {isAdmin && (
+                  <Button asChild variant="outline" className="mt-3 w-full h-11 rounded-xl">
+                    <Link to="/admin/insights">
+                      <ShieldCheck className="h-4 w-4 mr-2" /> Painel admin
+                    </Link>
+                  </Button>
                 )}
                 <Button
                   onClick={() => void signOut()}
