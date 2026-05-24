@@ -1,15 +1,14 @@
 /**
- * Ambientes para transformar — UMA seção consolidada na home mostrando 8
- * ambientes principais + CTA pros 3 restantes. As 11 rotas /ambientes/<slug>
- * continuam acessíveis; só limito a presença visual na home pra evitar
- * scroll longo. Cards menos representados (lavabo, quarto-infantil, sala-tv)
- * ficam disponíveis via landing direta + cross-links nas páginas de estilo.
+ * Qual ambiente você quer transformar? — UMA seção consolidada na home
+ * mostrando 10 cômodos em grid 5x2 desktop (3 cols ≤1024, 2 cols ≤640).
+ * Uniforme (sem destaque grande) pra dar ritmo editorial e reduzir scroll.
  *
- * Layout: grid editorial 1 destaque grande + 7 cards regulares. Mobile 1
- * col, sm 2, lg 4. Cada card é PremiumOverlayCard apontando pra rota.
+ * As 11 rotas /ambientes/<slug> continuam acessíveis; só limito a presença
+ * visual na home a 10 (deixo "sala-tv" de fora pra cair em 5x2 exato).
+ * sala-tv segue acessível via cross-links nas páginas relacionadas.
+ *
+ * Imagens reaproveitam assets existentes (sem trocar nem regerar).
  */
-import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
 
 import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
@@ -20,6 +19,8 @@ import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
 import galleryLoft from "@/assets/gallery-loft.jpg";
 import rankMinimalBedroom from "@/assets/rank-minimal-bedroom.jpg";
 import galleryVaranda from "@/assets/gallery-varanda.jpg";
+import styleJapandi from "@/assets/style-japandi.jpg";
+import decoratedBathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
 
 type RoomItem = {
   slug: string;
@@ -27,7 +28,6 @@ type RoomItem = {
   description: string;
   src: string;
   alt: string;
-  featured?: boolean;
 };
 
 const ROOMS: ReadonlyArray<RoomItem> = [
@@ -37,12 +37,11 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     description: "Sofá, tapete, iluminação e mesa de centro em harmonia.",
     src: decoratedLivingWarm,
     alt: "Sala de estar decorada em estilo moderno acolhedor",
-    featured: true,
   },
   {
     slug: "quarto",
     name: "Quarto",
-    description: "Sono, descanso e identidade pessoal em uma paleta calma.",
+    description: "Sono, descanso e identidade pessoal em paleta calma.",
     src: decoratedBedroom,
     alt: "Quarto decorado com texturas naturais",
   },
@@ -75,6 +74,13 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     alt: "Sala de jantar integrada com mesa central e iluminação",
   },
   {
+    slug: "varanda-gourmet",
+    name: "Varanda gourmet",
+    description: "Receba bem em escala proporcional ao seu espaço.",
+    src: galleryVaranda,
+    alt: "Varanda gourmet com plantas e mesa de receber",
+  },
+  {
     slug: "closet",
     name: "Closet",
     description: "Organização modular e iluminação que valorizam.",
@@ -82,16 +88,22 @@ const ROOMS: ReadonlyArray<RoomItem> = [
     alt: "Closet organizado com iluminação direta",
   },
   {
-    slug: "varanda-gourmet",
-    name: "Varanda gourmet",
-    description: "Receba bem em escala proporcional ao seu espaço.",
-    src: galleryVaranda,
-    alt: "Varanda gourmet com plantas e mesa de receber",
+    slug: "quarto-infantil",
+    name: "Quarto infantil",
+    description: "Funcional pra dormir, brincar e estudar.",
+    src: styleJapandi,
+    alt: "Quarto infantil com paleta serena",
+  },
+  {
+    slug: "lavabo",
+    name: "Lavabo",
+    description: "Aceita ousadia: papel de parede, cuba esculpida.",
+    src: decoratedBathroomSuite,
+    alt: "Lavabo decorado com materiais nobres",
   },
 ] as const;
 
 export function AmbientesGrid() {
-  const [featured, ...rest] = ROOMS;
   return (
     <section
       id="ambientes"
@@ -106,7 +118,7 @@ export function AmbientesGrid() {
               id="ambientes-heading"
               className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl"
             >
-              Comece pelo cômodo que faz <span className="italic">a maior diferença</span>.
+              Escolha o <span className="italic">cômodo</span> para transformar.
             </h2>
           </div>
           <p className="max-w-sm text-sm text-muted-foreground sm:text-base">
@@ -115,23 +127,9 @@ export function AmbientesGrid() {
           </p>
         </div>
 
-        {/* Destaque + grid */}
-        <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-4">
-          {/* Destaque ocupa 2 cols no desktop. */}
-          <div className="lg:col-span-2 lg:row-span-2">
-            <PremiumOverlayCard
-              src={featured.src}
-              alt={featured.alt}
-              kicker="Ambiente em destaque"
-              title={featured.name}
-              description={featured.description}
-              aspect="square"
-              size="lg"
-              to={`/ambientes/${featured.slug}`}
-              ctaLabel="Decorar este ambiente"
-            />
-          </div>
-          {rest.map((room) => (
+        {/* Grid uniforme 5x2 desktop, 3 sm, 2 mobile. */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
+          {ROOMS.map((room) => (
             <PremiumOverlayCard
               key={room.slug}
               src={room.src}
@@ -139,39 +137,12 @@ export function AmbientesGrid() {
               kicker="Ambiente"
               title={room.name}
               description={room.description}
-              aspect="tall"
+              aspect="portrait"
+              size="sm"
               to={`/ambientes/${room.slug}`}
               ctaLabel="Decorar"
             />
           ))}
-        </div>
-
-        {/* CTA "Ver todos" — 11 ambientes total, 8 em destaque acima. */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-6 sm:mt-10">
-          <p className="text-sm text-muted-foreground">
-            Também temos landings dedicadas pra quarto infantil, lavabo e sala de TV.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              to="/ambientes/quarto-infantil"
-              className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors"
-            >
-              Quarto infantil
-            </Link>
-            <Link
-              to="/ambientes/lavabo"
-              className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors"
-            >
-              Lavabo
-            </Link>
-            <Link
-              to="/ambientes/sala-tv"
-              className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium hover:border-accent hover:text-accent transition-colors"
-            >
-              Sala de TV
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
         </div>
       </div>
     </section>

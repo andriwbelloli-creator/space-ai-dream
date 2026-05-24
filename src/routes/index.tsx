@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
+import { Tipos2D5D } from "@/components/Tipos2D5D";
 import { PresentationModal } from "@/components/PresentationModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
@@ -569,23 +570,16 @@ function Index() {
         onDemo={() => handlePresentation(true)}
         onUpload={openUpload}
       />
-      <Marquee />
       <StylesCarousel onUpload={openUpload} />
-      <FeaturedBeforeAfter />
       <HowItWorks onDemo={() => handlePresentation(true)} />
       <AmbientesGrid />
+      <Tipos2D5D />
       <EditorialCollections />
       <ResultShowcase
         onBudget={() => openReward("budget")}
         onAffiliate={setAffiliateOpen}
         onReward={openReward}
       />
-      <InspirationGallery
-        onUpload={openUpload}
-        onPickStyle={openUploadWithStyle}
-        onLead={(title) => setLead({ planInterest: "pro", title })}
-      />
-      <Professionals onUpload={openUpload} onCourse={() => setCourseOpen(true)} />
       <Pricing
         onReward={openReward}
         onLead={(planInterest) =>
@@ -595,7 +589,6 @@ function Index() {
           })
         }
       />
-      <Trust />
       <FAQ />
       <Footer />
 
@@ -1015,7 +1008,40 @@ function Hero({
             lista de compras e orçamento estimado de produtos reais para comprar.
           </p>
 
-          <div className="mt-7 flex flex-col sm:flex-row gap-3">
+          {/* Dropzone primária — abre UploadPhotoModal no click ou drop. Drag
+              real do arquivo cai no modal que ja sabe processar. Aqui so
+              precisamos sinalizar afordancia visual + abrir o flow. */}
+          <button
+            type="button"
+            onClick={onUpload}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.currentTarget.dataset.dragging = "true";
+            }}
+            onDragLeave={(e) => {
+              delete e.currentTarget.dataset.dragging;
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              delete e.currentTarget.dataset.dragging;
+              onUpload();
+            }}
+            className="mt-6 w-full max-w-xl border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-accent/5 data-[dragging=true]:border-accent data-[dragging=true]:bg-accent/10 data-[dragging=true]:border-solid rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Enviar foto do ambiente"
+          >
+            <div className="h-11 w-11 shrink-0 grid place-items-center rounded-xl bg-accent/15 text-accent">
+              <Camera className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-foreground">Arraste uma foto aqui</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                ou clique para selecionar · JPG, PNG, WEBP
+              </div>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0 hidden sm:block" />
+          </button>
+
+          <div className="mt-5 flex flex-col sm:flex-row gap-3">
             <Button
               onClick={onUpload}
               className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm w-full sm:w-auto"
