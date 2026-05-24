@@ -566,6 +566,22 @@ const PLAN_LABELS: Record<string, string> = {
   premium: "Premium",
 };
 
+const EMAIL_LIKE_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+/**
+ * Quando a Supabase Auth não recebe `full_name` do OAuth, ela grava o e-mail
+ * em `profiles.display_name`. Esta função evita vazar e-mail nas telas que
+ * prometem "sem PII" — retorna null se o valor parece um e-mail, deixando
+ * a UI cair no fallback "Sem nome".
+ */
+function maskEmailLikeName(name: string | null): string | null {
+  if (!name) return null;
+  const trimmed = name.trim();
+  if (!trimmed) return null;
+  if (EMAIL_LIKE_RE.test(trimmed)) return null;
+  return trimmed;
+}
+
 export type AdminUserRow = {
   id: string;
   displayName: string | null;
@@ -664,7 +680,7 @@ export const getAdminUsers = createServerFn({ method: "GET" })
       const topByProjects: AdminUserRow[] = profiles
         .map((p) => ({
           id: p.id,
-          displayName: p.display_name,
+          displayName: maskEmailLikeName(p.display_name),
           plan: p.plan,
           credits: p.credits,
           projectCount: projectCounts[p.id] ?? 0,
@@ -932,7 +948,7 @@ export const getAdminCredits = createServerFn({ method: "GET" })
         .slice(0, 10)
         .map(([userId, consumed]) => ({
           userId,
-          userName: profileMap.get(userId) ?? null,
+          userName: maskEmailLikeName(profileMap.get(userId) ?? null),
           consumed,
         }));
 
@@ -942,7 +958,7 @@ export const getAdminCredits = createServerFn({ method: "GET" })
         kind: t.kind,
         reference: t.reference,
         userId: t.user_id,
-        userName: profileMap.get(t.user_id) ?? null,
+        userName: maskEmailLikeName(profileMap.get(t.user_id) ?? null),
         createdAt: t.created_at,
       }));
 
