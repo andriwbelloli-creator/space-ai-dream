@@ -65,6 +65,30 @@ function AdminShell({ children }: { children: React.ReactNode }) {
               >
                 Funil
               </Link>
+              <Link
+                to="/admin/receita"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Receita
+              </Link>
+              <Link
+                to="/admin/creditos"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Créditos
+              </Link>
+              <Link
+                to="/admin/afiliados"
+                activeOptions={{ exact: true }}
+                activeProps={{ className: "bg-muted text-foreground" }}
+                className="rounded-full px-3 py-1 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                Afiliados
+              </Link>
             </nav>
           </div>
           <Link

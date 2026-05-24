@@ -711,3 +711,453 @@ export const getAdminUsers = createServerFn({ method: "GET" })
       return { ok: false, reason: "error", message: "Erro inesperado ao carregar os usuários." };
     }
   });
+
+// ─── Receita / Assinaturas ──────────────────────────────────────────────────
+
+const SUBSCRIPTION_STATUS_LABELS: Record<string, string> = {
+  active: "Ativa",
+  canceled: "Cancelada",
+  past_due: "Em atraso",
+  trialing: "Trial",
+  incomplete: "Incompleta",
+  incomplete_expired: "Expirada",
+  unpaid: "Não paga",
+};
+
+export type AdminSubscriptionRow = {
+  id: string;
+  status: string;
+  priceId: string;
+  productId: string;
+  environment: string;
+  cancelAtPeriodEnd: boolean;
+  currentPeriodEnd: string | null;
+  createdAt: string;
+};
+
+export type AdminRevenue = {
+  total: number;
+  active: number;
+  canceledLast30: number;
+  renewingNext30: number;
+  byStatus: AdminRankedItem[];
+  byPrice: AdminRankedItem[];
+  byEnvironment: AdminRankedItem[];
+  recent: AdminSubscriptionRow[];
+};
+
+export type AdminRevenueResult =
+  | { ok: true; revenue: AdminRevenue }
+  | { ok: false; reason: "forbidden" | "error"; message?: string };
+
+/**
+ * Read-only stripe_subscriptions. NÃO altera assinaturas, pricing nem checkout.
+ * Apenas conta status, agrupa por price_id e environment, lista as 30 mais recentes.
+ */
+export const getAdminRevenue = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminRevenueResult> => {
+    if (!(await isUserAdmin(context.userId))) {
+      return { ok: false, reason: "forbidden" };
+    }
+
+    try {
+      const now = Date.now();
+      const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const thirtyDaysAhead = new Date(now + 30 * 24 * 60 * 60 * 1000).toISOString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabaseAdmin as any;
+
+      const [totalRes, activeRes, canceledRes, renewingRes, listRes] = await Promise.all([
+        db.from("stripe_subscriptions").select("id", { count: "exact", head: true }),
+        db
+          .from("stripe_subscriptions")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "active"),
+        db
+          .from("stripe_subscriptions")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "canceled")
+          .gte("updated_at", thirtyDaysAgo),
+        db
+          .from("stripe_subscriptions")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "active")
+          .lte("current_period_end", thirtyDaysAhead)
+          .gte("current_period_end", new Date(now).toISOString()),
+        db
+          .from("stripe_subscriptions")
+          .select(
+            "id, status, price_id, product_id, environment, cancel_at_period_end, current_period_end, created_at",
+          )
+          .order("created_at", { ascending: false })
+          .limit(MAX_PROJECTS_INSIGHTS),
+      ]);
+
+      type SubRow = {
+        id: string;
+        status: string;
+        price_id: string;
+        product_id: string;
+        environment: string;
+        cancel_at_period_end: boolean;
+        current_period_end: string | null;
+        created_at: string;
+      };
+      const subs = (listRes.data ?? []) as unknown[] as SubRow[];
+
+      const statusCounts: Record<string, number> = {};
+      const priceCounts: Record<string, number> = {};
+      const envCounts: Record<string, number> = {};
+
+      for (const s of subs) {
+        statusCounts[s.status] = (statusCounts[s.status] ?? 0) + 1;
+        if (s.price_id) priceCounts[s.price_id] = (priceCounts[s.price_id] ?? 0) + 1;
+        if (s.environment) envCounts[s.environment] = (envCounts[s.environment] ?? 0) + 1;
+      }
+
+      const recent: AdminSubscriptionRow[] = subs.slice(0, 30).map((s) => ({
+        id: s.id,
+        status: s.status,
+        priceId: s.price_id,
+        productId: s.product_id,
+        environment: s.environment,
+        cancelAtPeriodEnd: s.cancel_at_period_end,
+        currentPeriodEnd: s.current_period_end,
+        createdAt: s.created_at,
+      }));
+
+      return {
+        ok: true,
+        revenue: {
+          total: totalRes.count ?? 0,
+          active: activeRes.count ?? 0,
+          canceledLast30: canceledRes.count ?? 0,
+          renewingNext30: renewingRes.count ?? 0,
+          byStatus: Object.entries(statusCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([slug, count]) => ({
+              slug,
+              label: SUBSCRIPTION_STATUS_LABELS[slug] ?? slug,
+              count,
+            })),
+          byPrice: Object.entries(priceCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10)
+            .map(([slug, count]) => ({ slug, label: slug, count })),
+          byEnvironment: Object.entries(envCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([slug, count]) => ({ slug, label: slug, count })),
+          recent,
+        },
+      };
+    } catch (e) {
+      console.error("[admin] getAdminRevenue — exceção:", e);
+      return { ok: false, reason: "error", message: "Erro inesperado ao carregar a receita." };
+    }
+  });
+
+// ─── Créditos ───────────────────────────────────────────────────────────────
+
+const CREDIT_KIND_LABELS: Record<string, string> = {
+  signup_bonus: "Bônus de cadastro",
+  generation: "Consumo (geração)",
+  subscription_grant: "Crédito de assinatura",
+  admin_adjust: "Ajuste admin",
+  refund: "Reembolso",
+};
+
+export type AdminCreditTxRow = {
+  id: string;
+  amount: number;
+  kind: string;
+  reference: string | null;
+  userId: string;
+  userName: string | null;
+  createdAt: string;
+};
+
+export type AdminCredits = {
+  totalTx: number;
+  creditsAdded: number;
+  creditsConsumed: number;
+  uniqueUsers: number;
+  byKind: AdminRankedItem[];
+  topConsumers: Array<{ userId: string; userName: string | null; consumed: number }>;
+  recent: AdminCreditTxRow[];
+};
+
+export type AdminCreditsResult =
+  | { ok: true; credits: AdminCredits }
+  | { ok: false; reason: "forbidden" | "error"; message?: string };
+
+/**
+ * Read-only credit_transactions. Não cria nem altera transações.
+ * Soma valores positivos (adições) e negativos (consumos) separadamente.
+ */
+export const getAdminCredits = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminCreditsResult> => {
+    if (!(await isUserAdmin(context.userId))) {
+      return { ok: false, reason: "forbidden" };
+    }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabaseAdmin as any;
+
+      const [totalRes, txRes, profilesRes] = await Promise.all([
+        db.from("credit_transactions").select("id", { count: "exact", head: true }),
+        db
+          .from("credit_transactions")
+          .select("id, amount, kind, reference, user_id, created_at")
+          .order("created_at", { ascending: false })
+          .limit(MAX_EVENTS_INSIGHTS),
+        db.from("profiles").select("id, display_name").limit(MAX_PROJECTS_INSIGHTS),
+      ]);
+
+      type TxRow = {
+        id: string;
+        amount: number;
+        kind: string;
+        reference: string | null;
+        user_id: string;
+        created_at: string;
+      };
+      const txs = (txRes.data ?? []) as TxRow[];
+
+      type ProfileRow = { id: string; display_name: string | null };
+      const profileMap = new Map<string, string | null>();
+      for (const p of (profilesRes.data ?? []) as ProfileRow[]) {
+        profileMap.set(p.id, p.display_name);
+      }
+
+      let creditsAdded = 0;
+      let creditsConsumed = 0;
+      const kindCounts: Record<string, number> = {};
+      const userConsumption: Record<string, number> = {};
+      const uniqueUsers = new Set<string>();
+
+      for (const t of txs) {
+        if (t.amount > 0) creditsAdded += t.amount;
+        else if (t.amount < 0) creditsConsumed += Math.abs(t.amount);
+        kindCounts[t.kind] = (kindCounts[t.kind] ?? 0) + 1;
+        uniqueUsers.add(t.user_id);
+        if (t.amount < 0) {
+          userConsumption[t.user_id] = (userConsumption[t.user_id] ?? 0) + Math.abs(t.amount);
+        }
+      }
+
+      const topConsumers = Object.entries(userConsumption)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([userId, consumed]) => ({
+          userId,
+          userName: profileMap.get(userId) ?? null,
+          consumed,
+        }));
+
+      const recent: AdminCreditTxRow[] = txs.slice(0, 30).map((t) => ({
+        id: t.id,
+        amount: t.amount,
+        kind: t.kind,
+        reference: t.reference,
+        userId: t.user_id,
+        userName: profileMap.get(t.user_id) ?? null,
+        createdAt: t.created_at,
+      }));
+
+      return {
+        ok: true,
+        credits: {
+          totalTx: totalRes.count ?? 0,
+          creditsAdded,
+          creditsConsumed,
+          uniqueUsers: uniqueUsers.size,
+          byKind: Object.entries(kindCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([slug, count]) => ({
+              slug,
+              label: CREDIT_KIND_LABELS[slug] ?? slug,
+              count,
+            })),
+          topConsumers,
+          recent,
+        },
+      };
+    } catch (e) {
+      console.error("[admin] getAdminCredits — exceção:", e);
+      return { ok: false, reason: "error", message: "Erro inesperado ao carregar os créditos." };
+    }
+  });
+
+// ─── Afiliados ──────────────────────────────────────────────────────────────
+
+export type AdminAffiliateProduct = {
+  name: string;
+  category: string | null;
+  count: number;
+  lastUrl: string | null;
+};
+
+export type AdminWishlistProduct = {
+  name: string;
+  count: number;
+  avgPriceCents: number | null;
+  lastUrl: string | null;
+};
+
+export type AdminAffiliateClickRow = {
+  id: string;
+  productName: string | null;
+  productCategory: string | null;
+  productUrl: string | null;
+  clickedAt: string;
+};
+
+export type AdminAffiliates = {
+  totalClicks: number;
+  clicks7d: number;
+  affiliateClickEvents7d: number;
+  wishlistItems: number;
+  topClicked: AdminAffiliateProduct[];
+  topWishlisted: AdminWishlistProduct[];
+  recent: AdminAffiliateClickRow[];
+};
+
+export type AdminAffiliatesResult =
+  | { ok: true; affiliates: AdminAffiliates }
+  | { ok: false; reason: "forbidden" | "error"; message?: string };
+
+/**
+ * Performance de afiliados. Combina product_clicks (tabela dedicada) com
+ * events.event="affiliate_click" (tracking de funil). Wishlist como sinal
+ * de demanda. Read-only.
+ */
+export const getAdminAffiliates = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminAffiliatesResult> => {
+    if (!(await isUserAdmin(context.userId))) {
+      return { ok: false, reason: "forbidden" };
+    }
+
+    try {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabaseAdmin as any;
+
+      const [
+        totalClicksRes,
+        clicks7dRes,
+        affEvents7dRes,
+        wishlistTotalRes,
+        clicksListRes,
+        wishlistListRes,
+      ] = await Promise.all([
+        db.from("product_clicks").select("id", { count: "exact", head: true }),
+        db
+          .from("product_clicks")
+          .select("id", { count: "exact", head: true })
+          .gte("clicked_at", sevenDaysAgo),
+        db
+          .from("events")
+          .select("id", { count: "exact", head: true })
+          .eq("event", "affiliate_click")
+          .gte("created_at", sevenDaysAgo),
+        db.from("wishlist").select("id", { count: "exact", head: true }),
+        db
+          .from("product_clicks")
+          .select("id, product_name, product_category, product_url, clicked_at")
+          .order("clicked_at", { ascending: false })
+          .limit(MAX_EVENTS_INSIGHTS),
+        db
+          .from("wishlist")
+          .select("product_name, product_url, price_cents")
+          .limit(MAX_EVENTS_INSIGHTS),
+      ]);
+
+      type ClickRow = {
+        id: string;
+        product_name: string | null;
+        product_category: string | null;
+        product_url: string | null;
+        clicked_at: string;
+      };
+      const clicks = (clicksListRes.data ?? []) as ClickRow[];
+
+      // Agrupa cliques por produto
+      const productAgg: Record<
+        string,
+        { count: number; category: string | null; lastUrl: string | null }
+      > = {};
+      for (const c of clicks) {
+        const key = c.product_name?.trim();
+        if (!key) continue;
+        if (!productAgg[key]) {
+          productAgg[key] = { count: 0, category: c.product_category, lastUrl: c.product_url };
+        }
+        productAgg[key].count += 1;
+      }
+      const topClicked: AdminAffiliateProduct[] = Object.entries(productAgg)
+        .sort((a, b) => b[1].count - a[1].count)
+        .slice(0, 10)
+        .map(([name, v]) => ({ name, category: v.category, count: v.count, lastUrl: v.lastUrl }));
+
+      // Wishlist por produto
+      type WishRow = {
+        product_name: string;
+        product_url: string | null;
+        price_cents: number | null;
+      };
+      const wishlist = (wishlistListRes.data ?? []) as WishRow[];
+      const wishAgg: Record<
+        string,
+        { count: number; sumPrice: number; pricedCount: number; lastUrl: string | null }
+      > = {};
+      for (const w of wishlist) {
+        const key = w.product_name?.trim();
+        if (!key) continue;
+        if (!wishAgg[key]) {
+          wishAgg[key] = { count: 0, sumPrice: 0, pricedCount: 0, lastUrl: w.product_url };
+        }
+        wishAgg[key].count += 1;
+        if (w.price_cents) {
+          wishAgg[key].sumPrice += w.price_cents;
+          wishAgg[key].pricedCount += 1;
+        }
+      }
+      const topWishlisted: AdminWishlistProduct[] = Object.entries(wishAgg)
+        .sort((a, b) => b[1].count - a[1].count)
+        .slice(0, 10)
+        .map(([name, v]) => ({
+          name,
+          count: v.count,
+          avgPriceCents: v.pricedCount > 0 ? Math.round(v.sumPrice / v.pricedCount) : null,
+          lastUrl: v.lastUrl,
+        }));
+
+      const recent: AdminAffiliateClickRow[] = clicks.slice(0, 30).map((c) => ({
+        id: c.id,
+        productName: c.product_name,
+        productCategory: c.product_category,
+        productUrl: c.product_url,
+        clickedAt: c.clicked_at,
+      }));
+
+      return {
+        ok: true,
+        affiliates: {
+          totalClicks: totalClicksRes.count ?? 0,
+          clicks7d: clicks7dRes.count ?? 0,
+          affiliateClickEvents7d: affEvents7dRes.count ?? 0,
+          wishlistItems: wishlistTotalRes.count ?? 0,
+          topClicked,
+          topWishlisted,
+          recent,
+        },
+      };
+    } catch (e) {
+      console.error("[admin] getAdminAffiliates — exceção:", e);
+      return { ok: false, reason: "error", message: "Erro inesperado ao carregar os afiliados." };
+    }
+  });

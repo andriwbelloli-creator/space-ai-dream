@@ -26,9 +26,12 @@ import { Route as EstilosStyleSlugRouteImport } from './routes/estilos.$styleSlu
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AmbientesRoomSlugRouteImport } from './routes/ambientes.$roomSlug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
+import { Route as AdminReceitaRouteImport } from './routes/admin.receita'
 import { Route as AdminProjetosRouteImport } from './routes/admin.projetos'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminInsightsRouteImport } from './routes/admin.insights'
+import { Route as AdminCreditosRouteImport } from './routes/admin.creditos'
+import { Route as AdminAfiliadosRouteImport } from './routes/admin.afiliados'
 import { Route as AuthenticatedProjetosRouteImport } from './routes/_authenticated/projetos'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -116,6 +119,11 @@ const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   path: '/usuarios',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReceitaRoute = AdminReceitaRouteImport.update({
+  id: '/receita',
+  path: '/receita',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminProjetosRoute = AdminProjetosRouteImport.update({
   id: '/projetos',
   path: '/projetos',
@@ -129,6 +137,16 @@ const AdminLeadsRoute = AdminLeadsRouteImport.update({
 const AdminInsightsRoute = AdminInsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCreditosRoute = AdminCreditosRouteImport.update({
+  id: '/creditos',
+  path: '/creditos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAfiliadosRoute = AdminAfiliadosRouteImport.update({
+  id: '/afiliados',
+  path: '/afiliados',
   getParentRoute: () => AdminRoute,
 } as any)
 const AuthenticatedProjetosRoute = AuthenticatedProjetosRouteImport.update({
@@ -149,9 +167,12 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/projetos': typeof AuthenticatedProjetosRoute
+  '/admin/afiliados': typeof AdminAfiliadosRoute
+  '/admin/creditos': typeof AdminCreditosRoute
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/projetos': typeof AdminProjetosRoute
+  '/admin/receita': typeof AdminReceitaRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -170,9 +191,12 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/projetos': typeof AuthenticatedProjetosRoute
+  '/admin/afiliados': typeof AdminAfiliadosRoute
+  '/admin/creditos': typeof AdminCreditosRoute
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/projetos': typeof AdminProjetosRoute
+  '/admin/receita': typeof AdminReceitaRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -194,9 +218,12 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/projetos': typeof AuthenticatedProjetosRoute
+  '/admin/afiliados': typeof AdminAfiliadosRoute
+  '/admin/creditos': typeof AdminCreditosRoute
   '/admin/insights': typeof AdminInsightsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/projetos': typeof AdminProjetosRoute
+  '/admin/receita': typeof AdminReceitaRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -218,9 +245,12 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/projetos'
+    | '/admin/afiliados'
+    | '/admin/creditos'
     | '/admin/insights'
     | '/admin/leads'
     | '/admin/projetos'
+    | '/admin/receita'
     | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
@@ -239,9 +269,12 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/projetos'
+    | '/admin/afiliados'
+    | '/admin/creditos'
     | '/admin/insights'
     | '/admin/leads'
     | '/admin/projetos'
+    | '/admin/receita'
     | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
@@ -262,9 +295,12 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/_authenticated/projetos'
+    | '/admin/afiliados'
+    | '/admin/creditos'
     | '/admin/insights'
     | '/admin/leads'
     | '/admin/projetos'
+    | '/admin/receita'
     | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
@@ -412,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsuariosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/receita': {
+      id: '/admin/receita'
+      path: '/receita'
+      fullPath: '/admin/receita'
+      preLoaderRoute: typeof AdminReceitaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/projetos': {
       id: '/admin/projetos'
       path: '/projetos'
@@ -431,6 +474,20 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/admin/insights'
       preLoaderRoute: typeof AdminInsightsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/creditos': {
+      id: '/admin/creditos'
+      path: '/creditos'
+      fullPath: '/admin/creditos'
+      preLoaderRoute: typeof AdminCreditosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/afiliados': {
+      id: '/admin/afiliados'
+      path: '/afiliados'
+      fullPath: '/admin/afiliados'
+      preLoaderRoute: typeof AdminAfiliadosRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_authenticated/projetos': {
@@ -456,17 +513,23 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminAfiliadosRoute: typeof AdminAfiliadosRoute
+  AdminCreditosRoute: typeof AdminCreditosRoute
   AdminInsightsRoute: typeof AdminInsightsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminProjetosRoute: typeof AdminProjetosRoute
+  AdminReceitaRoute: typeof AdminReceitaRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAfiliadosRoute: AdminAfiliadosRoute,
+  AdminCreditosRoute: AdminCreditosRoute,
   AdminInsightsRoute: AdminInsightsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminProjetosRoute: AdminProjetosRoute,
+  AdminReceitaRoute: AdminReceitaRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
