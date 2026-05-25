@@ -100,6 +100,23 @@ import styleModernoOrganico from "@/assets/style-moderno-organico.jpg";
 import styleClassico from "@/assets/style-classico.jpg";
 import styleBrutalista from "@/assets/style-brutalista.jpg";
 
+// Hero projects (R9.1) — 6 pares before/after que alimentam o carrossel
+// clicável e a comparação central. Cada thumbnail troca a imagem central
+// do BeforeAfter ao clicar. Reusa pares já curados em src/assets/ sem
+// gerar imagem nova (regra inviolável: não regenerar via IA assets em uso).
+import heroLivingBefore from "@/assets/empty-living.jpg";
+import heroLivingAfter from "@/assets/decorated-living-warm.jpg";
+import heroBedroomBefore from "@/assets/empty-bedroom.jpg";
+import heroBedroomAfter from "@/assets/decorated-bedroom.jpg";
+import heroOfficeBefore from "@/assets/empty-office.jpg";
+import heroOfficeAfter from "@/assets/gallery-office.jpg";
+import heroKitchenBefore from "@/assets/empty-kitchen.jpg";
+import heroKitchenAfter from "@/assets/decorated-kitchen.jpg";
+import heroDiningBefore from "@/assets/empty-dining.jpg";
+import heroDiningAfter from "@/assets/decorated-dining.jpg";
+import heroBathroomBefore from "@/assets/empty-bathroom.jpg";
+import heroBathroomAfter from "@/assets/decorated-bathroom.jpg";
+
 // Assets dedicados pros 6 cards de Profissionais (R7.1) — gerados via
 // Imagen 4 (imagen-4.0-generate-001) com prompts calibrados por persona
 // (designer/arquiteto/imobiliária/consultório/e-commerce/comparativo).
@@ -113,6 +130,81 @@ import proPlanner5d from "@/assets/pro-planner-5d-comparison.jpg";
 const heroPair = pair("hero-living");
 const emptyLiving = heroPair.empty!.src;
 const decoratedLiving = heroPair.decorated!.src;
+
+/**
+ * Hero projects (R9.1) — 6 pares curados que alimentam o carrossel
+ * clicável do hero e a comparação central. Cada thumbnail no trilho
+ * lateral troca a imagem central do BeforeAfter; o selo no topo central
+ * é derivado de `style` + `room` do projeto selecionado.
+ *
+ * Pra trocar curadoria sem mexer no componente, edita aqui.
+ */
+type HeroProject = {
+  id: string;
+  label: string;
+  style: string;
+  room: string;
+  beforeImage: string;
+  afterImage: string;
+  alt: string;
+};
+
+const heroProjects: ReadonlyArray<HeroProject> = [
+  {
+    id: "sala-japandi",
+    label: "Sala Japandi",
+    style: "Japandi",
+    room: "Sala",
+    beforeImage: heroLivingBefore,
+    afterImage: heroLivingAfter,
+    alt: "Sala vazia transformada em ambiente Japandi decorado",
+  },
+  {
+    id: "quarto-organico",
+    label: "Quarto Moderno Orgânico",
+    style: "Moderno Orgânico",
+    room: "Quarto",
+    beforeImage: heroBedroomBefore,
+    afterImage: heroBedroomAfter,
+    alt: "Quarto vazio transformado em ambiente Moderno Orgânico",
+  },
+  {
+    id: "office-minimal",
+    label: "Home office Minimalista",
+    style: "Minimalista",
+    room: "Home office",
+    beforeImage: heroOfficeBefore,
+    afterImage: heroOfficeAfter,
+    alt: "Home office vazio transformado em ambiente minimalista",
+  },
+  {
+    id: "cozinha-contemporanea",
+    label: "Cozinha Contemporânea",
+    style: "Contemporâneo",
+    room: "Cozinha",
+    beforeImage: heroKitchenBefore,
+    afterImage: heroKitchenAfter,
+    alt: "Cozinha vazia transformada em ambiente contemporâneo",
+  },
+  {
+    id: "jantar-luxo",
+    label: "Sala de jantar Luxo",
+    style: "Luxo discreto",
+    room: "Sala de jantar",
+    beforeImage: heroDiningBefore,
+    afterImage: heroDiningAfter,
+    alt: "Sala de jantar vazia transformada em ambiente luxuoso",
+  },
+  {
+    id: "banheiro-natural",
+    label: "Banheiro Natural",
+    style: "Natural",
+    room: "Banheiro",
+    beforeImage: heroBathroomBefore,
+    afterImage: heroBathroomAfter,
+    alt: "Banheiro vazio transformado em ambiente natural",
+  },
+];
 
 const featuredBaPair = pair("ba-bathroom");
 const showcasePair = pair("show-kitchen");
@@ -1074,9 +1166,11 @@ function Hero({
   return (
     <section className="relative overflow-hidden">
       {/* Grid asymmetric 5/7: texto contido à esquerda, BeforeAfter
-          ganha peso visual à direita (editorial magazine). Sem blobs
-          decorativos — a foto vira a peça principal. */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-24 grid lg:grid-cols-12 gap-10 lg:gap-14 items-center relative">
+          ganha peso visual à direita (editorial magazine). `lg:items-start`
+          (R9.2) alinha os topos pra eliminar o vazio acima do editorial
+          que `items-center` criava quando a coluna visual era mais alta.
+          Paddings reduzidos pra o hero caber melhor no primeiro viewport. */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8 sm:pt-12 lg:pt-14 pb-6 sm:pb-8 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center lg:items-start relative">
         <div className="lg:col-span-5 is-fade-up">
           {/* H1 editorial: serif italic dominante, escala maior. Misturado
               com sans pra ritmo. */}
@@ -1107,7 +1201,7 @@ function Hero({
               delete e.currentTarget.dataset.dragging;
               onUpload();
             }}
-            className="mt-8 w-full max-w-md border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-accent/5 data-[dragging=true]:border-accent data-[dragging=true]:bg-accent/10 data-[dragging=true]:border-solid rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-7 w-full max-w-md border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-accent/5 data-[dragging=true]:border-accent data-[dragging=true]:bg-accent/10 data-[dragging=true]:border-solid rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Enviar foto do ambiente"
           >
             <div className="h-11 w-11 shrink-0 grid place-items-center rounded-xl bg-accent/15 text-accent">
@@ -1132,7 +1226,7 @@ function Hero({
           </button>
 
           {/* Trust horizontal — uma linha respirável em vez de grid 2x2. */}
-          <ul className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+          <ul className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
             {[
               "3 gerações grátis",
               "Sem cartão",
@@ -1146,41 +1240,237 @@ function Hero({
           </ul>
         </div>
 
-        <div className="lg:col-span-7 relative">
-          <div className="relative is-fade-up">
-            {/* BeforeAfter editorial maior — aspect 4/5 (mais vertical) dá
-                peso visual de capa de revista. Sombra suave, ring sutil. */}
-            <BeforeAfter
-              before={emptyLiving}
-              after={decoratedLiving}
-              auto
-              priority
-              alt="Antes e depois: sala decorada com IA"
-              className="aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-3xl overflow-hidden"
-            />
-
-            {/* Etiqueta discreta de estilo aplicado — refinada vs versão
-                anterior, sem ícone destacado. */}
-            <div className="absolute left-4 top-4 sm:left-5 sm:top-5 bg-card/95 backdrop-blur rounded-full border px-3 py-1.5 text-[11px] text-foreground/80 is-float">
-              <span className="uppercase tracking-widest text-muted-foreground mr-1.5">Estilo</span>
-              Japandi · Sala
-            </div>
-          </div>
-
-          {/* CTA secundário "Baixar orçamento" agora abaixo da imagem,
-              discreto, sem cobrir composição. Preserva contrato onBudget. */}
-          <div className="mt-5 flex justify-end">
-            <button
-              type="button"
-              onClick={onBudget}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition underline-offset-4 hover:underline"
-            >
-              <Download className="h-3.5 w-3.5" /> Baixar orçamento de exemplo
-            </button>
-          </div>
-        </div>
+        <HeroVisual onBudget={onBudget} onUpload={onUpload} />
       </div>
     </section>
+  );
+}
+
+/* ----------- HERO VISUAL (R9.1) — composição dinâmica antes/depois ----------- */
+
+/**
+ * Coluna visual do hero: trilhos verticais clicáveis + comparação
+ * antes/depois central + selo de estilo + CTA dedicado.
+ *
+ * Estado local `selectedHeroId` controla qual projeto está em destaque.
+ * Cada thumbnail nos trilhos (e na trilha horizontal mobile) é um
+ * `<button>` acessível que troca a imagem central via `setSelectedHeroId`.
+ *
+ * Loop infinito: trilho replica `heroProjects` 3x — qualquer altura
+ * de viewport realista cabe sem buraco. Trilho direito usa lista
+ * invertida pra variedade visual (não duplica a esquerda).
+ *
+ * Selo de estilo posicionado no topo central pra não sobrepor os
+ * labels "Antes" (top-left) e "Depois" (top-right) do BeforeAfter.
+ *
+ * Reduced motion: keyframes `is-rail-up/down` ficam pausados via CSS,
+ * mas os botões continuam clicáveis (interação preservada).
+ */
+function HeroVisual({
+  onBudget,
+  onUpload,
+}: {
+  onBudget: () => void;
+  onUpload: () => void;
+}) {
+  const [selectedHeroId, setSelectedHeroId] = useState<string>(heroProjects[0]!.id);
+  const [paused, setPaused] = useState(false);
+  const selected =
+    heroProjects.find((p) => p.id === selectedHeroId) ?? heroProjects[0]!;
+
+  // Duplicação (2x) + animação `-50%` → loop CSS perfeito: cada ciclo
+  // desloca exatamente 1 cópia completa, o reset visual coincide com
+  // o início da 2ª cópia (idêntica à 1ª). Triplicar quebra esse
+  // alinhamento e cria vazio no fim do ciclo.
+  const railLeftItems = [...heroProjects, ...heroProjects];
+  const reversed = [...heroProjects].reverse();
+  const railRightItems = [...reversed, ...reversed];
+
+  // Auto-rotação a cada 10s: avança circular pelo heroProjects. A
+  // dependência `selectedHeroId` faz o timer resetar a cada interação
+  // manual (clique zera o ciclo, próximo tick acontece 10s depois do
+  // clique). `paused` desliga em hover. `prefers-reduced-motion` cancela
+  // o autoplay (interação manual permanece).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced || paused) return;
+    const id = window.setInterval(() => {
+      setSelectedHeroId((prev) => {
+        const idx = heroProjects.findIndex((p) => p.id === prev);
+        const next = heroProjects[(idx + 1) % heroProjects.length]!;
+        return next.id;
+      });
+    }, 10000);
+    return () => window.clearInterval(id);
+  }, [selectedHeroId, paused]);
+
+  // ThumbButton (R9.3) — aspect-square no próprio botão garante que
+  // todos os thumbs tenham EXATAMENTE o mesmo tamanho, independente do
+  // aspect intrínseco da foto (antes a `<img>` caía em intrinsic size
+  // porque o botão não tinha altura definida).
+  const ThumbButton = ({ project, src }: { project: HeroProject; src: string }) => {
+    const isActive = project.id === selectedHeroId;
+    return (
+      <button
+        type="button"
+        onClick={() => setSelectedHeroId(project.id)}
+        aria-label={`Selecionar projeto ${project.label}`}
+        aria-pressed={isActive}
+        data-active={isActive || undefined}
+        className="group relative block aspect-square w-full shrink-0 overflow-hidden rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-card transition-shadow data-[active]:ring-2 data-[active]:ring-accent data-[active]:shadow-lg"
+      >
+        <img
+          src={src}
+          alt=""
+          loading="lazy"
+          className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06] group-data-[active]:scale-[1.04]"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-black/5 group-data-[active]:ring-0"
+        />
+      </button>
+    );
+  };
+
+  return (
+    <div
+      className="lg:col-span-7 is-fade-up"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Grid de 3 colunas no desktop: trilho clicável ↑ | comparação
+          central | trilho clicável ↓. Mobile: só a comparação, trilho
+          horizontal logo abaixo (mantém clique sem sacrificar altura). */}
+      <div className="grid grid-cols-1 lg:grid-cols-[96px_1fr_96px] gap-3 lg:gap-4 items-stretch">
+        {/* Trilho esquerdo — sobe lentamente. Imagens "depois" (mais
+            aspiracionais) pra puxar o clique. O `is-rail-up` está em
+            `absolute inset-0` pra NÃO empurrar a altura do aside: assim
+            o aside fica com a altura da row do grid (= altura do BA
+            central via items-stretch) e a animação rola dentro. */}
+        <aside className="hidden lg:block relative overflow-hidden rounded-2xl bg-card border">
+          <div className="absolute inset-0">
+            <div className="is-rail-up flex flex-col gap-3 p-2">
+              {railLeftItems.map((p, i) => (
+                <ThumbButton key={`rail-l-${i}`} project={p} src={p.afterImage} />
+              ))}
+            </div>
+          </div>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-background to-transparent"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background to-transparent"
+          />
+        </aside>
+
+        {/* Centro — comparação antes/depois dinâmica + selo topo central
+            + CTA principal. `key={selected.id}` força re-mount limpo da
+            animação `auto` do slider sempre que o projeto muda. */}
+        <div className="relative">
+          {/* Selo topo central — NÃO sobrepõe "Antes" nem "Depois". Fundo
+              claro translúcido + borda sutil + sombra leve, leitura
+              premium. Atualiza com style + room do projeto selecionado. */}
+          <div
+            aria-live="polite"
+            className="absolute left-1/2 top-4 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-black/10 bg-card/95 backdrop-blur px-3 py-1.5 text-[11px] text-foreground/80 shadow-sm"
+          >
+            <span className="uppercase tracking-widest text-muted-foreground mr-1.5">
+              Estilo
+            </span>
+            {selected.style} · {selected.room}
+          </div>
+
+          <BeforeAfter
+            key={selected.id}
+            before={selected.beforeImage}
+            after={selected.afterImage}
+            auto
+            priority
+            alt={selected.alt}
+            className="aspect-[4/5] sm:aspect-[5/6] lg:aspect-[6/7] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-3xl overflow-hidden"
+          />
+
+          {/* CTA principal — fica em todas as imagens centrais. Abre o
+              fluxo de upload existente sem criar rota nova. */}
+          <div className="mt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <Button
+              onClick={onUpload}
+              className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1 sm:flex-none"
+            >
+              <Sparkles className="h-4 w-4 mr-1.5" /> Criar projeto parecido com IA
+            </Button>
+            <span className="text-[12px] text-muted-foreground text-center sm:text-left">
+              Em segundos, com lista de compras e orçamento.
+            </span>
+          </div>
+        </div>
+
+        {/* Trilho direito — desce lentamente. Mostra "antes" pra criar
+            contraste visual com o trilho esquerdo. Mesma técnica do
+            trilho esquerdo: animação interna em `absolute inset-0` pra
+            não vazar altura do aside. */}
+        <aside className="hidden lg:block relative overflow-hidden rounded-2xl bg-card border">
+          <div className="absolute inset-0">
+            <div className="is-rail-down flex flex-col gap-3 p-2">
+              {railRightItems.map((p, i) => (
+                <ThumbButton key={`rail-r-${i}`} project={p} src={p.beforeImage} />
+              ))}
+            </div>
+          </div>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-background to-transparent"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background to-transparent"
+          />
+        </aside>
+      </div>
+
+      {/* Trilho horizontal mobile — substitui os trilhos verticais e
+          mantém clique. Snap-mandatory pra deslizamento confortável. */}
+      <div className="lg:hidden mt-4 -mx-4 px-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-3 snap-x snap-mandatory pb-2">
+          {heroProjects.map((p) => {
+            const isActive = p.id === selectedHeroId;
+            return (
+              <button
+                key={`mobile-${p.id}`}
+                type="button"
+                onClick={() => setSelectedHeroId(p.id)}
+                aria-label={`Selecionar projeto ${p.label}`}
+                aria-pressed={isActive}
+                data-active={isActive || undefined}
+                className="snap-start shrink-0 block w-20 aspect-square overflow-hidden rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-accent data-[active]:ring-2 data-[active]:ring-accent"
+              >
+                <img
+                  src={p.afterImage}
+                  alt=""
+                  loading="lazy"
+                  className="block h-full w-full object-cover"
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* CTA secundário discreto — preserva contrato onBudget original. */}
+      <div className="mt-4 flex justify-end">
+        <button
+          type="button"
+          onClick={onBudget}
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition underline-offset-4 hover:underline"
+        >
+          <Download className="h-3.5 w-3.5" /> Baixar orçamento de exemplo
+        </button>
+      </div>
+    </div>
   );
 }
 

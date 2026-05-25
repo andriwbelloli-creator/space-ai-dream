@@ -203,6 +203,32 @@
   animation-play-state: paused;
 }
 
+/* Carrosséis verticais do hero — usados pra parallax discreto ao lado
+   do BeforeAfter principal. Conteúdo duplicado (a+a) garante loop
+   infinito sem corte visual. Velocidade lenta (50s) pra não distrair. */
+@keyframes is-rail-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+@keyframes is-rail-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.is-rail-up {
+  animation: is-rail-up 50s linear infinite;
+}
+.is-rail-down {
+  animation: is-rail-down 50s linear infinite;
+}
+
 @keyframes is-float {
   0%,
   100% {
@@ -383,6 +409,8 @@
 @media (prefers-reduced-motion: reduce) {
   .is-marquee,
   .is-marquee-slow,
+  .is-rail-up,
+  .is-rail-down,
   .is-float,
   .is-shimmer,
   .is-slider-auto,
