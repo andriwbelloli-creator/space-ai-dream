@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
+import { useTrack } from "@/lib/use-track";
 import {
   Check,
   ArrowRight,
@@ -188,6 +189,13 @@ function PricingPage() {
     if (lead !== null) setLeadMounted(true);
   }, [lead]);
 
+  // Tracking de visualização da página de planos — entrada do funil
+  // de monetização. Dispara uma vez por mount.
+  const track = useTrack();
+  useEffect(() => {
+    track("pricing_viewed");
+  }, [track]);
+
   // Usuário autenticado controla a exibição do link "Meus Projetos" no header.
   const { user } = useAuth();
 
@@ -320,8 +328,11 @@ function PricingPage() {
                     asChild={p.id !== "pro"}
                     onClick={
                       p.id === "pro"
-                        ? () => setLead({ planInterest: p.id, title: "Fale com vendas" })
-                        : undefined
+                        ? () => {
+                            track("plan_selected", { plan: p.id, cycle });
+                            setLead({ planInterest: p.id, title: "Fale com vendas" });
+                          }
+                        : () => track("plan_selected", { plan: p.id, cycle })
                     }
                     className={`mt-7 h-11 rounded-xl ${
                       p.highlight
@@ -562,7 +573,10 @@ function PricingPage() {
               </Link>
               <button
                 type="button"
-                onClick={() => setLead({ title: "Fale com vendas" })}
+                onClick={() => {
+                  track("plan_selected", { plan: "sales", cycle, source: "pricing_footer" });
+                  setLead({ title: "Fale com vendas" });
+                }}
                 className="inline-flex items-center rounded-full border border-background/30 h-11 px-5 text-sm hover:bg-background/10"
               >
                 <Briefcase className="h-4 w-4 mr-1.5" /> Falar com vendas

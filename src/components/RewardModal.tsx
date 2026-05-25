@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTrack } from "@/lib/use-track";
 import {
   Download,
   Smartphone,
@@ -87,7 +89,15 @@ type Props = {
 };
 
 export function RewardModal({ open, onOpenChange, kind, onSuccess }: Props) {
+  const track = useTrack();
   const cfg = kind ? CONFIGS[kind] : null;
+  // Tracking de abertura do modal por kind — granulariza qual reward
+  // (budget, send_phone, save_project, etc) está sendo solicitado.
+  useEffect(() => {
+    if (open && kind) {
+      track("reward_modal_opened", { kind });
+    }
+  }, [open, kind, track]);
   if (!cfg || !kind) return null;
 
   const Icon = cfg.icon;

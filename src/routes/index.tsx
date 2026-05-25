@@ -13,7 +13,7 @@ import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { buildAffiliateLinks } from "@/lib/affiliate";
-import { logEvent } from "@/lib/tracking.functions";
+import { useTrack } from "@/lib/use-track";
 import { useSmartAnchor } from "@/lib/use-smart-anchor";
 import { checkAdminAccess } from "@/lib/admin";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
@@ -615,7 +615,7 @@ function Index() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [affiliateOpen, setAffiliateOpen] = useState<null | string>(null);
-  const track = useServerFn(logEvent);
+  const track = useTrack();
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [initialStyle, setInitialStyle] = useState<string | undefined>(undefined);
@@ -661,7 +661,7 @@ function Index() {
   const handlePresentation = (open: boolean) => {
     setPresentationOpen(open);
     if (open) {
-      void track({ data: { event: "demo_viewed" } }).catch(() => {});
+      track("demo_viewed");
     }
     if (!open) {
       try {
@@ -835,17 +835,12 @@ function Index() {
                     target="_blank"
                     rel="sponsored noopener noreferrer"
                     onClick={() => {
-                      void track({
-                        data: {
-                          event: "affiliate_click",
-                          props: {
-                            provider: m.id,
-                            productName: affiliateOpen,
-                            productUrl: m.url,
-                            source: "home_buy_dialog",
-                          },
-                        },
-                      }).catch(() => {});
+                      track("affiliate_click", {
+                        provider: m.id,
+                        productName: affiliateOpen,
+                        productUrl: m.url,
+                        source: "home_buy_dialog",
+                      });
                     }}
                   >
                     <span>Ver na {m.label}</span>
@@ -864,16 +859,11 @@ function Index() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
-                    void track({
-                      data: {
-                        event: "affiliate_click",
-                        props: {
-                          provider: "google_shopping",
-                          productName: affiliateOpen,
-                          source: "home_buy_dialog",
-                        },
-                      },
-                    }).catch(() => {});
+                    track("affiliate_click", {
+                      provider: "google_shopping",
+                      productName: affiliateOpen,
+                      source: "home_buy_dialog",
+                    });
                   }}
                 >
                   <span>Buscar no Google Shopping</span>
@@ -901,6 +891,29 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
   // Smart anchor: scroll na home, navega pra "/" + hash em outras rotas.
   // Resolve o bug silencioso de clicar em #galeria/#pro fora da home.
   const smartAnchor = useSmartAnchor();
+  const track = useTrack();
+  // Anchor com tracking — dispara `nav_menu_click` antes do scroll/navigate.
+  // Mesmo wrapper serve pros 4 anchors (#ambientes, #estilos, #galeria, #pro)
+  // no desktop e no mobile sheet sem duplicação.
+  const trackedAnchor = (anchor: string) => (e?: { preventDefault?: () => void }) => {
+    track("nav_menu_click", { target: anchor, source: "header" });
+    smartAnchor(anchor)(e);
+  };
+  // Demo (Guia modal) com tracking.
+  const handleNavDemo = () => {
+    track("nav_menu_click", { target: "guia", source: "header" });
+    onDemo();
+  };
+  // CTA "Criar projeto com IA" no header — distingue de hero_upload_click.
+  const handleHeaderUpload = () => {
+    track("nav_menu_click", { target: "cta_upload", source: "header" });
+    onUpload();
+  };
+  // Link "Planos" — registra nav + pricing_click pra funil de monetização.
+  const handlePricingClick = () => {
+    track("nav_menu_click", { target: "planos", source: "header" });
+    track("pricing_click", { source: "header" });
+  };
   // Acesso ao painel interno aparece no menu de perfil apenas pra admins.
   // Verificação server-side é a fonte da verdade — esta flag só controla a
   // visibilidade do link. Não-admins nem veem o atalho.
@@ -937,38 +950,42 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           <IdealSpaceLogo />
         </Link>
         <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
-          <button onClick={onDemo} className="hover:text-foreground transition">
+          <button onClick={handleNavDemo} className="hover:text-foreground transition">
             Guia
           </button>
           <a
             className="hover:text-foreground transition"
             href="#ambientes"
-            onClick={smartAnchor("ambientes")}
+            onClick={trackedAnchor("ambientes")}
           >
             Ambientes
           </a>
           <a
             className="hover:text-foreground transition"
             href="#estilos"
-            onClick={smartAnchor("estilos")}
+            onClick={trackedAnchor("estilos")}
           >
             Estilos
           </a>
           <a
             className="hover:text-foreground transition"
             href="#galeria"
-            onClick={smartAnchor("galeria")}
+            onClick={trackedAnchor("galeria")}
           >
             Ideias
           </a>
           <a
             className="hover:text-foreground transition"
             href="#pro"
-            onClick={smartAnchor("pro")}
+            onClick={trackedAnchor("pro")}
           >
             Profissionais
           </a>
-          <Link to="/pricing" className="hover:text-foreground transition">
+          <Link
+            to="/pricing"
+            onClick={handlePricingClick}
+            className="hover:text-foreground transition"
+          >
             Planos
           </Link>
         </nav>
@@ -1036,7 +1053,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
             </>
           )}
           <Button
-            onClick={onUpload}
+            onClick={handleHeaderUpload}
             className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm"
           >
             <Camera className="h-4 w-4 mr-1.5" /> Criar projeto com IA
@@ -1064,12 +1081,32 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
             </SheetHeader>
             <div className="mt-6 flex flex-col gap-1 text-base">
               {[
-                { l: "Guia", href: "#", onClick: onDemo },
-                { l: "Ambientes", href: "#ambientes", onClick: smartAnchor("ambientes") },
-                { l: "Estilos", href: "#estilos", onClick: smartAnchor("estilos") },
-                { l: "Ideias", href: "#galeria", onClick: smartAnchor("galeria") },
-                { l: "Profissionais", href: "#pro", onClick: smartAnchor("pro") },
-                { l: "Planos", href: "/pricing" },
+                { l: "Guia", href: "#", onClick: handleNavDemo, target: "guia" },
+                {
+                  l: "Ambientes",
+                  href: "#ambientes",
+                  onClick: trackedAnchor("ambientes"),
+                  target: "ambientes",
+                },
+                {
+                  l: "Estilos",
+                  href: "#estilos",
+                  onClick: trackedAnchor("estilos"),
+                  target: "estilos",
+                },
+                {
+                  l: "Ideias",
+                  href: "#galeria",
+                  onClick: trackedAnchor("galeria"),
+                  target: "galeria",
+                },
+                {
+                  l: "Profissionais",
+                  href: "#pro",
+                  onClick: trackedAnchor("pro"),
+                  target: "pro",
+                },
+                { l: "Planos", href: "/pricing", target: "planos" },
               ].map((item) => (
                 <a
                   key={item.l}
@@ -1080,7 +1117,9 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                           e.preventDefault();
                           item.onClick!();
                         }
-                      : undefined
+                      : item.target === "planos"
+                        ? () => handlePricingClick()
+                        : undefined
                   }
                   className="py-3 border-b border-border/60"
                 >
@@ -1094,7 +1133,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
               )}
             </div>
             <Button
-              onClick={onUpload}
+              onClick={handleHeaderUpload}
               className="mt-6 w-full h-11 rounded-xl bg-foreground text-background"
             >
               Criar projeto com IA
@@ -1163,6 +1202,18 @@ function Hero({
   onDemo: () => void;
   onUpload: () => void;
 }) {
+  const track = useTrack();
+  // Wrappers que disparam o evento de funil ANTES de chamar o handler
+  // original. Source distingue dropzone (afordância principal de entrada)
+  // do CTA central do BeforeAfter — instrumentação separada em HeroVisual.
+  const handleDropzoneUpload = () => {
+    track("hero_upload_click", { source: "dropzone" });
+    onUpload();
+  };
+  const handleDemo = () => {
+    track("hero_demo_click");
+    onDemo();
+  };
   return (
     <section className="relative overflow-hidden">
       {/* Grid asymmetric 5/7: texto contido à esquerda, BeforeAfter
@@ -1188,7 +1239,7 @@ function Hero({
               duplicado foi removido pra evitar redundância). */}
           <button
             type="button"
-            onClick={onUpload}
+            onClick={handleDropzoneUpload}
             onDragOver={(e) => {
               e.preventDefault();
               e.currentTarget.dataset.dragging = "true";
@@ -1199,7 +1250,7 @@ function Hero({
             onDrop={(e) => {
               e.preventDefault();
               delete e.currentTarget.dataset.dragging;
-              onUpload();
+              handleDropzoneUpload();
             }}
             className="mt-7 w-full max-w-md border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-accent/5 data-[dragging=true]:border-accent data-[dragging=true]:bg-accent/10 data-[dragging=true]:border-solid rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Enviar foto do ambiente"
@@ -1219,7 +1270,7 @@ function Hero({
           {/* CTA secundário discreto — leva à demo (PresentationModal). */}
           <button
             type="button"
-            onClick={onDemo}
+            onClick={handleDemo}
             className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition underline-offset-4 hover:underline"
           >
             <PlayCircle className="h-4 w-4" /> Ver demonstração
@@ -1277,6 +1328,7 @@ function HeroVisual({
   const [paused, setPaused] = useState(false);
   const selected =
     heroProjects.find((p) => p.id === selectedHeroId) ?? heroProjects[0]!;
+  const track = useTrack();
 
   // Duplicação (2x) + animação `-50%` → loop CSS perfeito: cada ciclo
   // desloca exatamente 1 cópia completa, o reset visual coincide com
@@ -1290,20 +1342,24 @@ function HeroVisual({
   // dependência `selectedHeroId` faz o timer resetar a cada interação
   // manual (clique zera o ciclo, próximo tick acontece 10s depois do
   // clique). `paused` desliga em hover. `prefers-reduced-motion` cancela
-  // o autoplay (interação manual permanece).
+  // o autoplay (interação manual permanece). Cada troca dispara
+  // `hero_before_after_project_selected` com trigger=auto pra distinguir
+  // de interação manual (trigger=manual no ThumbButton/mobile thumb).
   useEffect(() => {
     if (typeof window === "undefined") return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced || paused) return;
     const id = window.setInterval(() => {
-      setSelectedHeroId((prev) => {
-        const idx = heroProjects.findIndex((p) => p.id === prev);
-        const next = heroProjects[(idx + 1) % heroProjects.length]!;
-        return next.id;
+      const idx = heroProjects.findIndex((p) => p.id === selectedHeroId);
+      const next = heroProjects[(idx + 1) % heroProjects.length]!;
+      track("hero_before_after_project_selected", {
+        project_id: next.id,
+        trigger: "auto",
       });
+      setSelectedHeroId(next.id);
     }, 10000);
     return () => window.clearInterval(id);
-  }, [selectedHeroId, paused]);
+  }, [selectedHeroId, paused, track]);
 
   // ThumbButton (R9.3) — aspect-square no próprio botão garante que
   // todos os thumbs tenham EXATAMENTE o mesmo tamanho, independente do
@@ -1314,7 +1370,14 @@ function HeroVisual({
     return (
       <button
         type="button"
-        onClick={() => setSelectedHeroId(project.id)}
+        onClick={() => {
+          track("hero_before_after_project_selected", {
+            project_id: project.id,
+            trigger: "manual",
+            source: "rail_desktop",
+          });
+          setSelectedHeroId(project.id);
+        }}
         aria-label={`Selecionar projeto ${project.label}`}
         aria-pressed={isActive}
         data-active={isActive || undefined}
@@ -1395,10 +1458,15 @@ function HeroVisual({
           />
 
           {/* CTA principal — fica em todas as imagens centrais. Abre o
-              fluxo de upload existente sem criar rota nova. */}
+              fluxo de upload existente sem criar rota nova. Tracking
+              `hero_before_after_cta_click` distingue do upload via dropzone
+              (que dispara `hero_upload_click` source=dropzone). */}
           <div className="mt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <Button
-              onClick={onUpload}
+              onClick={() => {
+                track("hero_before_after_cta_click", { project_id: selected.id });
+                onUpload();
+              }}
               className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm flex-1 sm:flex-none"
             >
               <Sparkles className="h-4 w-4 mr-1.5" /> Criar projeto parecido com IA
@@ -1442,7 +1510,14 @@ function HeroVisual({
               <button
                 key={`mobile-${p.id}`}
                 type="button"
-                onClick={() => setSelectedHeroId(p.id)}
+                onClick={() => {
+                  track("hero_before_after_project_selected", {
+                    project_id: p.id,
+                    trigger: "manual",
+                    source: "rail_mobile",
+                  });
+                  setSelectedHeroId(p.id);
+                }}
                 aria-label={`Selecionar projeto ${p.label}`}
                 aria-pressed={isActive}
                 data-active={isActive || undefined}
@@ -1460,11 +1535,15 @@ function HeroVisual({
         </div>
       </div>
 
-      {/* CTA secundário discreto — preserva contrato onBudget original. */}
+      {/* CTA secundário discreto — preserva contrato onBudget original.
+          Tracking `download_budget_click` mede interesse no orçamento. */}
       <div className="mt-4 flex justify-end">
         <button
           type="button"
-          onClick={onBudget}
+          onClick={() => {
+            track("download_budget_click", { source: "hero" });
+            onBudget();
+          }}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition underline-offset-4 hover:underline"
         >
           <Download className="h-3.5 w-3.5" /> Baixar orçamento de exemplo

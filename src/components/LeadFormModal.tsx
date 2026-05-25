@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Loader2, Check, AlertCircle, Sparkles, ShieldCheck } from "lucide-react";
 import { submitLead, type LeadInterest, type LeadFormPayload } from "@/lib/leads";
+import { useTrack } from "@/lib/use-track";
 
 type Props = {
   open: boolean;
@@ -132,6 +133,15 @@ export function LeadFormModal({
   }>({});
   const [status, setStatus] = useState<Status>("idle");
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const track = useTrack();
+
+  // Tracking de abertura do formulário — granulariza por source (home,
+  // pricing, pro_clinica, etc) e plan_interest pra atribuição.
+  useEffect(() => {
+    if (open) {
+      track("lead_form_opened", { source: source ?? "unknown", plan_interest: planInterest });
+    }
+  }, [open, source, planInterest, track]);
 
   // Ao abrir: pré-preenche os campos opcionais a partir das props.
   // Ao fechar: limpa tudo (após a transição de saída do diálogo).
@@ -209,10 +219,21 @@ export function LeadFormModal({
     const res = await submitLead(payload);
     if (res.ok) {
       setStatus("success");
+      // NUNCA enviar name/email/phone pro tracking — só metadados de funil.
+      track("lead_form_submitted", {
+        source: source ?? "unknown",
+        plan_interest: planInterest,
+        interest,
+      });
     } else {
       // Não limpamos os dados — o usuário pode corrigir e reenviar.
       setStatus("error");
       setSubmitError(res.error ?? "Não foi possível enviar agora. Tente novamente.");
+      track("lead_form_error", {
+        source: source ?? "unknown",
+        plan_interest: planInterest,
+        reason: res.error ? "server_error" : "unknown",
+      });
     }
   };
 

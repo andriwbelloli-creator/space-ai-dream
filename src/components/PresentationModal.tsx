@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { useNavigate } from "@tanstack/react-router";
 import { useSmartAnchor } from "@/lib/use-smart-anchor";
+import { useTrack } from "@/lib/use-track";
 import {
   ArrowRight,
   Camera,
@@ -93,19 +94,23 @@ const STEPS: ReadonlyArray<Step> = [
 export function PresentationModal({ open, onOpenChange, before, after, onCreate }: Props) {
   const navigate = useNavigate();
   const smartAnchor = useSmartAnchor();
+  const track = useTrack();
 
   // Fecha o modal antes de navegar pra evitar transição com o modal aberto.
-  const closeThen = (fn: () => void) => () => {
+  // Cada CTA dispara `guia_cta_click` com `cta` distinto pra granularizar
+  // o funil: qual etapa do onboarding o usuário escolheu como saída.
+  const closeThen = (cta: string, fn: () => void) => () => {
+    track("guia_cta_click", { cta });
     onOpenChange(false);
     fn();
   };
 
-  const goIdeas = closeThen(() => smartAnchor("galeria")());
-  const goPro = closeThen(() => smartAnchor("pro")());
-  const goPlans = closeThen(() => {
+  const goIdeas = closeThen("ideas", () => smartAnchor("galeria")());
+  const goPro = closeThen("pro", () => smartAnchor("pro")());
+  const goPlans = closeThen("plans", () => {
     void navigate({ to: "/pricing" });
   });
-  const goCreate = closeThen(() => {
+  const goCreate = closeThen("create", () => {
     onCreate?.();
   });
 

@@ -50,8 +50,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { useCredits } from "@/hooks/use-credits";
-import { useServerFn } from "@tanstack/react-start";
-import { logEvent } from "@/lib/tracking.functions";
+import { useTrack } from "@/lib/use-track";
 
 type Props = {
   open: boolean;
@@ -186,7 +185,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
   const navigate = useNavigate();
   const { user } = useAuth();
   const { credits, setBalance } = useCredits();
-  const track = useServerFn(logEvent);
+  const track = useTrack();
   const [preview, setPreview] = useState<string | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -197,6 +196,15 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
   }, [open, initialStyle]);
   useEffect(() => {
     if (open) setRoomHint(initialRoom);
+  }, [open, initialRoom]);
+  // Tracking: room deeplinkado (vem do Hero / página de ambiente) é uma
+  // decisão deliberada de funil. Registra source pra distinguir do
+  // auto-detect que vem na resposta da geração.
+  useEffect(() => {
+    if (open && initialRoom) {
+      track("room_type_selected", { room_type: initialRoom, source: "deeplink" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, initialRoom]);
   const [stage, setStage] = useState<Stage>("idle");
   const [progress, setProgress] = useState(0);
@@ -284,7 +292,8 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
         }
       });
       setDrafts(listDrafts());
-      void track({ data: { event: "start_project" } }).catch(() => {});
+      track("start_project");
+      track("upload_modal_opened");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -352,12 +361,24 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
     setError(null);
     setMeta(null);
 
+    // Tracking: arquivo selecionado pelo user (antes da validação). Apenas
+    // metadados — NUNCA o conteúdo binário ou nome do arquivo (PII).
+    track("upload_file_selected", {
+      size_kb: Math.round(file.size / 1024),
+      mime: file.type || "unknown",
+    });
+
     if (!file.type.startsWith("image/")) {
       setError("Formato não suportado. Envie uma imagem (JPG, PNG ou WebP).");
+      track("upload_file_error", { reason: "invalid_format", mime: file.type || "unknown" });
       return;
     }
     if (file.size > MAX_FILE_MB * 1024 * 1024) {
       setError(`Imagem muito grande. Máximo ${MAX_FILE_MB}MB.`);
+      track("upload_file_error", {
+        reason: "file_too_large",
+        size_mb: Math.round(file.size / 1024 / 1024),
+      });
       return;
     }
 
@@ -369,7 +390,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
       setPreview(dataUrl);
       setMeta({ original: file.size, optimized: blob.size, w: width, h: height });
       if (!draftId) setDraftId(newDraftId());
-      void track({ data: { event: "image_uploaded" } }).catch(() => {});
+      track("image_uploaded");
       setProgress(100);
       setTimeout(() => {
         setStage("idle");
@@ -378,6 +399,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
     } catch (e) {
       setError("Não conseguimos preparar essa imagem. Tente outra foto.");
       setStage("error");
+      track("upload_file_error", { reason: "compression_failed" });
     }
   };
 
@@ -399,7 +421,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
       } catch {
         /* ignore */
       }
-      void track({ data: { event: "start_project_blocked_by_auth" } }).catch(() => {});
+      track("start_project_blocked_by_auth");
       toast.error("Crie sua conta grátis para gerar. Leva 30 segundos.");
       // Preserva contexto: usuário volta pra rota de onde clicou em vez
       // de cair na home. URL carrega redirect+sourceAction (essencial);
@@ -444,6 +466,17 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
 
     const styleName = STYLES.find((s) => s.id === style)?.name;
 
+    // Tracking: início da geração. `startedAt` captura o ms pra calcular
+    // duration_ms no sucesso/falha. variation_count distingue 1ª geração
+    // de "gerar mais variações" (que mantém variations existentes).
+    const startedAt = Date.now();
+    track("generation_started", {
+      style,
+      room_hint: roomHint,
+      variation_count: count,
+      reset,
+    });
+
     try {
       const tasks = Array.from({ length: count }, (_, i) =>
         transformImage({
@@ -484,14 +517,38 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
         | PromiseRejectedResult
         | undefined;
       if (!anySuccess && firstError) {
+        const reason = firstError.reason?.message ?? "unknown";
         setError(firstError.reason?.message ?? "Não foi possível gerar agora.");
         setStage("error");
         setProgress(0);
+        track("generation_failed", {
+          style,
+          room_hint: roomHint,
+          reason: reason.slice(0, 100),
+          duration_ms: Date.now() - startedAt,
+        });
         return;
       }
       setProgress(100);
       setStage("done");
-      void track({ data: { event: "image_generated", props: { style } } }).catch(() => {});
+      // Mantém `image_generated` (funil legado de admin) + adiciona o
+      // `generation_succeeded` mais rico (com duração + room detectado).
+      const succeededCount = results.filter(
+        (r) => r.status === "fulfilled" && r.value,
+      ).length;
+      const firstFulfilled = results.find(
+        (r): r is PromiseFulfilledResult<Variation | null> =>
+          r.status === "fulfilled" && r.value !== null,
+      );
+      track("image_generated", { style });
+      track("generation_succeeded", {
+        style,
+        room_hint: roomHint,
+        detected_room: firstFulfilled?.value?.roomType ?? null,
+        success_count: succeededCount,
+        requested_count: count,
+        duration_ms: Date.now() - startedAt,
+      });
       // Snapshot this generation as a new version in the project history.
       if (draftId) {
         const justGenerated = results
@@ -527,6 +584,12 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
       setError(message);
       setStage("error");
       setProgress(0);
+      track("generation_failed", {
+        style,
+        room_hint: roomHint,
+        reason: message.slice(0, 100),
+        duration_ms: Date.now() - startedAt,
+      });
     } finally {
       // Para o tick animado: ele checa ticket.cancelled antes de chamar
       // setStage. Sem isso, em gerações rápidas (Gemini < 5-7s) o tick
@@ -1135,9 +1198,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
                       setStyle(s.id);
                       // Evento de funil: decisao de estilo é o gatilho do
                       // "começou de verdade" — separado de start_project (abrir modal).
-                      void track({
-                        data: { event: "style_selected", props: { style: s.id } },
-                      }).catch(() => {});
+                      track("style_selected", { style: s.id });
                     }}
                     className={`text-left rounded-xl border px-3 py-2.5 transition ${
                       active ? "border-accent bg-accent/8 ring-1 ring-accent" : "hover:bg-muted/60"
@@ -1203,7 +1264,7 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
                     type="button"
                     onClick={() => {
                       setWaOpen(true);
-                      void track({ data: { event: "whatsapp_click" } }).catch(() => {});
+                      track("whatsapp_click");
                     }}
                     className="h-11 rounded-full px-5 text-sm bg-[#25D366] hover:bg-[#1ebe5a] text-white"
                   >
@@ -1316,7 +1377,7 @@ function ShoppingPanel({
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<string | null>(null);
   const [leadOpen, setLeadOpen] = useState(false);
-  const track = useServerFn(logEvent);
+  const track = useTrack();
 
   const roomType = variation?.roomType;
   const vid = variation?.id;
@@ -1341,7 +1402,7 @@ function ShoppingPanel({
         },
       });
       setCache((prev) => ({ ...prev, [vid]: out.items }));
-      void track({ data: { event: "shopping_list_loaded" } }).catch(() => {});
+      track("shopping_list_loaded");
     } catch {
       setErrorId(vid);
     } finally {
@@ -1390,23 +1451,16 @@ function ShoppingPanel({
     // Cliques modificados (ctrl/cmd/shift/alt) seguem o comportamento nativo.
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
-    void track({
-      data: {
-        event: "affiliate_click",
-        props: {
-          provider: affiliateProviderFromUrl(url),
-          productName: item.name,
-          productCategory: item.cat,
-          productUrl: url,
-          roomType: roomType ?? undefined,
-          style: styleId || undefined,
-          tag: item.tag,
-          position: String(position + 1),
-          source: "shopping_list",
-        },
-      },
-    }).catch(() => {
-      /* log falhou — sem impacto: o link abre mesmo assim */
+    track("affiliate_click", {
+      provider: affiliateProviderFromUrl(url),
+      productName: item.name,
+      productCategory: item.cat,
+      productUrl: url,
+      roomType: roomType ?? undefined,
+      style: styleId || undefined,
+      tag: item.tag,
+      position: position + 1,
+      source: "shopping_list",
     });
     // window.open síncrono (dentro do gesto) — evita bloqueio de pop-up.
     window.open(url, "_blank", "noopener,noreferrer");
@@ -1417,17 +1471,10 @@ function ShoppingPanel({
   // a quantidade de itens visiveis na primeira dobra.
   const onExpand = () => {
     setUnlocked(true);
-    void track({
-      data: {
-        event: "shopping_list_expanded",
-        props: {
-          roomType: roomType ?? undefined,
-          style: styleId || undefined,
-          totalItems: String(items.length),
-        },
-      },
-    }).catch(() => {
-      /* falha de log nao bloqueia o expand */
+    track("shopping_list_expanded", {
+      roomType: roomType ?? undefined,
+      style: styleId || undefined,
+      totalItems: items.length,
     });
   };
 
@@ -1437,7 +1484,7 @@ function ShoppingPanel({
       items,
       estimate: total,
     });
-    void track({ data: { event: "pdf_download" } }).catch(() => {});
+    track("pdf_download");
   };
 
   return (

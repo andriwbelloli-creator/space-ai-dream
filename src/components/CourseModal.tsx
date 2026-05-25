@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTrack } from "@/lib/use-track";
 import {
   X,
   GraduationCap,
@@ -79,6 +80,16 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
   const [activeModule, setActiveModule] = useState(0);
   const totalHours = "8h+";
   const totalLessons = MODULES.reduce((s, m) => s + m.lessons, 0);
+  const track = useTrack();
+  // Tracking de abertura — mede interesse no curso (lead magnet B2B).
+  useEffect(() => {
+    if (open) track("course_modal_opened");
+  }, [open, track]);
+  // Wrapper de enroll: registra evento ANTES de chamar callback do pai.
+  const handleEnroll = () => {
+    track("course_enrolled");
+    onEnroll?.();
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -144,7 +155,7 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
               </div>
               <div className="text-xs text-background/70 mt-0.5">ou 12× R$ 49,70 no cartão</div>
               <Button
-                onClick={() => onEnroll?.()}
+                onClick={handleEnroll}
                 className="mt-4 w-full h-11 rounded-full bg-accent text-accent-foreground hover:opacity-95"
               >
                 Garantir minha vaga <Sparkles className="ml-1.5 h-4 w-4" />

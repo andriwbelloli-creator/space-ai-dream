@@ -31,6 +31,43 @@ export const ALLOWED_EVENTS = [
   "share_link_copied",
   "public_project_viewed",
   "public_project_cta_click",
+  // Lote A (tracking funil real) — Hero v9 + Guia v10
+  // Hero: dropzone, demo, carrossel clicável, CTA central
+  "hero_upload_click",
+  "hero_demo_click",
+  "hero_before_after_project_selected",
+  "hero_before_after_cta_click",
+  // Navegação header/menu
+  "nav_menu_click",
+  "pricing_click",
+  // Guia/Onboarding (PresentationModal) — 4 CTAs
+  "guia_cta_click",
+  // Pricing
+  "pricing_viewed",
+  "plan_selected",
+  // Lead form (profissionais, planos pagos)
+  "lead_form_opened",
+  "lead_form_submitted",
+  "lead_form_error",
+  // Profissionais
+  "professional_lead_click",
+  "professional_card_click",
+  // Reward modal (7 tipos: budget, send_phone, save_project, etc)
+  "reward_modal_opened",
+  // Curso
+  "course_modal_opened",
+  "course_enrolled",
+  // Orçamento
+  "budget_viewed",
+  "download_budget_click",
+  // Lote A.3 — pipeline de upload + geração IA
+  "upload_modal_opened",
+  "upload_file_selected",
+  "upload_file_error",
+  "room_type_selected",
+  "generation_started",
+  "generation_succeeded",
+  "generation_failed",
 ] as const;
 
 export type FunnelEvent = (typeof ALLOWED_EVENTS)[number];
