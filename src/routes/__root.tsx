@@ -119,11 +119,61 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+/**
+ * Em SSR, lê env vars do Worker runtime (Cloudflare expõe via process.env)
+ * e injeta em `window.__SUPABASE_ENV__` antes do bundle do client rodar.
+ *
+ * Por que isto existe: o Vite faz string replacement de `import.meta.env.VITE_*`
+ * apenas em build-time. Se as vars não estiverem disponíveis ao bundler do
+ * Cloudflare Workers Builds (estão como runtime vars, não build vars), o
+ * client.ts vê `undefined` e dispara o erro "Missing Supabase environment
+ * variable(s)".
+ *
+ * Esta injeção via SSR torna o client independente de build-time replacement —
+ * ele lê em runtime do `window.__SUPABASE_ENV__` populado aqui.
+ *
+ * Só o anon key + URL são expostos (já são públicos por design do Supabase).
+ * O service_role NUNCA aparece aqui — fica apenas no server fn handlers.
+ */
+function readPublicSupabaseEnv() {
+  if (typeof window !== "undefined") {
+    // Em hidration no client, lê o valor já populado pelo SSR pra preservar
+    // o mesmo HTML output (evita hydration mismatch).
+    type WinEnv = Window & {
+      __SUPABASE_ENV__?: { url?: string; key?: string };
+    };
+    const w = window as WinEnv;
+    return {
+      url: w.__SUPABASE_ENV__?.url || "",
+      key: w.__SUPABASE_ENV__?.key || "",
+    };
+  }
+  // SSR: lê do runtime do Worker.
+  const url =
+    (typeof process !== "undefined" && process.env?.SUPABASE_URL) ||
+    (typeof process !== "undefined" && process.env?.VITE_SUPABASE_URL) ||
+    "";
+  const key =
+    (typeof process !== "undefined" && process.env?.SUPABASE_PUBLISHABLE_KEY) ||
+    (typeof process !== "undefined" && process.env?.VITE_SUPABASE_PUBLISHABLE_KEY) ||
+    "";
+  return { url, key };
+}
+
 function RootShell({ children }: { children: React.ReactNode }) {
+  const env = readPublicSupabaseEnv();
   return (
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        {/* Bootstrap das env vars públicas do Supabase. Renderizado em
+            SSR e no hydration do cliente com o mesmo conteúdo. */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `window.__SUPABASE_ENV__=${JSON.stringify(env)};`,
+          }}
+        />
       </head>
       <body>
         {children}
