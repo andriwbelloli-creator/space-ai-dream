@@ -1949,18 +1949,18 @@ function Professionals({
   ];
 
   return (
-    <section id="pro" className="bg-card/40 border-y border-border/60 py-14 sm:py-20">
+    <section id="pro" className="bg-foreground text-background py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        {/* Header no mesmo padrão de Tipos2D5D: kicker + h2 + sub à esquerda,
-            CTAs principais à direita. Fundo claro pra consistência com
-            o trilho de Visualizações. */}
+        {/* Header com fundo escuro pra dar quebra editorial no ritmo da
+            home. Cards PremiumVerticalCard mantêm fundo claro interno
+            (contraste de revista). Texto e CTAs adaptados pra escuro. */}
         <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            <span className="is-kicker">Para profissionais</span>
-            <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
+            <span className="is-kicker text-accent">Para profissionais</span>
+            <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-background sm:text-4xl md:text-5xl">
               Acelere estudos visuais e <span className="italic">apresentações</span>.
             </h2>
-            <p className="mt-4 max-w-md text-sm text-muted-foreground sm:text-base">
+            <p className="mt-4 max-w-md text-sm text-background/70 sm:text-base">
               Use IA pra criar variações de ambiente em minutos, apresentar ideias a clientes e
               gerar orçamentos preliminares com lista de produtos.
             </p>
@@ -1968,14 +1968,14 @@ function Professionals({
           <div className="flex flex-wrap gap-2">
             <Button
               onClick={() => onLead("pro_general")}
-              className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm"
+              className="h-11 rounded-full bg-background text-foreground hover:bg-background/90 px-5 text-sm"
             >
               Conhecer recursos <ArrowRight className="ml-1.5 h-4 w-4" />
             </Button>
             <Button
               onClick={onCourse}
               variant="outline"
-              className="h-11 rounded-full px-5 text-sm"
+              className="h-11 rounded-full px-5 text-sm bg-white/5 border-white/20 text-background hover:bg-white/10 hover:text-background"
             >
               Conhecer o curso
             </Button>

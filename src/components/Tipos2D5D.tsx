@@ -14,17 +14,17 @@ import floorplan from "@/assets/floorplan-apartment.jpg";
 
 export function Tipos2D5D() {
   return (
-    <section className="bg-card/40 border-y border-border/60 py-14 sm:py-20">
+    <section className="bg-foreground text-background py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-10 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            <span className="is-kicker">Visualizações</span>
-            <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
+            <span className="is-kicker text-accent">Visualizações</span>
+            <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-background sm:text-4xl md:text-5xl">
               Do <span className="italic">conceito visual</span> à{" "}
               <span className="italic">planta baixa</span>.
             </h2>
           </div>
-          <p className="max-w-sm text-sm text-muted-foreground sm:text-base">
+          <p className="max-w-sm text-sm text-background/70 sm:text-base">
             Hoje o Ideal Space gera o 2D com IA generativa. 5D e planta baixa estão em
             desenvolvimento e entram em ondas pra usuários da lista de espera.
           </p>
