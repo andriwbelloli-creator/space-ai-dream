@@ -6,7 +6,13 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 function createSupabaseAdminClient() {
-  const SUPABASE_URL = process.env.SUPABASE_URL;
+  // URL é pública — fallback hardcoded pra evitar dependência exclusiva
+  // do Cloudflare runtime. SERVICE_ROLE_KEY continua APENAS via secret
+  // do Cloudflare runtime (nunca no código).
+  const SUPABASE_URL =
+    process.env.SUPABASE_URL ||
+    process.env.VITE_SUPABASE_URL ||
+    "https://tuftobschhomtwsuerus.supabase.co";
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
