@@ -9,13 +9,16 @@ import { GoogleButton } from "@/components/GoogleButton";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { clearReturnContext, resolveReturnTo } from "@/lib/navigation-return";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react";
 
 type Mode = "signin" | "signup" | "forgot";
 
 type LoginMode = "signin" | "signup" | "forgot";
-type LoginSearch = { redirect?: string; mode?: LoginMode };
+// sourceAction: etiqueta curta da ação que disparou o gate (ex:
+// "upload_photo"). Não afeta navegação — vai pra analytics/telemetria.
+type LoginSearch = { redirect?: string; mode?: LoginMode; sourceAction?: string };
 
 const SAFE_REDIRECT = (raw: unknown): string | undefined => {
   if (typeof raw !== "string" || !raw) return undefined;
@@ -24,12 +27,18 @@ const SAFE_REDIRECT = (raw: unknown): string | undefined => {
   return raw;
 };
 
+// Whitelist conservadora: lowercase + dígito + underscore, até 64 chars.
+// Evita injeção em logs/analytics; tudo fora disso vira undefined.
+const SAFE_SOURCE_ACTION = (raw: unknown): string | undefined =>
+  typeof raw === "string" && /^[a-z0-9_]{1,64}$/.test(raw) ? raw : undefined;
+
 const VALID_MODES: LoginMode[] = ["signin", "signup", "forgot"];
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search): LoginSearch => ({
     redirect: SAFE_REDIRECT(search.redirect),
     mode: VALID_MODES.includes(search.mode as LoginMode) ? (search.mode as LoginMode) : undefined,
+    sourceAction: SAFE_SOURCE_ACTION(search.sourceAction),
   }),
   beforeLoad: async ({ search }) => {
     // Já autenticado → pula a tela de login e vai pro destino/início.
@@ -83,17 +92,19 @@ function LoginPage() {
   const track = useServerFn(logEvent);
   const { user } = useAuth();
   const { redirect: redirectTo, mode: initialMode } = Route.useSearch();
-  const dest = redirectTo ?? "/";
+  // Resolve via navigation-return: URL redirect tem prioridade, fallback
+  // sessionStorage. Já bloqueia rotas de auth/paywall (anti-loop).
+  // Quando nada válido, "/". Magic link usa o mesmo dest pra ?next=.
+  const dest = resolveReturnTo({ redirect: redirectTo }) ?? "/";
 
   // Belt-and-suspenders ao beforeLoad: em SSR e race de hidratação,
   // supabase.auth.getSession() pode retornar null mesmo com sessão válida
   // no localStorage. Quando o AuthProvider termina de restaurar e `user`
-  // materializa, redireciona pro destino — com guard explícito contra
-  // /login pra impedir loop.
+  // materializa, redireciona pro destino e limpa o contexto persistido.
   useEffect(() => {
     if (!user) return;
-    const target = dest && !dest.startsWith("/login") ? dest : "/";
-    navigate({ to: target });
+    clearReturnContext();
+    navigate({ to: dest });
   }, [user, dest, navigate]);
 
   const [mode, setMode] = useState<Mode>(initialMode ?? "signin");

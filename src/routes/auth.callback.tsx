@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { clearReturnContext, resolveReturnTo } from "@/lib/navigation-return";
 
 /**
  * /auth/callback — processa o redirect do Supabase após:
@@ -13,7 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
  *
  * Após processar, redireciona:
  *  - recovery → /reset-password (com sessão temporária ativa)
- *  - signup/oauth → returnUrl validado OU início
+ *  - signup/oauth → returnUrl validado OU início (via navigation-return,
+ *    que faz fallback pra sessionStorage se URL não carregar redirect)
  *  - erro → mostra tela com botão "voltar pro login"
  *
  * Anti open-redirect: só caminhos same-origin começando com '/' e sem '//'.
@@ -22,6 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 type CallbackSearch = {
   redirect?: string;
   next?: string;
+  sourceAction?: string;
 };
 
 const SAFE_REDIRECT = (raw: unknown): string | undefined => {
@@ -30,10 +33,16 @@ const SAFE_REDIRECT = (raw: unknown): string | undefined => {
   return raw;
 };
 
+// Whitelist conservadora idêntica à do /login. Evita injeção em
+// logs/analytics; tudo fora dela vira undefined.
+const SAFE_SOURCE_ACTION = (raw: unknown): string | undefined =>
+  typeof raw === "string" && /^[a-z0-9_]{1,64}$/.test(raw) ? raw : undefined;
+
 export const Route = createFileRoute("/auth/callback")({
   validateSearch: (search): CallbackSearch => ({
     redirect: SAFE_REDIRECT(search.redirect),
     next: SAFE_REDIRECT(search.next),
+    sourceAction: SAFE_SOURCE_ACTION(search.sourceAction),
   }),
   head: () => ({
     meta: [{ title: "Confirmando | Ideal Space" }, { name: "robots", content: "noindex,nofollow" }],
@@ -56,6 +65,15 @@ function AuthCallback() {
       try {
         const url = new URL(window.location.href);
 
+        // Resolve destino com prioridade URL (redirect ?? next) e fallback
+        // sessionStorage via navigation-return. Vale pra success do hash
+        // flow e do code flow. Recovery não usa — vai sempre pra reset.
+        const dest = resolveReturnTo({ redirect: redirect || next }) ?? "/";
+        const goToDest = () => {
+          clearReturnContext();
+          navigate({ to: dest as "/" });
+        };
+
         // 1) Hash flow (recovery / magic link / oauth implicit): tokens já vêm na URL
         if (url.hash && url.hash.length > 1) {
           const params = new URLSearchParams(url.hash.slice(1));
@@ -70,16 +88,17 @@ function AuthCallback() {
             });
             if (error) throw error;
 
-            // Recovery → user precisa definir nova senha
+            // Recovery → user precisa definir nova senha (não consome
+            // contexto de retorno — deixa pra resolver após reset).
             if (type === "recovery") {
               setStatus({ kind: "success", message: "Sessão de redefinição ativa." });
               navigate({ to: "/reset-password" });
               return;
             }
 
-            // Magic link / signup confirmado via hash → início
+            // Magic link / signup confirmado via hash → destino com fallback
             setStatus({ kind: "success", message: "Login confirmado." });
-            navigate({ to: (redirect || next || "/") as "/" });
+            goToDest();
             return;
           }
         }
@@ -90,7 +109,7 @@ function AuthCallback() {
           const { error } = await supabase.auth.exchangeCodeForSession(code);
           if (error) throw error;
           setStatus({ kind: "success", message: "Login confirmado." });
-          navigate({ to: (redirect || next || "/") as "/" });
+          goToDest();
           return;
         }
 
