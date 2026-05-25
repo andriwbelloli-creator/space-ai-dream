@@ -2043,7 +2043,7 @@ function InspirationGallery({
   };
 
   return (
-    <section id="galeria" className="py-14 sm:py-20">
+    <section id="galeria" className="py-14 sm:py-20 overflow-x-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
