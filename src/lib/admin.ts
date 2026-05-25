@@ -145,13 +145,31 @@ const ROOM_LABELS_INSIGHTS: Record<string, string> = {
   outro: "Outro",
 };
 
+// Funil principal — ordem cronológica do usuário típico. Cada passo é
+// relativo ao primeiro (start_project = 100%). Lote A.3 adicionou passos
+// intermediários (upload_file_selected, style_selected, generation_started/
+// succeeded) pra dar mais resolução. `image_generated` (legado) virou
+// equivalente a generation_succeeded; mantido pra continuidade histórica.
 const ADMIN_FUNNEL_STEPS: ReadonlyArray<{ event: string; label: string }> = [
-  { event: "start_project", label: "Iniciou projeto" },
-  { event: "image_uploaded", label: "Enviou foto" },
-  { event: "image_generated", label: "Gerou imagem" },
+  { event: "start_project", label: "Abriu upload" },
+  { event: "upload_file_selected", label: "Escolheu foto" },
+  { event: "image_uploaded", label: "Foto válida" },
+  { event: "style_selected", label: "Escolheu estilo" },
+  { event: "generation_started", label: "Gerou (iniciou)" },
+  { event: "generation_succeeded", label: "Gerou (sucesso)" },
   { event: "shopping_list_loaded", label: "Viu lista" },
   { event: "affiliate_click", label: "Clicou afiliado" },
   { event: "project_made_public", label: "Compartilhou" },
+];
+
+// Funil de monetização — entrada pelo header/CTA, decisão de plano, lead.
+// Independente do funil de geração: mede outra hipótese (quanto convertem
+// quem visita /pricing ou abre o modal Guia). `pricing_viewed` é a baseline.
+const ADMIN_MONETIZATION_FUNNEL_STEPS: ReadonlyArray<{ event: string; label: string }> = [
+  { event: "pricing_viewed", label: "Viu planos" },
+  { event: "plan_selected", label: "Clicou em plano" },
+  { event: "lead_form_opened", label: "Abriu form" },
+  { event: "lead_form_submitted", label: "Enviou form" },
 ];
 
 const MAX_EVENTS_INSIGHTS = 10_000;
@@ -173,6 +191,8 @@ export type AdminInsights = {
   topStyles: AdminRankedItem[];
   topRooms: AdminRankedItem[];
   funnel: AdminFunnelStep[];
+  /** Funil de monetização (pricing → plano → lead). Baseline: pricing_viewed. */
+  monetizationFunnel: AdminFunnelStep[];
   eventCounts: Array<{ event: string; count: number }>;
 };
 
@@ -243,7 +263,7 @@ export const getAdminInsights = createServerFn({ method: "GET" })
         if (e.event) eventCountMap[e.event] = (eventCountMap[e.event] ?? 0) + 1;
       }
 
-      // Funil: cada step relativo ao primeiro (start_project = 100%)
+      // Funil principal: cada step relativo ao primeiro (start_project = 100%)
       const baseline = eventCountMap["start_project"] ?? 0;
       const funnel: AdminFunnelStep[] = ADMIN_FUNNEL_STEPS.map((step) => {
         const count = eventCountMap[step.event] ?? 0;
@@ -252,6 +272,18 @@ export const getAdminInsights = createServerFn({ method: "GET" })
           label: step.label,
           count,
           pct: baseline > 0 ? Math.round((count / baseline) * 100) : 0,
+        };
+      });
+
+      // Funil de monetização: baseline = pricing_viewed.
+      const monetizationBaseline = eventCountMap["pricing_viewed"] ?? 0;
+      const monetizationFunnel: AdminFunnelStep[] = ADMIN_MONETIZATION_FUNNEL_STEPS.map((step) => {
+        const count = eventCountMap[step.event] ?? 0;
+        return {
+          event: step.event,
+          label: step.label,
+          count,
+          pct: monetizationBaseline > 0 ? Math.round((count / monetizationBaseline) * 100) : 0,
         };
       });
 
@@ -287,6 +319,7 @@ export const getAdminInsights = createServerFn({ method: "GET" })
           topStyles,
           topRooms,
           funnel,
+          monetizationFunnel,
           eventCounts: Object.entries(eventCountMap)
             .sort((a, b) => b[1] - a[1])
             .map(([event, count]) => ({ event, count })),

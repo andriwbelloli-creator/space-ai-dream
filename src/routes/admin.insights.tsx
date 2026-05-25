@@ -158,12 +158,12 @@ function AdminInsightsPage() {
             />
           </div>
 
-          {/* Funil */}
+          {/* Funil principal — geração */}
           <section className="mt-8">
             <h2 className="text-base font-semibold tracking-tight">Funil de geração</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
               Contagem bruta de eventos — um usuário pode gerar múltiplos eventos. Percentual
-              relativo a "Iniciou projeto".
+              relativo a "Abriu upload".
             </p>
             {state.insights.funnel[0]?.count === 0 ? (
               <p className="mt-4 text-xs text-muted-foreground">
@@ -181,6 +181,32 @@ function AdminInsightsPage() {
               </div>
             )}
           </section>
+
+          {/* Funil de monetização — pricing → plano → lead */}
+          {state.insights.monetizationFunnel?.length > 0 && (
+            <section className="mt-8">
+              <h2 className="text-base font-semibold tracking-tight">Funil de monetização</h2>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Visitas à página de planos, seleção de plano e formulário de lead. Percentual
+                relativo a "Viu planos".
+              </p>
+              {state.insights.monetizationFunnel[0]?.count === 0 ? (
+                <p className="mt-4 text-xs text-muted-foreground">
+                  Sem dados ainda. Acesse /pricing pra começar a popular.
+                </p>
+              ) : (
+                <div className="mt-4 rounded-2xl border border-border bg-card p-4 space-y-3">
+                  {state.insights.monetizationFunnel.map((step) => (
+                    <FunnelRow
+                      key={step.event}
+                      step={step}
+                      baseline={state.insights.monetizationFunnel[0]?.count ?? 1}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Top estilos + ambientes */}
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
