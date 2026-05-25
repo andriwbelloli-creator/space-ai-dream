@@ -26,7 +26,12 @@ export type StyleSlug =
   | "mid-century"
   | "mediterraneo"
   | "art-deco"
-  | "maximalista";
+  | "maximalista"
+  | "transicional"
+  | "rustico-moderno"
+  | "moderno-organico"
+  | "classico"
+  | "brutalista";
 
 /** Conteúdo de SEO + copy de conversão de uma landing page de estilo. */
 export interface StyleSeoData {
@@ -1111,6 +1116,301 @@ export const SEO_STYLES: Record<StyleSlug, StyleSeoData> = {
       before: "empty-living",
       after: "decorated-dining",
       gallery: ["style-luxo", "decorated-bedroom", "decorated-living-warm"],
+    },
+  },
+  transicional: {
+    name: "Transicional",
+    title: "Design de Interiores Transicional com IA | Ideal Space",
+    description:
+      "Veja seu ambiente no estilo transicional: equilíbrio elegante entre clássico e contemporâneo. Envie uma foto e receba uma proposta atemporal.",
+    h1: "Veja seu ambiente no estilo *Transicional*",
+    promise:
+      "Equilíbrio elegante entre o conforto clássico e a leveza contemporânea. Paleta neutra sofisticada, mobiliário acolhedor com linhas limpas, detalhes sutis de moldura. Envie uma foto e veja como seu ambiente ganha sofisticação atemporal, sem virar showroom frio.",
+    cta: "Testar Transicional no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "transicional",
+    benefits: [
+      "Mistura clássico e contemporâneo sem cair em um lado só",
+      "Paleta neutra sofisticada que envelhece bem",
+      "Linhas limpas com detalhes elegantes pontuais",
+      "Funciona em apartamentos familiares de médio e alto padrão",
+      "Visual atemporal que não fica datado em poucos anos",
+    ],
+    visualTitle: "Veja como o ambiente ganha equilíbrio e sofisticação",
+    visualDescription:
+      "Exemplo de transformação no estilo transicional a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Qual a diferença entre Transicional e Contemporâneo?",
+        a: "Transicional mantém referências clássicas sutis, como moldura, simetria e tecidos encorpados. Contemporâneo é mais limpo e atual, sem essas referências históricas.",
+      },
+      {
+        q: "Funciona em apartamento pequeno?",
+        a: "Funciona. Transicional cabe bem em ambiente compacto porque trabalha proporção e neutralidade, sem peças pesadas.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim, foto comum do celular serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "Combina com móveis modernos que eu já tenho?",
+        a: "Combina. A graça do transicional é justamente o cruzamento entre épocas. Móveis modernos viram base pra elementos clássicos sutis.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Transicional",
+    relatedLinks: [
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Clássico", to: "/estilos/classico" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Quarto", to: "/ambientes/quarto" },
+    ],
+    whyChoose: [
+      "Paleta atemporal que não fica datada em ciclos curtos",
+      "Mistura conforto clássico com leveza contemporânea",
+      "Funciona em apartamentos familiares e imóveis premium",
+      "Detalhes elegantes sem cair em showroom frio",
+    ],
+    images: {
+      before: "empty-living",
+      after: "decorated-living-warm",
+      gallery: ["decorated-bedroom", "decorated-living", "style-luxo"],
+    },
+  },
+  "rustico-moderno": {
+    name: "Rústico moderno",
+    title: "Design Rústico Moderno com IA | Ideal Space",
+    description:
+      "Veja seu ambiente no estilo rústico moderno: aconchego de casa de campo com acabamento urbano. Envie uma foto e receba uma proposta acolhedora.",
+    h1: "Veja seu ambiente no estilo *Rústico moderno*",
+    promise:
+      "Aconchego de casa de campo com acabamento urbano. Madeira natural ou de demolição, fibras, tons claros e quentes, metais pretos foscos. Envie uma foto e veja como seu ambiente ganha calor de lar sem virar pastiche caipira.",
+    cta: "Testar Rústico moderno no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "rustico-moderno",
+    benefits: [
+      "Madeira natural ou de demolição como base aconchegante",
+      "Fibras e texturas tácteis para calor visual",
+      "Metais pretos foscos como contraste contemporâneo",
+      "Paleta clara e quente, sem virar caipira",
+      "Estética acolhedora com curadoria séria, sem pastiche",
+    ],
+    visualTitle: "Veja como o ambiente ganha aconchego e contraste",
+    visualDescription:
+      "Exemplo de transformação no estilo rústico moderno a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Rústico moderno é a mesma coisa que decoração de campo?",
+        a: "Não. É a fusão: madeira e fibras do campo com linhas limpas e metais pretos do contemporâneo. Resultado é urbano-acolhedor, não pastiche caipira.",
+      },
+      {
+        q: "Funciona em apartamento?",
+        a: "Funciona muito bem. Compensa cimento queimado e estrutura urbana com madeira, tecidos e metais escuros.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim, com luz natural ajuda na qualidade da geração.",
+      },
+      {
+        q: "Combina com móveis que eu já tenho?",
+        a: "Provavelmente. A IA propõe paleta, têxteis e peças complementares que somam ao que já existe.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Rústico moderno",
+    relatedLinks: [
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Industrial", to: "/estilos/industrial" },
+      { label: "Japandi", to: "/estilos/japandi" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Cozinha", to: "/ambientes/cozinha" },
+    ],
+    whyChoose: [
+      "Acolhimento de casa de campo sem renúncia ao moderno",
+      "Madeira e metal preto criam contraste sofisticado",
+      "Estilo Pinterest com curadoria séria, não cliché",
+      "Funciona em casa, apartamento e ambiente comercial",
+    ],
+    images: {
+      before: "empty-kitchen",
+      after: "decorated-kitchen-island",
+      gallery: ["decorated-living-warm", "decorated-bedroom", "gallery-loft"],
+    },
+  },
+  "moderno-organico": {
+    name: "Moderno orgânico",
+    title: "Design Moderno Orgânico com IA | Ideal Space",
+    description:
+      "Veja seu ambiente no estilo moderno orgânico: curvas, materiais naturais e biofilia. Envie uma foto e receba uma proposta sofisticada e acolhedora.",
+    h1: "Veja seu ambiente no estilo *Moderno orgânico*",
+    promise:
+      "Design contemporâneo com formas curvas, texturas naturais, pedra, linho, madeira clara e biofilia. Envie uma foto do seu ambiente e veja como ele pode ficar premium, biofílico e fluido, sem cair em minimalismo frio.",
+    cta: "Testar Moderno orgânico no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "moderno-organico",
+    benefits: [
+      "Formas curvas e fluidas em vez de geometria dura",
+      "Materiais táteis: linho, bouclé, pedra, cerâmica artesanal",
+      "Plantas de grande porte como peças de design",
+      "Paleta quente e neutra com sensação biofílica",
+      "Sofisticação sem cair em minimalismo frio",
+    ],
+    visualTitle: "Veja como o ambiente ganha fluidez e textura",
+    visualDescription:
+      "Exemplo de transformação no estilo moderno orgânico a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Qual a diferença entre Moderno orgânico e Natural?",
+        a: "Natural é mais rústico, com fibras e madeira evidentes. Moderno orgânico é mais premium, com curvas esculturais, pedra, bouclé e mobiliário autoral.",
+      },
+      {
+        q: "Funciona em ambiente pequeno?",
+        a: "Funciona. As curvas suavizam o espaço e o linho/bouclé adicionam calor sem ocupar área.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim, qualquer foto comum com luz natural funciona bem.",
+      },
+      {
+        q: "Combina com móveis modernos que tenho?",
+        a: "Combina. Móveis modernos viram base e a IA adiciona camadas orgânicas: tapete, plantas, peça escultural.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Moderno orgânico",
+    relatedLinks: [
+      { label: "Japandi", to: "/estilos/japandi" },
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Quarto", to: "/ambientes/quarto" },
+    ],
+    whyChoose: [
+      "Curvas suavizam ambientes geometricamente duros",
+      "Materiais táteis premium com sensação biofílica",
+      "Acolhedor sem cair em minimalismo frio",
+      "Estilo em alta em imóveis premium e apartamentos jovens",
+    ],
+    images: {
+      before: "empty-bedroom",
+      after: "decorated-bedroom",
+      gallery: ["decorated-living-warm", "style-natural", "moodboard-pro"],
+    },
+  },
+  classico: {
+    name: "Clássico",
+    title: "Design Clássico de Interiores com IA | Ideal Space",
+    description:
+      "Veja seu ambiente no estilo clássico: simetria, boiseries e tecidos ricos. Envie uma foto e receba uma proposta elegante e atemporal.",
+    h1: "Veja seu ambiente no estilo *Clássico*",
+    promise:
+      "Elegância tradicional com simetria, boiseries, madeira nobre, tecidos ricos e atmosfera atemporal. Envie uma foto do seu ambiente e veja como ele pode ganhar imponência residencial sem cair em cenografia.",
+    cta: "Testar Clássico no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "classico",
+    benefits: [
+      "Simetria como base da composição",
+      "Boiseries e molduras elegantes sem excesso",
+      "Madeira nobre como mogno, carvalho ou nogueira",
+      "Tecidos ricos: veludo, linho encorpado, seda",
+      "Atemporal: estilo que não envelhece em ciclos curtos",
+    ],
+    visualTitle: "Veja como o ambiente ganha formalidade e nobreza",
+    visualDescription:
+      "Exemplo de transformação no estilo clássico a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Qual a diferença entre Clássico e Luxo discreto?",
+        a: "Luxo discreto é minimalismo premium contemporâneo. Clássico tem referências históricas declaradas: boiseries, simetria, mobiliário com escala formal.",
+      },
+      {
+        q: "Funciona em apartamento?",
+        a: "Funciona em apartamento amplo. Em ambiente compacto, melhor versão Transicional, que mistura clássico com contemporâneo.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim, com luz natural ajuda na qualidade da geração.",
+      },
+      {
+        q: "Não fica antiquado?",
+        a: "Não, quando a paleta é leve e os móveis têm escala correta pro ambiente. A IA evita cenografia exagerada.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Clássico",
+    relatedLinks: [
+      { label: "Transicional", to: "/estilos/transicional" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Art déco", to: "/estilos/art-deco" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Sala de jantar", to: "/ambientes/sala-jantar" },
+    ],
+    whyChoose: [
+      "Elegância atemporal que valoriza o imóvel",
+      "Simetria e composição formal melhoram a percepção de qualidade",
+      "Materiais nobres com proporção residencial real",
+      "Funciona em imóveis de alto padrão e ambientes formais",
+    ],
+    images: {
+      before: "empty-living",
+      after: "decorated-living",
+      gallery: ["style-luxo", "decorated-bedroom", "decorated-dining"],
+    },
+  },
+  brutalista: {
+    name: "Brutalista",
+    title: "Design Brutalista de Interiores com IA | Ideal Space",
+    description:
+      "Veja seu ambiente no estilo brutalista: concreto aparente, volumes monolíticos e atmosfera autoral. Envie uma foto e receba uma proposta editorial.",
+    h1: "Veja seu ambiente no estilo *Brutalista*",
+    promise:
+      "Concreto aparente, volumes geométricos, formas monolíticas, materiais crus e mobiliário escultural. Envie uma foto do seu ambiente e veja como ele pode ganhar atmosfera arquitetônica e editorial, sem perder conforto.",
+    cta: "Testar Brutalista no meu ambiente",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultStyle: "brutalista",
+    benefits: [
+      "Concreto aparente como protagonista",
+      "Volumes monolíticos e formas esculturais",
+      "Materiais crus com superfícies texturizadas",
+      "Mobiliário escultural com presença autoral",
+      "Atmosfera editorial sem virar galeria fria",
+    ],
+    visualTitle: "Veja como o ambiente ganha presença arquitetônica",
+    visualDescription:
+      "Exemplo de transformação no estilo brutalista a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Brutalista não fica gelado?",
+        a: "Não, quando contraposto a madeira quente, têxteis texturizados e iluminação dramática pontual. A IA equilibra dureza e conforto.",
+      },
+      {
+        q: "Funciona em apartamento residencial?",
+        a: "Funciona em apartamentos urbanos com pé-direito alto, lofts e studios. Em ambiente compacto, melhor versão híbrida com Industrial.",
+      },
+      {
+        q: "Posso usar uma foto de celular?",
+        a: "Sim, com luz natural ajuda.",
+      },
+      {
+        q: "Brutalista é a mesma coisa que Industrial?",
+        a: "Não. Industrial é tijolo aparente, dutos e vintage. Brutalista é concreto monolítico, escultural e arquitetônico.",
+      },
+    ],
+    finalCta: "Ver meu ambiente em Brutalista",
+    relatedLinks: [
+      { label: "Industrial", to: "/estilos/industrial" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Mid-century", to: "/estilos/mid-century" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Home office", to: "/ambientes/home-office" },
+    ],
+    whyChoose: [
+      "Atmosfera arquitetônica e editorial diferenciada",
+      "Concreto como matéria-prima sofisticada, não crua",
+      "Funciona em lofts, studios e imóveis modernos",
+      "Estilo autoral pra público criativo e design-conscious",
+    ],
+    images: {
+      before: "empty-bathroom",
+      after: "decorated-bathroom-suite",
+      gallery: ["style-industrial", "decorated-living", "gallery-loft"],
     },
   },
 };

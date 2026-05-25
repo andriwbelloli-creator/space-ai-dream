@@ -35,6 +35,16 @@ const STYLE_PROMPTS: Record<string, string> = {
     "Art deco interior: bold geometric patterns, brass and gold accents, velvet upholstery, marble and lacquer, jewel tones, dramatic lighting.",
   maximalista:
     "Maximalist interior: vivid colors, mixed patterns, gallery walls, layered textures, statement pieces, eclectic curation, abundant decor.",
+  transicional:
+    "Transitional interior: balanced blend of classic and contemporary, sophisticated neutral palette, comfortable furniture with clean lines, subtle moldings, elegant textiles, warm lighting, timeless residential composition.",
+  "rustico-moderno":
+    "Modern farmhouse interior: country warmth meets urban finishing, natural or reclaimed wood, natural fibers, textured fabrics, light warm tones, matte black metals, soft lighting, cozy yet sophisticated.",
+  "moderno-organico":
+    "Organic modern interior: contemporary base with curved forms and natural materials, light wood, stone, linen, bouclé, handmade ceramics, statement plants, warm neutral palette, soft lighting, tactile and biophilic.",
+  classico:
+    "Classic traditional interior: symmetry, boiseries, elegant moldings, fine wood, rich fabrics like velvet and heavy linen, sophisticated lighting, neutral or deep tones, formal composition, residential elegance without theatrical excess.",
+  brutalista:
+    "Sophisticated brutalist interior: exposed concrete, geometric volumes, monolithic forms, raw materials, textured surfaces, sculptural furniture, dramatic lighting, architectural and editorial atmosphere with preserved comfort.",
 };
 
 // Retrocompat: drafts e projetos persistidos antes da padronização podem ter

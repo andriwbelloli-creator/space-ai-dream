@@ -13,6 +13,7 @@ import { RewardModal, type RewardKind } from "@/components/RewardModal";
 import { generateBudgetPdf } from "@/lib/budget-pdf";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { logEvent } from "@/lib/tracking.functions";
+import { useSmartAnchor } from "@/lib/use-smart-anchor";
 import { checkAdminAccess } from "@/lib/admin";
 import { PLANS, formatPlanPrice } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
@@ -90,6 +91,13 @@ import styleMidCentury from "@/assets/decorated-living.jpg";
 import styleMediterraneo from "@/assets/decorated-living-warm.jpg";
 import styleArtDeco from "@/assets/decorated-bathroom-suite.jpg";
 import styleMaximalista from "@/assets/decorated-dining.jpg";
+// Assets dedicados pros 5 novos estilos (R6.1) — gerados via Imagen 4
+// (imagen-4.0-generate-001) com prompts calibrados por estilo.
+import styleTransicional from "@/assets/style-transicional.jpg";
+import styleRusticoModerno from "@/assets/style-rustico-moderno.jpg";
+import styleModernoOrganico from "@/assets/style-moderno-organico.jpg";
+import styleClassico from "@/assets/style-classico.jpg";
+import styleBrutalista from "@/assets/style-brutalista.jpg";
 
 const heroPair = pair("hero-living");
 const emptyLiving = heroPair.empty!.src;
@@ -295,6 +303,42 @@ const styles: ReadonlyArray<{
     styleId: "maximalista",
     slug: "maximalista",
   },
+  // 5 novos estilos (R6) com slug pra rota /estilos/<slug>.
+  {
+    img: styleTransicional,
+    name: "Transicional",
+    sub: "Clássico com leveza",
+    styleId: "transicional",
+    slug: "transicional",
+  },
+  {
+    img: styleRusticoModerno,
+    name: "Rústico moderno",
+    sub: "Aconchego com metal preto",
+    styleId: "rustico-moderno",
+    slug: "rustico-moderno",
+  },
+  {
+    img: styleModernoOrganico,
+    name: "Moderno orgânico",
+    sub: "Curvas e biofilia",
+    styleId: "moderno-organico",
+    slug: "moderno-organico",
+  },
+  {
+    img: styleClassico,
+    name: "Clássico",
+    sub: "Simetria e boiseries",
+    styleId: "classico",
+    slug: "classico",
+  },
+  {
+    img: styleBrutalista,
+    name: "Brutalista",
+    sub: "Concreto escultural",
+    styleId: "brutalista",
+    slug: "brutalista",
+  },
 ];
 
 const shoppingList = [
@@ -475,7 +519,11 @@ function Index() {
   const [courseOpen, setCourseOpen] = useState(false);
   const [reward, setReward] = useState<RewardKind | null>(null);
   // Funil de leads: contexto do CTA de plano que abriu o modal comercial.
-  const [lead, setLead] = useState<{ planInterest?: string; title?: string } | null>(null);
+  const [lead, setLead] = useState<{
+    planInterest?: string;
+    title?: string;
+    source?: string;
+  } | null>(null);
   // Monta cada modal lazy só na 1ª abertura e o mantém montado (preserva animações).
   const [uploadMounted, setUploadMounted] = useState(false);
   const [leadMounted, setLeadMounted] = useState(false);
@@ -574,11 +622,26 @@ function Index() {
       <StylesCarousel onUpload={openUpload} />
       <AmbientesGrid />
       <Tipos2D5D />
+      {/* Galeria #galeria — destino do menu "Ideias". Sub-CTAs no fim
+          levam pras sections de Estilos e Ambientes. */}
+      <InspirationGallery
+        onUpload={openUpload}
+        onPickStyle={openUploadWithStyle}
+        onLead={(title) => setLead({ title, source: "galeria" })}
+      />
       <EditorialCollections />
       <ResultShowcase
         onBudget={() => openReward("budget")}
         onAffiliate={setAffiliateOpen}
         onReward={openReward}
+      />
+      {/* Profissionais #pro — destino do menu "Profissionais". Cards
+          sem rota dedicada (clínicas, e-commerce) viram lead capture. */}
+      <Professionals
+        onCourse={() => setCourseOpen(true)}
+        onLead={(source) =>
+          setLead({ source, title: "Fale com o time do Ideal Space" })
+        }
       />
       <Pricing
         onReward={openReward}
@@ -631,7 +694,10 @@ function Index() {
           <LeadFormModal
             open={lead !== null}
             onOpenChange={(o) => !o && setLead(null)}
-            source="home"
+            // source identifica de onde o lead veio (home, pro_clinica,
+            // pro_ecommerce, pro_general, plano X, etc) — vai pra coluna
+            // `source` da tabela leads pra atribuição comercial.
+            source={lead?.source ?? "home"}
             planInterest={lead?.planInterest}
             title={lead?.title}
           />
@@ -729,6 +795,9 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
   const { user, signOut } = useAuth();
   const { credits } = useCredits();
   const verifyAdmin = useServerFn(checkAdminAccess);
+  // Smart anchor: scroll na home, navega pra "/" + hash em outras rotas.
+  // Resolve o bug silencioso de clicar em #galeria/#pro fora da home.
+  const smartAnchor = useSmartAnchor();
   // Acesso ao painel interno aparece no menu de perfil apenas pra admins.
   // Verificação server-side é a fonte da verdade — esta flag só controla a
   // visibilidade do link. Não-admins nem veem o atalho.
@@ -766,19 +835,35 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
         </Link>
         <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
           <button onClick={onDemo} className="hover:text-foreground transition">
-            Como funciona
+            Guia
           </button>
-          <a className="hover:text-foreground transition" href="#ambientes">
+          <a
+            className="hover:text-foreground transition"
+            href="#ambientes"
+            onClick={smartAnchor("ambientes")}
+          >
             Ambientes
           </a>
-          <a className="hover:text-foreground transition" href="#estilos">
+          <a
+            className="hover:text-foreground transition"
+            href="#estilos"
+            onClick={smartAnchor("estilos")}
+          >
             Estilos
           </a>
-          <a className="hover:text-foreground transition" href="#galeria">
-            Galeria
+          <a
+            className="hover:text-foreground transition"
+            href="#galeria"
+            onClick={smartAnchor("galeria")}
+          >
+            Ideias
           </a>
-          <a className="hover:text-foreground transition" href="#pro">
-            Para profissionais
+          <a
+            className="hover:text-foreground transition"
+            href="#pro"
+            onClick={smartAnchor("pro")}
+          >
+            Profissionais
           </a>
           <Link to="/pricing" className="hover:text-foreground transition">
             Planos
@@ -876,11 +961,11 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
             </SheetHeader>
             <div className="mt-6 flex flex-col gap-1 text-base">
               {[
-                { l: "Como funciona", href: "#", onClick: onDemo },
-                { l: "Ambientes", href: "#ambientes" },
-                { l: "Estilos", href: "#estilos" },
-                { l: "Galeria", href: "#galeria" },
-                { l: "Para profissionais", href: "#pro" },
+                { l: "Guia", href: "#", onClick: onDemo },
+                { l: "Ambientes", href: "#ambientes", onClick: smartAnchor("ambientes") },
+                { l: "Estilos", href: "#estilos", onClick: smartAnchor("estilos") },
+                { l: "Ideias", href: "#galeria", onClick: smartAnchor("galeria") },
+                { l: "Profissionais", href: "#pro", onClick: smartAnchor("pro") },
                 { l: "Planos", href: "/pricing" },
               ].map((item) => (
                 <a
@@ -1707,6 +1792,26 @@ function InspirationGallery({
             Nada por aqui ainda. Novos projetos chegam toda semana.
           </p>
         )}
+
+        {/* Sub-CTAs discretos: rotas alternativas pra explorar inspirações
+            por outras dimensões (estilo ou cômodo) sem sair da home. */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <a
+            href="#estilos"
+            className="hover:text-foreground transition inline-flex items-center gap-1"
+          >
+            Explorar por estilo <ChevronRight className="h-3.5 w-3.5" />
+          </a>
+          <span aria-hidden className="hidden sm:inline text-border">
+            ·
+          </span>
+          <a
+            href="#ambientes"
+            className="hover:text-foreground transition inline-flex items-center gap-1"
+          >
+            Explorar por ambiente <ChevronRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -1773,16 +1878,25 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
 
 /* ----------------------------- PROFESSIONALS ----------------------------- */
 
-function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse: () => void }) {
-  // `href` opcional: quando presente, o card vira link pra landing dedicada.
-  // Quando ausente (Clinicas, E-commerce) o card fica puramente informativo —
-  // sem hover/cursor de clique pra nao parecer botao falso.
+function Professionals({
+  onCourse,
+  onLead,
+}: {
+  onCourse: () => void;
+  // Source vai pra coluna source da tabela leads — distingue origem
+  // do lead pra atribuição comercial (pro_clinica, pro_ecommerce, etc).
+  onLead: (source: string) => void;
+}) {
+  // Cards podem usar `href` (rota dedicada) OU `onClick` (LeadFormModal),
+  // mutuamente exclusivos. Audiências sem produto/rota viram captura
+  // de interesse comercial em vez de cards inertes.
   const audiences: Array<{
     icon: React.ReactNode;
     t: string;
     d: string;
     bullets: string[];
     href?: string;
+    onClick?: () => void;
   }> = [
     {
       icon: <Pencil className="h-4 w-4" />,
@@ -1810,12 +1924,21 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
       t: "Consultórios & Clínicas",
       d: "Ambientes acolhedores que transmitem confiança ao paciente.",
       bullets: ["Iluminação suave", "Privacidade visual", "Lista de itens"],
+      onClick: () => onLead("pro_clinica"),
     },
     {
       icon: <ShoppingBag className="h-4 w-4" />,
       t: "E-commerce & Afiliados",
       d: "Transforme projetos em listas de compras prontas.",
       bullets: ["Produtos sugeridos", "Links afiliados", "Orçamento PDF"],
+      onClick: () => onLead("pro_ecommerce"),
+    },
+    {
+      icon: <Sparkles className="h-4 w-4" />,
+      t: "Comparar com Planner 5D",
+      d: "Veja onde o Ideal Space encaixa no fluxo de quem já usa Planner 5D.",
+      bullets: ["Comparativo honesto", "Casos de uso pro", "Quando cada um faz sentido"],
+      href: "/vs/planner-5d",
     },
   ];
 
@@ -1845,7 +1968,7 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Button
-                onClick={onUpload}
+                onClick={() => onLead("pro_general")}
                 className="h-11 rounded-full bg-background text-foreground hover:bg-background/90 px-5 text-sm"
               >
                 Conhecer recursos profissionais <ArrowRight className="ml-1.5 h-4 w-4" />
@@ -1882,11 +2005,26 @@ function Professionals({ onUpload, onCourse }: { onUpload: () => void; onCourse:
                   </ul>
                 </>
               );
-              return a.href ? (
-                <Link key={a.t} to={a.href} className={`${baseClass} ${interactiveClass}`}>
-                  {body}
-                </Link>
-              ) : (
+              if (a.href) {
+                return (
+                  <Link key={a.t} to={a.href} className={`${baseClass} ${interactiveClass}`}>
+                    {body}
+                  </Link>
+                );
+              }
+              if (a.onClick) {
+                return (
+                  <button
+                    type="button"
+                    key={a.t}
+                    onClick={a.onClick}
+                    className={`${baseClass} ${interactiveClass} text-left`}
+                  >
+                    {body}
+                  </button>
+                );
+              }
+              return (
                 <div key={a.t} className={baseClass}>
                   {body}
                 </div>
@@ -2106,11 +2244,9 @@ function MobileBottomNav({
   onUpload: () => void;
   onShopping: () => void;
 }) {
-  const scrollTo = (id: string) => {
-    if (typeof document === "undefined") return;
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  // Smart anchor: na home faz scroll suave, fora da home navega pra "/"
+  // com hash. Substitui o scrollTo local que silenciava em outras rotas.
+  const smartAnchor = useSmartAnchor();
   const Item = ({
     icon: Icon,
     label,
@@ -2142,8 +2278,8 @@ function MobileBottomNav({
     >
       <div className="pointer-events-auto mx-2 mb-[max(env(safe-area-inset-bottom),0.5rem)] rounded-3xl border border-border bg-card/95 backdrop-blur-xl shadow-2xl">
         <div className="flex items-stretch px-1 py-1">
-          <Item icon={Sparkles} label="Estilos" onClick={() => scrollTo("estilos")} />
-          <Item icon={ImageIcon} label="Galeria" onClick={() => scrollTo("galeria")} />
+          <Item icon={Sparkles} label="Estilos" onClick={smartAnchor("estilos")} />
+          <Item icon={ImageIcon} label="Ideias" onClick={smartAnchor("galeria")} />
           <Item icon={Camera} label="Criar" onClick={onUpload} primary />
           <Item icon={ShoppingBag} label="Compras" onClick={onShopping} />
         </div>

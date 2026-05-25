@@ -35,6 +35,7 @@ import {
   timeAgo,
 } from "@/lib/drafts";
 import { transformImage } from "@/lib/transform.functions";
+import { saveReturnContext } from "@/lib/navigation-return";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
 import { getShoppingFallback, estimateTotal, sortByPriority } from "@/lib/shopping";
@@ -63,18 +64,24 @@ type Props = {
 
 // Catálogo do picker. IDs batem com slugs canônicos do catálogo SEO
 // (seo-styles-data.ts) e com STYLE_PROMPTS em transform.functions.ts.
+// Ordem prioriza estilos mais comerciais/atuais no topo.
 const STYLES = [
   { id: "japandi", name: "Japandi", sub: "Calmo, oak e linho" },
   { id: "contemporaneo", name: "Contemporâneo", sub: "Linhas suaves e arte" },
+  { id: "moderno-organico", name: "Moderno orgânico", sub: "Curvas e biofilia" },
+  { id: "transicional", name: "Transicional", sub: "Clássico com leveza" },
   { id: "minimalista", name: "Minimalista", sub: "Menos é mais" },
   { id: "natural", name: "Natural", sub: "Madeira e fibras" },
+  { id: "rustico-moderno", name: "Rústico moderno", sub: "Aconchego com metal preto" },
   { id: "industrial", name: "Industrial", sub: "Tijolo e metal" },
   { id: "luxo", name: "Luxo discreto", sub: "Materiais nobres" },
+  { id: "classico", name: "Clássico", sub: "Simetria e boiseries" },
   { id: "boho-chic", name: "Boho chic", sub: "Eclético e acolhedor" },
   { id: "mid-century", name: "Mid-century", sub: "Anos 50/60 quente" },
   { id: "mediterraneo", name: "Mediterrâneo", sub: "Costeiro caiado" },
   { id: "art-deco", name: "Art-déco", sub: "Geometria e brilho" },
   { id: "maximalista", name: "Maximalista", sub: "Cor e camadas" },
+  { id: "brutalista", name: "Brutalista", sub: "Concreto escultural" },
 ];
 
 // Retrocompat: drafts/variations antigas podem ter slugs internos legados
@@ -394,7 +401,15 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
       }
       void track({ data: { event: "start_project_blocked_by_auth" } }).catch(() => {});
       toast.error("Crie sua conta grátis para gerar. Leva 30 segundos.");
-      navigate({ to: "/login", search: { redirect: "/", mode: "signup" } });
+      // Preserva contexto: usuário volta pra rota de onde clicou em vez
+      // de cair na home. URL carrega redirect+sourceAction (essencial);
+      // sessionStorage guarda metadata pra futuras integrações.
+      const returnTo = typeof window !== "undefined" ? window.location.pathname : "/";
+      saveReturnContext({ returnTo, sourceAction: "upload_photo" });
+      navigate({
+        to: "/login",
+        search: { redirect: returnTo, sourceAction: "upload_photo", mode: "signup" },
+      });
       return;
     }
     if (credits && !credits.unlimited && credits.balance < count) {
