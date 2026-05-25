@@ -7,6 +7,7 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
 import { Tipos2D5D } from "@/components/Tipos2D5D";
+import { PremiumVerticalCard } from "@/components/ui/premium-cards";
 import { PresentationModal } from "@/components/PresentationModal";
 import { CourseModal } from "@/components/CourseModal";
 import { RewardModal, type RewardKind } from "@/components/RewardModal";
@@ -98,6 +99,16 @@ import styleRusticoModerno from "@/assets/style-rustico-moderno.jpg";
 import styleModernoOrganico from "@/assets/style-moderno-organico.jpg";
 import styleClassico from "@/assets/style-classico.jpg";
 import styleBrutalista from "@/assets/style-brutalista.jpg";
+
+// Assets dedicados pros 6 cards de Profissionais (R7.1) — gerados via
+// Imagen 4 (imagen-4.0-generate-001) com prompts calibrados por persona
+// (designer/arquiteto/imobiliária/consultório/e-commerce/comparativo).
+import proDesigners from "@/assets/pro-designers-studio.jpg";
+import proArquitetos from "@/assets/pro-arquitetos-projeto.jpg";
+import proImobiliarias from "@/assets/pro-imobiliarias-virtual-staging.jpg";
+import proConsultorios from "@/assets/pro-consultorios-clinicas.jpg";
+import proEcommerce from "@/assets/pro-ecommerce-afiliados.jpg";
+import proPlanner5d from "@/assets/pro-planner-5d-comparison.jpg";
 
 const heroPair = pair("hero-living");
 const emptyLiving = heroPair.empty!.src;
@@ -1051,7 +1062,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
 
 function Hero({
   onBudget,
-  onAffiliate,
+  onAffiliate: _onAffiliate,
   onDemo,
   onUpload,
 }: {
@@ -1062,40 +1073,25 @@ function Hero({
 }) {
   return (
     <section className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="absolute -top-40 -left-40 h-[480px] w-[480px] rounded-full blur-3xl opacity-50"
-        style={{
-          background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.35), transparent 60%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute -bottom-40 -right-40 h-[520px] w-[520px] rounded-full blur-3xl opacity-40"
-        style={{
-          background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.25), transparent 60%)",
-        }}
-      />
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20 grid lg:grid-cols-12 gap-10 lg:gap-12 items-center relative">
-        <div className="lg:col-span-6 is-fade-up">
-          <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" /> Design de
-            interiores com IA · decoração comprável
-          </div>
-          <h1 className="mt-5 text-[2.4rem] sm:text-5xl lg:text-[68px] leading-[1.04] tracking-[-0.02em] font-semibold">
-            Transforme espaços vazios em{" "}
-            <span className="font-serif italic font-normal text-accent">ambientes decorados</span>{" "}
-            com IA.
+      {/* Grid asymmetric 5/7: texto contido à esquerda, BeforeAfter
+          ganha peso visual à direita (editorial magazine). Sem blobs
+          decorativos — a foto vira a peça principal. */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-24 grid lg:grid-cols-12 gap-10 lg:gap-14 items-center relative">
+        <div className="lg:col-span-5 is-fade-up">
+          {/* H1 editorial: serif italic dominante, escala maior. Misturado
+              com sans pra ritmo. */}
+          <h1 className="text-[2.6rem] sm:text-[3.5rem] lg:text-[5.25rem] leading-[1.02] tracking-[-0.025em] font-semibold">
+            <span className="font-serif italic font-normal text-accent">Transforme</span> espaços em{" "}
+            <span className="font-serif italic font-normal text-accent">ambientes</span> decorados.
           </h1>
-          <p className="mt-4 text-[15px] sm:text-lg text-muted-foreground max-w-xl">
-            Envie a foto do seu ambiente, escolha um estilo e veja a IA decorar em segundos, com
-            lista de compras e orçamento estimado de produtos reais para comprar.
+          <p className="mt-5 text-[15px] sm:text-base text-muted-foreground max-w-md leading-relaxed">
+            Envie a foto do seu ambiente, escolha um estilo e veja a IA decorar em segundos. Com
+            lista de compras e orçamento estimado de produtos reais.
           </p>
 
-          {/* Dropzone primária — abre UploadPhotoModal no click ou drop. Drag
-              real do arquivo cai no modal que ja sabe processar. Aqui so
-              precisamos sinalizar afordancia visual + abrir o flow. */}
+          {/* Dropzone primária — abre UploadPhotoModal no click ou drop.
+              É a única afordância de entrada agora (CTA "Criar projeto"
+              duplicado foi removido pra evitar redundância). */}
           <button
             type="button"
             onClick={onUpload}
@@ -1111,7 +1107,7 @@ function Hero({
               delete e.currentTarget.dataset.dragging;
               onUpload();
             }}
-            className="mt-6 w-full max-w-xl border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-accent/5 data-[dragging=true]:border-accent data-[dragging=true]:bg-accent/10 data-[dragging=true]:border-solid rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-8 w-full max-w-md border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-accent/5 data-[dragging=true]:border-accent data-[dragging=true]:bg-accent/10 data-[dragging=true]:border-solid rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Enviar foto do ambiente"
           >
             <div className="h-11 w-11 shrink-0 grid place-items-center rounded-xl bg-accent/15 text-accent">
@@ -1126,64 +1122,60 @@ function Hero({
             <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0 hidden sm:block" />
           </button>
 
-          <div className="mt-5 flex flex-col sm:flex-row gap-3">
-            <Button
-              onClick={onUpload}
-              className="h-12 rounded-full bg-foreground text-background hover:bg-foreground/90 px-6 text-sm w-full sm:w-auto"
-            >
-              <Camera className="mr-2 h-4 w-4" /> Criar projeto com IA
-            </Button>
-            <Button
-              onClick={onDemo}
-              variant="outline"
-              className="h-12 rounded-full px-6 text-sm w-full sm:w-auto"
-            >
-              <PlayCircle className="mr-2 h-4 w-4" /> Ver demonstração
-            </Button>
-          </div>
+          {/* CTA secundário discreto — leva à demo (PresentationModal). */}
+          <button
+            type="button"
+            onClick={onDemo}
+            className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition underline-offset-4 hover:underline"
+          >
+            <PlayCircle className="h-4 w-4" /> Ver demonstração
+          </button>
 
-          <ul className="mt-8 grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-muted-foreground max-w-md">
+          {/* Trust horizontal — uma linha respirável em vez de grid 2x2. */}
+          <ul className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
             {[
-              "3 gerações grátis por mês",
-              "Sem cartão no início",
+              "3 gerações grátis",
+              "Sem cartão",
               "Fotos privadas",
-              "Resultado rápido",
+              "Resultado em segundos",
             ].map((t) => (
-              <li key={t} className="flex items-center gap-2">
+              <li key={t} className="flex items-center gap-1.5">
                 <Check className="h-3.5 w-3.5 text-accent" /> {t}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="lg:col-span-6 relative">
+        <div className="lg:col-span-7 relative">
           <div className="relative is-fade-up">
+            {/* BeforeAfter editorial maior — aspect 4/5 (mais vertical) dá
+                peso visual de capa de revista. Sombra suave, ring sutil. */}
             <BeforeAfter
               before={emptyLiving}
               after={decoratedLiving}
               auto
               priority
               alt="Antes e depois: sala decorada com IA"
-              className="aspect-[5/4] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5"
+              className="aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5] w-full shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-3xl overflow-hidden"
             />
 
-            <div className="absolute left-3 sm:left-4 top-4 sm:top-6 bg-card/95 backdrop-blur rounded-2xl shadow-xl border p-2.5 sm:p-3 pr-3 sm:pr-4 flex items-center gap-2.5 sm:gap-3 is-float">
-              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-accent/15 text-accent grid place-items-center">
-                <Wand2 className="h-4 w-4" />
-              </div>
-              <div className="text-left">
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                  Estilo aplicado
-                </div>
-                <div className="text-xs sm:text-sm font-medium">Japandi · Sala</div>
-              </div>
+            {/* Etiqueta discreta de estilo aplicado — refinada vs versão
+                anterior, sem ícone destacado. */}
+            <div className="absolute left-4 top-4 sm:left-5 sm:top-5 bg-card/95 backdrop-blur rounded-full border px-3 py-1.5 text-[11px] text-foreground/80 is-float">
+              <span className="uppercase tracking-widest text-muted-foreground mr-1.5">Estilo</span>
+              Japandi · Sala
             </div>
+          </div>
 
+          {/* CTA secundário "Baixar orçamento" agora abaixo da imagem,
+              discreto, sem cobrir composição. Preserva contrato onBudget. */}
+          <div className="mt-5 flex justify-end">
             <button
+              type="button"
               onClick={onBudget}
-              className="absolute -bottom-5 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 rounded-full bg-accent text-accent-foreground text-xs font-medium px-4 py-2 shadow-lg hover:opacity-95"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition underline-offset-4 hover:underline"
             >
-              <Download className="h-3.5 w-3.5" /> Baixar orçamento
+              <Download className="h-3.5 w-3.5" /> Baixar orçamento de exemplo
             </button>
           </div>
         </div>
@@ -1887,150 +1879,139 @@ function Professionals({
   // do lead pra atribuição comercial (pro_clinica, pro_ecommerce, etc).
   onLead: (source: string) => void;
 }) {
-  // Cards podem usar `href` (rota dedicada) OU `onClick` (LeadFormModal),
-  // mutuamente exclusivos. Audiências sem produto/rota viram captura
-  // de interesse comercial em vez de cards inertes.
+  // Cards: imagem + kicker + título + descrição curta + CTA, no mesmo
+  // padrão visual da seção Tipos2D5D (Visualizações). href OU onClick
+  // mutuamente exclusivos: rota dedicada quando existe produto, captura
+  // de lead quando ainda não há.
   const audiences: Array<{
-    icon: React.ReactNode;
-    t: string;
-    d: string;
-    bullets: string[];
+    img: string;
+    kicker: string;
+    title: string;
+    description: string;
+    ctaLabel: string;
     href?: string;
     onClick?: () => void;
   }> = [
     {
-      icon: <Pencil className="h-4 w-4" />,
-      t: "Designers",
-      d: "Crie variações visuais com rapidez para apresentar a clientes.",
-      bullets: ["Múltiplas versões", "Galeria de referências", "Exportação de projeto"],
+      img: proDesigners,
+      kicker: "Estúdios",
+      title: "Designers",
+      description:
+        "Crie variações visuais com rapidez para apresentar a clientes. Múltiplas versões em minutos.",
+      ctaLabel: "Conhecer recursos",
       href: "/para-designers",
     },
     {
-      icon: <Compass className="h-4 w-4" />,
-      t: "Arquitetos",
-      d: "Estudos iniciais e apresentações com antes/depois claro.",
-      bullets: ["Conceitos visuais", "Organização por cliente", "Observações técnicas"],
+      img: proArquitetos,
+      kicker: "Profissionais",
+      title: "Arquitetos",
+      description:
+        "Estudos iniciais e apresentações com antes e depois claro. Conceitos visuais por cliente.",
+      ctaLabel: "Conhecer recursos",
       href: "/para-arquitetos",
     },
     {
-      icon: <Building2 className="h-4 w-4" />,
-      t: "Imobiliárias",
-      d: "Virtual staging para imóveis vazios em minutos.",
-      bullets: ["Staging rápido", "Pacotes por imagem", "Disclaimer automático"],
+      img: proImobiliarias,
+      kicker: "Imóveis",
+      title: "Imobiliárias",
+      description:
+        "Virtual staging para imóveis vazios em minutos. Disclaimer automático em cada imagem.",
+      ctaLabel: "Conhecer recursos",
       href: "/para-imobiliarias",
     },
     {
-      icon: <Stethoscope className="h-4 w-4" />,
-      t: "Consultórios & Clínicas",
-      d: "Ambientes acolhedores que transmitem confiança ao paciente.",
-      bullets: ["Iluminação suave", "Privacidade visual", "Lista de itens"],
+      img: proConsultorios,
+      kicker: "Saúde",
+      title: "Consultórios & Clínicas",
+      description:
+        "Ambientes acolhedores que transmitem confiança ao paciente. Iluminação suave e privacidade.",
+      ctaLabel: "Solicitar contato",
       onClick: () => onLead("pro_clinica"),
     },
     {
-      icon: <ShoppingBag className="h-4 w-4" />,
-      t: "E-commerce & Afiliados",
-      d: "Transforme projetos em listas de compras prontas.",
-      bullets: ["Produtos sugeridos", "Links afiliados", "Orçamento PDF"],
+      img: proEcommerce,
+      kicker: "Afiliados",
+      title: "E-commerce & Afiliados",
+      description:
+        "Transforme projetos em listas de compras prontas, com produtos sugeridos e links de afiliado.",
+      ctaLabel: "Solicitar contato",
       onClick: () => onLead("pro_ecommerce"),
     },
     {
-      icon: <Sparkles className="h-4 w-4" />,
-      t: "Comparar com Planner 5D",
-      d: "Veja onde o Ideal Space encaixa no fluxo de quem já usa Planner 5D.",
-      bullets: ["Comparativo honesto", "Casos de uso pro", "Quando cada um faz sentido"],
+      img: proPlanner5d,
+      kicker: "Comparativo",
+      title: "Comparar com Planner 5D",
+      description:
+        "Veja onde o Ideal Space encaixa no fluxo de quem já usa Planner 5D para planejar projetos.",
+      ctaLabel: "Comparar",
       href: "/vs/planner-5d",
     },
   ];
 
   return (
-    <section id="pro" className="py-14 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 rounded-[2rem] bg-foreground text-background p-8 sm:p-14 relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute -top-32 -right-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-30"
-          style={{
-            background: "radial-gradient(circle, oklch(0.72 0.13 55 / 0.7), transparent 60%)",
-          }}
-        />
-
-        <div className="grid lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-14 items-start relative">
-          {/* Left column: pitch + CTAs */}
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
-              Para profissionais
-            </div>
-            <h2 className="mt-3 text-3xl sm:text-4xl tracking-[-0.02em] font-semibold leading-tight font-serif">
-              Acelere estudos visuais e apresentações de projeto
+    <section id="pro" className="bg-card/40 border-y border-border/60 py-14 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        {/* Header no mesmo padrão de Tipos2D5D: kicker + h2 + sub à esquerda,
+            CTAs principais à direita. Fundo claro pra consistência com
+            o trilho de Visualizações. */}
+        <div className="mb-10 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <span className="is-kicker">Para profissionais</span>
+            <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
+              Acelere estudos visuais e <span className="italic">apresentações</span>.
             </h2>
-            <p className="mt-4 text-background/70 max-w-md text-sm sm:text-base leading-relaxed">
-              Use IA para criar variações de ambiente em minutos, apresentar ideias a clientes e
+            <p className="mt-4 max-w-md text-sm text-muted-foreground sm:text-base">
+              Use IA pra criar variações de ambiente em minutos, apresentar ideias a clientes e
               gerar orçamentos preliminares com lista de produtos.
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Button
-                onClick={() => onLead("pro_general")}
-                className="h-11 rounded-full bg-background text-foreground hover:bg-background/90 px-5 text-sm"
-              >
-                Conhecer recursos profissionais <ArrowRight className="ml-1.5 h-4 w-4" />
-              </Button>
-              <Button
-                onClick={onCourse}
-                variant="outline"
-                className="h-11 rounded-full px-5 text-sm bg-white/5 border-white/20 text-background hover:bg-white/10 hover:text-background"
-              >
-                Conhecer o curso
-              </Button>
-            </div>
           </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => onLead("pro_general")}
+              className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm"
+            >
+              Conhecer recursos <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Button>
+            <Button
+              onClick={onCourse}
+              variant="outline"
+              className="h-11 rounded-full px-5 text-sm"
+            >
+              Conhecer o curso
+            </Button>
+          </div>
+        </div>
 
-          {/* Right column: 5 audience cards */}
-          <div className="grid sm:grid-cols-2 gap-3">
-            {audiences.map((a) => {
-              const baseClass =
-                "rounded-2xl bg-white/5 border border-white/10 backdrop-blur p-5 flex flex-col";
-              const interactiveClass = "hover:bg-white/10 transition";
-              const body = (
-                <>
-                  <div className="h-9 w-9 rounded-xl bg-white/10 grid place-items-center text-accent">
-                    {a.icon}
-                  </div>
-                  <div className="mt-4 font-medium font-serif text-lg leading-tight">{a.t}</div>
-                  <p className="mt-1.5 text-sm text-background/70 leading-relaxed">{a.d}</p>
-                  <ul className="mt-4 pt-4 border-t border-white/10 space-y-1.5">
-                    {a.bullets.map((b) => (
-                      <li key={b} className="text-[12px] text-background/65 leading-relaxed">
-                        · {b}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              );
-              if (a.href) {
-                return (
-                  <Link key={a.t} to={a.href} className={`${baseClass} ${interactiveClass}`}>
-                    {body}
-                  </Link>
-                );
-              }
-              if (a.onClick) {
-                return (
-                  <button
-                    type="button"
-                    key={a.t}
-                    onClick={a.onClick}
-                    className={`${baseClass} ${interactiveClass} text-left`}
-                  >
-                    {body}
-                  </button>
-                );
-              }
-              return (
-                <div key={a.t} className={baseClass}>
-                  {body}
-                </div>
-              );
-            })}
-          </div>
+        {/* Grid: 1 col mobile, 2 sm, 3 lg — espelha o padrão dos cards
+            de Visualizações pra dar consistência ao design system. */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+          {audiences.map((a) =>
+            a.href ? (
+              <PremiumVerticalCard
+                key={a.title}
+                src={a.img}
+                alt={a.title}
+                kicker={a.kicker}
+                title={a.title}
+                description={a.description}
+                aspect="video"
+                ctaLabel={a.ctaLabel}
+                to={a.href}
+              />
+            ) : (
+              <PremiumVerticalCard
+                key={a.title}
+                src={a.img}
+                alt={a.title}
+                kicker={a.kicker}
+                title={a.title}
+                description={a.description}
+                aspect="video"
+                ctaLabel={a.ctaLabel}
+                onClick={a.onClick}
+              />
+            ),
+          )}
         </div>
       </div>
     </section>
