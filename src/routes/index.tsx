@@ -629,7 +629,7 @@ function Index() {
         onDemo={() => handlePresentation(true)}
         onUpload={openUpload}
       />
-      <HowItWorks onDemo={() => handlePresentation(true)} />
+      <HowItWorks onUpload={openUpload} />
       <StylesCarousel onUpload={openUpload} />
       <AmbientesGrid />
       <Tipos2D5D />
@@ -1375,70 +1375,80 @@ function StylesCarousel({ onUpload }: { onUpload: () => void }) {
 
 /* ----------------------------- HOW IT WORKS ----------------------------- */
 
-function HowItWorks({ onDemo }: { onDemo: () => void }) {
+function HowItWorks({ onUpload }: { onUpload: () => void }) {
+  // Smart anchor: scroll na home, navegação fora dela. CTA secundário
+  // aponta pra #galeria (Ideias) — destino mais alinhado com "Ver ideias
+  // de ambientes" do que o anchor #ambientes (grid).
+  const smartAnchor = useSmartAnchor();
   const steps = [
     {
       n: "01",
-      icon: <ImageIcon className="h-5 w-5" />,
-      t: "Escolha o ambiente",
-      d: "Selecione um exemplo ou envie a foto do seu espaço.",
+      t: "Envie uma foto",
+      d: "Use uma imagem real do seu ambiente vazio, antigo ou sem decoração.",
     },
     {
       n: "02",
-      icon: <Wand2 className="h-5 w-5" />,
       t: "Escolha o estilo",
-      d: "Japandi, Moderno, Industrial, Luxo discreto, Natural e mais.",
+      d: "Defina o tipo de ambiente e a estética desejada, do minimalista ao luxo discreto.",
     },
     {
       n: "03",
-      icon: <Sparkles className="h-5 w-5" />,
-      t: "A IA decora",
-      d: "Geração 2D rápida preservando a estrutura do ambiente.",
+      t: "Gere a visualização",
+      d: "A IA cria uma proposta decorada para você comparar possibilidades antes de decidir.",
     },
     {
       n: "04",
-      icon: <ShoppingBag className="h-5 w-5" />,
-      t: "Lista + orçamento",
-      d: "Itens sugeridos por categoria e PDF do projeto.",
+      t: "Evolua o projeto",
+      d: "Veja referências, produtos sugeridos e caminhos para transformar a ideia em execução.",
     },
   ];
   return (
     <section id="criar" className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex items-end justify-between gap-6 flex-wrap">
-          <SectionHead
-            kicker="Como funciona"
-            title={
-              <>
-                Do <span className="font-serif italic font-normal">espaço vazio</span> ao projeto,
-                em 4 passos
-              </>
-            }
-          />
-          <Button
-            onClick={onDemo}
-            variant="outline"
-            className="rounded-full h-11 px-5 text-sm hidden sm:inline-flex"
-          >
-            <PlayCircle className="h-4 w-4 mr-1.5" /> Ver demonstração
-          </Button>
-        </div>
-        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {steps.map((s) => (
-            <div
-              key={s.n}
-              className="relative rounded-3xl border bg-card p-6 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex items-center justify-between">
-                <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent grid place-items-center">
-                  {s.icon}
-                </div>
-                <div className="font-serif text-3xl text-muted-foreground/60">{s.n}</div>
-              </div>
-              <div className="mt-5 text-lg font-medium">{s.t}</div>
-              <div className="mt-1.5 text-sm text-muted-foreground">{s.d}</div>
+        {/* Layout 5/7 editorial: pitch + CTAs à esquerda, grid 2x2 dos
+            4 passos à direita. Mobile: empilha verticalmente. */}
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-14 items-start">
+          <div className="lg:col-span-5">
+            <span className="is-kicker text-accent">Guia</span>
+            <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
+              Como o Ideal Space <span className="italic">transforma</span> seu ambiente
+            </h2>
+            <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base leading-relaxed">
+              Envie uma foto, escolha o estilo e receba uma proposta visual com IA em poucos
+              segundos, com ideias, produtos e próximos passos para tirar o projeto do papel.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button
+                onClick={onUpload}
+                className="h-11 rounded-full bg-foreground text-background hover:bg-foreground/90 px-5 text-sm"
+              >
+                <Camera className="h-4 w-4 mr-1.5" /> Criar projeto com IA
+              </Button>
+              <a
+                href="#galeria"
+                onClick={smartAnchor("galeria")}
+                className="h-11 inline-flex items-center rounded-full border border-border bg-background hover:bg-muted px-5 text-sm text-foreground transition-colors"
+              >
+                Ver ideias de ambientes
+              </a>
             </div>
-          ))}
+          </div>
+
+          {/* Cards 2x2 (lg). Mobile 1 col. Numeração serif italic discreta. */}
+          <div className="lg:col-span-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+              {steps.map((s) => (
+                <div
+                  key={s.n}
+                  className="rounded-3xl border bg-card p-6 hover:shadow-lg transition-shadow"
+                >
+                  <div className="font-serif italic text-2xl text-accent/80">{s.n}</div>
+                  <div className="mt-3 text-lg font-medium leading-tight">{s.t}</div>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{s.d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
