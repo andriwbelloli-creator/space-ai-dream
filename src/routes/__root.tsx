@@ -135,6 +135,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
  * Só o anon key + URL são expostos (já são públicos por design do Supabase).
  * O service_role NUNCA aparece aqui — fica apenas no server fn handlers.
  */
+/**
+ * Fallback público hardcoded — URL e ANON key do Supabase do projeto
+ * `tuftobschhomtwsuerus`. A anon key é PÚBLICA por design do Supabase
+ * (qualquer client browser que loga vê — RLS protege os dados, não a
+ * key). Usada apenas como último recurso quando o runtime do Worker
+ * não expõe as vars via process.env.
+ *
+ * NÃO inclui service_role nem GOOGLE_AI_API_KEY — esses continuam só
+ * como Cloudflare Runtime Secrets.
+ */
+const PUBLIC_SUPABASE_FALLBACK = {
+  url: "https://tuftobschhomtwsuerus.supabase.co",
+  key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1ZnRvYnNjaGhvbXR3c3VlcnVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5Nzg2MDEsImV4cCI6MjA5NDU1NDYwMX0._Ej0gmZOwxVBQCTGqvAX578MN7KxVm6ILg1uRgaMqVQ",
+};
+
 function readPublicSupabaseEnv() {
   if (typeof window !== "undefined") {
     // Em hidration no client, lê o valor já populado pelo SSR pra preservar
@@ -144,8 +159,8 @@ function readPublicSupabaseEnv() {
     };
     const w = window as WinEnv;
     return {
-      url: w.__SUPABASE_ENV__?.url || "",
-      key: w.__SUPABASE_ENV__?.key || "",
+      url: w.__SUPABASE_ENV__?.url || PUBLIC_SUPABASE_FALLBACK.url,
+      key: w.__SUPABASE_ENV__?.key || PUBLIC_SUPABASE_FALLBACK.key,
     };
   }
   // SSR: lê do runtime do Worker. Cloudflare permite cadastrar vars com
@@ -157,7 +172,7 @@ function readPublicSupabaseEnv() {
     env.VITE_SUPABASE_URL ||
     env.NEXT_PUBLIC_SUPABASE_URL ||
     env.PUBLIC_SUPABASE_URL ||
-    "";
+    PUBLIC_SUPABASE_FALLBACK.url;
   const key =
     env.SUPABASE_PUBLISHABLE_KEY ||
     env.VITE_SUPABASE_PUBLISHABLE_KEY ||
@@ -165,7 +180,7 @@ function readPublicSupabaseEnv() {
     env.VITE_SUPABASE_ANON_KEY ||
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
     env.PUBLIC_SUPABASE_ANON_KEY ||
-    "";
+    PUBLIC_SUPABASE_FALLBACK.key;
   return { url, key };
 }
 
