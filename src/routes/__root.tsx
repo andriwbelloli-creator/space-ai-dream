@@ -148,20 +148,43 @@ function readPublicSupabaseEnv() {
       key: w.__SUPABASE_ENV__?.key || "",
     };
   }
-  // SSR: lê do runtime do Worker.
+  // SSR: lê do runtime do Worker. Cloudflare permite cadastrar vars com
+  // nomes diferentes (com/sem prefixo VITE_, NEXT_PUBLIC_, PUBLIC_) — tenta
+  // todos pra evitar exigir reconfiguração manual no dashboard.
+  const env = typeof process !== "undefined" ? process.env ?? {} : {};
   const url =
-    (typeof process !== "undefined" && process.env?.SUPABASE_URL) ||
-    (typeof process !== "undefined" && process.env?.VITE_SUPABASE_URL) ||
+    env.SUPABASE_URL ||
+    env.VITE_SUPABASE_URL ||
+    env.NEXT_PUBLIC_SUPABASE_URL ||
+    env.PUBLIC_SUPABASE_URL ||
     "";
   const key =
-    (typeof process !== "undefined" && process.env?.SUPABASE_PUBLISHABLE_KEY) ||
-    (typeof process !== "undefined" && process.env?.VITE_SUPABASE_PUBLISHABLE_KEY) ||
+    env.SUPABASE_PUBLISHABLE_KEY ||
+    env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+    env.SUPABASE_ANON_KEY ||
+    env.VITE_SUPABASE_ANON_KEY ||
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    env.PUBLIC_SUPABASE_ANON_KEY ||
     "";
   return { url, key };
 }
 
+/**
+ * Diagnóstico TEMPORÁRIO: lista os nomes de env vars relacionadas a
+ * Supabase que o Worker está conseguindo enxergar (sem valores). Usado
+ * em SSR pra debugar quando `readPublicSupabaseEnv` retorna vazio.
+ * Remover este bloco assim que as vars estiverem corretamente lidas.
+ */
+function listSupabaseEnvKeys(): string[] {
+  if (typeof process === "undefined" || !process.env) return [];
+  return Object.keys(process.env)
+    .filter((k) => /supabase|SUPABASE/i.test(k))
+    .sort();
+}
+
 function RootShell({ children }: { children: React.ReactNode }) {
   const env = readPublicSupabaseEnv();
+  const debugKeys = typeof window === "undefined" ? listSupabaseEnvKeys() : [];
   return (
     <html lang="pt-BR">
       <head>
@@ -171,7 +194,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
-            __html: `window.__SUPABASE_ENV__=${JSON.stringify(env)};`,
+            __html: `window.__SUPABASE_ENV__=${JSON.stringify(env)};window.__SUPABASE_DEBUG_KEYS__=${JSON.stringify(debugKeys)};`,
           }}
         />
       </head>
