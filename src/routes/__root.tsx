@@ -184,22 +184,8 @@ function readPublicSupabaseEnv() {
   return { url, key };
 }
 
-/**
- * Diagnóstico TEMPORÁRIO: lista os nomes de env vars relacionadas a
- * Supabase que o Worker está conseguindo enxergar (sem valores). Usado
- * em SSR pra debugar quando `readPublicSupabaseEnv` retorna vazio.
- * Remover este bloco assim que as vars estiverem corretamente lidas.
- */
-function listSupabaseEnvKeys(): string[] {
-  if (typeof process === "undefined" || !process.env) return [];
-  return Object.keys(process.env)
-    .filter((k) => /supabase|SUPABASE/i.test(k))
-    .sort();
-}
-
 function RootShell({ children }: { children: React.ReactNode }) {
   const env = readPublicSupabaseEnv();
-  const debugKeys = typeof window === "undefined" ? listSupabaseEnvKeys() : [];
   return (
     <html lang="pt-BR">
       <head>
@@ -209,7 +195,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
-            __html: `window.__SUPABASE_ENV__=${JSON.stringify(env)};window.__SUPABASE_DEBUG_KEYS__=${JSON.stringify(debugKeys)};`,
+            __html: `window.__SUPABASE_ENV__=${JSON.stringify(env)};`,
           }}
         />
       </head>
