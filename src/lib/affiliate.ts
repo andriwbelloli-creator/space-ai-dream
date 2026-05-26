@@ -7,7 +7,7 @@
 export const AFFILIATE_TAGS = {
   amazon: "deskly02-20", // Amazon Associates BR (conta Deskly)
   mercadolivre: "", // pendente — matt_tool do ML
-  magalu: "", // Magazine Você — pendente: cadastrar loja Ideal Space no Magazine Você antes de ativar
+  magalu: "desklylife", // Magazine Você "desklylife" (conta Andriw, reativada 2026-05-26)
   awin: "2890163", // Awin Publisher ID (conta Deskly) — desativado até ter merchants
   lomadee: "", // pendente — Lomadee sourceId
 } as const;
