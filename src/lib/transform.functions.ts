@@ -207,6 +207,11 @@ export const transformImage = createServerFn({ method: "POST" })
     });
 
     if (validation.rateLimited) {
+      console.error("[transform] validation rate limited", {
+        status: validation.status,
+        error: validation.error,
+        model: MODEL_TEXT,
+      });
       await refund("rate_limit_validation");
       return {
         error:
@@ -333,6 +338,11 @@ export const transformImage = createServerFn({ method: "POST" })
     });
 
     if (imageRes.rateLimited) {
+      console.error("[transform] image rate limited", {
+        status: imageRes.status,
+        error: imageRes.error,
+        model: MODEL_IMAGE,
+      });
       await refund("rate_limit_image");
       return {
         error:
@@ -342,6 +352,11 @@ export const transformImage = createServerFn({ method: "POST" })
       };
     }
     if (!imageRes.dataUrl) {
+      console.error("[transform] image generation failed", {
+        status: imageRes.status,
+        error: imageRes.error,
+        model: MODEL_IMAGE,
+      });
       await refund("no_image_returned");
       return {
         error: "Não conseguimos gerar a imagem agora. Tente novamente em instantes.",
