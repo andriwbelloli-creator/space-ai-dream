@@ -59,6 +59,10 @@ type Props = {
   // Cômodo pré-selecionado, vindo da rota /ambientes/<slug>. Vira chip
   // visual no topo do modal e roomTypeHint enviado pro back.
   initialRoom?: string;
+  // Arquivo pré-carregado quando o modal é aberto via drag-and-drop da
+  // dropzone do Hero. Quando presente, o modal processa automaticamente
+  // (passa pela mesma validação MIME/tamanho via handleFile).
+  initialFile?: File;
 };
 
 // Catálogo do picker. IDs batem com slugs canônicos do catálogo SEO
@@ -181,7 +185,13 @@ const GENERATING_MESSAGES = [
   "Finalizando…",
 ] as const;
 
-export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom }: Props) {
+export function UploadPhotoModal({
+  open,
+  onOpenChange,
+  initialStyle,
+  initialRoom,
+  initialFile,
+}: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { credits, setBalance } = useCredits();
@@ -409,6 +419,21 @@ export function UploadPhotoModal({ open, onOpenChange, initialStyle, initialRoom
     const file = e.dataTransfer.files?.[0];
     if (file) handleFile(file);
   };
+
+  // Quando o modal abre com `initialFile` (vem da dropzone do Hero via
+  // drag-and-drop), processa automaticamente pelo mesmo `handleFile` que
+  // o input file dispara — preservando validações de MIME e tamanho.
+  // `initialFileRef` evita reprocessar o mesmo arquivo em re-renders.
+  const initialFileRef = useRef<File | null>(null);
+  useEffect(() => {
+    if (open && initialFile && initialFile !== initialFileRef.current) {
+      initialFileRef.current = initialFile;
+      void handleFile(initialFile);
+    } else if (!open) {
+      initialFileRef.current = null;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialFile]);
 
   const variationLabels = ["Opção A", "Opção B", "Opção C", "Opção D"];
 

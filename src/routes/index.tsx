@@ -69,7 +69,6 @@ import {
   ChevronDown,
   ChevronRight,
   Zap,
-  PlayCircle,
   Camera,
   Smartphone,
   BookmarkPlus,
@@ -619,6 +618,9 @@ function Index() {
   const [presentationOpen, setPresentationOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [initialStyle, setInitialStyle] = useState<string | undefined>(undefined);
+  // Arquivo capturado pelo drag-and-drop da dropzone do Hero. Encaminhado
+  // pro UploadPhotoModal via prop initialFile pra processamento direto.
+  const [droppedFile, setDroppedFile] = useState<File | null>(null);
   const [courseOpen, setCourseOpen] = useState(false);
   const [reward, setReward] = useState<RewardKind | null>(null);
   // Funil de leads: contexto do CTA de plano que abriu o modal comercial.
@@ -720,6 +722,7 @@ function Index() {
         onAffiliate={setAffiliateOpen}
         onDemo={() => handlePresentation(true)}
         onUpload={openUpload}
+        onDropFile={setDroppedFile}
       />
       <HowItWorks onUpload={openUpload} />
       <StylesCarousel onUpload={openUpload} />
@@ -771,8 +774,14 @@ function Index() {
         <Suspense fallback={modalFallback}>
           <UploadPhotoModal
             open={uploadOpen}
-            onOpenChange={setUploadOpen}
+            onOpenChange={(o) => {
+              setUploadOpen(o);
+              // Limpa o arquivo capturado pelo drop quando o modal fecha
+              // pra próximo arrasto começar do zero.
+              if (!o) setDroppedFile(null);
+            }}
             initialStyle={initialStyle}
+            initialFile={droppedFile ?? undefined}
           />
         </Suspense>
       )}
@@ -1194,15 +1203,18 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
 function Hero({
   onBudget,
   onAffiliate: _onAffiliate,
-  onDemo,
+  onDemo: _onDemo,
   onUpload,
+  onDropFile,
 }: {
   onBudget: () => void;
   onAffiliate: (s: string) => void;
   onDemo: () => void;
   onUpload: () => void;
+  onDropFile: (file: File) => void;
 }) {
   const track = useTrack();
+  const smartAnchor = useSmartAnchor();
   // Wrappers que disparam o evento de funil ANTES de chamar o handler
   // original. Source distingue dropzone (afordância principal de entrada)
   // do CTA central do BeforeAfter — instrumentação separada em HeroVisual.
@@ -1210,9 +1222,11 @@ function Hero({
     track("hero_upload_click", { source: "dropzone" });
     onUpload();
   };
-  const handleDemo = () => {
-    track("hero_demo_click");
-    onDemo();
+  // CTA secundário: scroll suave pra galeria de inspirações na própria
+  // home via useSmartAnchor (mesmo padrão usado em outros pontos do site).
+  const handleSeeProjects = () => {
+    track("hero_see_projects_click");
+    smartAnchor("galeria")();
   };
   return (
     <section className="relative overflow-hidden">
@@ -1226,12 +1240,12 @@ function Hero({
           {/* H1 editorial: serif italic dominante, escala maior. Misturado
               com sans pra ritmo. */}
           <h1 className="text-[2.6rem] sm:text-[3.5rem] lg:text-[5.25rem] leading-[1.02] tracking-[-0.025em] font-semibold">
-            <span className="font-serif italic font-normal text-accent">Transforme</span> espaços em{" "}
-            <span className="font-serif italic font-normal text-accent">ambientes</span> decorados.
+            Veja seu ambiente virar um{" "}
+            <span className="font-serif italic font-normal text-accent">projeto pronto</span>
           </h1>
           <p className="mt-5 text-[15px] sm:text-base text-muted-foreground max-w-md leading-relaxed">
-            Envie a foto do seu ambiente, escolha um estilo e veja a IA decorar em segundos. Com
-            lista de compras e orçamento estimado de produtos reais.
+            Suba uma foto e veja seu espaço transformado em vários estilos. Quando gostar do
+            resultado, conecte com um profissional pra tirar do papel.
           </p>
 
           {/* Dropzone primária — abre UploadPhotoModal no click ou drop.
@@ -1250,6 +1264,12 @@ function Hero({
             onDrop={(e) => {
               e.preventDefault();
               delete e.currentTarget.dataset.dragging;
+              // Captura o arquivo arrastado e encaminha pro modal antes
+              // de abri-lo. Modal processa via handleFile (mesma validação
+              // MIME/tamanho do input file). Se não veio arquivo (drag
+              // sem files), só abre o modal vazio como fallback.
+              const file = e.dataTransfer.files?.[0];
+              if (file) onDropFile(file);
               handleDropzoneUpload();
             }}
             className="mt-7 w-full max-w-md border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-accent/5 data-[dragging=true]:border-accent data-[dragging=true]:bg-accent/10 data-[dragging=true]:border-solid rounded-2xl px-5 py-5 flex items-center gap-4 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -1259,7 +1279,7 @@ function Hero({
               <Camera className="h-5 w-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-foreground">Arraste uma foto aqui</div>
+              <div className="text-sm font-medium text-foreground">Criar meu projeto</div>
               <div className="text-xs text-muted-foreground mt-0.5">
                 ou clique para selecionar · JPG, PNG, WEBP
               </div>
@@ -1267,13 +1287,13 @@ function Hero({
             <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0 hidden sm:block" />
           </button>
 
-          {/* CTA secundário discreto — leva à demo (PresentationModal). */}
+          {/* CTA secundário discreto — scroll suave pra galeria na própria home. */}
           <button
             type="button"
-            onClick={handleDemo}
+            onClick={handleSeeProjects}
             className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition underline-offset-4 hover:underline"
           >
-            <PlayCircle className="h-4 w-4" /> Ver demonstração
+            <Sparkles className="h-4 w-4" /> Ver projetos prontos
           </button>
 
           {/* Trust horizontal — uma linha respirável em vez de grid 2x2. */}
