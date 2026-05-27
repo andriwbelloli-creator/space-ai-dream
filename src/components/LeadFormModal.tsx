@@ -68,6 +68,114 @@ const SELECT_CLASS =
   "h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground " +
   "shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
+/**
+ * Texto contextualizado por origem do lead. Cada source recebe heading,
+ * subheading, CTA e mensagem de sucesso próprios, calibrados pra promessa
+ * que o usuário viu na tela que abriu o modal. Não usa em-dash em nada
+ * visível pro usuário (regra interna de copy).
+ */
+type SourceCopy = {
+  heading: string;
+  subheading: string;
+  ctaLabel: string;
+  successHeading: string;
+  successBody: string;
+};
+
+const DEFAULT_COPY: SourceCopy = {
+  heading: "Receba ideias e proposta no seu e-mail",
+  subheading:
+    "Deixe seus dados e a nossa equipe envia inspirações decorativas pro seu ambiente, com lista de compras e faixas de preço.",
+  ctaLabel: "Quero receber",
+  successHeading: "Tudo certo!",
+  successBody:
+    "Você vai receber as ideias no e-mail em até 1 dia útil. Se preencheu o celular, também enviamos pelo WhatsApp.",
+};
+
+function getSourceCopy(source: string | undefined): SourceCopy {
+  const key = (source ?? "").toLowerCase();
+
+  // Lista de compras (vem da galeria de variações do UploadPhotoModal)
+  if (key === "shopping-list" || key === "shopping_list") {
+    return {
+      heading: "Receba a lista completa por WhatsApp",
+      subheading:
+        "A nossa equipe envia o orçamento detalhado e a lista de compras completa do ambiente direto no seu WhatsApp.",
+      ctaLabel: "Receber lista por WhatsApp",
+      successHeading: "Lista a caminho!",
+      successBody:
+        "Em até 1 dia útil você recebe a lista detalhada por WhatsApp e e-mail, com faixas de preço e links das lojas parceiras.",
+    };
+  }
+
+  // Upsell de download HD pra usuário Free
+  if (key === "hd-download-upsell" || key === "hd_download_upsell") {
+    return {
+      heading: "Desbloquear download em HD",
+      subheading:
+        "Faça upgrade pra um plano pago e salve suas imagens em alta resolução, com lista de compras e suporte da nossa equipe.",
+      ctaLabel: "Quero fazer upgrade",
+      successHeading: "Recebemos seu pedido!",
+      successBody:
+        "Vamos enviar a opção de plano que melhor se encaixa no que você precisa. Resposta em até 1 dia útil.",
+    };
+  }
+
+  // Simulador de orçamento (rota /orcamento-design-interiores)
+  if (key === "orcamento-design-interiores" || key === "orcamento" || key.startsWith("orcamento")) {
+    return {
+      heading: "Receber orçamento e proposta em PDF",
+      subheading:
+        "A nossa equipe envia um orçamento detalhado e uma proposta em PDF, com lista de compras e faixas de preço por item.",
+      ctaLabel: "Receber proposta em PDF",
+      successHeading: "Pedido recebido!",
+      successBody:
+        "Em até 2 dias úteis você recebe a proposta em PDF no e-mail informado, com tudo separado por ambiente.",
+    };
+  }
+
+  // Página de planos
+  if (key === "pricing") {
+    return {
+      heading: "Falar com a equipe de vendas",
+      subheading:
+        "Conte um pouco sobre o seu uso e indicamos o plano ideal, com condições especiais pra times e empresas.",
+      ctaLabel: "Quero falar com vendas",
+      successHeading: "Recebemos seu contato!",
+      successBody:
+        "A nossa equipe comercial entra em contato em até 1 dia útil pra entender melhor o seu uso.",
+    };
+  }
+
+  // Landings de profissionais (pro_clinica, pro_ecommerce, pro_general)
+  if (key.startsWith("pro_") || key.startsWith("pro-")) {
+    return {
+      heading: "Conhecer a solução pro seu negócio",
+      subheading:
+        "A nossa equipe envia exemplos do seu segmento e indica o melhor caminho pra usar o Ideal Space na sua operação.",
+      ctaLabel: "Quero conhecer",
+      successHeading: "Recebemos seu contato!",
+      successBody:
+        "Em até 1 dia útil você recebe exemplos do seu segmento no e-mail, com opções de plano pra times.",
+    };
+  }
+
+  // Landings combinatórias de SEO (estilos-X-Y, ambientes-Y, estilos-X)
+  if (key.startsWith("estilos-") || key.startsWith("ambientes-")) {
+    return {
+      heading: "Receber ideias por e-mail",
+      subheading:
+        "A nossa equipe envia inspirações decorativas calibradas pro estilo e ambiente que você escolheu, com lista de compras.",
+      ctaLabel: "Quero receber ideias",
+      successHeading: "Ideias a caminho!",
+      successBody:
+        "Em até 1 dia útil você recebe as inspirações no e-mail, com lista de compras e faixas de preço.",
+    };
+  }
+
+  return DEFAULT_COPY;
+}
+
 /** Aplica a máscara brasileira "(99) 99999-9999" durante a digitação. */
 function maskPhone(value: string): string {
   const d = value.replace(/\D/g, "").slice(0, 11);
@@ -169,20 +277,68 @@ export function LeadFormModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const heading = title?.trim() || "Receba uma proposta personalizada";
-  const subheading =
-    description?.trim() ||
-    "Deixe seus dados e a nossa equipe entra em contato para entender o seu projeto e indicar o melhor caminho.";
+  const sourceCopy = getSourceCopy(source);
+  const heading = title?.trim() || sourceCopy.heading;
+  const subheading = description?.trim() || sourceCopy.subheading;
+  const ctaLabel = sourceCopy.ctaLabel;
+  const successHeading = sourceCopy.successHeading;
+  const successBody = sourceCopy.successBody;
+
+  /**
+   * Valida um campo específico (usado no onBlur). Retorna a string de erro
+   * ou undefined. Mantém o critério usado também no submit pra evitar
+   * surpresa de "passou no blur mas falhou no submit".
+   */
+  const validateField = (
+    field: "name" | "email" | "phone" | "interest" | "consent",
+  ): string | undefined => {
+    switch (field) {
+      case "name":
+        if (name.trim().length < 2)
+          return "Digite o seu nome completo pra personalizarmos o contato.";
+        return undefined;
+      case "email":
+        if (!EMAIL_RE.test(email.trim()))
+          return "Confira se o e-mail tem @ e domínio (ex.: nome@dominio.com).";
+        return undefined;
+      case "phone": {
+        const digits = phone.replace(/\D/g, "");
+        if (digits.length < 10 || digits.length > 11)
+          return "Use o formato (DDD) 9XXXX-XXXX, com DDD de 2 dígitos.";
+        return undefined;
+      }
+      case "interest":
+        if (!interest) return "Escolha o perfil que melhor descreve o seu uso.";
+        return undefined;
+      case "consent":
+        if (!consent) return "Confirme o aceite pra podermos entrar em contato.";
+        return undefined;
+    }
+  };
 
   const validate = () => {
     const e: typeof errors = {};
-    if (name.trim().length < 2) e.name = "Informe o seu nome.";
-    if (!EMAIL_RE.test(email.trim())) e.email = "Informe um e-mail válido.";
-    const digits = phone.replace(/\D/g, "");
-    if (digits.length < 10 || digits.length > 11) e.phone = "Informe um celular válido com DDD.";
-    if (!interest) e.interest = "Selecione uma opção.";
-    if (!consent) e.consent = "Você precisa aceitar para continuar.";
+    const fields: Array<"name" | "email" | "phone" | "interest" | "consent"> = [
+      "name",
+      "email",
+      "phone",
+      "interest",
+      "consent",
+    ];
+    for (const f of fields) {
+      const msg = validateField(f);
+      if (msg) e[f] = msg;
+    }
     return e;
+  };
+
+  /** Handler de blur que só seta erro se o campo já tem conteúdo (evita
+   *  irritar usuário que clicou e saiu sem digitar). Consent não tem blur. */
+  const handleBlur = (field: "name" | "email" | "phone") => () => {
+    const fieldValue = field === "name" ? name : field === "email" ? email : phone;
+    if (fieldValue.trim().length === 0) return;
+    const msg = validateField(field);
+    setErrors((prev) => ({ ...prev, [field]: msg }));
   };
 
   const loading = status === "loading";
@@ -262,17 +418,39 @@ export function LeadFormModal({
               <Check className="h-7 w-7" />
             </div>
             <DialogTitle className="mt-4 text-xl sm:text-2xl font-semibold tracking-[-0.01em]">
-              Recebemos o seu contato!
+              {(() => {
+                const firstName = name.trim().split(/\s+/)[0];
+                return firstName ? `${successHeading} ${firstName}` : successHeading;
+              })()}
             </DialogTitle>
             <DialogDescription className="mt-2 text-sm text-muted-foreground">
-              Nossa equipe vai falar com você em breve para entender o seu projeto e indicar o
-              melhor caminho. Obrigado pelo interesse no Ideal Space.
+              {successBody}
             </DialogDescription>
+
+            {/* Reforço visual de canais e prazo, com ícone discreto. Sem
+                em-dash (regra de copy). */}
+            <div className="mt-5 mx-auto max-w-xs rounded-xl border border-border/60 bg-card px-4 py-3 text-left text-xs text-muted-foreground space-y-1.5">
+              <div className="flex items-start gap-2">
+                <Check className="h-3.5 w-3.5 mt-0.5 text-accent shrink-0" />
+                <span>
+                  Vamos enviar pro e-mail <span className="text-foreground">{email}</span>.
+                </span>
+              </div>
+              {phone && (
+                <div className="flex items-start gap-2">
+                  <Check className="h-3.5 w-3.5 mt-0.5 text-accent shrink-0" />
+                  <span>
+                    Confirme o número <span className="text-foreground">{phone}</span> no WhatsApp.
+                  </span>
+                </div>
+              )}
+            </div>
+
             <Button
               onClick={() => onOpenChange(false)}
               className="mt-6 h-11 rounded-full px-6 bg-foreground text-background hover:bg-foreground/90"
             >
-              Fechar
+              Continuar navegando
             </Button>
           </div>
         ) : (
@@ -307,10 +485,16 @@ export function LeadFormModal({
                     setName(e.target.value);
                     if (errors.name) setErrors((p) => ({ ...p, name: undefined }));
                   }}
+                  onBlur={handleBlur("name")}
                   className={`mt-1 h-11 rounded-xl ${errors.name ? "border-destructive" : ""}`}
                   aria-invalid={!!errors.name}
+                  aria-describedby={errors.name ? "lead-name-error" : undefined}
                 />
-                {errors.name && <p className="mt-1 text-[11px] text-destructive">{errors.name}</p>}
+                {errors.name && (
+                  <p id="lead-name-error" className="mt-1 text-[11px] text-destructive">
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -328,11 +512,15 @@ export function LeadFormModal({
                     setEmail(e.target.value);
                     if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
                   }}
+                  onBlur={handleBlur("email")}
                   className={`mt-1 h-11 rounded-xl ${errors.email ? "border-destructive" : ""}`}
                   aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "lead-email-error" : undefined}
                 />
                 {errors.email && (
-                  <p className="mt-1 text-[11px] text-destructive">{errors.email}</p>
+                  <p id="lead-email-error" className="mt-1 text-[11px] text-destructive">
+                    {errors.email}
+                  </p>
                 )}
               </div>
 
@@ -351,11 +539,15 @@ export function LeadFormModal({
                     setPhone(maskPhone(e.target.value));
                     if (errors.phone) setErrors((p) => ({ ...p, phone: undefined }));
                   }}
+                  onBlur={handleBlur("phone")}
                   className={`mt-1 h-11 rounded-xl ${errors.phone ? "border-destructive" : ""}`}
                   aria-invalid={!!errors.phone}
+                  aria-describedby={errors.phone ? "lead-phone-error" : undefined}
                 />
                 {errors.phone && (
-                  <p className="mt-1 text-[11px] text-destructive">{errors.phone}</p>
+                  <p id="lead-phone-error" className="mt-1 text-[11px] text-destructive">
+                    {errors.phone}
+                  </p>
                 )}
               </div>
 
@@ -396,9 +588,9 @@ export function LeadFormModal({
               </div>
             </div>
 
-            {/* Campos opcionais sobre o projeto */}
+            {/* Campos opcionais sobre o projeto. Pode pular tudo. */}
             <div className="mt-5 flex items-center gap-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-              <span className="h-px flex-1 bg-border" /> Sobre o projeto · opcional
+              <span className="h-px flex-1 bg-border" /> Opcional, ajuda na proposta
               <span className="h-px flex-1 bg-border" />
             </div>
             <div className="mt-4 grid sm:grid-cols-2 gap-3">
@@ -519,14 +711,14 @@ export function LeadFormModal({
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Enviando…
                 </>
               ) : (
-                "Quero falar com a equipe"
+                ctaLabel
               )}
             </Button>
 
             <p className="mt-3 flex items-start gap-1.5 text-[11px] text-muted-foreground">
               <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-              Seus dados são tratados conforme a LGPD e usados apenas para este contato. Você pode
-              solicitar a exclusão quando quiser.
+              Seus dados ficam protegidos pela LGPD e são usados só pra este contato. Você pode
+              pedir a exclusão quando quiser.
             </p>
           </form>
         )}
