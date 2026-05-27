@@ -174,11 +174,11 @@ function EstiloComboPage() {
 
   const relatedLinks = [
     ...otherRoomsForStyle.map((r) => ({
-      href: `/estilos/${styleSlug}/${r}`,
+      to: `/estilos/${styleSlug}/${r}`,
       label: `${style.name} para ${ROOM_LABEL[r]}`,
     })),
     ...otherStylesForRoom.map((s) => ({
-      href: `/estilos/${s}/${roomSlug}`,
+      to: `/estilos/${s}/${roomSlug}`,
       label: `${SEO_STYLES[s].name} no ${roomLabel}`,
     })),
   ];
