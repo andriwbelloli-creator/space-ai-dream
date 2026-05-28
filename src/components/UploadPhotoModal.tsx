@@ -250,6 +250,8 @@ export function UploadPhotoModal({
   const [waOpen, setWaOpen] = useState(false);
   // Lote 8 — upsell "Salvar Imagem em HD".
   const [hdLeadOpen, setHdLeadOpen] = useState(false);
+  // Banner CTA "Quero executar este projeto" — pós-geração, conecta com arquiteto.
+  const [executarOpen, setExecutarOpen] = useState(false);
   // Plano pago confiável: credits.plan vem do getUserCredits (user_roles +
   // user_credits). Sem credits ou plan "free" → tratado como Free (fallback seguro).
   const isPaidUser = !!credits && credits.plan !== "free";
@@ -1201,6 +1203,35 @@ export function UploadPhotoModal({
             )}
           </div>
 
+          {/* Banner CTA pós-geração — conecta o usuário com um arquiteto
+              real pra executar o projeto que ele acabou de visualizar.
+              Renderiza só quando há pelo menos uma variação gerada. */}
+          {variations.length > 0 && (
+            <div className="mt-5 rounded-2xl bg-accent text-accent-foreground p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="min-w-0">
+                <div className="text-base sm:text-lg font-semibold tracking-tight">
+                  Quer tirar esse projeto do papel?
+                </div>
+                <p className="mt-1 text-sm opacity-90">
+                  Conectamos você com um arquiteto que vai te chamar no WhatsApp em até 4h úteis.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  track("hero_executar_projeto_click", {
+                    style,
+                    variation_count: variations.length,
+                  });
+                  setExecutarOpen(true);
+                }}
+                className="shrink-0 inline-flex items-center justify-center gap-1.5 rounded-full bg-foreground text-background h-11 px-5 text-sm font-semibold hover:bg-foreground/90 transition"
+              >
+                Quero executar este projeto
+              </button>
+            </div>
+          )}
+
           {error && (
             <div className="mt-3 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
@@ -1364,6 +1395,17 @@ export function UploadPhotoModal({
         planInterest="premium"
         title="Desbloqueie o download em HD"
         description="Faça upgrade para um plano pago e salve suas imagens em alta resolução."
+      />
+      {/* Variante executar-projeto — conecta o usuário com arquiteto pós-geração.
+          projectId ainda não está disponível (transform.functions.ts não retorna);
+          dívida técnica pra próxima task. user_id vem do useAuth. */}
+      <LeadFormModal
+        open={executarOpen}
+        onOpenChange={setExecutarOpen}
+        source="executar-projeto"
+        defaultStyle={style}
+        defaultRoomType={variations[activeIdx]?.roomType}
+        userId={user?.id}
       />
     </Dialog>
   );
