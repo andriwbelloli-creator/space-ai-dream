@@ -14,16 +14,1098 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_email: string | null
+          admin_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          payload: Json
+        }
+        Insert: {
+          action: string
+          admin_email?: string | null
+          admin_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          payload?: Json
+        }
+        Update: {
+          action?: string
+          admin_email?: string | null
+          admin_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          payload?: Json
+        }
+        Relationships: []
+      }
+      analyses: {
+        Row: {
+          action_plan: Json
+          ai_model: string | null
+          budget_range: string | null
+          category: string | null
+          created_at: string
+          email: string | null
+          id: string
+          image_url: string
+          improvements: Json
+          is_public: boolean
+          overall_score: number
+          professional_profile: string | null
+          recommended_products: Json
+          scores: Json
+          strengths: Json
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          action_plan?: Json
+          ai_model?: string | null
+          budget_range?: string | null
+          category?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          image_url: string
+          improvements?: Json
+          is_public?: boolean
+          overall_score: number
+          professional_profile?: string | null
+          recommended_products?: Json
+          scores?: Json
+          strengths?: Json
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          action_plan?: Json
+          ai_model?: string | null
+          budget_range?: string | null
+          category?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          image_url?: string
+          improvements?: Json
+          is_public?: boolean
+          overall_score?: number
+          professional_profile?: string | null
+          recommended_products?: Json
+          scores?: Json
+          strengths?: Json
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      budget_leads: {
+        Row: {
+          consent_date: string
+          consent_marketing: boolean
+          consent_privacy: boolean
+          created_at: string
+          email: string
+          id: string
+          phone: string
+          project_id: string | null
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          consent_date?: string
+          consent_marketing?: boolean
+          consent_privacy: boolean
+          created_at?: string
+          email: string
+          id?: string
+          phone: string
+          project_id?: string | null
+          source?: string
+          user_id?: string | null
+        }
+        Update: {
+          consent_date?: string
+          consent_marketing?: boolean
+          consent_privacy?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          phone?: string
+          project_id?: string | null
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_leads_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["credit_tx_kind"]
+          metadata: Json | null
+          reference: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["credit_tx_kind"]
+          metadata?: Json | null
+          reference?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["credit_tx_kind"]
+          metadata?: Json | null
+          reference?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      empty_room_templates: {
+        Row: {
+          architecture_type: string | null
+          badge: string | null
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          is_active: boolean
+          layout_rules: Json | null
+          priority_categories: Json | null
+          room_type: string
+          slug: string
+          sort_order: number
+          suggested_budget_range: string | null
+          suggested_style_slug: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          architecture_type?: string | null
+          badge?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          layout_rules?: Json | null
+          priority_categories?: Json | null
+          room_type: string
+          slug: string
+          sort_order?: number
+          suggested_budget_range?: string | null
+          suggested_style_slug?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          architecture_type?: string | null
+          badge?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          layout_rules?: Json | null
+          priority_categories?: Json | null
+          room_type?: string
+          slug?: string
+          sort_order?: number
+          suggested_budget_range?: string | null
+          suggested_style_slug?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          props: Json
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          props?: Json
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          props?: Json
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      idea_photo_prompts: {
+        Row: {
+          anti_artifact_override: string | null
+          base_override: string | null
+          floor: string
+          light: string
+          materials: string
+          mood: string
+          palette: string
+          scene_extra: string
+          style_slug: string
+          updated_at: string
+          window_view: string
+        }
+        Insert: {
+          anti_artifact_override?: string | null
+          base_override?: string | null
+          floor?: string
+          light?: string
+          materials?: string
+          mood?: string
+          palette?: string
+          scene_extra?: string
+          style_slug: string
+          updated_at?: string
+          window_view?: string
+        }
+        Update: {
+          anti_artifact_override?: string | null
+          base_override?: string | null
+          floor?: string
+          light?: string
+          materials?: string
+          mood?: string
+          palette?: string
+          scene_extra?: string
+          style_slug?: string
+          updated_at?: string
+          window_view?: string
+        }
+        Relationships: []
+      }
+      ideas: {
+        Row: {
+          badge: string | null
+          budget_range: string | null
+          category: string | null
+          created_at: string
+          description: string | null
+          hero_image_url: string | null
+          id: string
+          is_active: boolean
+          level: string | null
+          pain_point: string | null
+          products: Json
+          professional_profile: string | null
+          slug: string
+          sort_order: number
+          style_slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          badge?: string | null
+          budget_range?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          id?: string
+          is_active?: boolean
+          level?: string | null
+          pain_point?: string | null
+          products?: Json
+          professional_profile?: string | null
+          slug: string
+          sort_order?: number
+          style_slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          badge?: string | null
+          budget_range?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          id?: string
+          is_active?: boolean
+          level?: string | null
+          pain_point?: string | null
+          products?: Json
+          professional_profile?: string | null
+          slug?: string
+          sort_order?: number
+          style_slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          budget_range: string | null
+          cep: string | null
+          clicked_affiliate_url: string | null
+          clicked_at: string | null
+          consent_lgpd: boolean
+          created_at: string
+          email: string
+          email_message_id: string | null
+          email_opened_at: string | null
+          id: string
+          idea_slug: string
+          interest: string | null
+          investment_range: string | null
+          message: string | null
+          name: string
+          pdf_url: string | null
+          phone: string | null
+          plan_interest: string | null
+          project_id: string | null
+          room_type: string | null
+          source: string
+          start_timing: string | null
+          style: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          cep?: string | null
+          clicked_affiliate_url?: string | null
+          clicked_at?: string | null
+          consent_lgpd?: boolean
+          created_at?: string
+          email: string
+          email_message_id?: string | null
+          email_opened_at?: string | null
+          id?: string
+          idea_slug: string
+          interest?: string | null
+          investment_range?: string | null
+          message?: string | null
+          name: string
+          pdf_url?: string | null
+          phone?: string | null
+          plan_interest?: string | null
+          project_id?: string | null
+          room_type?: string | null
+          source?: string
+          start_timing?: string | null
+          style?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          cep?: string | null
+          clicked_affiliate_url?: string | null
+          clicked_at?: string | null
+          consent_lgpd?: boolean
+          created_at?: string
+          email?: string
+          email_message_id?: string | null
+          email_opened_at?: string | null
+          id?: string
+          idea_slug?: string
+          interest?: string | null
+          investment_range?: string | null
+          message?: string | null
+          name?: string
+          pdf_url?: string | null
+          phone?: string | null
+          plan_interest?: string | null
+          project_id?: string | null
+          room_type?: string | null
+          source?: string
+          start_timing?: string | null
+          style?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads_backup_20260527: {
+        Row: {
+          budget_range: string | null
+          clicked_affiliate_url: string | null
+          clicked_at: string | null
+          consent_lgpd: boolean | null
+          created_at: string | null
+          email: string | null
+          email_message_id: string | null
+          email_opened_at: string | null
+          id: string | null
+          idea_slug: string | null
+          interest: string | null
+          message: string | null
+          name: string | null
+          pdf_url: string | null
+          phone: string | null
+          plan_interest: string | null
+          room_type: string | null
+          source: string | null
+          style: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          clicked_affiliate_url?: string | null
+          clicked_at?: string | null
+          consent_lgpd?: boolean | null
+          created_at?: string | null
+          email?: string | null
+          email_message_id?: string | null
+          email_opened_at?: string | null
+          id?: string | null
+          idea_slug?: string | null
+          interest?: string | null
+          message?: string | null
+          name?: string | null
+          pdf_url?: string | null
+          phone?: string | null
+          plan_interest?: string | null
+          room_type?: string | null
+          source?: string | null
+          style?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          clicked_affiliate_url?: string | null
+          clicked_at?: string | null
+          consent_lgpd?: boolean | null
+          created_at?: string | null
+          email?: string | null
+          email_message_id?: string | null
+          email_opened_at?: string | null
+          id?: string | null
+          idea_slug?: string | null
+          interest?: string | null
+          message?: string | null
+          name?: string | null
+          pdf_url?: string | null
+          phone?: string | null
+          plan_interest?: string | null
+          room_type?: string | null
+          source?: string | null
+          style?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      product_clicks: {
+        Row: {
+          analysis_id: string | null
+          clicked_at: string
+          id: string
+          product_category: string | null
+          product_name: string | null
+          product_url: string | null
+          user_id: string | null
+        }
+        Insert: {
+          analysis_id?: string | null
+          clicked_at?: string
+          id?: string
+          product_category?: string | null
+          product_name?: string | null
+          product_url?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          analysis_id?: string | null
+          clicked_at?: string
+          id?: string
+          product_category?: string | null
+          product_name?: string | null
+          product_url?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_clicks_analysis_id_fkey"
+            columns: ["analysis_id"]
+            isOneToOne: false
+            referencedRelation: "analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          affiliate_url: string | null
+          category: string | null
+          category_group: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          price_cents: number | null
+          style_slug: string | null
+        }
+        Insert: {
+          affiliate_url?: string | null
+          category?: string | null
+          category_group?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          price_cents?: number | null
+          style_slug?: string | null
+        }
+        Update: {
+          affiliate_url?: string | null
+          category?: string | null
+          category_group?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          price_cents?: number | null
+          style_slug?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          credits: number
+          display_name: string | null
+          id: string
+          plan: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          credits?: number
+          display_name?: string | null
+          id: string
+          plan?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          credits?: number
+          display_name?: string | null
+          id?: string
+          plan?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      project_recommended_products: {
+        Row: {
+          affiliate_provider: string | null
+          affiliate_url: string | null
+          category_group: string
+          clicked_count: number
+          created_at: string
+          fallback_url: string | null
+          id: string
+          price_cents: number | null
+          priority: string
+          product_category: string
+          product_id: string | null
+          product_name: string
+          project_id: string
+          reason: string | null
+          saved_count: number
+          sort_order: number
+        }
+        Insert: {
+          affiliate_provider?: string | null
+          affiliate_url?: string | null
+          category_group: string
+          clicked_count?: number
+          created_at?: string
+          fallback_url?: string | null
+          id?: string
+          price_cents?: number | null
+          priority?: string
+          product_category: string
+          product_id?: string | null
+          product_name: string
+          project_id: string
+          reason?: string | null
+          saved_count?: number
+          sort_order?: number
+        }
+        Update: {
+          affiliate_provider?: string | null
+          affiliate_url?: string | null
+          category_group?: string
+          clicked_count?: number
+          created_at?: string
+          fallback_url?: string | null
+          id?: string
+          price_cents?: number | null
+          priority?: string
+          product_category?: string
+          product_id?: string | null
+          product_name?: string
+          project_id?: string
+          reason?: string | null
+          saved_count?: number
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_recommended_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_recommended_products_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          after_url: string | null
+          ai_model: string | null
+          ai_prompt: string | null
+          ai_response: Json | null
+          architecture_type: string | null
+          before_url: string | null
+          budget_range: string | null
+          created_at: string
+          generation_cost_cents: number | null
+          generation_time_ms: number | null
+          id: string
+          is_public: boolean
+          is_saved: boolean
+          mode: string | null
+          parent_project_id: string | null
+          prompt_version: string | null
+          quality_status: string | null
+          room_type: string | null
+          style_slug: string
+          template_id: string | null
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          after_url?: string | null
+          ai_model?: string | null
+          ai_prompt?: string | null
+          ai_response?: Json | null
+          architecture_type?: string | null
+          before_url?: string | null
+          budget_range?: string | null
+          created_at?: string
+          generation_cost_cents?: number | null
+          generation_time_ms?: number | null
+          id?: string
+          is_public?: boolean
+          is_saved?: boolean
+          mode?: string | null
+          parent_project_id?: string | null
+          prompt_version?: string | null
+          quality_status?: string | null
+          room_type?: string | null
+          style_slug: string
+          template_id?: string | null
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          after_url?: string | null
+          ai_model?: string | null
+          ai_prompt?: string | null
+          ai_response?: Json | null
+          architecture_type?: string | null
+          before_url?: string | null
+          budget_range?: string | null
+          created_at?: string
+          generation_cost_cents?: number | null
+          generation_time_ms?: number | null
+          id?: string
+          is_public?: boolean
+          is_saved?: boolean
+          mode?: string | null
+          parent_project_id?: string | null
+          prompt_version?: string | null
+          quality_status?: string | null
+          room_type?: string | null
+          style_slug?: string
+          template_id?: string | null
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_parent_project_id_fkey"
+            columns: ["parent_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stripe_subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          price_id: string
+          product_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id: string
+          product_id: string
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id?: string
+          product_id?: string
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      styles_admin: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          hero_image_url: string | null
+          is_active: boolean
+          name: string
+          prompt_template: string | null
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          is_active?: boolean
+          name: string
+          prompt_template?: string | null
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          hero_image_url?: string | null
+          is_active?: boolean
+          name?: string
+          prompt_template?: string | null
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          plan: Database["public"]["Enums"]["plan_tier"]
+          provider: string | null
+          provider_subscription_id: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan: Database["public"]["Enums"]["plan_tier"]
+          provider?: string | null
+          provider_subscription_id?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          provider?: string | null
+          provider_subscription_id?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_credits: {
+        Row: {
+          balance: number
+          created_at: string
+          plan: Database["public"]["Enums"]["plan_tier"]
+          renews_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          renews_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          renews_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      waitlist: {
+        Row: {
+          budget_range: string | null
+          created_at: string
+          email: string
+          id: string
+          main_goal: string | null
+          name: string
+          professional_profile: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          main_goal?: string | null
+          name: string
+          professional_profile?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          main_goal?: string | null
+          name?: string
+          professional_profile?: string | null
+        }
+        Relationships: []
+      }
+      wishlist: {
+        Row: {
+          affiliate_tag: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          price_cents: number | null
+          product_name: string
+          product_url: string | null
+          project_id: string | null
+          user_id: string
+        }
+        Insert: {
+          affiliate_tag?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          price_cents?: number | null
+          product_name: string
+          product_url?: string | null
+          project_id?: string | null
+          user_id: string
+        }
+        Update: {
+          affiliate_tag?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          price_cents?: number | null
+          product_name?: string
+          product_url?: string | null
+          project_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_metrics: {
+        Args: never
+        Returns: {
+          active_users: number
+          new_users_7d: number
+          total_analyses: number
+          total_leads: number
+          total_projects: number
+          total_users: number
+        }[]
+      }
+      admin_users_overview: {
+        Args: never
+        Returns: {
+          created_at: string
+          display_name: string
+          email: string
+          email_confirmed_at: string
+          id: string
+          last_sign_in_at: string
+          provider: string
+          role: Database["public"]["Enums"]["app_role"]
+          status: string
+        }[]
+      }
+      consume_credit: {
+        Args: { _reference?: string; _user_id: string }
+        Returns: number
+      }
+      has_active_stripe_subscription: {
+        Args: { check_env?: string; user_uuid: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      topup_monthly_credits: {
+        Args: {
+          _amount: number
+          _plan: string
+          _reference: string
+          _user_id: string
+        }
+        Returns: number
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      credit_tx_kind:
+        | "signup_bonus"
+        | "generation"
+        | "subscription_grant"
+        | "admin_adjust"
+        | "refund"
+      plan_tier: "free" | "premium" | "pro"
+      subscription_status: "active" | "canceled" | "past_due" | "trialing"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +1232,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      credit_tx_kind: [
+        "signup_bonus",
+        "generation",
+        "subscription_grant",
+        "admin_adjust",
+        "refund",
+      ],
+      plan_tier: ["free", "premium", "pro"],
+      subscription_status: ["active", "canceled", "past_due", "trialing"],
+    },
   },
 } as const
