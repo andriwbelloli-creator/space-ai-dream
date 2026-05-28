@@ -3,6 +3,7 @@
 // da home e da lista de compras.
 
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
 /** Slug que identifica leads originados do formulário comercial genérico. */
 export const LEAD_FORM_SLUG = "lead-form";
@@ -10,20 +11,31 @@ export const LEAD_FORM_SLUG = "lead-form";
 /** Perfil de quem está entrando em contato — direciona o atendimento comercial. */
 export type LeadInterest = "pessoal" | "designer" | "arquiteto" | "imobiliaria" | "empresa";
 
+/** Tipo Insert da tabela leads (autogerado pelo Supabase CLI). */
+type LeadInsert = Database["public"]["Tables"]["leads"]["Insert"];
+
 export interface LeadFormPayload {
-  // Obrigatórios
+  // Obrigatórios (em todas as variantes)
   name: string;
-  email: string;
   phone: string;
   interest: LeadInterest;
   consent_lgpd: boolean;
-  // Opcionais
+  // E-mail pode vir vazio "" em variantes onde é opcional (ex.: executar-projeto).
+  // Quando preenchido, valida formato.
+  email: string;
+  // Opcionais (variantes legadas)
   room_type?: string;
   plan_interest?: string;
   budget_range?: string;
   style?: string;
   message?: string;
   source?: string;
+  // Opcionais (variante executar-projeto)
+  cep?: string;
+  investment_range?: string;
+  start_timing?: string;
+  user_id?: string;
+  project_id?: string;
 }
 
 /** Regex padrão de e-mail — algo@dominio.tld, sem espaços. */
@@ -58,8 +70,11 @@ export async function submitLead(
   if (name.length < 2) {
     return { ok: false, error: "Informe o seu nome completo." };
   }
-  if (!EMAIL_RE.test(email)) {
-    return { ok: false, error: "Informe um e-mail válido." };
+  // E-mail é validado APENAS se preenchido — variantes como "executar-projeto"
+  // permitem envio sem e-mail (campo opcional). UI ainda pode forçar como
+  // obrigatório onde fizer sentido.
+  if (email.length > 0 && !EMAIL_RE.test(email)) {
+    return { ok: false, error: "Informe um e-mail válido ou deixe em branco." };
   }
   if (phoneDigits.length < 10 || phoneDigits.length > 11) {
     return { ok: false, error: "Informe um celular válido com DDD." };
@@ -74,7 +89,7 @@ export async function submitLead(
     };
   }
 
-  const row = {
+  const row: LeadInsert = {
     idea_slug: LEAD_FORM_SLUG,
     source: clean(payload.source) ?? LEAD_FORM_SLUG,
     name,
@@ -87,14 +102,15 @@ export async function submitLead(
     budget_range: clean(payload.budget_range),
     style: clean(payload.style),
     message: clean(payload.message),
+    cep: clean(payload.cep),
+    investment_range: clean(payload.investment_range),
+    start_timing: clean(payload.start_timing),
+    user_id: clean(payload.user_id),
+    project_id: clean(payload.project_id),
   };
 
   try {
-    // Os tipos autogerados em integrations/supabase/types.ts podem estar
-    // desatualizados em relação ao schema atual da tabela `leads`; por isso
-    // o cast `as any` fica restrito exatamente a este ponto de inserção.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await supabase.from("leads").insert(row as any);
+    const { error } = await supabase.from("leads").insert(row);
     if (error) return { ok: false, error: error.message };
     return { ok: true };
   } catch (e) {

@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Loader2, Check, AlertCircle, Sparkles, ShieldCheck } from "lucide-react";
+import { X, Loader2, Check, AlertCircle, Sparkles, ShieldCheck, MapPin } from "lucide-react";
 import { submitLead, type LeadInterest, type LeadFormPayload } from "@/lib/leads";
 import { useTrack } from "@/lib/use-track";
+import { useCepLookup, maskCep } from "@/lib/useCepLookup";
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Origem do lead — ex.: "pricing", "home", "shopping-list". */
+  /** Origem do lead — ex.: "pricing", "home", "shopping-list", "executar-projeto". */
   source?: string;
   /** Id do plano de interesse quando o lead vem de um CTA de plano. */
   planInterest?: string;
@@ -23,6 +24,10 @@ type Props = {
   title?: string;
   /** Sobrescreve a descrição do modal. */
   description?: string;
+  /** Usuário logado (variante executar-projeto vincula o lead ao user). */
+  userId?: string;
+  /** Projeto que originou o lead (variante executar-projeto). */
+  projectId?: string;
 };
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -60,6 +65,23 @@ const STYLE_OPTIONS = [
   { value: "classico", label: "Clássico" },
   { value: "escandinavo", label: "Escandinavo" },
   { value: "outro", label: "Outro" },
+];
+
+/** Faixas de investimento — variante executar-projeto. */
+const INVESTMENT_OPTIONS: { value: string; label: string; sub: string }[] = [
+  { value: "ate_3k", label: "Até R$ 3 mil", sub: "Refresh com decoração" },
+  { value: "3k_10k", label: "R$ 3-10 mil", sub: "Mobília nova" },
+  { value: "10k_30k", label: "R$ 10-30 mil", sub: "Projeto completo de um cômodo" },
+  { value: "30k_100k", label: "R$ 30-100 mil", sub: "Reforma parcial" },
+  { value: "acima_100k", label: "Acima de R$ 100 mil", sub: "Reforma estrutural" },
+];
+
+/** Quando começar — variante executar-projeto. */
+const TIMING_OPTIONS: { value: string; label: string }[] = [
+  { value: "agora", label: "Agora" },
+  { value: "proximo_mes", label: "Próximo mês" },
+  { value: "2_3_meses", label: "Em 2-3 meses" },
+  { value: "explorando", label: "Só explorando" },
 ];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -173,6 +195,19 @@ function getSourceCopy(source: string | undefined): SourceCopy {
     };
   }
 
+  // Variante executar-projeto: pós-geração, conecta com arquiteto.
+  if (key === "executar-projeto") {
+    return {
+      heading: "Quero executar este projeto",
+      subheading:
+        "Um arquiteto vai falar com você no WhatsApp em até 4h úteis pra tirar o projeto do papel.",
+      ctaLabel: "Falar com um arquiteto",
+      successHeading: "Pedido recebido!",
+      successBody:
+        "Um arquiteto vai te chamar no WhatsApp em até 4h úteis pra entender o projeto e os próximos passos.",
+    };
+  }
+
   return DEFAULT_COPY;
 }
 
@@ -222,7 +257,12 @@ export function LeadFormModal({
   defaultStyle,
   title,
   description,
+  userId,
+  projectId,
 }: Props) {
+  // Flag de variante — gateia campos novos sem afetar nenhum callsite legado.
+  const isExecutarProjeto = source === "executar-projeto";
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -232,12 +272,20 @@ export function LeadFormModal({
   const [styleField, setStyleField] = useState("");
   const [message, setMessage] = useState("");
   const [consent, setConsent] = useState(false);
+  // Campos novos — variante executar-projeto.
+  const [cep, setCep] = useState("");
+  const [investmentRange, setInvestmentRange] = useState("");
+  const [startTiming, setStartTiming] = useState("");
+  const cepLookup = useCepLookup(cep);
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
     phone?: string;
     interest?: string;
     consent?: string;
+    cep?: string;
+    investmentRange?: string;
+    startTiming?: string;
   }>({});
   const [status, setStatus] = useState<Status>("idle");
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -268,6 +316,9 @@ export function LeadFormModal({
         setStyleField("");
         setMessage("");
         setConsent(false);
+        setCep("");
+        setInvestmentRange("");
+        setStartTiming("");
         setErrors({});
         setStatus("idle");
         setSubmitError(null);
@@ -290,7 +341,7 @@ export function LeadFormModal({
    * surpresa de "passou no blur mas falhou no submit".
    */
   const validateField = (
-    field: "name" | "email" | "phone" | "interest" | "consent",
+    field: "name" | "email" | "phone" | "interest" | "consent" | "cep" | "investmentRange" | "startTiming",
   ): string | undefined => {
     switch (field) {
       case "name":
@@ -298,6 +349,9 @@ export function LeadFormModal({
           return "Digite o seu nome completo pra personalizarmos o contato.";
         return undefined;
       case "email":
+        // Na variante executar-projeto o e-mail é opcional: só valida formato
+        // se o usuário preencheu. Nas demais variantes o e-mail é obrigatório.
+        if (isExecutarProjeto && email.trim().length === 0) return undefined;
         if (!EMAIL_RE.test(email.trim()))
           return "Confira se o e-mail tem @ e domínio (ex.: nome@dominio.com).";
         return undefined;
@@ -308,34 +362,60 @@ export function LeadFormModal({
         return undefined;
       }
       case "interest":
+        // Variante executar-projeto não pede perfil — usa default "pessoal"
+        // automático no submit pra não pedir extra ao usuário.
+        if (isExecutarProjeto) return undefined;
         if (!interest) return "Escolha o perfil que melhor descreve o seu uso.";
         return undefined;
       case "consent":
         if (!consent) return "Confirme o aceite pra podermos entrar em contato.";
+        return undefined;
+      case "cep": {
+        const digits = cep.replace(/\D/g, "");
+        if (digits.length !== 8) return "Informe o CEP com 8 dígitos (formato XXXXX-XXX).";
+        return undefined;
+      }
+      case "investmentRange":
+        if (!investmentRange) return "Escolha uma faixa de investimento.";
+        return undefined;
+      case "startTiming":
+        if (!startTiming) return "Diga quando você quer começar.";
         return undefined;
     }
   };
 
   const validate = () => {
     const e: typeof errors = {};
-    const fields: Array<"name" | "email" | "phone" | "interest" | "consent"> = [
+    const baseFields: Array<"name" | "email" | "phone" | "interest" | "consent"> = [
       "name",
       "email",
       "phone",
       "interest",
       "consent",
     ];
-    for (const f of fields) {
+    const executarFields: Array<"cep" | "investmentRange" | "startTiming"> = [
+      "cep",
+      "investmentRange",
+      "startTiming",
+    ];
+    for (const f of baseFields) {
       const msg = validateField(f);
       if (msg) e[f] = msg;
+    }
+    if (isExecutarProjeto) {
+      for (const f of executarFields) {
+        const msg = validateField(f);
+        if (msg) e[f] = msg;
+      }
     }
     return e;
   };
 
   /** Handler de blur que só seta erro se o campo já tem conteúdo (evita
    *  irritar usuário que clicou e saiu sem digitar). Consent não tem blur. */
-  const handleBlur = (field: "name" | "email" | "phone") => () => {
-    const fieldValue = field === "name" ? name : field === "email" ? email : phone;
+  const handleBlur = (field: "name" | "email" | "phone" | "cep") => () => {
+    const fieldValue =
+      field === "name" ? name : field === "email" ? email : field === "phone" ? phone : cep;
     if (fieldValue.trim().length === 0) return;
     const msg = validateField(field);
     setErrors((prev) => ({ ...prev, [field]: msg }));
@@ -358,11 +438,18 @@ export function LeadFormModal({
     setStatus("loading");
     setSubmitError(null);
 
+    // Na variante executar-projeto o interest não é perguntado: usamos
+    // default "pessoal" pra satisfazer schema. Flag de tracking distingue
+    // leads com perfil escolhido manualmente vs default automático.
+    const effectiveInterest: LeadInterest = isExecutarProjeto
+      ? "pessoal"
+      : (interest as LeadInterest);
+
     const payload: LeadFormPayload = {
       name: name.trim(),
       email: email.trim().toLowerCase(),
       phone: phone.trim(),
-      interest: interest as LeadInterest,
+      interest: effectiveInterest,
       consent_lgpd: consent,
       room_type: roomType || undefined,
       plan_interest: planInterest || undefined,
@@ -370,6 +457,11 @@ export function LeadFormModal({
       style: styleField || undefined,
       message: message.trim() || undefined,
       source: source || undefined,
+      cep: isExecutarProjeto ? cep.trim() || undefined : undefined,
+      investment_range: isExecutarProjeto ? investmentRange || undefined : undefined,
+      start_timing: isExecutarProjeto ? startTiming || undefined : undefined,
+      user_id: userId || undefined,
+      project_id: projectId || undefined,
     };
 
     const res = await submitLead(payload);
@@ -379,7 +471,10 @@ export function LeadFormModal({
       track("lead_form_submitted", {
         source: source ?? "unknown",
         plan_interest: planInterest,
-        interest,
+        interest: effectiveInterest,
+        // Flag distingue leads de executar-projeto (interest auto) dos demais
+        // (interest escolhido pelo user). Vital pra atribuição comercial.
+        interest_source: isExecutarProjeto ? "auto_from_executar_projeto" : "user_selected",
       });
     } else {
       // Não limpamos os dados — o usuário pode corrigir e reenviar.
@@ -499,7 +594,7 @@ export function LeadFormModal({
 
               <div>
                 <label htmlFor="lead-email" className="text-xs font-medium text-foreground">
-                  E-mail*
+                  {isExecutarProjeto ? "E-mail (opcional)" : "E-mail*"}
                 </label>
                 <Input
                   id="lead-email"
@@ -551,6 +646,7 @@ export function LeadFormModal({
                 )}
               </div>
 
+              {!isExecutarProjeto && (
               <div>
                 <span className="text-xs font-medium text-foreground">Qual é o seu perfil?*</span>
                 <div
@@ -586,9 +682,13 @@ export function LeadFormModal({
                   <p className="mt-1 text-[11px] text-destructive">{errors.interest}</p>
                 )}
               </div>
+              )}
             </div>
 
-            {/* Campos opcionais sobre o projeto. Pode pular tudo. */}
+            {/* Campos opcionais sobre o projeto. Escondidos na variante
+                executar-projeto pra manter o form em ~5 campos (~30s). */}
+            {!isExecutarProjeto && (
+              <>
             <div className="mt-5 flex items-center gap-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
               <span className="h-px flex-1 bg-border" /> Opcional, ajuda na proposta
               <span className="h-px flex-1 bg-border" />
@@ -665,6 +765,141 @@ export function LeadFormModal({
                 />
               </div>
             </div>
+              </>
+            )}
+
+            {/* Bloco novo — variante executar-projeto. CEP com lookup ViaCEP,
+                faixa de investimento e quando começar (5 + 4 opções). */}
+            {isExecutarProjeto && (
+              <div className="mt-5 space-y-3">
+                <div>
+                  <label htmlFor="lead-cep" className="text-xs font-medium text-foreground">
+                    CEP*
+                  </label>
+                  <div className="relative mt-1">
+                    <Input
+                      id="lead-cep"
+                      inputMode="numeric"
+                      autoComplete="postal-code"
+                      placeholder="00000-000"
+                      value={cep}
+                      onChange={(e) => {
+                        setCep(maskCep(e.target.value));
+                        if (errors.cep) setErrors((p) => ({ ...p, cep: undefined }));
+                      }}
+                      onBlur={handleBlur("cep")}
+                      className={`h-11 rounded-xl pr-9 ${errors.cep ? "border-destructive" : ""}`}
+                      aria-invalid={!!errors.cep}
+                      aria-describedby={errors.cep ? "lead-cep-error" : undefined}
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+                      {cepLookup.status === "loading" && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
+                      {cepLookup.status === "success" && (
+                        <Check className="h-4 w-4 text-accent" />
+                      )}
+                      {cepLookup.status === "error" && (
+                        <AlertCircle className="h-4 w-4 text-destructive" />
+                      )}
+                      {cepLookup.status === "idle" && <MapPin className="h-4 w-4" />}
+                    </div>
+                  </div>
+                  {errors.cep && (
+                    <p id="lead-cep-error" className="mt-1 text-[11px] text-destructive">
+                      {errors.cep}
+                    </p>
+                  )}
+                  {cepLookup.status === "success" && !errors.cep && (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      {cepLookup.data.logradouro && `${cepLookup.data.logradouro}, `}
+                      {cepLookup.data.bairro && `${cepLookup.data.bairro}, `}
+                      {cepLookup.data.localidade}/{cepLookup.data.uf}
+                    </p>
+                  )}
+                  {cepLookup.status === "error" && !errors.cep && (
+                    <p className="mt-1 text-[11px] text-destructive">{cepLookup.error}</p>
+                  )}
+                </div>
+
+                <div>
+                  <span className="text-xs font-medium text-foreground">
+                    Faixa de investimento*
+                  </span>
+                  <div
+                    role="radiogroup"
+                    aria-label="Faixa de investimento"
+                    className="mt-1.5 space-y-2"
+                  >
+                    {INVESTMENT_OPTIONS.map((o) => {
+                      const active = investmentRange === o.value;
+                      return (
+                        <button
+                          key={o.value}
+                          type="button"
+                          role="radio"
+                          aria-checked={active}
+                          onClick={() => {
+                            setInvestmentRange(o.value);
+                            if (errors.investmentRange)
+                              setErrors((p) => ({ ...p, investmentRange: undefined }));
+                          }}
+                          className={`w-full text-left rounded-xl border px-3 py-2 transition ${
+                            active
+                              ? "border-accent bg-accent/8 ring-1 ring-accent"
+                              : "hover:bg-muted/60"
+                          }`}
+                        >
+                          <div className="text-sm font-medium">{o.label}</div>
+                          <div className="text-[11px] text-muted-foreground">{o.sub}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {errors.investmentRange && (
+                    <p className="mt-1 text-[11px] text-destructive">{errors.investmentRange}</p>
+                  )}
+                </div>
+
+                <div>
+                  <span className="text-xs font-medium text-foreground">
+                    Quando quer começar?*
+                  </span>
+                  <div
+                    role="radiogroup"
+                    aria-label="Quando quer começar"
+                    className="mt-1.5 grid grid-cols-2 gap-2"
+                  >
+                    {TIMING_OPTIONS.map((o) => {
+                      const active = startTiming === o.value;
+                      return (
+                        <button
+                          key={o.value}
+                          type="button"
+                          role="radio"
+                          aria-checked={active}
+                          onClick={() => {
+                            setStartTiming(o.value);
+                            if (errors.startTiming)
+                              setErrors((p) => ({ ...p, startTiming: undefined }));
+                          }}
+                          className={`text-left rounded-xl border px-3 py-2 transition ${
+                            active
+                              ? "border-accent bg-accent/8 ring-1 ring-accent"
+                              : "hover:bg-muted/60"
+                          }`}
+                        >
+                          <div className="text-sm font-medium">{o.label}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {errors.startTiming && (
+                    <p className="mt-1 text-[11px] text-destructive">{errors.startTiming}</p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Consentimento LGPD */}
             <label className="mt-4 flex gap-2 text-xs text-muted-foreground items-start cursor-pointer">
