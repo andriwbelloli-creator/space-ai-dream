@@ -5,9 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Loader2, Check, AlertCircle, Sparkles, ShieldCheck, MapPin } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { submitLead, type LeadInterest, type LeadFormPayload } from "@/lib/leads";
 import { useTrack } from "@/lib/use-track";
 import { useCepLookup, maskCep } from "@/lib/useCepLookup";
+import { notifyExecutarProjetoLead } from "@/lib/notifyLead.server";
 
 type Props = {
   open: boolean;
@@ -277,6 +279,8 @@ export function LeadFormModal({
   const [investmentRange, setInvestmentRange] = useState("");
   const [startTiming, setStartTiming] = useState("");
   const cepLookup = useCepLookup(cep);
+  // Server fn wrapper — só dispara na variante executar-projeto.
+  const notifyLead = useServerFn(notifyExecutarProjetoLead);
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -476,6 +480,28 @@ export function LeadFormModal({
         // (interest escolhido pelo user). Vital pra atribuição comercial.
         interest_source: isExecutarProjeto ? "auto_from_executar_projeto" : "user_selected",
       });
+
+      // Notificação WhatsApp via CallMeBot — fire-and-forget. Só dispara
+      // na variante executar-projeto pra Andriw acionar arquiteto dentro do
+      // SLA de 4h. Falha de notificação NUNCA quebra a UX (lead já salvo).
+      if (isExecutarProjeto) {
+        void notifyLead({
+          data: {
+            name: name.trim(),
+            phone: phone.trim(),
+            email: email.trim() || undefined,
+            cep: cep.trim() || undefined,
+            city:
+              cepLookup.status === "success"
+                ? `${cepLookup.data.localidade}/${cepLookup.data.uf}`
+                : undefined,
+            investment_range: investmentRange || undefined,
+            start_timing: startTiming || undefined,
+          },
+        }).catch(() => {
+          // Best-effort: notify é informativo, lead já está persistido.
+        });
+      }
     } else {
       // Não limpamos os dados — o usuário pode corrigir e reenviar.
       setStatus("error");
