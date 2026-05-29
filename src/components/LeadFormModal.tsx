@@ -213,9 +213,14 @@ function getSourceCopy(source: string | undefined): SourceCopy {
   return DEFAULT_COPY;
 }
 
-/** Aplica a máscara brasileira "(99) 99999-9999" durante a digitação. */
+/** Aplica a máscara brasileira "(99) 99999-9999" durante a digitação.
+ *  Strip automático do DDI 55 quando o usuário digita ou cola o número
+ *  no formato internacional (12 ou 13 dígitos começando com "55"), pra
+ *  evitar truncamento dos 2 últimos dígitos no `.slice(0, 11)`.
+ *  DDD 55 (centro do RS) com 10 ou 11 dígitos NÃO dispara o strip. */
 function maskPhone(value: string): string {
-  const d = value.replace(/\D/g, "").slice(0, 11);
+  const raw = value.replace(/\D/g, "");
+  const d = (raw.length >= 12 && raw.startsWith("55") ? raw.slice(2) : raw).slice(0, 11);
   if (d.length === 0) return "";
   if (d.length <= 2) return `(${d}`;
   if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
