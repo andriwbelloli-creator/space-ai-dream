@@ -175,6 +175,42 @@ type Variation = {
   roomType?: string;
 };
 
+/** Reduz "Opção A" a "A" pra usar como sufixo curto na composição
+ *  `${styleName} · ${shortLabel}`. Vazio se label ausente. */
+function shortLabel(label: string | undefined): string {
+  if (!label) return "";
+  const parts = label.trim().split(/\s+/);
+  return parts.length > 1 ? parts[parts.length - 1] : label;
+}
+
+/** Formata o label de uma variação pra display no carrossel.
+ *
+ * Regras:
+ * - Com `styleName`: monta `${styleName} · ${shortLabel}` (ex.: "Japandi · A").
+ * - Anti-colisão: se a mesma combinação (styleName + shortLabel) já apareceu
+ *   antes na lista, anexa `#${oneBasedIdx}` pra desambiguar (ex.: "Japandi · A #4").
+ *   Cobre o caso de gerar o mesmo estilo 2x na mesma sessão.
+ * - Fallback: drafts antigos sem `styleName` caem em `v.label` puro ou "Opção N".
+ *
+ * Recebe índice 1-based pra alinhar com o que o usuário enxerga.
+ */
+function formatVariationLabel(
+  v: Variation,
+  oneBasedIdx: number,
+  all: ReadonlyArray<Variation>,
+): string {
+  if (!v.styleName) return v.label ?? `Opção ${oneBasedIdx}`;
+  const base = `${v.styleName} · ${shortLabel(v.label)}`;
+  const zeroBasedIdx = oneBasedIdx - 1;
+  const collision = all.some(
+    (other, otherIdx) =>
+      otherIdx < zeroBasedIdx &&
+      other.styleName === v.styleName &&
+      shortLabel(other.label) === shortLabel(v.label),
+  );
+  return collision ? `${base} #${oneBasedIdx}` : base;
+}
+
 /** Mensagens rotativas exibidas no overlay durante stage === "generating". */
 const GENERATING_MESSAGES = [
   "Analisando estrutura…",
@@ -906,10 +942,20 @@ export function UploadPhotoModal({
                     >
                       Trocar foto
                     </button>
-                    <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border">
-                      <Layers className="h-3 w-3 text-accent" />
-                      {variations[activeIdx]?.label ?? `Opção ${activeIdx + 1}`} · {activeIdx + 1}/
-                      {variations.length}
+                    <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur text-[10px] px-2.5 py-1 border max-w-[calc(100%-1.5rem)]">
+                      <Layers className="h-3 w-3 text-accent shrink-0" />
+                      <span className="truncate">
+                        {variations[activeIdx]
+                          ? formatVariationLabel(
+                              variations[activeIdx],
+                              activeIdx + 1,
+                              variations,
+                            )
+                          : `Opção ${activeIdx + 1}`}
+                      </span>
+                      <span className="shrink-0">
+                        · {activeIdx + 1}/{variations.length}
+                      </span>
                     </div>
                   </>
                 ) : preview ? (
@@ -1033,15 +1079,15 @@ export function UploadPhotoModal({
                             ? "ring-2 ring-accent border-accent"
                             : "opacity-80 hover:opacity-100"
                         }`}
-                        aria-label={v.label ?? `Opção ${i + 1}`}
+                        aria-label={formatVariationLabel(v, i + 1, variations)}
                       >
                         <img
                           src={v.url}
                           alt=""
                           className="absolute inset-0 h-full w-full object-cover"
                         />
-                        <span className="absolute bottom-0 inset-x-0 text-[9px] text-center text-background bg-foreground/70 py-0.5">
-                          {v.label ?? `Opção ${i + 1}`}
+                        <span className="absolute bottom-0 inset-x-0 text-[9px] text-center text-background bg-foreground/70 py-0.5 truncate px-1">
+                          {formatVariationLabel(v, i + 1, variations)}
                         </span>
                       </button>
                     );
@@ -1341,15 +1387,20 @@ export function UploadPhotoModal({
               paralelo de uma vez. Link texto pra nao competir visualmente
               com o CTA primario "Gerar com IA". */}
           {variations.length === 0 && (
-            <button
-              type="button"
-              onClick={() => generate(3, true)}
-              disabled={!preview || generating || optimizing}
-              className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Layers className="h-3 w-3" />
-              Ou gere 3 versões em paralelo
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => generate(3, true)}
+                disabled={!preview || generating || optimizing}
+                className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Layers className="h-3 w-3" />
+                Ou gere 3 versões em paralelo
+              </button>
+              <p className="mt-1 text-[11px] leading-tight text-muted-foreground/80 text-center sm:text-left">
+                3 variações de paleta, composição e iluminação ao mesmo tempo
+              </p>
+            </>
           )}
           {!user && (
             <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
@@ -1365,12 +1416,17 @@ export function UploadPhotoModal({
             </p>
           )}
           {variations.length > 0 && (
-            <p className="mt-2 text-[11px] text-muted-foreground text-center sm:text-left">
-              Arraste o slider sobre a imagem para comparar{" "}
-              <span className="font-medium text-foreground">antes</span> e{" "}
-              <span className="font-medium text-foreground">depois</span>. Deslize lateralmente para
-              ver outras variações.
-            </p>
+            <>
+              <p className="mt-2 text-xs text-muted-foreground text-center sm:text-left">
+                Quer testar outro estilo? Troque abaixo. Tudo fica aqui pra comparar.
+              </p>
+              <p className="mt-1 text-[11px] text-muted-foreground text-center sm:text-left">
+                Arraste o slider sobre a imagem para comparar{" "}
+                <span className="font-medium text-foreground">antes</span> e{" "}
+                <span className="font-medium text-foreground">depois</span>. Deslize lateralmente
+                para ver outras variações.
+              </p>
+            </>
           )}
           <p className="mt-2 text-[10px] text-muted-foreground">
             Reduzimos a imagem para {MAX_DIMENSION}px e qualidade {Math.round(JPEG_QUALITY * 100)}%
