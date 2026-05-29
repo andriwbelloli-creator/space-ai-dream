@@ -133,9 +133,8 @@ Procedimento: seguir o **fluxo de 9 passos** (seção 4). Aguardar autorização
 - Push direto sem `bun run build` + `bunx tsc --noEmit` verdes nos arquivos alterados.
 - Regra de afiliado Magalu: sem tag `desklylife`. Builder cai em fallback genérico (`magazineluiza.com.br/busca/...`) até nova decisão de governança.
 - Não usar Browserless sem pedido explícito do Andriw.
-- Stripe / checkout estão fora de escopo. Não criar nem modificar fluxo de pagamento.
 - Preservar o fluxo de IA existente (validação Gemini, edição Nano Banana, recomendações). Não refatorar sem autorização.
-- Monetização é afiliado-first.
+- Monetização: B2C dominante (planos Free/Starter/Premium/Pro via Stripe com Pix incluído) é foco prioritário do MVP. Afiliado (Amazon BR ativo) é complementar. B2B nicho (arquiteto/designer) é feature de captura via `LeadFormModal` source="executar-projeto", não core.
 - Nunca usar travessão / em-dash em copy visível ao usuário.
 
 ---
@@ -171,3 +170,46 @@ Manter relatório final em **até 25 linhas** sempre que possível. Sem dramatiz
 - Ideal Space **pode reaproveitar** back-end, autenticação, pipeline de IA, banco de imagens, lógica de afiliados, módulos LGPD e (futuramente) checkout do Home Office Life.
 - Toda integração reaproveitada deve ser **validada antes de uso** (sem simulação, sem fake, sem placeholder em prod).
 - O repositório `ai-home-decorator` é **referência somente**; não editar nem usar como cwd.
+
+---
+
+## 11. Modelo de receita (atualizado 2026-05-29)
+
+### Posicionamento estratégico
+- **B2C dominante**: planos pagos são o motor de receita do MVP.
+- **B2B nicho complementar**: arquiteto/designer paga plano profissional; lead pra arquiteto vinculado a projeto gerado é feature suporte, não core.
+- Decisão tomada após auditoria de pricing/paywall (70% da fundação técnica já existe — caminho B do mapeamento).
+
+### 4 planos (fonte: `src/lib/plans.ts`)
+
+| Plano | Mensal | Anual | Destaque |
+|---|---|---|---|
+| Free | R$ 0 | R$ 0 | Onboarding sem cartão |
+| Starter | R$ 29,90 | R$ 22,90/mês | Sem marca d'água, 15 gerações/mês |
+| Premium | R$ 49,90 | R$ 39,90/mês | Plano principal de upsell (highlight) |
+| Pro | a definir | a definir | Profissionais (arquiteto/designer) |
+
+### Gateway
+- **Stripe** (com Pix Brasil incluído via Stripe).
+- **Sem trial** no MVP (avaliação pós-validação).
+- Sem multi-gateway no MVP (schema `provider` está provisionado pra futuro).
+
+### Estratégia técnica (Caminho B)
+
+**Aproveitar** o que já existe:
+- `src/lib/plans.ts` (catálogo dos 4 planos)
+- `src/hooks/use-credits.ts` + RPC `consume_credit` + refund automático
+- Schema DB: `user_credits`, `subscriptions`, `stripe_subscriptions`, enum `subscription_status` com `trialing`
+- Paywall HD em `UploadPhotoModal` + paywall leve da shopping list
+
+**Adicionar**:
+- Stripe SDK + variáveis de ambiente (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`)
+- Server function de Checkout Session
+- Webhook handler (`checkout.session.completed`, `invoice.paid`, `customer.subscription.updated`, `customer.subscription.deleted`)
+- Sync subscription → user_credits (trigger ou função no webhook)
+- Migration: adicionar `"starter"` ao enum `plan_tier` (atualmente só `free/premium/pro` — inconsistente com `plans.ts`)
+- CTAs reais dos planos pagos (substituir `/login` por `/checkout/{planId}`)
+
+### Limites de plano
+- Enforcement via `credits.balance` + `credits.unlimited`. Sub ativa atualiza `user_credits.plan` e renova `balance`.
+- Refund automático em falha do pipeline IA mantém-se.
