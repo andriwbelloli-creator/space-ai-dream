@@ -24,6 +24,14 @@ export type Plan = {
   notIncluded?: string[];
   /** Microcopy curto abaixo do botão. */
   footnote?: string;
+  /**
+   * Nomes das variáveis de ambiente que armazenam os Stripe Price IDs.
+   * Server-only: `checkout.functions.ts` lê via `process.env[key]`.
+   * Mantemos apenas o NOME aqui pra evitar hardcoded de IDs no fonte.
+   * Ausente em planos não-cobráveis (ex.: Free).
+   */
+  priceIdEnvMonthly?: string;
+  priceIdEnvYearly?: string;
 };
 
 export const PLANS: Plan[] = [
@@ -53,6 +61,8 @@ export const PLANS: Plan[] = [
     annual: 22.9,
     cta: "Quero acesso antecipado",
     ctaHref: "/login",
+    priceIdEnvMonthly: "STRIPE_PRICE_STARTER_MONTHLY",
+    priceIdEnvYearly: "STRIPE_PRICE_STARTER_YEARLY",
     features: [
       "15 gerações 2D por mês",
       "Todos os estilos básicos",
@@ -73,6 +83,8 @@ export const PLANS: Plan[] = [
     highlight: true,
     cta: "Quero acesso antecipado",
     ctaHref: "/login",
+    priceIdEnvMonthly: "STRIPE_PRICE_PREMIUM_MONTHLY",
+    priceIdEnvYearly: "STRIPE_PRICE_PREMIUM_YEARLY",
     features: [
       "50 gerações 2D por mês",
       "Todos os estilos, inclusive premium",
@@ -89,10 +101,12 @@ export const PLANS: Plan[] = [
     id: "pro",
     name: "Pro",
     tagline: "Para designers, arquitetos, corretores e imobiliárias.",
-    monthly: 149.9,
-    annual: 119.9,
+    monthly: 139,
+    annual: 129,
     cta: "Falar com vendas",
     ctaHref: "mailto:contato@idealspace.com.br",
+    priceIdEnvMonthly: "STRIPE_PRICE_PRO_MONTHLY",
+    priceIdEnvYearly: "STRIPE_PRICE_PRO_YEARLY",
     features: [
       "200 gerações por mês em resolução máxima",
       "PDF profissional com a sua marca",

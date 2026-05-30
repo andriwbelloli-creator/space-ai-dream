@@ -1,9 +1,11 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { PLANS, formatPlanPrice } from "@/lib/plans";
+import { PLANS, formatPlanPrice, type PlanId } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
 import { useTrack } from "@/lib/use-track";
+import { createCheckoutSession } from "@/lib/checkout.functions";
 import {
   Check,
   ArrowRight,
@@ -199,6 +201,42 @@ function PricingPage() {
   // Usuário autenticado controla a exibição do link "Meus Projetos" no header.
   const { user } = useAuth();
 
+  // Estado do checkout Stripe: planId em loading + mensagem de erro
+  // do último submit. Sprint 3 só cobre Starter e Premium via Checkout;
+  // Pro continua abrindo o lead modal "Fale com vendas".
+  const [loadingPlanId, setLoadingPlanId] = useState<PlanId | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const startCheckout = useServerFn(createCheckoutSession);
+
+  /** Dispara Checkout Session ou redireciona pro login com retorno pra cá. */
+  const handleCheckout = async (planId: PlanId, currentCycle: Cycle) => {
+    if (!user) {
+      // Preserva intenção: ao voltar do login, user cai de novo em /pricing.
+      window.location.href = "/login?next=/pricing";
+      return;
+    }
+    setCheckoutError(null);
+    setLoadingPlanId(planId);
+    // Server fn aceita "monthly" | "yearly" — Cycle aqui usa "annual".
+    const stripeCycle: "monthly" | "yearly" =
+      currentCycle === "annual" ? "yearly" : "monthly";
+    try {
+      track("plan_checkout_started", { plan: planId, cycle: stripeCycle, source: "pricing_card" });
+      const res = await startCheckout({ data: { planId, cycle: stripeCycle } });
+      if (res.ok) {
+        window.location.href = res.url;
+        return;
+      }
+      console.error("[pricing] checkout falhou", res.error);
+      setCheckoutError("Não foi possível abrir o checkout agora. Tente de novo em instantes.");
+    } catch (e) {
+      console.error("[pricing] checkout threw", e);
+      setCheckoutError("Não foi possível abrir o checkout agora. Tente de novo em instantes.");
+    } finally {
+      setLoadingPlanId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -324,24 +362,56 @@ function PricingPage() {
                     ))}
                   </ul>
 
-                  <Button
-                    asChild={p.id !== "pro"}
-                    onClick={
-                      p.id === "pro"
-                        ? () => {
-                            track("plan_selected", { plan: p.id, cycle });
-                            setLead({ planInterest: p.id, title: "Fale com vendas" });
-                          }
-                        : () => track("plan_selected", { plan: p.id, cycle })
-                    }
-                    className={`mt-7 h-11 rounded-xl ${
-                      p.highlight
-                        ? "bg-accent text-accent-foreground hover:opacity-95"
-                        : "bg-foreground text-background hover:bg-foreground/90"
-                    }`}
-                  >
-                    {p.id === "pro" ? p.cta : <Link to={p.ctaHref}>{p.cta}</Link>}
-                  </Button>
+                  {p.id === "pro" ? (
+                    <Button
+                      onClick={() => {
+                        track("plan_selected", { plan: p.id, cycle });
+                        setLead({ planInterest: p.id, title: "Fale com vendas" });
+                      }}
+                      className={`mt-7 h-11 rounded-xl ${
+                        p.highlight
+                          ? "bg-accent text-accent-foreground hover:opacity-95"
+                          : "bg-foreground text-background hover:bg-foreground/90"
+                      }`}
+                    >
+                      {p.cta}
+                    </Button>
+                  ) : p.priceIdEnvMonthly ? (
+                    <Button
+                      onClick={() => {
+                        track("plan_selected", { plan: p.id, cycle });
+                        void handleCheckout(p.id, cycle);
+                      }}
+                      disabled={loadingPlanId === p.id}
+                      className={`mt-7 h-11 rounded-xl ${
+                        p.highlight
+                          ? "bg-accent text-accent-foreground hover:opacity-95"
+                          : "bg-foreground text-background hover:bg-foreground/90"
+                      }`}
+                    >
+                      {loadingPlanId === p.id ? "Aguarde…" : p.cta}
+                    </Button>
+                  ) : (
+                    <Button
+                      asChild
+                      onClick={() => track("plan_selected", { plan: p.id, cycle })}
+                      className={`mt-7 h-11 rounded-xl ${
+                        p.highlight
+                          ? "bg-accent text-accent-foreground hover:opacity-95"
+                          : "bg-foreground text-background hover:bg-foreground/90"
+                      }`}
+                    >
+                      <Link to={p.ctaHref}>{p.cta}</Link>
+                    </Button>
+                  )}
+                  {checkoutError && loadingPlanId === null && p.priceIdEnvMonthly && (
+                    <div
+                      role="alert"
+                      className="mt-2 text-[11px] text-destructive text-center"
+                    >
+                      {checkoutError}
+                    </div>
+                  )}
                   {p.footnote && (
                     <div className="mt-2 text-[11px] text-muted-foreground text-center">
                       {p.footnote}

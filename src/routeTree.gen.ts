@@ -24,6 +24,8 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VsPlanner5dRouteImport } from './routes/vs.planner-5d'
 import { Route as PProjectIdRouteImport } from './routes/p.$projectId'
 import { Route as EstilosStyleSlugRouteImport } from './routes/estilos.$styleSlug'
+import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
+import { Route as CheckoutCancelRouteImport } from './routes/checkout.cancel'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AmbientesRoomSlugRouteImport } from './routes/ambientes.$roomSlug'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
@@ -35,6 +37,7 @@ import { Route as AdminCreditosRouteImport } from './routes/admin.creditos'
 import { Route as AdminAfiliadosRouteImport } from './routes/admin.afiliados'
 import { Route as AuthenticatedProjetosRouteImport } from './routes/_authenticated/projetos'
 import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
+import { Route as EstilosStyleSlugRoomSlugRouteImport } from './routes/estilos.$styleSlug.$roomSlug'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -111,6 +114,16 @@ const EstilosStyleSlugRoute = EstilosStyleSlugRouteImport.update({
   path: '/estilos/$styleSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
+  id: '/checkout/success',
+  path: '/checkout/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutCancelRoute = CheckoutCancelRouteImport.update({
+  id: '/checkout/cancel',
+  path: '/checkout/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -166,6 +179,12 @@ const AuthenticatedMinhaContaRoute = AuthenticatedMinhaContaRouteImport.update({
   path: '/minha-conta',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const EstilosStyleSlugRoomSlugRoute =
+  EstilosStyleSlugRoomSlugRouteImport.update({
+    id: '/$roomSlug',
+    path: '/$roomSlug',
+    getParentRoute: () => EstilosStyleSlugRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -189,10 +208,13 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
+  '/checkout/cancel': typeof CheckoutCancelRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
+  '/estilos/$styleSlug': typeof EstilosStyleSlugRouteWithChildren
   '/p/$projectId': typeof PProjectIdRoute
   '/vs/planner-5d': typeof VsPlanner5dRoute
   '/admin/': typeof AdminIndexRoute
+  '/estilos/$styleSlug/$roomSlug': typeof EstilosStyleSlugRoomSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -215,10 +237,13 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
+  '/checkout/cancel': typeof CheckoutCancelRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
+  '/estilos/$styleSlug': typeof EstilosStyleSlugRouteWithChildren
   '/p/$projectId': typeof PProjectIdRoute
   '/vs/planner-5d': typeof VsPlanner5dRoute
   '/admin': typeof AdminIndexRoute
+  '/estilos/$styleSlug/$roomSlug': typeof EstilosStyleSlugRoomSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -244,10 +269,13 @@ export interface FileRoutesById {
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/ambientes/$roomSlug': typeof AmbientesRoomSlugRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/estilos/$styleSlug': typeof EstilosStyleSlugRoute
+  '/checkout/cancel': typeof CheckoutCancelRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
+  '/estilos/$styleSlug': typeof EstilosStyleSlugRouteWithChildren
   '/p/$projectId': typeof PProjectIdRoute
   '/vs/planner-5d': typeof VsPlanner5dRoute
   '/admin/': typeof AdminIndexRoute
+  '/estilos/$styleSlug/$roomSlug': typeof EstilosStyleSlugRoomSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -273,10 +301,13 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
+    | '/checkout/cancel'
+    | '/checkout/success'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
     | '/vs/planner-5d'
     | '/admin/'
+    | '/estilos/$styleSlug/$roomSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -299,10 +330,13 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
+    | '/checkout/cancel'
+    | '/checkout/success'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
     | '/vs/planner-5d'
     | '/admin'
+    | '/estilos/$styleSlug/$roomSlug'
   id:
     | '__root__'
     | '/'
@@ -327,10 +361,13 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/ambientes/$roomSlug'
     | '/auth/callback'
+    | '/checkout/cancel'
+    | '/checkout/success'
     | '/estilos/$styleSlug'
     | '/p/$projectId'
     | '/vs/planner-5d'
     | '/admin/'
+    | '/estilos/$styleSlug/$roomSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -347,7 +384,9 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AmbientesRoomSlugRoute: typeof AmbientesRoomSlugRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
-  EstilosStyleSlugRoute: typeof EstilosStyleSlugRoute
+  CheckoutCancelRoute: typeof CheckoutCancelRoute
+  CheckoutSuccessRoute: typeof CheckoutSuccessRoute
+  EstilosStyleSlugRoute: typeof EstilosStyleSlugRouteWithChildren
   PProjectIdRoute: typeof PProjectIdRoute
   VsPlanner5dRoute: typeof VsPlanner5dRoute
 }
@@ -459,6 +498,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EstilosStyleSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/success': {
+      id: '/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof CheckoutSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/cancel': {
+      id: '/checkout/cancel'
+      path: '/checkout/cancel'
+      fullPath: '/checkout/cancel'
+      preLoaderRoute: typeof CheckoutCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -536,6 +589,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMinhaContaRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/estilos/$styleSlug/$roomSlug': {
+      id: '/estilos/$styleSlug/$roomSlug'
+      path: '/$roomSlug'
+      fullPath: '/estilos/$styleSlug/$roomSlug'
+      preLoaderRoute: typeof EstilosStyleSlugRoomSlugRouteImport
+      parentRoute: typeof EstilosStyleSlugRoute
+    }
   }
 }
 
@@ -577,6 +637,17 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface EstilosStyleSlugRouteChildren {
+  EstilosStyleSlugRoomSlugRoute: typeof EstilosStyleSlugRoomSlugRoute
+}
+
+const EstilosStyleSlugRouteChildren: EstilosStyleSlugRouteChildren = {
+  EstilosStyleSlugRoomSlugRoute: EstilosStyleSlugRoomSlugRoute,
+}
+
+const EstilosStyleSlugRouteWithChildren =
+  EstilosStyleSlugRoute._addFileChildren(EstilosStyleSlugRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -591,10 +662,22 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AmbientesRoomSlugRoute: AmbientesRoomSlugRoute,
   AuthCallbackRoute: AuthCallbackRoute,
-  EstilosStyleSlugRoute: EstilosStyleSlugRoute,
+  CheckoutCancelRoute: CheckoutCancelRoute,
+  CheckoutSuccessRoute: CheckoutSuccessRoute,
+  EstilosStyleSlugRoute: EstilosStyleSlugRouteWithChildren,
   PProjectIdRoute: PProjectIdRoute,
   VsPlanner5dRoute: VsPlanner5dRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
