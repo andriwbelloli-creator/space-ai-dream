@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, Sparkles, ChevronDown, Camera, Upload, Wand2 } from "lucide-react";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { Footer } from "@/components/Footer";
-import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
+import { EditorialHeader } from "@/components/editorial/EditorialHeader";
 import { resolveLandingImage } from "@/lib/seo-landing-images";
 import type {
   LandingBenefit,
@@ -145,46 +145,26 @@ export function ExpandedLanding({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header simplificado — sem o menu completo da Home pra manter foco. */}
-      <header className="border-b border-border/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-            <IdealSpaceLogo />
-          </Link>
-          <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground transition">
-              Início
-            </Link>
-            <Link to="/pricing" className="hover:text-foreground transition">
-              Planos
-            </Link>
-          </nav>
-          <Link
-            to="/"
-            className="text-sm rounded-full border h-9 px-4 inline-flex items-center hover:bg-muted"
-          >
-            Voltar
-          </Link>
-        </div>
-      </header>
+      {/* Header editorial — mesma identidade da Home (creme, logo serif, CTA terracota). */}
+      <EditorialHeader onCtaClick={() => setUploadOpen(true)} ctaLabel={cta} />
 
       {/* HERO — kicker + h1 + parágrafo + CTA primário + trust microcopy */}
-      <section className="pt-16 sm:pt-24 pb-16 sm:pb-20">
+      <section className="pt-12 sm:pt-20 pb-16 sm:pb-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
           <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-accent">
             <Sparkles className="h-3.5 w-3.5" />
             {kicker}
           </div>
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl tracking-[-0.02em] font-semibold leading-[1.05]">
+          <h1 className="mt-5 font-serif text-5xl font-normal leading-[1.04] tracking-[-0.01em] text-foreground sm:text-6xl lg:text-7xl">
             {renderHeadline(h1)}
           </h1>
-          <p className="mt-6 text-muted-foreground text-lg leading-relaxed">{promise}</p>
+          <p className="mt-7 text-base text-muted-foreground leading-relaxed">{promise}</p>
           <div className="mt-9 flex flex-col items-center gap-3">
             {/* CTA primário acima da dobra: abre o fluxo de upload com o
                 ambiente/estilo da rota pré-selecionado. */}
             <Button
               onClick={() => setUploadOpen(true)}
-              className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
+              className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-foreground text-background hover:bg-foreground/90"
             >
               <Camera className="h-4 w-4 mr-2" /> {cta}
               <ArrowRight className="h-5 w-5 ml-2" />
