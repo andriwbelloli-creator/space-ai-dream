@@ -44,6 +44,10 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-gold-soft: var(--gold-soft);
   --color-gold-foreground: var(--gold-foreground);
+  --color-sage: var(--sage);
+  --color-sage-foreground: var(--sage-foreground);
+  --color-ink-blue: var(--ink-blue);
+  --color-ink-blue-foreground: var(--ink-blue-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -69,33 +73,40 @@
 
 :root {
   --radius: 1rem;
-  /* Warm off-white palette inspired by Home Office Life, evolved for Ideal Space */
-  --background: oklch(0.985 0.005 80);
-  --foreground: oklch(0.18 0.012 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.012 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.012 60);
-  --primary: oklch(0.22 0.015 60);
-  --primary-foreground: oklch(0.985 0.005 80);
-  --secondary: oklch(0.955 0.012 75);
-  --secondary-foreground: oklch(0.22 0.015 60);
-  --muted: oklch(0.95 0.01 75);
-  --muted-foreground: oklch(0.5 0.015 65);
-  --accent: oklch(0.72 0.13 55); /* warm terracotta accent */
-  --accent-foreground: oklch(0.99 0.005 80);
-  /* Secondary editorial accent — soft gold for premium kickers, dividers and badges. */
-  --gold-soft: oklch(0.78 0.085 78);
-  --gold-foreground: oklch(0.22 0.015 60);
+  /* Atelier Inteligente palette — marfim arquitetônico + grafite profundo,
+     com acentos terracota e dourado fosco. Mantém estrutura warm-neutral
+     do Home Office Life pra não quebrar componentes existentes. */
+  --background: oklch(0.962 0.013 82); /* #F7F3EC marfim arquitetônico */
+  --foreground: oklch(0.2 0 0); /* #171717 grafite profundo */
+  --card: oklch(0.99 0.008 85); /* #FFFCF7 branco cálido */
+  --card-foreground: oklch(0.2 0 0);
+  --popover: oklch(0.99 0.008 85);
+  --popover-foreground: oklch(0.2 0 0);
+  --primary: oklch(0.2 0 0); /* grafite */
+  --primary-foreground: oklch(0.99 0.008 85);
+  --secondary: oklch(0.945 0.014 80);
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.935 0.012 78);
+  --muted-foreground: oklch(0.5 0.012 75); /* #6F6A62 cinza pedra */
+  --accent: oklch(0.62 0.115 40); /* #B87355 terracota suave */
+  --accent-foreground: oklch(0.99 0.008 85);
+  /* Secondary editorial accents — gold for kickers/badges, sage for
+     Canvas de Decisão chips, ink-blue for tech modules. */
+  --gold-soft: oklch(0.74 0.085 82); /* #C4A56A dourado fosco */
+  --gold-foreground: oklch(0.2 0 0);
+  --sage: oklch(0.61 0.04 155); /* #6F8F7A verde sálvia */
+  --sage-foreground: oklch(0.99 0.008 85);
+  --ink-blue: oklch(0.2 0.012 250); /* #0E1116 preto azulado */
+  --ink-blue-foreground: oklch(0.962 0.013 82);
   /* Editorial shadow scale — softer than shadcn defaults, premium feel. */
   --shadow-editorial-sm: 0 1px 1px rgb(0 0 0 / 0.03), 0 2px 6px rgb(0 0 0 / 0.04);
   --shadow-editorial-md: 0 1px 1px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
   --shadow-editorial-lg: 0 2px 4px rgb(0 0 0 / 0.04), 0 16px 48px rgb(0 0 0 / 0.08);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.9 0.008 75);
-  --input: oklch(0.92 0.008 75);
-  --ring: oklch(0.72 0.13 55);
+  --border: oklch(0.89 0.018 80); /* #E5DED2 areia */
+  --input: oklch(0.91 0.016 80);
+  --ring: oklch(0.62 0.115 40);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
