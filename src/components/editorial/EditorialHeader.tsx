@@ -48,12 +48,12 @@ export function EditorialHeader({
         </Link>
 
         <nav className="hidden items-center gap-10 text-sm text-foreground/80 md:flex">
-          <Link to="/" hash="como-funciona" className="hover:text-foreground transition">
+          <a href="/#como-funciona" className="hover:text-foreground transition">
             Como funciona
-          </Link>
-          <Link to="/" hash="projetos" className="hover:text-foreground transition">
+          </a>
+          <a href="/#cards-editoriais" className="hover:text-foreground transition">
             Projetos
-          </Link>
+          </a>
           <Link to="/pricing" className="hover:text-foreground transition">
             Planos
           </Link>
