@@ -1,5 +1,6 @@
 // Fonte única dos planos do Ideal Space.
-// Consumido por src/routes/pricing.tsx e pela seção de planos da home (src/routes/index.tsx).
+// Consumido por src/routes/pricing.tsx, pela seção de planos da home (src/routes/index.tsx)
+// e por src/lib/stripe-webhook.server.ts (monthlyCredits).
 // Observação: os limites de geração abaixo são exibição — o enforcement real por usuário
 // é um passo posterior (ver classificação de risco, item A4).
 
@@ -25,6 +26,11 @@ export type Plan = {
   /** Microcopy curto abaixo do botão. */
   footnote?: string;
   /**
+   * Créditos concedidos por renovação mensal. Fonte única — lido pelo webhook
+   * (stripe-webhook.server.ts) para evitar duplicidade com PLAN_MONTHLY_CREDITS.
+   */
+  monthlyCredits: number;
+  /**
    * Nomes das variáveis de ambiente que armazenam os Stripe Price IDs.
    * Server-only: `checkout.functions.ts` lê via `process.env[key]`.
    * Mantemos apenas o NOME aqui pra evitar hardcoded de IDs no fonte.
@@ -41,6 +47,7 @@ export const PLANS: Plan[] = [
     tagline: "Para testar a IA e decorar seu primeiro ambiente.",
     monthly: 0,
     annual: 0,
+    monthlyCredits: 3,
     cta: "Começar grátis",
     ctaHref: "/login",
     features: [
@@ -61,6 +68,7 @@ export const PLANS: Plan[] = [
     annual: 22.9,
     cta: "Quero acesso antecipado",
     ctaHref: "/login",
+    monthlyCredits: 15,
     priceIdEnvMonthly: "STRIPE_PRICE_STARTER_MONTHLY",
     priceIdEnvYearly: "STRIPE_PRICE_STARTER_YEARLY",
     features: [
@@ -83,6 +91,7 @@ export const PLANS: Plan[] = [
     highlight: true,
     cta: "Quero acesso antecipado",
     ctaHref: "/login",
+    monthlyCredits: 50,
     priceIdEnvMonthly: "STRIPE_PRICE_PREMIUM_MONTHLY",
     priceIdEnvYearly: "STRIPE_PRICE_PREMIUM_YEARLY",
     features: [
@@ -105,6 +114,7 @@ export const PLANS: Plan[] = [
     annual: 129,
     cta: "Assinar Pro",
     ctaHref: "/pricing",
+    monthlyCredits: 200,
     priceIdEnvMonthly: "STRIPE_PRICE_PRO_MONTHLY",
     priceIdEnvYearly: "STRIPE_PRICE_PRO_YEARLY",
     features: [

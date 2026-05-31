@@ -47,14 +47,7 @@
 import Stripe from "stripe";
 import { stripe, getStripeMode } from "./stripe.server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-
-// Creditos mensais por plano.
-// Deve estar alinhado com os limites exibidos em src/lib/plans.ts.
-const PLAN_MONTHLY_CREDITS: Record<string, number> = {
-  starter: 15,
-  premium: 50,
-  pro: 200,
-};
+import { PLANS } from "./plans";
 
 // ---- Helpers de Response ------------------------------------------------
 
@@ -187,7 +180,7 @@ async function grantCredits(
   planId: string,
   eventId: string,
 ): Promise<void> {
-  const amount = PLAN_MONTHLY_CREDITS[planId];
+  const amount = PLANS.find((p) => p.id === planId)?.monthlyCredits;
   if (!amount) {
     console.warn("[webhook] plano sem mapeamento de creditos — nenhum credito concedido", {
       planId,
