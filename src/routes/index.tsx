@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
+import { AtelierHero } from "@/components/home/AtelierHero";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
 import { Tipos2D5D } from "@/components/Tipos2D5D";
@@ -717,11 +718,9 @@ function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header onDemo={() => handlePresentation(true)} onUpload={openUpload} />
-      <Hero
-        onBudget={() => openReward("budget")}
-        onAffiliate={setAffiliateOpen}
-        onDemo={() => handlePresentation(true)}
+      <AtelierHero
         onUpload={openUpload}
+        onBudget={() => openReward("budget")}
         onDropFile={setDroppedFile}
       />
       <HowItWorks onUpload={openUpload} />

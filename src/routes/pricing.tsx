@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
+import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { PLANS, formatPlanPrice, type PlanId } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
 import { useTrack } from "@/lib/use-track";
@@ -241,11 +242,8 @@ function PricingPage() {
       {/* Header */}
       <header className="border-b border-border/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-            <span className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center text-xs">
-              IS
-            </span>
-            Ideal Space
+          <Link to="/" aria-label="Ideal Space — início">
+            <IdealSpaceLogo />
           </Link>
           <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-foreground transition">
