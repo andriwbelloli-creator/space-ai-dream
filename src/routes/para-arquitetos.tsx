@@ -6,9 +6,9 @@ import {
 } from "@/components/landing/ProfessionalLanding";
 import { faqPageJsonLd } from "@/lib/structured-data";
 
-const TITLE = "Módulo de Inteligência Artificial para Arquitetos | Ideal Space";
+const TITLE = "IA Visual para Estudos de Pré-Projeto | Ideal Space para Arquitetos";
 const DESCRIPTION =
-  "Módulo do Arquiteto do Ideal Space, em desenvolvimento: anteprojeto compatível com CAD/BIM e render 5D para o cliente aprovar. Cadastre-se na lista de espera para acessar quando estiver disponível.";
+  "Transforme fotos, briefings e referências em estudos visuais para apresentar possibilidades ao cliente antes do detalhamento. Apoio ao pré-projeto: validação técnica, medidas e execução continuam com o profissional.";
 
 export const Route = createFileRoute("/para-arquitetos")({
   head: () => ({
@@ -24,22 +24,22 @@ export const Route = createFileRoute("/para-arquitetos")({
   component: ParaArquitetosPage,
 });
 
-/** Pilares de venda do módulo — anteprojetos CAD/BIM e render 5D. */
+/** Pilares de venda do módulo — estudos visuais e apresentação de conceito. */
 const PROMISES: ProfessionalPromise[] = [
   {
     icon: Ruler,
-    title: "Anteprojetos em minutos",
-    desc: "Do briefing ao estudo volumétrico: a IA propõe layout, circulação e partido arquitetônico para você validar antes de abrir o software.",
+    title: "Estudos de conceito em minutos",
+    desc: "Envie uma foto do ambiente e receba estudos visuais de paleta, estilo e mobília para alinhar a direção com o cliente antes de abrir o software.",
   },
   {
     icon: Layers,
-    title: "Compatível com CAD e BIM",
-    desc: "Gere referências e estudos que conversam com o seu fluxo de trabalho em CAD/BIM, prontos para detalhar no projeto executivo.",
+    title: "Variações para apresentar",
+    desc: "Gere caminhos A/B e apresente possibilidades diferentes para o mesmo espaço. O cliente decide a direção; você aprofunda no projeto executivo.",
   },
   {
     icon: FileText,
-    title: "Render 5D para aprovar",
-    desc: "Apresente acabamentos, iluminação e estimativa de custo num render 5D. O cliente decide mais rápido e o anteprojeto avança sem retrabalho.",
+    title: "Pré-projeto visual com lista de referências",
+    desc: "Exporte um estudo visual com imagem conceitual e lista de referências de produtos. Apoio ao briefing — validação técnica e execução continuam com o profissional.",
   },
 ];
 
@@ -49,28 +49,28 @@ function ParaArquitetosPage() {
       heroKicker="Módulo do Arquiteto"
       heroHeading={
         <>
-          Acelerador de{" "}
-          <span className="font-serif italic font-normal text-accent">Estudos Preliminares</span>{" "}
-          para Arquitetos
+          IA Visual para{" "}
+          <span className="font-serif italic font-normal text-accent">Pré-Projeto</span>{" "}
+          e Apresentação Profissional
         </>
       }
-      heroSubtitle="Transforme uma foto ou planta do terreno em estudos preliminares com rapidez. A IA do Ideal Space cuida do partido inicial, do estudo de layout e da apresentação 5D para que você dedique o seu tempo ao que importa: o projeto executivo."
+      heroSubtitle="Transforme fotos, briefings e referências em estudos visuais para apresentar possibilidades ao cliente antes do detalhamento. A tecnologia acelera caminhos; a decisão permanece com o profissional."
       ctaLabel="Solicitar Módulo do Arquiteto"
       promisesKicker="Pensado para o escritório"
       promisesHeading={
         <>
-          Do briefing ao anteprojeto,{" "}
-          <span className="font-serif italic font-normal">sem retrabalho</span>.
+          Do briefing ao estudo visual,{" "}
+          <span className="font-serif italic font-normal">antes do detalhamento</span>.
         </>
       }
       promises={PROMISES}
       finalKicker="Fale com nosso time de Projetos"
-      finalHeading="Leve a IA para o seu escritório de arquitetura."
-      finalDescription="Conte sobre os seus projetos e montamos uma demonstração do Módulo do Arquiteto sob medida para a sua rotina."
+      finalHeading="Leve o pré-projeto visual para o seu escritório."
+      finalDescription="Conte sobre os seus projetos e montamos uma demonstração sob medida para a sua rotina de briefing e apresentação a clientes."
       finalBullets={[
-        "Estudo de layout assistido",
-        "Exportação amigável a CAD/BIM",
-        "Render 5D com estimativa de custo",
+        "Estudos visuais de conceito por ambiente",
+        "Variações A/B para alinhar com o cliente",
+        "Lista de referências com estimativa de orçamento",
       ]}
       faq={FAQ}
       internalLinks={INTERNAL_LINKS}
@@ -81,15 +81,15 @@ function ParaArquitetosPage() {
   );
 }
 
-/** FAQ específica do perfil arquiteto. Foco em CAD/BIM, ART, executivo. */
+/** FAQ específica do perfil arquiteto. Foco em pré-projeto visual, ART, executivo. */
 const FAQ = [
   {
     q: "O Ideal Space substitui o projeto executivo?",
     a: "Não. A IA gera propostas visuais e estudos preliminares que aceleram a fase de concepção. O projeto executivo, a memória de cálculo, ART/RRT e aprovação na prefeitura continuam sendo do arquiteto responsável.",
   },
   {
-    q: "Os estudos saem compatíveis com AutoCAD ou Revit?",
-    a: "O Módulo do Arquiteto está em desenvolvimento como acesso antecipado. A entrega prevista são referências visuais e layouts que você usa de base no seu fluxo CAD/BIM, sem importação direta de arquivos DWG ou RVT por enquanto.",
+    q: "Os estudos visuais substituem o projeto executivo?",
+    a: "Não. O Ideal Space gera propostas visuais conceituais para apoiar briefing e apresentação ao cliente. Projeto executivo, memorial descritivo, ART/RRT e aprovações de obra continuam sendo responsabilidade do profissional.",
   },
   {
     q: "Que tipo de imóvel funciona melhor?",
@@ -100,8 +100,8 @@ const FAQ = [
     a: "Sim. Cada projeto pode virar uma página pública compartilhável, com o antes e depois e a lista de produtos sugerida. Você manda o link para o cliente decidir antes de seguir para o executivo.",
   },
   {
-    q: "Quando o render 5D fica disponível?",
-    a: "Estamos liberando o render 5D em ondas para arquitetos da lista de espera. Quem se cadastra agora entra na próxima rodada e ajuda a calibrar o que ainda é prioridade.",
+    q: "Que tipo de entrega eu consigo hoje?",
+    a: "Hoje: estudo visual 2D do ambiente com estilo aplicado, slider antes/depois para apresentar ao cliente e lista de referências de produtos com estimativa de orçamento. Render 5D e integração com CAD/BIM são visão futura.",
   },
   {
     q: "Quanto custa pra escritórios?",
