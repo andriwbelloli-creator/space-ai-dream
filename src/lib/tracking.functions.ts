@@ -100,10 +100,9 @@ function sanitizeProps(props: unknown): Record<string, string> {
  * Fire-and-forget no client — nunca bloqueia nem quebra a UI. Eventos fora da
  * allowlist são ignorados silenciosamente.
  */
-export const logEvent = createServerFn({ method: "POST" })
-  .inputValidator((data: LogEventInput) => data)
-  .handler(async ({ data }): Promise<{ ok: boolean }> => {
-    const input = data;
+export const logEvent = createServerFn({ method: "POST" }).handler(
+  async ({ data }): Promise<{ ok: boolean }> => {
+    const input = (data ?? {}) as LogEventInput;
     if (!ALLOWED_EVENTS.includes(input.event as FunnelEvent)) {
       return { ok: false };
     }
@@ -119,4 +118,5 @@ export const logEvent = createServerFn({ method: "POST" })
       console.error("logEvent failed", e);
     }
     return { ok: true };
-  });
+  },
+);
