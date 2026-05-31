@@ -15,7 +15,7 @@ export type AccountSubscription = {
 };
 
 export type AccountSummary = {
-  plan: "free" | "premium" | "pro" | "admin";
+  plan: "free" | "starter" | "premium" | "pro" | "admin";
   unlimited: boolean;
   balance: number;
   renewsAt: string | null;
@@ -66,9 +66,9 @@ export const getAccountSummary = createServerFn({ method: "GET" })
         balance = typeof row.balance === "number" ? row.balance : 0;
         if (
           row.plan === "free" ||
+          row.plan === "starter" ||
           row.plan === "premium" ||
-          row.plan === "pro" ||
-          row.plan === "admin"
+          row.plan === "pro"
         ) {
           plan = row.plan;
         }

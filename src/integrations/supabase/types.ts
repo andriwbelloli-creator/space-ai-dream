@@ -1104,7 +1104,7 @@ export type Database = {
         | "subscription_grant"
         | "admin_adjust"
         | "refund"
-      plan_tier: "free" | "premium" | "pro"
+      plan_tier: "free" | "premium" | "pro" | "starter"
       subscription_status: "active" | "canceled" | "past_due" | "trialing"
     }
     CompositeTypes: {
@@ -1241,7 +1241,7 @@ export const Constants = {
         "admin_adjust",
         "refund",
       ],
-      plan_tier: ["free", "premium", "pro"],
+      plan_tier: ["free", "premium", "pro", "starter"],
       subscription_status: ["active", "canceled", "past_due", "trialing"],
     },
   },
