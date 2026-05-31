@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EditorialHeader } from "@/components/editorial/EditorialHeader";
 
 const LeadFormModal = lazy(() =>
   import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
