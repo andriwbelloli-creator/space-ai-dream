@@ -42,9 +42,8 @@ const STORAGE_KEY = "idealspace.returnContext.v1";
 const MAX_AGE_MS = 30 * 60 * 1000;
 
 // Prefixes que NÃO podem ser destino de retorno — geram loop ou caem
-// fora do escopo deste mecanismo. Pricing tem fluxo próprio de retorno
-// pós-checkout; aqui só cuidamos do retorno pós-auth.
-const UNSAFE_PREFIXES = ["/login", "/auth/callback", "/auth/", "/reset-password", "/pricing"];
+// fora do escopo deste mecanismo.
+const UNSAFE_PREFIXES = ["/login", "/auth/callback", "/auth/", "/reset-password"];
 
 type SaveInput = {
   /** Path absoluto same-origin (ex: "/vs/planner-5d"). */

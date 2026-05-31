@@ -211,7 +211,7 @@ function PricingPage() {
   const handleCheckout = async (planId: PlanId, currentCycle: Cycle) => {
     if (!user) {
       // Preserva intenção: ao voltar do login, user cai de novo em /pricing.
-      window.location.href = "/login?next=/pricing";
+      window.location.href = "/login?redirect=%2Fpricing";
       return;
     }
     setCheckoutError(null);
@@ -373,7 +373,7 @@ function PricingPage() {
                     <Button
                       onClick={() => {
                         track("plan_selected", { plan: p.id, cycle });
-                        window.location.href = user ? "/projetos" : "/login?next=/pricing";
+                        window.location.href = user ? "/projetos" : "/login?redirect=%2Fpricing";
                       }}
                       className={`mt-7 h-11 rounded-xl ${
                         p.highlight
@@ -644,6 +644,7 @@ function PricingPage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/login"
+                search={{ redirect: "/pricing" }}
                 className="inline-flex items-center rounded-full bg-accent text-accent-foreground h-11 px-5 text-sm font-medium hover:opacity-90"
               >
                 Começar grátis <ArrowRight className="h-4 w-4 ml-1" />
