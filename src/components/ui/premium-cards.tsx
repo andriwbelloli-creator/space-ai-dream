@@ -26,12 +26,11 @@ const aspectClass: Record<CardAspect, string> = {
   tall: "aspect-[4/5]",
 };
 
-type CtaProps = {
-  ctaLabel?: string;
-  to?: string;
-  href?: string;
-  onClick?: () => void;
-};
+type CtaProps =
+  | { ctaLabel: string; to: string; href?: never; onClick?: never }
+  | { ctaLabel: string; href: string; to?: never; onClick?: never }
+  | { ctaLabel: string; onClick: () => void; to?: never; href?: never }
+  | { ctaLabel?: undefined; to?: undefined; href?: undefined; onClick?: undefined };
 
 function CardCta({
   ctaLabel,
@@ -177,7 +176,7 @@ export function PremiumOverlayCard({
   const wrapperProps: React.HTMLAttributes<HTMLElement> & {
     href?: string;
     to?: string;
-    type?: "button";
+    type?: string;
   } = to
     ? {} // handled by Link wrapper below
     : href
