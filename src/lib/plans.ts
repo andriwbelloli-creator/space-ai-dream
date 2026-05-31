@@ -103,8 +103,8 @@ export const PLANS: Plan[] = [
     tagline: "Para designers, arquitetos, corretores e imobiliárias.",
     monthly: 139,
     annual: 129,
-    cta: "Falar com vendas",
-    ctaHref: "mailto:contato@idealspace.com.br",
+    cta: "Assinar Pro",
+    ctaHref: "/pricing",
     priceIdEnvMonthly: "STRIPE_PRICE_PRO_MONTHLY",
     priceIdEnvYearly: "STRIPE_PRICE_PRO_YEARLY",
     features: [

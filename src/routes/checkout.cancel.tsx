@@ -18,10 +18,10 @@ function CheckoutCancelPage() {
           <X className="h-7 w-7" />
         </div>
         <h1 className="mt-5 text-2xl sm:text-3xl font-semibold tracking-[-0.01em]">
-          Pagamento cancelado
+          Compra não concluída
         </h1>
         <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-          Sem cobrança. Você pode tentar de novo quando quiser, é rápido.
+          Sem cobrança. Você pode escolher um plano quando quiser.
         </p>
         <Button
           asChild

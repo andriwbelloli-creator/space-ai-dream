@@ -202,8 +202,7 @@ function PricingPage() {
   const { user } = useAuth();
 
   // Estado do checkout Stripe: planId em loading + mensagem de erro
-  // do último submit. Sprint 3 só cobre Starter e Premium via Checkout;
-  // Pro continua abrindo o lead modal "Fale com vendas".
+  // do último submit. Starter, Premium e Pro via Checkout.
   const [loadingPlanId, setLoadingPlanId] = useState<PlanId | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const startCheckout = useServerFn(createCheckoutSession);
@@ -362,21 +361,7 @@ function PricingPage() {
                     ))}
                   </ul>
 
-                  {p.id === "pro" ? (
-                    <Button
-                      onClick={() => {
-                        track("plan_selected", { plan: p.id, cycle });
-                        setLead({ planInterest: p.id, title: "Fale com vendas" });
-                      }}
-                      className={`mt-7 h-11 rounded-xl ${
-                        p.highlight
-                          ? "bg-accent text-accent-foreground hover:opacity-95"
-                          : "bg-foreground text-background hover:bg-foreground/90"
-                      }`}
-                    >
-                      {p.cta}
-                    </Button>
-                  ) : p.priceIdEnvMonthly ? (
+                  {p.priceIdEnvMonthly ? (
                     <Button
                       onClick={() => {
                         track("plan_selected", { plan: p.id, cycle });
