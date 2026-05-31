@@ -313,16 +313,16 @@ function PricingPage() {
       {/* Plans */}
       <section className="pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             {PLANS.map((p) => {
               const price = isAnnual ? p.annual : p.monthly;
               return (
                 <div
                   key={p.id}
-                  className={`relative rounded-3xl p-7 flex flex-col border bg-card transition ${p.highlight ? "ring-2 ring-accent shadow-2xl bg-accent/[0.04] lg:-translate-y-2" : ""}`}
+                  className={`relative rounded-3xl p-8 flex flex-col border bg-card transition ${p.highlight ? "ring-2 ring-accent shadow-2xl bg-accent/[0.04] lg:-translate-y-2" : ""}`}
                 >
                   {p.highlight && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent text-accent-foreground text-[10px] font-semibold uppercase tracking-widest px-3 py-1 shadow-lg">
+                    <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-foreground text-background text-[10px] font-semibold uppercase tracking-widest px-3.5 py-1 shadow-lg">
                       ★ Mais escolhido
                     </span>
                   )}
