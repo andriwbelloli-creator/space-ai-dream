@@ -68,6 +68,13 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Intercepta o webhook do Stripe antes do TanStack Start.
+    // Import dinamico: evita carregar o SDK Stripe em todas as requisicoes.
+    if (new URL(request.url).pathname === "/api/stripe-webhook" && request.method === "POST") {
+      const { handleStripeWebhook } = await import("./lib/stripe-webhook.server");
+      return handleStripeWebhook(request);
+    }
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
