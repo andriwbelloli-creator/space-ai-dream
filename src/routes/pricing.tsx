@@ -181,7 +181,7 @@ const PLAN_AUDIENCE: Record<string, string> = {
 };
 
 function PricingPage() {
-  const [cycle, setCycle] = useState<Cycle>("monthly");
+  const [cycle, setCycle] = useState<Cycle>("annual");
   const isAnnual = cycle === "annual";
   // Funil de leads: `lead` aberto guarda o contexto do CTA que disparou o modal.
   const [lead, setLead] = useState<{ planInterest?: string; title?: string } | null>(null);
@@ -339,11 +339,19 @@ function PricingPage() {
                     </span>
                     {price > 0 && <span className="text-sm text-muted-foreground">/mês</span>}
                   </div>
-                  {isAnnual && price > 0 && (
-                    <div className="mt-1 text-[11px] text-accent">
-                      cobrado anualmente · economize 25%
+                  {isAnnual && price > 0 ? (
+                    <div className="mt-1 space-y-0.5">
+                      <div className="text-[11px] text-accent">
+                        cobrado anualmente · {formatPlanPrice(p.annual * 12)}/ano
+                      </div>
+                      <div className="text-[11px] text-accent font-medium">
+                        Você economiza {formatPlanPrice((p.monthly - p.annual) * 12)}/ano
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">
+                        Se pagar mensalmente: {formatPlanPrice(p.monthly)}/mês
+                      </div>
                     </div>
-                  )}
+                  ) : null}
                   <p className="mt-3 text-sm text-muted-foreground">{p.tagline}</p>
 
                   <ul className="mt-6 space-y-2.5 text-sm flex-1">
@@ -361,7 +369,21 @@ function PricingPage() {
                     ))}
                   </ul>
 
-                  {p.priceIdEnvMonthly ? (
+                  {p.id === "free" ? (
+                    <Button
+                      onClick={() => {
+                        track("plan_selected", { plan: p.id, cycle });
+                        window.location.href = user ? "/projetos" : "/login?next=/pricing";
+                      }}
+                      className={`mt-7 h-11 rounded-xl ${
+                        p.highlight
+                          ? "bg-accent text-accent-foreground hover:opacity-95"
+                          : "bg-foreground text-background hover:bg-foreground/90"
+                      }`}
+                    >
+                      {p.cta}
+                    </Button>
+                  ) : p.priceIdEnvMonthly ? (
                     <Button
                       onClick={() => {
                         track("plan_selected", { plan: p.id, cycle });
