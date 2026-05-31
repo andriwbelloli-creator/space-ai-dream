@@ -63,12 +63,13 @@ export function AtelierHero({ onUpload, onBudget, onDropFile }: Props) {
     onBudget();
   };
 
-  // Cards de entregáveis — Moodboard/Materiais reforçam o fluxo (abrem upload),
+  // Cards de entregáveis — Estilo e Móveis reforçam o fluxo (abrem upload),
   // Lista de compras leva ao orçamento de exemplo (preserva onBudget).
+  // Nomes honestos e aderentes ao produto (sem prometer entregável que não existe).
   const CARDS = [
-    { label: "Moodboard", sub: "Paleta e clima do projeto", img: imgMoodboard, onClick: handleDropzoneUpload },
-    { label: "Materiais", sub: "Acabamentos e texturas", img: imgMateriais, onClick: handleDropzoneUpload },
-    { label: "Lista de compras", sub: "Produtos com orçamento", img: imgLista, onClick: handleBudget },
+    { label: "Estilo e paleta", sub: "Defina a direção visual do ambiente.", img: imgMoodboard, onClick: handleDropzoneUpload },
+    { label: "Móveis e decoração", sub: "Veja peças e composições coerentes com o estilo.", img: imgMateriais, onClick: handleDropzoneUpload },
+    { label: "Lista de compras", sub: "Organize referências para tirar o projeto do papel.", img: imgLista, onClick: handleBudget },
   ];
 
   return (

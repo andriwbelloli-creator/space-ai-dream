@@ -8,8 +8,8 @@
  */
 import { EditorialFeatureCard, CollectionCard } from "@/components/ui/premium-cards";
 
-import livingWarm from "@/assets/decorated-living-warm.jpg";
-import kitchenIsland from "@/assets/decorated-kitchen-island.jpg";
+import livingAlt from "@/assets/decorated-living.jpg";
+import varandaCuradoria from "@/assets/gallery-varanda.jpg";
 import bathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
 import office from "@/assets/gallery-office.jpg";
 
@@ -40,7 +40,7 @@ export function EditorialCollections() {
         <div className="grid grid-cols-1 gap-5 sm:gap-6 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <EditorialFeatureCard
-              src={livingWarm}
+              src={livingAlt}
               alt="Sala de estar decorada com presença em apartamento compacto"
               kicker="Curadoria"
               title={
@@ -58,8 +58,8 @@ export function EditorialCollections() {
           <div className="grid gap-5 sm:gap-6 lg:col-span-5">
             <div className="grid grid-cols-1 gap-5 sm:gap-6 sm:grid-cols-2">
               <CollectionCard
-                src={kitchenIsland}
-                alt="Cozinha integrada com luz natural pra quem mora de aluguel"
+                src={varandaCuradoria}
+                alt="Varanda decorada com plantas e mobília leve pra quem mora de aluguel"
                 title="Projetos para alugar"
                 description="Decoração que vai com você no próximo apartamento, sem obra."
                 count="Tendência"
