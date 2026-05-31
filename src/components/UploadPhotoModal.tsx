@@ -74,17 +74,17 @@ const STYLES = [
   { id: "moderno-organico", name: "Moderno orgânico", sub: "Curvas e biofilia" },
   { id: "transicional", name: "Transicional", sub: "Clássico com leveza" },
   { id: "minimalista", name: "Minimalista", sub: "Menos é mais" },
-  { id: "natural", name: "Natural", sub: "Madeira e fibras" },
+  { id: "natural", name: "Natural aconchegante", sub: "Madeira e fibras" },
   { id: "rustico-moderno", name: "Rústico moderno", sub: "Aconchego com metal preto" },
   { id: "industrial", name: "Industrial", sub: "Tijolo e metal" },
   { id: "luxo", name: "Luxo discreto", sub: "Materiais nobres" },
-  { id: "classico", name: "Clássico", sub: "Simetria e boiseries" },
+  { id: "classico", name: "Clássico contemporâneo", sub: "Simetria e boiseries" },
   { id: "boho-chic", name: "Boho chic", sub: "Eclético e acolhedor" },
-  { id: "mid-century", name: "Mid-century", sub: "Anos 50/60 quente" },
+  { id: "mid-century", name: "Mid-century moderno", sub: "Anos 50/60 quente" },
   { id: "mediterraneo", name: "Mediterrâneo", sub: "Costeiro caiado" },
   { id: "art-deco", name: "Art-déco", sub: "Geometria e brilho" },
   { id: "maximalista", name: "Maximalista", sub: "Cor e camadas" },
-  { id: "brutalista", name: "Brutalista", sub: "Concreto escultural" },
+  { id: "brutalista", name: "Brutalista contemporâneo", sub: "Concreto escultural" },
 ];
 
 // Retrocompat: drafts/variations antigas podem ter slugs internos legados
