@@ -1,63 +1,108 @@
-## Escopo
+## Escopo confirmado
 
-Aplicar a direção **Atelier Inteligente** (visual principal) + **Canvas de Decisão** (estrutura funcional) na home (`/`), preservando tudo que já roda. **Casa Viva** fica só como inspiração emocional, não vira UI.
+- **Páginas alvo**: `/` (home), `/estilos/$styleSlug`, `/ambientes/$roomSlug`, `/estilos/$styleSlug/$roomSlug`, `/para-arquitetos`, `/para-designers`, `/para-imobiliarias`.
+- **Fora do escopo**: `/admin/*`, `/_authenticated/*` (projetos, minha-conta), `/checkout/*`, `/login`, `/auth/callback`, `/pricing`, `/legal`, `/p/$projectId`, `/reset-password`, `/vs/planner-5d`, `/orcamento-design-interiores`. Continuam exatamente como estão.
+- **Fidelidade**: pixel-a-pixel ao mockup (paleta creme, serif display, card laranja MAIS ESCOLHIDO, before/after central, cards moodboard/materiais/lista, bloco de planos no fundo).
+- **Build quebrado autorizado a permanecer**: trabalho só em JSX + CSS, zero alteração em chamadas Supabase tipadas, zero alteração em `types.ts`, zero migration, zero `client.ts`.
 
-Tudo descrito aqui é **front-end, em arquivos visuais**. Nenhum contrato de backend, hook ou rota muda.
+## Riscos aceitos pelo usuário
 
-## O que muda
+- 69 erros TS continuam.
+- Componentes que hoje chamam Supabase tipado (ex.: `use-credits`, `projects.functions`) **não serão tocados** — só os componentes de apresentação.
+- Se um componente visual depende de dados tipados quebrados, mantenho o import existente sem alterar a forma da chamada.
 
-### 1. Design tokens (`src/styles.css`)
-Atualizo apenas os valores OKLCH dos tokens existentes para a paleta solicitada — **sem renomear tokens**, então shadcn/ui e todos os componentes continuam funcionando:
-- `--background` → marfim arquitetônico `#F7F3EC`
-- `--card` → branco cálido `#FFFCF7`
-- `--foreground` / `--primary` → grafite profundo `#171717`
-- `--muted-foreground` → cinza pedra `#6F6A62`
-- `--border` / `--input` → areia `#E5DED2`
-- `--accent` / `--ring` → terracota suave `#B87355`
-- `--gold-soft` → dourado fosco `#C4A56A`
-- Adiciono `--sage` (`#6F8F7A`) e `--ink-blue` (`#0E1116`) como tokens novos (chips Canvas de Decisão e módulos tech).
-- Tipografia já está pronta: Plus Jakarta Sans + Instrument Serif.
+## Design system (novo, em `src/styles.css`)
 
-### 2. Home (`src/routes/index.tsx`)
-Reorganizo a sequência da home na ordem do brief, **reaproveitando componentes já existentes** (BeforeAfter, AmbientesGrid, EditorialCollections, PremiumVerticalCard, UploadPhotoModal, LeadFormModal):
+Tokens derivados do mockup, em `oklch`:
 
-1. **Header premium** (já existe) — só refino de CTA "Criar ambiente".
-2. **Hero Atelier Inteligente** — headline serif "Transforme seu ambiente antes de reformar", subheadline, CTAs `Criar meu primeiro ambiente` (abre `UploadPhotoModal`, fluxo intacto) + `Ver antes/depois` (scroll/ancora pra galeria), microcopy. À direita: `BeforeAfter` com chips visuais sobrepostos (`Japandi`, `R$ 8.000`, `Preservar piso`, `Lista de compras`, `Variações`).
-3. **Faixa de confiança** — 4 selos (Privacidade garantida, IA para interiores, Resultados em segundos, Orçamento e curadoria). Sem números inventados.
-4. **Como funciona** — 4 passos com ícones lineares (Envie foto → Escolha estilo → Defina orçamento → Compare e salve).
-5. **Canvas de Decisão** — bloco novo, mockup estático com 6 cards (Antes/depois, Variações, Moodboard, Lista de móveis, Orçamento, Próximos passos). Pura UI, sem novo backend.
-6. **Transformações reais** — mantém `AmbientesGrid` existente, só refresh de cabeçalho.
-7. **Planos** — refino visual dos 3 cards usando `PLANS` de `src/lib/plans.ts`. **CTAs e fluxo de checkout permanecem idênticos** (mesmos handlers).
-8. **Prova social** — mantém estrutura atual, só ajusta tipografia editorial; sem inventar métricas.
-9. **FAQ** — usa `Accordion` (já importado) com as 5 perguntas do brief.
-10. **Footer** — mantém.
+```text
+--background:       oklch(0.965 0.012 75)   /* creme #f5f0e6 */
+--foreground:       oklch(0.22 0.02 60)     /* near-black quente */
+--muted:            oklch(0.92 0.015 75)
+--muted-foreground: oklch(0.5 0.02 60)
+--accent:           oklch(0.62 0.17 42)     /* laranja terracota CTA */
+--accent-foreground:oklch(0.98 0.01 75)
+--gold:             oklch(0.72 0.10 75)     /* badge MAIS ESCOLHIDO */
+--card:             oklch(0.98 0.008 75)
+--border:           oklch(0.85 0.015 75)
+--radius:           1.25rem                 /* cards 20-24px */
 
-### 3. O que NÃO mexe
-- `src/integrations/supabase/*`, hooks de auth/credits, `src/lib/plans.ts`, `src/lib/affiliate.ts`, qualquer server function, todas as outras rotas (`/pricing`, `/login`, `/admin/*`, `/checkout/*`, `/ambientes/*`, `/estilos/*`, etc.).
-- Props públicas de `BeforeAfter`, `AmbientesGrid`, `UploadPhotoModal`, `LeadFormModal`, `PresentationModal`.
-- Nenhum asset gerado por IA é regenerado — uso só o que já está em `src/assets/`.
-- `src/routeTree.gen.ts`, `.env*`, `package.json` intocados.
-- Nada relacionado a Stripe / billing nesta task (a conversa anterior fica pendente).
+--font-display: "Cormorant Garamond", "Instrument Serif", Georgia, serif;
+--font-sans:    "Inter", system-ui, sans-serif;
+```
 
-### 4. Responsividade
-- Mobile: hero empilha (texto → mockup), CTAs full-width, cards do Canvas em 1 coluna, faixa de confiança em scroll horizontal suave, FAQ accordion nativo.
-- Tablet: 2 colunas no Canvas e planos.
-- Desktop: layout editorial conforme referência Atelier Inteligente.
+Tudo via token semântico — nenhum componente recebe hex direto.
 
-## Arquivos alterados (estimativa)
-- `src/styles.css` — tokens de cor.
-- `src/routes/index.tsx` — reorganização visual da home.
-- (talvez) `src/components/landing/CanvasDecisao.tsx` — componente novo isolado pro bloco 5, para não inflar mais o `index.tsx`.
+## Estrutura visual (template comum)
 
-## Riscos
-- `index.tsx` é grande (2.669 linhas) e mistura várias seções; risco de regressão em seções não citadas. **Mitigação:** mantenho seções existentes que não conflitam com o brief (ex.: `EditorialCollections`, `Tipos2D5D`, `ProfessionalLanding` se já estiverem na home) e só reordeno/refino as visadas.
-- Mudança dos tokens OKLCH afeta **todas as páginas**. **Mitigação:** os tokens novos são variações da mesma família warm-neutral atual; visual de outras páginas fica coerente, não quebra.
-- Sem testes visuais automatizados — vou validar via preview após cada bloco.
+```text
+┌─────────────────────────────────────────────┐
+│ Header creme: Logo serif | nav | CTA laranja│
+├──────────────┬──────────────────────────────┤
+│ H1 serif XL  │  Before/After interativo     │
+│ subtítulo    │  + 3 chips flutuantes        │
+│ 2 CTAs       │  (estilo / orçamento / piso) │
+│ 3 features   │                              │
+├──────────────┴──────────────────────────────┤
+│ 3 cards horizontais: Moodboard / Materiais  │
+│ / Lista de compras (imagem + título serif)  │
+├─────────────────────────────────────────────┤
+│ Planos: 3 cards, central com badge dourado  │
+└─────────────────────────────────────────────┘
+```
 
-## Validação
-- `bun run build` + `bunx tsc --noEmit` verdes.
-- Preview em desktop e mobile (viewport 375 e 768).
-- Checagem rápida: `/pricing`, `/login`, `/p/$projectId` ainda renderizam corretamente após a mudança de tokens.
+## Arquivos a criar
 
-## Pergunta antes de executar
-Quer que eu rode **tudo de uma vez** (tokens + home reorganizada num único push) ou em **2 fases** (1: tokens + hero novo; 2: Canvas de Decisão + restante)? Duas fases é mais seguro, uma fase é mais rápido.
+1. `src/components/layout/EditorialHeader.tsx` — header creme reaproveitável (logo serif, nav, CTA laranja).
+2. `src/components/editorial/HeroBeforeAfter.tsx` — hero split com `BeforeAfter` existente + chips flutuantes.
+3. `src/components/editorial/FeatureChips.tsx` — 3 chips (Antes/depois, Lista, Orçamento).
+4. `src/components/editorial/EditorialCardsRow.tsx` — 3 cards Moodboard/Materiais/Lista (genérico, recebe props).
+5. `src/components/editorial/PlansBlock.tsx` — bloco de 3 planos com card central destacado (lê de `src/lib/plans.ts` sem alterar contrato).
+
+## Arquivos a editar (apresentação apenas)
+
+- `src/styles.css` — substituir tokens da paleta, adicionar `--gold`, importar fontes serif via `@import` do Google Fonts.
+- `src/routes/index.tsx` — montar nova home com os 5 componentes acima.
+- `src/components/landing/ProfessionalLanding.tsx` — trocar header, hero, seção de promessas e CTA final pela nova linguagem (mantendo props e LeadFormModal intactos).
+- `src/components/ExpandedLanding.tsx` — aplicar mesma linguagem (hero serif + before/after + cards editoriais + FAQ + final CTA).
+
+## Arquivos NÃO tocados
+
+- `src/integrations/supabase/*` (todos).
+- `src/lib/*.functions.ts` e `*.server.ts`.
+- `src/lib/plans.ts`, `src/lib/auth.tsx`, `src/lib/credits*`, `src/lib/checkout*`, `src/lib/stripe*`.
+- `src/routes/_authenticated/*`, `src/routes/admin.*`, `src/routes/checkout.*`, `src/routes/login.tsx`, `src/routes/pricing.tsx`, `src/routes/legal.tsx`.
+- `src/components/LeadFormModal.tsx`, `src/components/UploadPhotoModal.tsx`, `CourseModal`, `PresentationModal`, `RewardModal`, `Share*`.
+- `Footer.tsx` (mantém atual; ajusto só cores via tokens, sem mudar estrutura).
+- `src/routeTree.gen.ts`, `.env`, `supabase/config.toml`, `CLAUDE.md`.
+
+## Imagens
+
+- Reuso assets existentes em `src/assets/` (`decorated-living.jpg`, `moodboard-pro.jpg`, `floorplan-apartment.jpg` e o par before/after que `BeforeAfter` já consome).
+- Nenhuma regeneração de imagem (proibido por CLAUDE.md §7).
+
+## Tipografia
+
+- Adicionar Google Fonts via `@import` no topo de `src/styles.css`:
+  - Cormorant Garamond (display serif)
+  - Inter (sans body)
+- H1/H2: `font-display`, peso 500, tracking apertado.
+- Body: `font-sans`.
+
+## Validações ao final
+
+- `bun run build` (relatar resultado).
+- `bunx tsc --noEmit` (esperado: continuar com os 69 erros pré-existentes; não devo introduzir novos).
+- Smoke visual em `/`, `/estilos/escandinavo`, `/ambientes/sala`, `/para-arquitetos` no preview.
+
+## Fora deste plano (não faço agora)
+
+- Resolver os 69 erros TS.
+- Tocar em `types.ts` ou banco.
+- Redesenhar `/pricing`, `/login`, `/admin/*`, `/_authenticated/*`.
+- Trocar copy ou pricing (só visual).
+- Commit/push (Faixa Vermelha — aguardo autorização separada depois do diff pronto).
+
+## Resultado esperado
+
+Home e 6 rotas de landing SEO com o visual do mockup, com a mesma linguagem de header/hero/cards/planos, mantendo todo o backend, auth, créditos, Stripe e afiliados intocados.
