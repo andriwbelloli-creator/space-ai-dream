@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EditorialHeader } from "@/components/editorial/EditorialHeader";
 
 const LeadFormModal = lazy(() =>
   import("@/components/LeadFormModal").then((m) => ({ default: m.LeadFormModal })),
@@ -151,50 +152,27 @@ export function ProfessionalLanding({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header — navegação padrão */}
-      <header className="border-b border-border/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
-            <span className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center text-xs">
-              IS
-            </span>
-            Ideal Space
-          </Link>
-          <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground transition">
-              Início
-            </Link>
-            <Link to="/pricing" className="hover:text-foreground transition">
-              Planos
-            </Link>
-          </nav>
-          <Link
-            to="/"
-            className="text-sm rounded-full border h-9 px-4 inline-flex items-center hover:bg-muted"
-          >
-            Voltar
-          </Link>
-        </div>
-      </header>
+      {/* Header — padrao editorial (creme + logo serif + CTA terracota). */}
+      <EditorialHeader onCtaClick={() => setLeadOpen(true)} ctaLabel={ctaLabel} />
 
-      {/* Hero */}
-      <section className="pt-16 sm:pt-24 pb-12">
+      {/* Hero — H1 serif gigante, kicker terracota, CTA preto. Match com a home. */}
+      <section className="pt-16 sm:pt-20 pb-14">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
           <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-accent">
             <Sparkles className="h-3.5 w-3.5" />
             {heroKicker}
           </div>
 
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl tracking-[-0.02em] font-semibold leading-[1.05]">
+          <h1 className="mt-5 font-serif text-5xl font-normal leading-[1.04] tracking-[-0.01em] text-foreground sm:text-6xl lg:text-7xl">
             {heroHeading}
           </h1>
 
-          <p className="mt-6 text-muted-foreground text-lg leading-relaxed">{heroSubtitle}</p>
+          <p className="mt-7 text-base text-muted-foreground leading-relaxed">{heroSubtitle}</p>
 
           <div className="mt-9">
             <Button
               onClick={() => setLeadOpen(true)}
-              className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-accent text-accent-foreground hover:opacity-95"
+              className="h-12 w-full sm:w-auto rounded-full px-8 text-base bg-foreground text-background hover:bg-foreground/90"
             >
               {ctaLabel}
               <ArrowRight className="h-5 w-5 ml-2" />
