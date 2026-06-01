@@ -238,7 +238,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Ideal Space | Design de interiores com IA, projeto 2D, 5D e planta baixa" },
+      { title: "Ideal Space | Design de interiores com IA, projeto 2D a partir de uma foto" },
       {
         name: "description",
         content:
@@ -788,8 +788,10 @@ function Index() {
         open={courseOpen}
         onOpenChange={setCourseOpen}
         onEnroll={() => {
+          // Curso vira lista de espera: captura o lead via LeadFormModal
+          // (source="curso" → submitLead → tabela leads), sem checkout.
           setCourseOpen(false);
-          openReward("budget");
+          setLead({ source: "curso", title: "Lista de espera — Curso" });
         }}
       />
 

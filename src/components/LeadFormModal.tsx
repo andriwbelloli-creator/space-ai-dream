@@ -132,6 +132,19 @@ function getSourceCopy(source: string | undefined): SourceCopy {
     };
   }
 
+  // Lista de espera do curso (vem do CourseModal — sem checkout/cobrança agora)
+  if (key === "curso") {
+    return {
+      heading: "Entre na lista de espera do curso",
+      subheading:
+        "Deixe seu contato e avisamos assim que as turmas abrirem, com condição de lote de lançamento.",
+      ctaLabel: "Entrar na lista",
+      successHeading: "Você está na lista!",
+      successBody:
+        "Assim que abrirmos turma, avisamos por e-mail e WhatsApp. Sem cobrança agora.",
+    };
+  }
+
   // Upsell de download HD pra usuário Free
   if (key === "hd-download-upsell" || key === "hd_download_upsell") {
     return {

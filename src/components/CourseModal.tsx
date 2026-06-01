@@ -119,7 +119,7 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
           <div className="relative grid lg:grid-cols-[1.4fr_1fr] gap-8 items-end">
             <div>
               <div className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-accent">
-                <GraduationCap className="h-3.5 w-3.5" /> Curso oficial Ideal Space
+                <GraduationCap className="h-3.5 w-3.5" /> Curso · em breve
               </div>
               <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl tracking-[-0.02em] font-semibold leading-tight">
                 Decoração com IA{" "}
@@ -147,21 +147,23 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
 
             <div className="rounded-2xl border border-white/15 bg-white/5 backdrop-blur p-5">
               <div className="text-[10px] uppercase tracking-[0.22em] text-background/60">
-                Investimento
+                Lote de lançamento
               </div>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="text-3xl sm:text-4xl font-semibold tracking-tight">R$ 497</span>
                 <span className="text-xs text-background/60 line-through">R$ 897</span>
               </div>
-              <div className="text-xs text-background/70 mt-0.5">ou 12× R$ 49,70 no cartão</div>
+              <div className="text-xs text-background/70 mt-0.5">
+                Condição reservada para a lista de espera
+              </div>
               <Button
                 onClick={handleEnroll}
                 className="mt-4 w-full h-11 rounded-full bg-accent text-accent-foreground hover:opacity-95"
               >
-                Garantir minha vaga <Sparkles className="ml-1.5 h-4 w-4" />
+                Entrar na lista de espera <Sparkles className="ml-1.5 h-4 w-4" />
               </Button>
               <p className="mt-2 text-[10px] text-center text-background/60">
-                7 dias de garantia incondicional
+                Turmas abrem por lote. Entre na lista para ser avisado primeiro. Sem cobrança agora.
               </p>
             </div>
           </div>
@@ -247,7 +249,7 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
 
             <div className="rounded-2xl border bg-card/60 p-4">
               <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Está incluso
+                No lançamento você terá
               </div>
               <ul className="mt-2 space-y-2">
                 {PERKS.map((p) => (
@@ -265,7 +267,7 @@ export function CourseModal({ open, onOpenChange, onEnroll }: Props) {
               onClick={() => onEnroll?.()}
               className="w-full h-11 rounded-full bg-foreground text-background hover:bg-foreground/90"
             >
-              Quero me inscrever <Sparkles className="ml-1.5 h-4 w-4" />
+              Entrar na lista de espera <Sparkles className="ml-1.5 h-4 w-4" />
             </Button>
           </aside>
         </div>
