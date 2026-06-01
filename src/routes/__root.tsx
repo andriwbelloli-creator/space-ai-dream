@@ -10,8 +10,11 @@ import {
 
 import appCss from "../styles.css?url";
 
+import { useEffect } from "react";
 import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
+import { captureMarketingAttribution, attributionToEventProps } from "@/lib/marketing-attribution";
+import { useTrack } from "@/lib/use-track";
 
 function NotFoundComponent() {
   return (
@@ -207,12 +210,32 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Captura atribuição de marketing (UTMs/click ids/referrer) uma vez no mount,
+ * client-side. Persiste em localStorage (first/last touch). Quando o load traz
+ * um toque de campanha novo, registra um evento na tabela `events` (SSOT de
+ * tracking). Não renderiza nada. SSR-safe (a captura roda só no effect).
+ */
+function MarketingAttributionInit() {
+  const track = useTrack();
+  useEffect(() => {
+    const result = captureMarketingAttribution();
+    if (result?.isNewCampaignTouch) {
+      track("marketing_attribution_captured", attributionToEventProps("last"));
+    }
+    // Roda só no mount: captura o ponto de entrada da sessão.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <MarketingAttributionInit />
         <Outlet />
         <Toaster />
       </AuthProvider>

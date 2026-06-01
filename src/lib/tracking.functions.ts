@@ -68,6 +68,8 @@ export const ALLOWED_EVENTS = [
   "generation_started",
   "generation_succeeded",
   "generation_failed",
+  // Growth/Marketing — Sprint 1: atribuição de origem/campanha (UTMs/click ids).
+  "marketing_attribution_captured",
 ] as const;
 
 export type FunnelEvent = (typeof ALLOWED_EVENTS)[number];
