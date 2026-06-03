@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 
 type Props = {
   before: string;
@@ -25,11 +25,19 @@ export function BeforeAfter({
   // toque/click do user, desligamos a animacao permanentemente — o user
   // tomou controle e o RAF nao pode mais sobrescrever o pos do drag.
   const [userInteracted, setUserInteracted] = useState(false);
+  // Dica visual "← arraste →" — aparece no primeiro foco/hover e some
+  // assim que o usuario interage. Pequeno toque de affordance sem poluir.
+  const [showHint, setShowHint] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!auto || userInteracted) return;
+    // Respeita prefers-reduced-motion: nao anima sozinho.
+    if (typeof window !== "undefined") {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) return;
+    }
     let raf = 0;
     const start = performance.now();
     const tick = (t: number) => {
@@ -65,6 +73,14 @@ export function BeforeAfter({
       case "ArrowRight":
         e.preventDefault();
         bump(+big);
+        break;
+      case "PageDown":
+        e.preventDefault();
+        bump(-10);
+        break;
+      case "PageUp":
+        e.preventDefault();
+        bump(+10);
         break;
       case "Home":
         e.preventDefault();
@@ -104,6 +120,7 @@ export function BeforeAfter({
         e.currentTarget.setPointerCapture(e.pointerId);
         setDragging(true);
         setUserInteracted(true);
+        setShowHint(false);
         move(e.clientX);
       }}
       onPointerMove={(e) => dragging && move(e.clientX)}
@@ -121,6 +138,8 @@ export function BeforeAfter({
         }
       }}
       onDoubleClick={() => setPos(50)}
+      onMouseEnter={() => setShowHint(true)}
+      onMouseLeave={() => setShowHint(false)}
     >
       <img
         src={after}
@@ -161,21 +180,43 @@ export function BeforeAfter({
           type="button"
           role="slider"
           aria-label="Comparar antes e depois"
+          aria-orientation="horizontal"
+          aria-keyshortcuts="ArrowLeft ArrowRight Home End Space"
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(pos)}
           aria-valuetext={`${Math.round(pos)}% antes`}
           tabIndex={interactive ? 0 : -1}
           onKeyDown={onKeyDown}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={() => {
+            setFocused(true);
+            setShowHint(true);
+          }}
+          onBlur={() => {
+            setFocused(false);
+            setShowHint(false);
+          }}
           // Sem stopPropagation: o pointerdown precisa bubble pro container
           // pra iniciar o drag. Sem isso, clicar no proprio handle nao
           // arrastava — so funcionava ao clicar fora dele.
-          className={`pointer-events-auto absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-white shadow-xl cursor-ew-resize outline-none transition ${
+          className={`pointer-events-auto absolute top-1/2 -translate-y-1/2 -translate-x-1/2 grid h-11 w-11 place-items-center rounded-full bg-white shadow-xl cursor-ew-resize outline-none transition hover:scale-105 active:scale-95 ${
             focused ? "ring-2 ring-accent ring-offset-2 ring-offset-background" : ""
           }`}
-        />
+        >
+          <span className="flex items-center text-foreground/70" aria-hidden="true">
+            <ChevronLeft className="h-3.5 w-3.5 -mr-1" />
+            <ChevronRight className="h-3.5 w-3.5 -ml-1" />
+          </span>
+        </button>
+        {/* Dica "arraste" sutil — aparece no foco/hover, some na interação. */}
+        {interactive && showHint && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-9 whitespace-nowrap rounded-full bg-black/65 px-2.5 py-1 text-[10px] font-medium uppercase tracking-widest text-white backdrop-blur"
+          >
+            Arraste
+          </div>
+        )}
       </div>
 
       {/* Bottom progress track with snap markers + reset */}
