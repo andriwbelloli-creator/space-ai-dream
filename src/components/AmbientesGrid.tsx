@@ -229,17 +229,28 @@ export function AmbientesGrid() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12">
                 {tier.rooms.map((room) => (
                   <div key={room.slug} className={tier.span}>
-                    <PremiumOverlayCard
-                      src={room.src}
-                      alt={room.alt}
-                      kicker={tier.label}
-                      title={room.name}
-                      description={room.description}
-                      aspect={tier.aspect}
-                      size={tier.size}
-                      to={`/ambientes/${room.slug}`}
-                      ctaLabel="Decorar"
-                    />
+                    {room.before ? (
+                      <BeforeAfterRoomCard
+                        slug={room.slug}
+                        name={room.name}
+                        description={room.description}
+                        before={room.before}
+                        after={room.src}
+                        alt={room.alt}
+                      />
+                    ) : (
+                      <PremiumOverlayCard
+                        src={room.src}
+                        alt={room.alt}
+                        kicker={tier.label}
+                        title={room.name}
+                        description={room.description}
+                        aspect={tier.aspect}
+                        size={tier.size}
+                        to={`/ambientes/${room.slug}`}
+                        ctaLabel="Decorar"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
