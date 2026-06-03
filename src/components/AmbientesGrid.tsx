@@ -261,3 +261,49 @@ export function AmbientesGrid() {
     </section>
   );
 }
+
+/**
+ * Card com slider antes/depois interativo. Mantém o mesmo destino clicável
+ * (`/ambientes/<slug>`) via barra de ação no rodapé — separada do slider
+ * pra não conflitar com o gesto de arrastar.
+ */
+function BeforeAfterRoomCard({
+  slug,
+  name,
+  description,
+  before,
+  after,
+  alt,
+}: {
+  slug: string;
+  name: string;
+  description: string;
+  before: string;
+  after: string;
+  alt: string;
+}) {
+  return (
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-shadow hover:shadow-md">
+      <div className="aspect-[3/4] w-full overflow-hidden">
+        <BeforeAfter before={before} after={after} alt={alt} className="h-full w-full" />
+      </div>
+      <Link
+        to="/ambientes/$slug"
+        params={{ slug }}
+        className="flex items-start justify-between gap-3 p-5 sm:p-6"
+      >
+        <div className="min-w-0">
+          <span className="is-kicker text-[10px]">Essenciais</span>
+          <h3 className="mt-1 font-serif text-lg leading-tight text-foreground sm:text-xl">
+            {name}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        </div>
+        <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-sm font-medium text-[color:var(--gold-soft)] transition-transform group-hover:translate-x-0.5">
+          Decorar
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </span>
+      </Link>
+    </article>
+  );
+}
