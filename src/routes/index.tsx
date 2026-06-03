@@ -986,6 +986,12 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           >
             Objetos
           </Link>
+          <Link
+            className="hover:text-foreground transition"
+            to="/acessibilidade"
+          >
+            Acessibilidade
+          </Link>
           <a
             className="hover:text-foreground transition"
             href="#galeria"
