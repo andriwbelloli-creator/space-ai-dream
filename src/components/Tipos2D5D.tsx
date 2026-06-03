@@ -14,7 +14,7 @@ import floorplan from "@/assets/floorplan-apartment.jpg";
 
 export function Tipos2D5D() {
   return (
-    <section className="bg-foreground text-background py-14 sm:py-20">
+    <section className="bg-foreground text-background py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-10 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">

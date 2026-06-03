@@ -1612,7 +1612,7 @@ function Marquee() {
 
 function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
   return (
-    <section id="ambientes" className="py-14 sm:py-20">
+    <section id="ambientes" className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -1681,7 +1681,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
 
 function StylesCarousel({ onUpload }: { onUpload: () => void }) {
   return (
-    <section id="estilos" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
+    <section id="estilos" className="py-12 sm:py-16 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -1773,7 +1773,7 @@ function HowItWorks({ onUpload }: { onUpload: () => void }) {
     },
   ];
   return (
-    <section id="criar" className="py-14 sm:py-20">
+    <section id="criar" className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Layout 5/7 editorial: pitch + CTAs à esquerda, grid 2x2 dos
             4 passos à direita. Mobile: empilha verticalmente. */}
@@ -1831,7 +1831,7 @@ function HowItWorks({ onUpload }: { onUpload: () => void }) {
 
 function FeaturedBeforeAfter() {
   return (
-    <section className="py-14 sm:py-20">
+    <section className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-5 order-2 lg:order-1">
           <span className="is-kicker">Antes e depois em destaque</span>
@@ -1880,7 +1880,7 @@ function ResultShowcase({
   onReward: (k: RewardKind) => void;
 }) {
   return (
-    <section className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
+    <section className="py-12 sm:py-16 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHead
           kicker="Tela de resultado"
@@ -2043,7 +2043,7 @@ function InspirationGallery({
   };
 
   return (
-    <section id="galeria" className="py-14 sm:py-20 overflow-x-hidden">
+    <section id="galeria" className="py-12 sm:py-16 overflow-x-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -2192,7 +2192,7 @@ function InspirationGallery({
 
 function RankingStrip({ onUpload }: { onUpload: () => void }) {
   return (
-    <section id="ranking" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
+    <section id="ranking" className="py-12 sm:py-16 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <SectionHead
@@ -2328,7 +2328,7 @@ function Professionals({
   ];
 
   return (
-    <section id="pro" className="bg-foreground text-background py-14 sm:py-20">
+    <section id="pro" className="bg-foreground text-background py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Header com fundo escuro pra dar quebra editorial no ritmo da
             home. Cards PremiumVerticalCard mantêm fundo claro interno
@@ -2407,7 +2407,7 @@ function Pricing({
   onLead: (planInterest: string) => void;
 }) {
   return (
-    <section id="planos" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
+    <section id="planos" className="py-12 sm:py-16 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="text-center">
           <span className="is-kicker">Assinatura</span>
@@ -2544,7 +2544,7 @@ function Trust() {
     },
   ];
   return (
-    <section className="py-14 sm:py-20">
+    <section className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHead
           kicker="Segurança e privacidade"
@@ -2575,7 +2575,7 @@ function Trust() {
 
 function FAQ() {
   return (
-    <section className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
+    <section className="py-12 sm:py-16 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <SectionHead kicker="Perguntas frequentes" title={<>FAQ</>} />
         <Accordion type="single" collapsible className="mt-8">
