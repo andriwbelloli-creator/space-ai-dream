@@ -37,6 +37,9 @@ export const ALLOWED_EVENTS = [
   "hero_demo_click",
   "hero_before_after_project_selected",
   "hero_before_after_cta_click",
+  // Sprint 2: CTAs do hero editorial (executar projeto, ver projetos).
+  "hero_executar_projeto_click",
+  "hero_see_projects_click",
   // Navegação header/menu
   "nav_menu_click",
   "pricing_click",
@@ -45,13 +48,12 @@ export const ALLOWED_EVENTS = [
   // Pricing
   "pricing_viewed",
   "plan_selected",
+  "plan_checkout_started",
   // Lead form (profissionais, planos pagos)
   "lead_form_opened",
   "lead_form_submitted",
   "lead_form_error",
-  // Profissionais
-  "professional_lead_click",
-  "professional_card_click",
+  // professional_lead_click e professional_card_click removidos na Sprint 2 (allowlistados, nunca disparados).
   // Reward modal (7 tipos: budget, send_phone, save_project, etc)
   "reward_modal_opened",
   // Curso
