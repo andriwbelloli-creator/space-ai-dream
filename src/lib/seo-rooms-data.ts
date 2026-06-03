@@ -720,8 +720,8 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     ],
     images: {
       before: "empty-bedroom",
-      after: "decorated-bedroom",
-      gallery: ["rank-minimal-bedroom", "decorated-bedroom", "decorated-bathroom-suite"],
+      after: "decorated-closet",
+      gallery: ["decorated-closet", "rank-minimal-bedroom", "decorated-bathroom-suite"],
     },
   },
   "varanda-gourmet": {
@@ -907,9 +907,9 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
       "Útil mesmo se a meta for só refrescar, sem reforma grande",
     ],
     images: {
-      before: "empty-bedroom",
-      after: "decorated-bedroom",
-      gallery: ["decorated-bedroom", "rank-minimal-bedroom", "decorated-living-warm"],
+      before: "empty-quarto-infantil",
+      after: "decorated-quarto-infantil",
+      gallery: ["decorated-quarto-infantil", "rank-minimal-bedroom", "decorated-living-warm"],
     },
   },
   lavabo: {
@@ -1002,8 +1002,8 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     ],
     images: {
       before: "empty-bathroom",
-      after: "decorated-bathroom",
-      gallery: ["decorated-bathroom", "decorated-bathroom-suite", "style-luxo"],
+      after: "decorated-lavabo",
+      gallery: ["decorated-lavabo", "decorated-bathroom-suite", "style-luxo"],
     },
   },
   "sala-tv": {
@@ -1096,8 +1096,8 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
     ],
     images: {
       before: "empty-living",
-      after: "decorated-living",
-      gallery: ["decorated-living-warm", "decorated-living", "gallery-loft"],
+      after: "decorated-sala-tv",
+      gallery: ["decorated-sala-tv", "decorated-living-warm", "gallery-loft"],
     },
   },
 };
