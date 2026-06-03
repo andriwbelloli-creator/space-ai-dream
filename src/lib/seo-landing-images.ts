@@ -20,6 +20,9 @@ import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
 import decoratedLiving from "@/assets/decorated-living.jpg";
 import decoratedQuartoInfantil from "@/assets/decorated-quarto-infantil.jpg";
 import decoratedSalaTv from "@/assets/decorated-sala-tv.jpg";
+import decoratedQuartoBebe from "@/assets/decorated-quarto-bebe.jpg";
+import decoratedHomeTheater from "@/assets/decorated-home-theater.jpg";
+import decoratedAreaPet from "@/assets/decorated-area-pet.jpg";
 import emptyBathroomSuite from "@/assets/empty-bathroom-suite.jpg";
 import emptyBathroom from "@/assets/empty-bathroom.jpg";
 import emptyBedroom from "@/assets/empty-bedroom.jpg";
@@ -58,6 +61,9 @@ export const LANDING_IMAGES: Record<string, string> = {
   "decorated-living": decoratedLiving,
   "decorated-quarto-infantil": decoratedQuartoInfantil,
   "decorated-sala-tv": decoratedSalaTv,
+  "decorated-quarto-bebe": decoratedQuartoBebe,
+  "decorated-home-theater": decoratedHomeTheater,
+  "decorated-area-pet": decoratedAreaPet,
   "empty-bathroom-suite": emptyBathroomSuite,
   "empty-bathroom": emptyBathroom,
   "empty-bedroom": emptyBedroom,
