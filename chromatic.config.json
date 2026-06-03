@@ -1,0 +1,9 @@
+{
+  "storybookBuildDir": "storybook-static",
+  "onlyChanged": true,
+  "externals": ["src/styles.css", "src/assets/**"],
+  "skip": "dependabot/**",
+  "autoAcceptChanges": "main",
+  "exitZeroOnChanges": true,
+  "exitOnceUploaded": true
+}

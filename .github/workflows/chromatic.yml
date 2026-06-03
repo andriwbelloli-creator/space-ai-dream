@@ -1,0 +1,44 @@
+name: Chromatic
+
+# Snapshot visual pixel-a-pixel das stories Editorial/* em todo PR e push.
+# Em commits na branch main, novas baselines são aceitas automaticamente.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  chromatic:
+    name: Visual regression
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Chromatic exige histórico completo pra comparar baselines
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Storybook
+        run: bun run build-storybook
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@v11
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          storybookBuildDir: storybook-static
+          onlyChanged: true
+          exitZeroOnChanges: true
+          exitOnceUploaded: true
+          autoAcceptChanges: main

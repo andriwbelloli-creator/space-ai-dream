@@ -31,10 +31,27 @@ Qualquer falha quebra `test-storybook` com mensagem identificando a story.
 
 ## Snapshot visual (Chromatic — opcional)
 
-Para regressão visual pixel-a-pixel, conectar o projeto no Chromatic:
+Chromatic está integrado para diff visual pixel-a-pixel em cada PR.
+
+### Setup único (admin do repo)
+
+1. Criar conta em https://www.chromatic.com e conectar o repositório GitHub.
+2. Copiar o **Project Token** gerado.
+3. No GitHub: **Settings → Secrets and variables → Actions → New repository secret**
+   - Nome: `CHROMATIC_PROJECT_TOKEN`
+   - Valor: o token copiado acima.
+4. Pronto — o workflow `.github/workflows/chromatic.yml` roda automaticamente em todo PR e push em `main`.
+
+### Rodar local (manual)
 
 ```bash
-bunx chromatic --project-token=<TOKEN>
+bun run build-storybook
+CHROMATIC_PROJECT_TOKEN=<token> bun run chromatic
 ```
 
-Não é necessário para o test-runner local rodar.
+### Comportamento do CI
+
+- **Pull Request**: faz upload, comenta o PR com link para revisar diffs. `exitZeroOnChanges` evita quebrar o build — a aprovação visual é manual no Chromatic UI.
+- **Push em `main`**: `autoAcceptChanges: main` aceita as novas baselines automaticamente.
+- **`onlyChanged: true`**: usa TurboSnap — só re-snapshot de stories afetadas pelo diff (rápido e barato em créditos).
+- **`externals`**: mudança em `src/styles.css` ou assets força re-snapshot de todas as stories (garante captura de mudanças no design system).

@@ -14,7 +14,9 @@
     "visual-check": "bun scripts/visual-consistency-check.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test-storybook": "test-storybook --url http://localhost:6006"
+    "test-storybook": "test-storybook --url http://localhost:6006",
+    "chromatic": "chromatic --exit-zero-on-changes",
+    "chromatic:ci": "chromatic --exit-once-uploaded"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
@@ -86,6 +88,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
+    "chromatic": "^17.2.0",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
