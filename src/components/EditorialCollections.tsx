@@ -20,15 +20,20 @@ export function EditorialCollections() {
       aria-labelledby="editorial-collections-heading"
     >
       <div className="container mx-auto px-4 sm:px-6">
-        <div className="mb-10 flex flex-col gap-3 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-10 flex flex-col gap-6 sm:mb-14 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <span className="is-kicker">Coleções editoriais</span>
             <h2
               id="editorial-collections-heading"
               className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl"
             >
-              Inspiração <span className="italic">curada</span>.
+              Inspiração{" "}
+              <span className="italic text-[color:var(--gold-soft)]">curada</span>.
             </h2>
+            <span
+              aria-hidden="true"
+              className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60"
+            />
           </div>
           <p className="max-w-sm text-sm text-muted-foreground sm:text-base">
             Coleções que respondem a uma situação real: apartamento pequeno, casa de aluguel, luxo
