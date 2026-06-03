@@ -39,8 +39,7 @@
       "allowedFiles": [
         "src/components/EditorialCollections.tsx",
         "src/lib/image-catalog.ts",
-        "src/lib/seo-landing-images.ts",
-        "src/routes/index.tsx"
+        "src/lib/seo-landing-images.ts"
       ]
     },
     {
@@ -133,8 +132,7 @@
         "src/components/EditorialCollections.tsx",
         "src/components/Tipos2D5D.tsx",
         "src/lib/image-catalog.ts",
-        "src/lib/seo-landing-images.ts",
-        "src/routes/index.tsx"
+        "src/lib/seo-landing-images.ts"
       ]
     },
     {
@@ -259,8 +257,7 @@
         "src/components/Tipos2D5D.tsx",
         "src/components/home/AtelierHero.tsx",
         "src/lib/image-catalog.ts",
-        "src/lib/seo-landing-images.ts",
-        "src/routes/index.tsx"
+        "src/lib/seo-landing-images.ts"
       ]
     },
     {
