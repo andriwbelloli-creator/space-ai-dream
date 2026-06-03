@@ -84,7 +84,7 @@ export function AtelierCurated({
             O Atelier sugere
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Pecas escolhidas a dedo pra dialogar com{" "}
+            Peças escolhidas a dedo pra dialogar com{" "}
             <span className="italic text-foreground">{styleName ?? "esse estilo"}</span>.
           </p>
         </div>
@@ -118,7 +118,7 @@ export function AtelierCurated({
                   onClick={(e) => handleClick(e, piece, url, i)}
                   className="inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:underline underline-offset-4"
                 >
-                  Ver peca
+                  Ver peça
                   <ExternalLink className="h-3 w-3 is-arrow-slide" aria-hidden />
                 </a>
               </div>
@@ -128,7 +128,7 @@ export function AtelierCurated({
       </ul>
 
       <p className="mt-3 text-[10px] text-muted-foreground/80">
-        Links de afiliado. Podemos receber comissao sem custo adicional pra voce.
+        Links de afiliado. Podemos receber comissão sem custo adicional pra você.
       </p>
     </section>
   );
