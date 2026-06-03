@@ -416,6 +416,84 @@
   animation-delay: 0.24s;
 }
 
+/* Card entrance — gentle rise + unfurl for curated grids */
+@keyframes is-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.is-card-enter {
+  animation: is-card-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.is-card-enter-delay-1 {
+  animation-delay: 0.1s;
+}
+.is-card-enter-delay-2 {
+  animation-delay: 0.2s;
+}
+.is-card-enter-delay-3 {
+  animation-delay: 0.3s;
+}
+
+/* Premium card hover lift with border + background transitions */
+.is-atelier-card {
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s ease,
+    background-color 0.4s ease;
+  box-shadow: var(--shadow-editorial-sm);
+}
+.is-atelier-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-editorial-lg);
+  border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+  background-color: var(--card);
+}
+
+/* Sparkle badge — gentle continuous glow pulse */
+@keyframes is-sparkle-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+}
+.is-sparkle-pulse {
+  animation: is-sparkle-pulse 3s ease-in-out infinite;
+}
+
+/* Arrow micro-interaction — slides right on parent hover */
+.is-arrow-slide {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .is-arrow-slide,
+.group:focus-within .is-arrow-slide {
+  transform: translateX(3px);
+}
+
+/* Subtle border glow sweep on hover */
+@keyframes is-border-glow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .is-marquee,
   .is-marquee-slow,
@@ -425,11 +503,15 @@
   .is-shimmer,
   .is-slider-auto,
   .is-fade-up,
-  .is-reveal {
+  .is-reveal,
+  .is-card-enter,
+  .is-sparkle-pulse {
     animation: none !important;
   }
   .is-hover-lift,
-  .is-image-zoom-host .is-image-zoom {
+  .is-image-zoom-host .is-image-zoom,
+  .is-atelier-card,
+  .is-arrow-slide {
     transition: none;
   }
 }
