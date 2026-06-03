@@ -980,6 +980,12 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           >
             Estilos
           </a>
+          <Link
+            className="hover:text-foreground transition"
+            to="/objetos"
+          >
+            Objetos
+          </Link>
           <a
             className="hover:text-foreground transition"
             href="#galeria"
@@ -1107,6 +1113,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                   onClick: trackedAnchor("estilos"),
                   target: "estilos",
                 },
+                { l: "Objetos", href: "/objetos", target: "objetos" },
                 {
                   l: "Ideias",
                   href: "#galeria",
