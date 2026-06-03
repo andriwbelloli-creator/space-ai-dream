@@ -3,9 +3,10 @@
  * Header magazine + bento dinâmico (curadoria em tamanhos variados)
  * espelhando o ritmo de EditorialCollections ("Inspiração curada").
  */
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search, X, ArrowDownAZ, ArrowUpAZ, ListFilter } from "lucide-react";
+import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
 import { SEO_OBJETOS, type ObjetoSlug } from "@/lib/seo-objetos-data";
 
@@ -92,6 +93,35 @@ function ObjetosPage() {
 
   return (
     <main className="bg-background">
+      {/* Cabeçalho minimalista com logo e saída para home */}
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <Link to="/" aria-label="Ideal Space, página inicial">
+            <IdealSpaceLogo />
+          </Link>
+          <nav className="flex items-center gap-4 text-sm text-muted-foreground">
+            <Link
+              to="/"
+              className="hidden sm:inline-block transition hover:text-foreground"
+            >
+              Início
+            </Link>
+            <Link
+              to="/objetos"
+              className="text-foreground transition"
+            >
+              Objetos
+            </Link>
+            <Link
+              to="/pricing"
+              className="hidden sm:inline-block transition hover:text-foreground"
+            >
+              Planos
+            </Link>
+          </nav>
+        </div>
+      </header>
+
       <section
         aria-labelledby="objetos-heading"
         className="py-16 sm:py-24"
