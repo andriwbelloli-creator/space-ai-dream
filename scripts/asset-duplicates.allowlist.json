@@ -1,0 +1,4 @@
+{
+  "_doc": "Exceções autorizadas à regra anti-duplicação de assets. Cada entrada exige justificativa objetiva (reason >= 5 chars) e lista exata dos arquivos onde o asset pode aparecer. Mantenha enxuto — o objetivo é zerar.",
+  "entries": []
+}
