@@ -23,6 +23,7 @@ import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
 import galleryLoft from "@/assets/gallery-loft.jpg";
 import decoratedCloset from "@/assets/decorated-closet.jpg";
 import decoratedVarandaGourmet from "@/assets/decorated-varanda-gourmet.jpg";
+import decoratedLavanderia from "@/assets/decorated-lavanderia.jpg";
 
 type RoomItem = {
   slug: string;
@@ -89,6 +90,14 @@ const ROOMS: ReadonlyArray<RoomItem> = [
       "Roupas, sapatos e acessórios organizados e visíveis. Cômodo dedicado ou integrado.",
     src: decoratedCloset,
     alt: "Closet com armários abertos, ilha central e iluminação direta",
+  },
+  {
+    slug: "lavanderia",
+    name: "Lavanderia",
+    description:
+      "Marcenaria sob medida, máquinas integradas e organização vertical pra aproveitar cada centímetro.",
+    src: decoratedLavanderia,
+    alt: "Lavanderia planejada com marcenaria sob medida e máquinas integradas",
   },
 ] as const;
 
