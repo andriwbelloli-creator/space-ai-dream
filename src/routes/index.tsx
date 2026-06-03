@@ -800,6 +800,9 @@ function Index() {
         kind={reward}
         onOpenChange={(o) => !o && setReward(null)}
         onSuccess={(k) => handleReward(k)}
+        // Alta intenção (budget/shopping_list): "Receber no WhatsApp" abre o
+        // LeadFormModal existente via setLead, sem mexer no PDF nem no signup.
+        onRequestContact={(k) => setLead({ source: `reward-${k}` })}
       />
 
       {leadMounted && (

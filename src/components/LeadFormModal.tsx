@@ -223,6 +223,32 @@ function getSourceCopy(source: string | undefined): SourceCopy {
     };
   }
 
+  // Reward de alta intenção: orçamento ou lista de compras via WhatsApp
+  // (vem do RewardModal via setLead source="reward-budget"/"reward-shopping_list").
+  if (key === "reward-budget") {
+    return {
+      heading: "Receber o orçamento por WhatsApp",
+      subheading:
+        "A nossa equipe envia o orçamento estimado deste ambiente, com itens e faixas de preço, direto no seu WhatsApp.",
+      ctaLabel: "Receber orçamento",
+      successHeading: "Orçamento a caminho!",
+      successBody:
+        "Em até 1 dia útil você recebe o orçamento por WhatsApp e e-mail, com itens e faixas de preço.",
+    };
+  }
+
+  if (key === "reward-shopping_list" || key === "reward-shopping-list") {
+    return {
+      heading: "Receber a lista de compras por WhatsApp",
+      subheading:
+        "A nossa equipe envia a lista completa de produtos deste ambiente, com links das lojas parceiras, direto no seu WhatsApp.",
+      ctaLabel: "Receber lista",
+      successHeading: "Lista a caminho!",
+      successBody:
+        "Em até 1 dia útil você recebe a lista completa por WhatsApp e e-mail, com faixas de preço e links.",
+    };
+  }
+
   return DEFAULT_COPY;
 }
 

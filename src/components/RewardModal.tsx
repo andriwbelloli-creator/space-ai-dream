@@ -12,6 +12,7 @@ import {
   Sparkles,
   X,
   ShieldCheck,
+  MessageCircle,
 } from "lucide-react";
 
 export type RewardKind =
@@ -86,9 +87,14 @@ type Props = {
     kind: RewardKind,
     data: { email?: string; phone?: string; marketing?: boolean },
   ) => void;
+  /**
+   * Opcional: kinds de alta intenção (budget, shopping_list) ganham um botão
+   * "Receber no WhatsApp" que chama isto, abrindo o LeadFormModal no pai.
+   */
+  onRequestContact?: (kind: RewardKind) => void;
 };
 
-export function RewardModal({ open, onOpenChange, kind, onSuccess }: Props) {
+export function RewardModal({ open, onOpenChange, kind, onSuccess, onRequestContact }: Props) {
   const track = useTrack();
   const cfg = kind ? CONFIGS[kind] : null;
   // Tracking de abertura do modal por kind — granulariza qual reward
@@ -102,6 +108,13 @@ export function RewardModal({ open, onOpenChange, kind, onSuccess }: Props) {
 
   const Icon = cfg.icon;
   const isBudget = kind === "budget";
+  // Kinds de alta intenção comercial ganham a opção de receber por WhatsApp
+  // (abre o LeadFormModal no pai via onRequestContact). PDF e signup intactos.
+  const showContact = kind === "budget" || kind === "shopping_list";
+  const handleContact = () => {
+    onRequestContact?.(kind);
+    onOpenChange(false);
+  };
 
   // Orçamento é gerado client-side (jsPDF). onSuccess dispara o generateBudgetPdf
   // no componente pai — nada é enviado a servidor.
@@ -152,6 +165,17 @@ export function RewardModal({ open, onOpenChange, kind, onSuccess }: Props) {
               className="mt-5 w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90"
             >
               <Download className="h-4 w-4 mr-2" /> Baixar orçamento em PDF
+            </Button>
+          )}
+
+          {showContact && onRequestContact && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleContact}
+              className="mt-2 w-full h-11 rounded-xl border-accent/40 text-accent hover:bg-accent/5"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" /> Receber no WhatsApp
             </Button>
           )}
 
