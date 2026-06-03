@@ -1,0 +1,18 @@
+{
+  "_description": "Mapeia caminho do asset (relativo ao repo) -> slug do cômodo esperado. Usado por scripts/visual-consistency-check.ts e pelo pre-commit hook.",
+  "_valid_slugs": [
+    "lavanderia", "cozinha", "lavabo", "banheiro",
+    "sala-tv", "sala-estar", "sala-jantar",
+    "quarto-adulto", "quarto-infantil", "closet",
+    "home-office", "varanda", "hall", "area-externa"
+  ],
+  "assets": {
+    "src/assets/decorated-lavanderia.jpg": "lavanderia",
+    "src/assets/empty-lavanderia.jpg": "lavanderia",
+    "src/assets/decorated-lavabo.jpg": "lavabo",
+    "src/assets/decorated-quarto-infantil.jpg": "quarto-infantil",
+    "src/assets/empty-quarto-infantil.jpg": "quarto-infantil",
+    "src/assets/decorated-sala-tv.jpg": "sala-tv",
+    "src/assets/decorated-closet.jpg": "closet"
+  }
+}
