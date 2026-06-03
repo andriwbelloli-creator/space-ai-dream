@@ -5,6 +5,7 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { AtelierHero } from "@/components/home/AtelierHero";
+import heroAfterUrl from "@/assets/decorated-living-warm.jpg";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
 import { ObjetosTeaser } from "@/components/ObjetosTeaser";
@@ -254,7 +255,10 @@ export const Route = createFileRoute("/")({
           "design de interiores com IA, projeto 2D com IA, projeto 5D de interiores, planta baixa com IA, layout de ambientes com IA, decoração com IA, virtual staging, planejamento de interiores, IA para arquitetos, IA para designers de interiores",
       },
     ],
-    links: [{ rel: "canonical", href: "https://idealspace.com.br/" }],
+    links: [
+      { rel: "canonical", href: "https://idealspace.com.br/" },
+      { rel: "preload", as: "image", href: heroAfterUrl, fetchpriority: "high" },
+    ],
     scripts: [
       {
         type: "application/ld+json",

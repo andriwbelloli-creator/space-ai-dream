@@ -127,6 +127,8 @@ export function BeforeAfter({
         alt={alt}
         className="block w-full h-full object-cover"
         loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
       />
       {/* Antes' overlay sobre o 'depois' base, recortado por clip-path
           (GPU-accelerated, sem layout recalc). Substitui o approach antigo
@@ -137,7 +139,9 @@ export function BeforeAfter({
           src={before}
           alt=""
           className="block h-full w-full object-cover"
-          loading={priority ? "eager" : "lazy"}
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
         />
       </div>
       <div className="pointer-events-none absolute top-3 left-3 rounded-full bg-black/60 text-white text-[10px] font-medium tracking-widest uppercase px-2.5 py-1 backdrop-blur">
