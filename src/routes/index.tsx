@@ -1120,6 +1120,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
                   target: "estilos",
                 },
                 { l: "Objetos", href: "/objetos", target: "objetos" },
+                { l: "Acessibilidade", href: "/acessibilidade", target: "acessibilidade" },
                 {
                   l: "Ideias",
                   href: "#galeria",
