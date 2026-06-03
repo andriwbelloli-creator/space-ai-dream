@@ -168,3 +168,57 @@ export function estimateTotal(items: ReadonlyArray<BudgetItem>): string {
   const fmt = (n: number) => n.toLocaleString("pt-BR");
   return `R$ ${fmt(min)} – ${fmt(max)}`;
 }
+
+/**
+ * Conta quantos itens existem por tag — usado pra alimentar chips
+ * de filtro com contagem (ex: "Essencial · 3").
+ */
+export function countByTag(
+  items: ReadonlyArray<BudgetItem>,
+): Record<BudgetItem["tag"], number> {
+  const out: Record<BudgetItem["tag"], number> = {
+    Essencial: 0,
+    Recomendado: 0,
+    Opcional: 0,
+  };
+  for (const it of items) out[it.tag] += 1;
+  return out;
+}
+
+/**
+ * Agrupa itens por categoria preservando a ordem de aparição.
+ * Útil pra renderizar a lista em seções (Móveis, Iluminação, etc.)
+ * quando o usuário expande a visualização.
+ */
+export function groupByCategory(
+  items: ReadonlyArray<BudgetItem>,
+): Array<{ cat: string; items: BudgetItem[] }> {
+  const order: string[] = [];
+  const map = new Map<string, BudgetItem[]>();
+  for (const it of items) {
+    if (!map.has(it.cat)) {
+      order.push(it.cat);
+      map.set(it.cat, []);
+    }
+    map.get(it.cat)!.push(it);
+  }
+  return order.map((cat) => ({ cat, items: map.get(cat)! }));
+}
+
+/**
+ * Serializa a lista em texto plano amigável pra área de transferência
+ * (e WhatsApp). Mantém prioridade visual e total estimado.
+ */
+export function toClipboardText(
+  items: ReadonlyArray<BudgetItem>,
+  projectName?: string,
+): string {
+  const lines: string[] = [];
+  if (projectName) lines.push(`Lista de compras · ${projectName}`, "");
+  for (const it of items) {
+    lines.push(`• [${it.tag}] ${it.name} — ${it.cat} (${it.price})`);
+  }
+  lines.push("", `Estimativa total: ${estimateTotal(items)}`);
+  lines.push("Gerado pelo Ideal Space · https://idealspace.com.br");
+  return lines.join("\n");
+}

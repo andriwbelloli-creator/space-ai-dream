@@ -38,9 +38,16 @@ import { transformImage } from "@/lib/transform.functions";
 import { saveReturnContext } from "@/lib/navigation-return";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
-import { getShoppingFallback, estimateTotal, sortByPriority } from "@/lib/shopping";
+import {
+  getShoppingFallback,
+  estimateTotal,
+  sortByPriority,
+  countByTag,
+  groupByCategory,
+  toClipboardText,
+} from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
-import { FileDown, ShoppingBag, RefreshCw, Download, Lock } from "lucide-react";
+import { FileDown, ShoppingBag, RefreshCw, Download, Lock, Copy } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
@@ -1499,6 +1506,59 @@ function affiliateProviderFromUrl(url: string): string {
   }
 }
 
+/** Linha individual da lista de compras com link afiliado. */
+function ShoppingItemRow({
+  item,
+  idx,
+  buyUrl,
+  onAffiliateClick,
+  tagStyles,
+}: {
+  item: BudgetItem;
+  idx: number;
+  buyUrl: (name: string) => string;
+  onAffiliateClick: (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: BudgetItem,
+    url: string,
+    position: number,
+  ) => void;
+  tagStyles: Record<BudgetItem["tag"], string>;
+}) {
+  const url = buyUrl(item.name);
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="sponsored noopener noreferrer"
+      onClick={(e) => onAffiliateClick(e, item, url, idx)}
+      className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+    >
+      <div className="min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span
+            className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 ${tagStyles[item.tag]}`}
+          >
+            {item.tag}
+          </span>
+          <span
+            className={`text-sm truncate ${item.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+          >
+            {item.name}
+          </span>
+        </div>
+        <div className="text-[11px] text-muted-foreground mt-0.5">{item.cat}</div>
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-0.5">
+        <span className="text-xs font-medium whitespace-nowrap">{item.price}</span>
+        <span className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent">
+          Ver na loja <ArrowUpRight className="h-3 w-3" />
+        </span>
+      </div>
+    </a>
+  );
+}
+
 function ShoppingPanel({
   styleName,
   variationLabel,
@@ -1515,6 +1575,9 @@ function ShoppingPanel({
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<string | null>(null);
   const [leadOpen, setLeadOpen] = useState(false);
+  const [tagFilter, setTagFilter] = useState<BudgetItem["tag"] | "Todos">("Todos");
+  const [grouped, setGrouped] = useState(false);
+  const [copied, setCopied] = useState(false);
   const track = useTrack();
 
   const roomType = variation?.roomType;
@@ -1525,6 +1588,9 @@ function ShoppingPanel({
   // pra UI quanto pro PDF, garantindo que os itens de maior impacto visual
   // aparecam primeiro e maximizem a chance de clique afiliado.
   const items: ReadonlyArray<BudgetItem> = sortByPriority(aiItems ?? getShoppingFallback(roomType));
+  const counts = countByTag(items);
+  const filtered: ReadonlyArray<BudgetItem> =
+    tagFilter === "Todos" ? items : items.filter((it) => it.tag === tagFilter);
 
   const fetchList = async () => {
     if (!variation?.url || !vid) return;
@@ -1557,8 +1623,9 @@ function ShoppingPanel({
 
   const isLoading = loadingId === vid;
   const hasError = errorId === vid && !aiItems;
-  const visibleItems: ReadonlyArray<BudgetItem> = unlocked ? items : items.slice(0, 4);
+  const visibleItems: ReadonlyArray<BudgetItem> = unlocked ? filtered : filtered.slice(0, 4);
   const total = estimateTotal(items);
+  const filteredTotal = estimateTotal(filtered);
   const projectName = variationLabel ? `${styleName} · ${variationLabel}` : styleName;
 
   const tagStyles: Record<BudgetItem["tag"], string> = {
@@ -1627,6 +1694,29 @@ function ShoppingPanel({
     track("pdf_download");
   };
 
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(toClipboardText(items, projectName));
+      setCopied(true);
+      toast.success("Lista copiada");
+      track("shopping_list_copied", {
+        roomType: roomType ?? undefined,
+        style: styleId || undefined,
+        totalItems: items.length,
+      });
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
+  };
+
+  const tagChips: ReadonlyArray<BudgetItem["tag"] | "Todos"> = [
+    "Todos",
+    "Essencial",
+    "Recomendado",
+    "Opcional",
+  ];
+
   return (
     <aside className="mt-4 lg:mt-0 rounded-2xl border bg-card/60 p-4 sm:p-5 flex flex-col">
       <div className="flex items-start justify-between gap-3">
@@ -1649,7 +1739,9 @@ function ShoppingPanel({
           <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
             Estimativa
           </div>
-          <div className="text-sm font-semibold text-foreground">{total}</div>
+          <div className="text-sm font-semibold text-foreground">
+            {tagFilter === "Todos" ? total : filteredTotal}
+          </div>
           <button
             onClick={fetchList}
             disabled={isLoading || !variation}
@@ -1665,7 +1757,57 @@ function ShoppingPanel({
         </div>
       </div>
 
-      <ul className="mt-4 -mx-1 divide-y divide-border/60">
+      {/* Filtros por tag + ações (copiar / agrupar) */}
+      {!isLoading && items.length > 0 && (
+        <div className="mt-3 flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-1 flex-wrap" role="tablist" aria-label="Filtrar por prioridade">
+            {tagChips.map((t) => {
+              const active = tagFilter === t;
+              const n = t === "Todos" ? items.length : counts[t];
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => {
+                    setTagFilter(t);
+                    setUnlocked(true);
+                  }}
+                  disabled={n === 0}
+                  className={`text-[10px] font-medium uppercase tracking-wider rounded-full px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:opacity-40 disabled:cursor-not-allowed ${
+                    active
+                      ? "bg-foreground text-background"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                  }`}
+                >
+                  {t} <span className="opacity-70">· {n}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setGrouped((v) => !v)}
+              className="text-[10px] text-muted-foreground hover:text-foreground rounded-full px-2 py-1 transition"
+              aria-pressed={grouped}
+            >
+              {grouped ? "Lista" : "Por categoria"}
+            </button>
+            <button
+              type="button"
+              onClick={onCopy}
+              className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground rounded-full px-2 py-1 transition"
+              aria-label="Copiar lista"
+            >
+              <Copy className="h-3 w-3" /> {copied ? "Copiado" : "Copiar"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <ul className="mt-3 -mx-1 divide-y divide-border/60">
         {isLoading && !aiItems
           ? Array.from({ length: 4 }).map((_, i) => (
               <li key={`sk_${i}`} className="px-1 py-2.5 animate-pulse">
@@ -1673,37 +1815,35 @@ function ShoppingPanel({
                 <div className="mt-2 h-2.5 w-1/3 rounded bg-muted/60" />
               </li>
             ))
+          : grouped && unlocked
+          ? groupByCategory(filtered).flatMap((g, gi) => [
+              <li
+                key={`cat_${gi}_${g.cat}`}
+                className="px-1 pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+              >
+                {g.cat} · {g.items.length}
+              </li>,
+              ...g.items.map((it, idx) => (
+                <li key={`${g.cat}_${it.name}`}>
+                  <ShoppingItemRow
+                    item={it}
+                    idx={idx}
+                    buyUrl={buyUrl}
+                    onAffiliateClick={handleAffiliateClick}
+                    tagStyles={tagStyles}
+                  />
+                </li>
+              )),
+            ])
           : visibleItems.map((it, idx) => (
               <li key={it.name}>
-                <a
-                  href={buyUrl(it.name)}
-                  target="_blank"
-                  rel="sponsored noopener noreferrer"
-                  onClick={(e) => handleAffiliateClick(e, it, buyUrl(it.name), idx)}
-                  className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60"
-                >
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 ${tagStyles[it.tag]}`}
-                      >
-                        {it.tag}
-                      </span>
-                      <span
-                        className={`text-sm truncate ${it.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
-                      >
-                        {it.name}
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-muted-foreground mt-0.5">{it.cat}</div>
-                  </div>
-                  <div className="flex shrink-0 flex-col items-end gap-0.5">
-                    <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
-                    <span className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent">
-                      Ver na loja <ArrowUpRight className="h-3 w-3" />
-                    </span>
-                  </div>
-                </a>
+                <ShoppingItemRow
+                  item={it}
+                  idx={idx}
+                  buyUrl={buyUrl}
+                  onAffiliateClick={handleAffiliateClick}
+                  tagStyles={tagStyles}
+                />
               </li>
             ))}
       </ul>
@@ -1714,12 +1854,12 @@ function ShoppingPanel({
         custo a mais para você.
       </p>
 
-      {!unlocked && items.length > visibleItems.length && (
+      {!unlocked && filtered.length > visibleItems.length && (
         <button
           onClick={onExpand}
           className="mt-3 text-xs rounded-xl border border-dashed py-2 hover:bg-muted/60"
         >
-          Ver mais {items.length - visibleItems.length} itens
+          Ver mais {filtered.length - visibleItems.length} itens
         </button>
       )}
 
