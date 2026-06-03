@@ -155,6 +155,9 @@ export function ExpandedLanding({
             <Link to="/" className="hover:text-foreground transition">
               Início
             </Link>
+            <Link to="/objetos" className="hover:text-foreground transition">
+              Objetos
+            </Link>
             <Link to="/pricing" className="hover:text-foreground transition">
               Planos
             </Link>

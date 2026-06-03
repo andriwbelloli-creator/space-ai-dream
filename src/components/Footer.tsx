@@ -18,6 +18,7 @@ export function Footer() {
         { label: "Criar com IA", href: "/" },
         { label: "Ambientes", href: "#ambientes" },
         { label: "Estilos", href: "#estilos" },
+        { label: "Objetos", href: "/objetos" },
         { label: "Galeria", href: "#galeria" },
         { label: "Planos", href: "/pricing" },
       ],
