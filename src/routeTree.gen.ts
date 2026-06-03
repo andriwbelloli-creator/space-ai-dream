@@ -19,6 +19,7 @@ import { Route as ObjetosRouteImport } from './routes/objetos'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AcessibilidadeRouteImport } from './routes/acessibilidade'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -89,6 +90,11 @@ const LegalRoute = LegalRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcessibilidadeRoute = AcessibilidadeRouteImport.update({
+  id: '/acessibilidade',
+  path: '/acessibilidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -194,6 +200,7 @@ const EstilosStyleSlugRoomSlugRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acessibilidade': typeof AcessibilidadeRoute
   '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acessibilidade': typeof AcessibilidadeRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
   '/objetos': typeof ObjetosRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/acessibilidade': typeof AcessibilidadeRoute
   '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
@@ -290,6 +299,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/acessibilidade'
     | '/admin'
     | '/legal'
     | '/login'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/acessibilidade'
     | '/legal'
     | '/login'
     | '/objetos'
@@ -352,6 +363,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/acessibilidade'
     | '/admin'
     | '/legal'
     | '/login'
@@ -385,6 +397,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AcessibilidadeRoute: typeof AcessibilidadeRoute
   AdminRoute: typeof AdminRouteWithChildren
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
@@ -474,6 +487,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acessibilidade': {
+      id: '/acessibilidade'
+      path: '/acessibilidade'
+      fullPath: '/acessibilidade'
+      preLoaderRoute: typeof AcessibilidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -671,6 +691,7 @@ const EstilosStyleSlugRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AcessibilidadeRoute: AcessibilidadeRoute,
   AdminRoute: AdminRouteWithChildren,
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
