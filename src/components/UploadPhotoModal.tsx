@@ -1248,6 +1248,17 @@ export function UploadPhotoModal({
                 variation={variations[activeIdx]}
               />
             )}
+
+            {/* Curadoria editorial "O Atelier sugere" — complementa a
+                shopping list automática com 3 peças narradas pra reforçar
+                identidade de estilo e gerar segundo ponto de clique afiliado. */}
+            {variations.length > 0 && (
+              <AtelierCurated
+                styleId={style}
+                styleName={STYLES.find((s) => s.id === style)?.name ?? "esse estilo"}
+                roomType={variations[activeIdx]?.roomType}
+              />
+            )}
           </div>
 
           {/* Banner CTA pós-geração — conecta o usuário com um arquiteto
