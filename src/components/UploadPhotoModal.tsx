@@ -45,6 +45,7 @@ import { generateShoppingList } from "@/lib/shopping.functions";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
 import { LeadFormModal } from "@/components/LeadFormModal";
+import { AtelierCurated } from "@/components/AtelierCurated";
 import { MessageCircle } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
