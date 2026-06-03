@@ -1506,6 +1506,59 @@ function affiliateProviderFromUrl(url: string): string {
   }
 }
 
+/** Linha individual da lista de compras com link afiliado. */
+function ShoppingItemRow({
+  item,
+  idx,
+  buyUrl,
+  onAffiliateClick,
+  tagStyles,
+}: {
+  item: BudgetItem;
+  idx: number;
+  buyUrl: (name: string) => string;
+  onAffiliateClick: (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: BudgetItem,
+    url: string,
+    position: number,
+  ) => void;
+  tagStyles: Record<BudgetItem["tag"], string>;
+}) {
+  const url = buyUrl(item.name);
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="sponsored noopener noreferrer"
+      onClick={(e) => onAffiliateClick(e, item, url, idx)}
+      className="flex items-start justify-between gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+    >
+      <div className="min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span
+            className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider rounded-full px-2 py-0.5 ${tagStyles[item.tag]}`}
+          >
+            {item.tag}
+          </span>
+          <span
+            className={`text-sm truncate ${item.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+          >
+            {item.name}
+          </span>
+        </div>
+        <div className="text-[11px] text-muted-foreground mt-0.5">{item.cat}</div>
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-0.5">
+        <span className="text-xs font-medium whitespace-nowrap">{item.price}</span>
+        <span className="inline-flex items-center gap-0.5 text-[11px] font-medium text-accent">
+          Ver na loja <ArrowUpRight className="h-3 w-3" />
+        </span>
+      </div>
+    </a>
+  );
+}
+
 function ShoppingPanel({
   styleName,
   variationLabel,
