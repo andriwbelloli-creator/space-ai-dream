@@ -5,14 +5,14 @@ import { useTrack } from "@/lib/use-track";
 
 /**
  * "O Atelier sugere" — vitrine editorial curada que aparece logo
- * abaixo da ShoppingList automática no painel de resultado da IA.
+ * abaixo da ShoppingList automatica no painel de resultado da IA.
  *
- * Estratégia:
- * - Curadoria estática por estilo (src/lib/curadoria.ts), 3 peças.
- * - Reusa buildAffiliateLinks (zero lógica nova de afiliado).
- * - Tracking com source: "curated" pra segmentar conversão vs lista.
- * - Sem imagens novas (governança proíbe regenerar via IA); usa
- *   ícone Lucide + tipografia editorial pra carregar a narrativa.
+ * Estrategia:
+ * - Curadoria estatica por estilo (src/lib/curadoria.ts), 3 pecas.
+ * - Reusa buildAffiliateLinks (zero logica nova de afiliado).
+ * - Tracking com source: "curated" pra segmentar conversao vs lista.
+ * - Sem imagens novas (governanca proibe regenerar via IA); usa
+ *   icone Lucide + tipografia editorial pra carregar a narrativa.
  */
 export function AtelierCurated({
   styleId,
@@ -68,10 +68,15 @@ export function AtelierCurated({
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  const delayClass = (i: number): string => {
+    const map = ["is-card-enter-delay-1", "is-card-enter-delay-2", "is-card-enter-delay-3"];
+    return map[i] ?? "";
+  };
+
   return (
     <section className="mt-5 rounded-2xl border border-accent/20 bg-accent/[0.04] p-4 sm:p-5">
-      <header className="flex items-start gap-2.5">
-        <span className="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent/15 text-accent">
+      <header className="flex items-start gap-2.5 is-fade-up">
+        <span className="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent/15 text-accent is-sparkle-pulse">
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
         </span>
         <div className="min-w-0">
@@ -91,7 +96,7 @@ export function AtelierCurated({
           return (
             <li
               key={piece.name}
-              className="flex flex-col rounded-xl border bg-card/70 p-3.5 transition hover:border-accent/40 hover:bg-card"
+              className={`flex flex-col rounded-xl border bg-card/70 p-3.5 is-atelier-card group is-card-enter ${delayClass(i)}`}
             >
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
                 {piece.category}
@@ -114,7 +119,7 @@ export function AtelierCurated({
                   className="inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:underline underline-offset-4"
                 >
                   Ver peça
-                  <ExternalLink className="h-3 w-3" aria-hidden />
+                  <ExternalLink className="h-3 w-3 is-arrow-slide" aria-hidden />
                 </a>
               </div>
             </li>
