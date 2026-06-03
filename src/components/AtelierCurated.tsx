@@ -173,7 +173,7 @@ export function AtelierCurated({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => handleClick(e, piece, url, i)}
-                      className="inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      className="inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded active:scale-[0.97] active:text-accent/80 transition-transform duration-150"
                     >
                       Ver peça
                       <ExternalLink className="h-3 w-3 is-arrow-slide" aria-hidden />
