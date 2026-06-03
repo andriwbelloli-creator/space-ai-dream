@@ -80,6 +80,7 @@ type RoomType =
   | "home-office"
   | "banheiro"
   | "quarto-infantil"
+  | "lavanderia"
   | "outro";
 
 const ROOM_TYPES: ReadonlyArray<RoomType> = [
@@ -89,6 +90,7 @@ const ROOM_TYPES: ReadonlyArray<RoomType> = [
   "home-office",
   "banheiro",
   "quarto-infantil",
+  "lavanderia",
   "outro",
 ];
 
