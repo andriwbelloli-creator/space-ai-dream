@@ -967,10 +967,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
         <Link to="/" aria-label="Ideal Space, página inicial">
           <IdealSpaceLogo />
         </Link>
-        <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
-          <button onClick={handleNavDemo} className="hover:text-foreground transition">
-            Guia
-          </button>
+        <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground min-w-0">
           <a
             className="hover:text-foreground transition"
             href="#ambientes"
@@ -978,32 +975,12 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           >
             Ambientes
           </a>
-          <a
-            className="hover:text-foreground transition"
-            href="#estilos"
-            onClick={trackedAnchor("estilos")}
-          >
-            Estilos
-          </a>
           <Link
             className="hover:text-foreground transition"
             to="/objetos"
           >
             Objetos
           </Link>
-          <Link
-            className="hover:text-foreground transition"
-            to="/acessibilidade"
-          >
-            Acessibilidade
-          </Link>
-          <a
-            className="hover:text-foreground transition"
-            href="#galeria"
-            onClick={trackedAnchor("galeria")}
-          >
-            Ideias
-          </a>
           <a
             className="hover:text-foreground transition"
             href="#pro"
@@ -1019,7 +996,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
             Planos
           </Link>
         </nav>
-        <div className="hidden lg:flex items-center gap-2">
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
           {!user && (
             <Button asChild variant="ghost" className="text-sm">
               <Link to="/login">Entrar</Link>
@@ -1084,7 +1061,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           )}
           <Button
             onClick={handleHeaderUpload}
-            className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm"
+            className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm whitespace-nowrap"
           >
             <Camera className="h-4 w-4 mr-1.5" /> Criar projeto com IA
           </Button>
@@ -1262,7 +1239,7 @@ function Hero({
         <div className="lg:col-span-5 is-fade-up">
           {/* H1 editorial: serif italic dominante, escala maior. Misturado
               com sans pra ritmo. */}
-          <h1 className="text-[2.6rem] sm:text-[3.5rem] lg:text-[5.25rem] leading-[1.02] tracking-[-0.025em] font-semibold">
+          <h1 className="text-[2.6rem] sm:text-[3.5rem] lg:text-[5.25rem] leading-[1.02] tracking-[-0.025em] font-semibold text-balance">
             Veja seu ambiente virar um{" "}
             <span className="font-serif italic font-normal text-accent">projeto pronto</span>
           </h1>
@@ -1642,7 +1619,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Ambientes vazios"
             title={
               <>
-                Escolha o <span className="italic font-normal text-[color:var(--gold-soft)]">cômodo</span> para
+                Escolha o cômodo para
                 transformar
               </>
             }
@@ -1711,7 +1688,7 @@ function StylesCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Estilos de decoração"
             title={
               <>
-                Escolha um <span className="italic font-normal text-[color:var(--gold-soft)]">estilo</span> para seu
+                Escolha um estilo para seu
                 projeto
               </>
             }
@@ -1859,10 +1836,10 @@ function FeaturedBeforeAfter() {
         <div className="lg:col-span-5 order-2 lg:order-1">
           <span className="is-kicker">Antes e depois em destaque</span>
           <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
-            Um <span className="italic font-normal text-[color:var(--gold-soft)]">banheiro vazio</span> vira refúgio em
+            Um banheiro vazio vira refúgio em
             segundos.
           </h2>
-          <span aria-hidden className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
+          <span aria-hidden className="mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-4 text-muted-foreground max-w-md">
             Arraste o controle e veja a estrutura preservada, a iluminação trabalhada e o mobiliário
             sugerido pela IA, pronto para virar lista de compras e orçamento.
@@ -2074,7 +2051,7 @@ function InspirationGallery({
             title={
               <>
                 Projetos{" "}
-                <span className="italic font-normal text-[color:var(--gold-soft)]">2D, 5D e planta baixa</span>
+                2D, 5D e planta baixa
               </>
             }
             sub="Variações 2D reais geradas pela plataforma. 5D e planta baixa em breve. Filtre por tipo de projeto."
@@ -2222,7 +2199,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
             kicker="Inspirações"
             title={
               <>
-                Ambientes para <span className="italic font-normal text-[color:var(--gold-soft)]">se inspirar</span>
+                Ambientes para se inspirar
               </>
             }
             sub="Exemplos de transformações criadas com IA na plataforma."
@@ -2438,7 +2415,7 @@ function Pricing({
             Planos para criar seus{" "}
             <span className="italic font-normal text-[color:var(--gold-soft)]">projetos com IA</span>.
           </h2>
-          <span aria-hidden className="mx-auto mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
+          <span aria-hidden className="mx-auto mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
             Comece grátis e evolua quando precisar, do 2D rápido aos recursos profissionais.
           </p>
@@ -2574,7 +2551,7 @@ function Trust() {
           title={
             <>
               Suas fotos e dados com{" "}
-              <span className="italic font-normal text-[color:var(--gold-soft)]">segurança</span>
+              segurança
             </>
           }
         />

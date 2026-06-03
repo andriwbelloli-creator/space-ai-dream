@@ -23,7 +23,7 @@ export function SectionHead({ kicker, title, sub, centered = false }: SectionHea
       <span
         aria-hidden
         data-testid="section-hairline"
-        className={`mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60 ${centered ? "mx-auto" : ""}`}
+        className={`mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60 ${centered ? "mx-auto" : ""}`}
       />
       {sub && (
         <p className={`mt-4 text-muted-foreground ${centered ? "max-w-xl mx-auto" : "max-w-xl"}`}>
