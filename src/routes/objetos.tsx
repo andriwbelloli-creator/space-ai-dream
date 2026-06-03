@@ -3,9 +3,10 @@
  * Header magazine + bento dinâmico (curadoria em tamanhos variados)
  * espelhando o ritmo de EditorialCollections ("Inspiração curada").
  */
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search, X, ArrowDownAZ, ArrowUpAZ, ListFilter } from "lucide-react";
+import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
 import { SEO_OBJETOS, type ObjetoSlug } from "@/lib/seo-objetos-data";
 
