@@ -2075,7 +2075,7 @@ function InspirationGallery({
                 <span className="font-serif italic font-normal">2D, 5D e planta baixa</span>
               </>
             }
-            sub="Variações reais geradas pela plataforma. Filtre por tipo de projeto."
+            sub="Variações 2D reais geradas pela plataforma. 5D e planta baixa em breve. Filtre por tipo de projeto."
           />
           <Button
             onClick={onUpload}

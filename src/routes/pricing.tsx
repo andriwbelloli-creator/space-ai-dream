@@ -95,7 +95,7 @@ const MODULES = [
     ],
     differentials: [
       "Camadas 2D, 5D e planta baixa no mesmo projeto (5D e planta em breve)",
-      "Exportação compatível com seu fluxo CAD",
+      "Exportação compatível com seu fluxo CAD (em breve)",
     ],
     soon: true,
   },
