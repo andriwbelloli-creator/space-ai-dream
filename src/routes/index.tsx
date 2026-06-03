@@ -1619,7 +1619,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Ambientes vazios"
             title={
               <>
-                Escolha o <span className="italic font-normal text-[color:var(--gold-soft)]">cômodo</span> para
+                Escolha o cômodo para
                 transformar
               </>
             }
@@ -1688,7 +1688,7 @@ function StylesCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Estilos de decoração"
             title={
               <>
-                Escolha um <span className="italic font-normal text-[color:var(--gold-soft)]">estilo</span> para seu
+                Escolha um estilo para seu
                 projeto
               </>
             }
@@ -1836,7 +1836,7 @@ function FeaturedBeforeAfter() {
         <div className="lg:col-span-5 order-2 lg:order-1">
           <span className="is-kicker">Antes e depois em destaque</span>
           <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
-            Um <span className="italic font-normal text-[color:var(--gold-soft)]">banheiro vazio</span> vira refúgio em
+            Um banheiro vazio vira refúgio em
             segundos.
           </h2>
           <span aria-hidden className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
@@ -2051,7 +2051,7 @@ function InspirationGallery({
             title={
               <>
                 Projetos{" "}
-                <span className="italic font-normal text-[color:var(--gold-soft)]">2D, 5D e planta baixa</span>
+                2D, 5D e planta baixa
               </>
             }
             sub="Variações 2D reais geradas pela plataforma. 5D e planta baixa em breve. Filtre por tipo de projeto."
@@ -2199,7 +2199,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
             kicker="Inspirações"
             title={
               <>
-                Ambientes para <span className="italic font-normal text-[color:var(--gold-soft)]">se inspirar</span>
+                Ambientes para se inspirar
               </>
             }
             sub="Exemplos de transformações criadas com IA na plataforma."
@@ -2551,7 +2551,7 @@ function Trust() {
           title={
             <>
               Suas fotos e dados com{" "}
-              <span className="italic font-normal text-[color:var(--gold-soft)]">segurança</span>
+              segurança
             </>
           }
         />
