@@ -1550,9 +1550,11 @@ function ShoppingPanel({
   const projectName = variationLabel ? `${styleName} · ${variationLabel}` : styleName;
 
   const tagStyles: Record<BudgetItem["tag"], string> = {
-    Essencial: "bg-accent text-accent-foreground",
-    Recomendado: "bg-foreground/85 text-background",
-    Opcional: "bg-muted text-foreground",
+    // Paleta editorial: bronze suave para o anchor, neutros para o resto.
+    // Evita pastéis saturados (rosa/laranja) que destoam de areia/bronze.
+    Essencial: "bg-accent/15 text-accent ring-1 ring-accent/25",
+    Recomendado: "bg-foreground/8 text-foreground ring-1 ring-foreground/15",
+    Opcional: "bg-muted text-muted-foreground ring-1 ring-border",
   };
 
   const buyUrl = (name: string) => {
