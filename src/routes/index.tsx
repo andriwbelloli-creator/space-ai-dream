@@ -967,10 +967,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
         <Link to="/" aria-label="Ideal Space, página inicial">
           <IdealSpaceLogo />
         </Link>
-        <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground">
-          <button onClick={handleNavDemo} className="hover:text-foreground transition">
-            Guia
-          </button>
+        <nav className="hidden lg:flex items-center gap-7 text-sm text-muted-foreground min-w-0">
           <a
             className="hover:text-foreground transition"
             href="#ambientes"
@@ -978,32 +975,12 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           >
             Ambientes
           </a>
-          <a
-            className="hover:text-foreground transition"
-            href="#estilos"
-            onClick={trackedAnchor("estilos")}
-          >
-            Estilos
-          </a>
           <Link
             className="hover:text-foreground transition"
             to="/objetos"
           >
             Objetos
           </Link>
-          <Link
-            className="hover:text-foreground transition"
-            to="/acessibilidade"
-          >
-            Acessibilidade
-          </Link>
-          <a
-            className="hover:text-foreground transition"
-            href="#galeria"
-            onClick={trackedAnchor("galeria")}
-          >
-            Ideias
-          </a>
           <a
             className="hover:text-foreground transition"
             href="#pro"
@@ -1019,7 +996,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
             Planos
           </Link>
         </nav>
-        <div className="hidden lg:flex items-center gap-2">
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
           {!user && (
             <Button asChild variant="ghost" className="text-sm">
               <Link to="/login">Entrar</Link>
