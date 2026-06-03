@@ -74,7 +74,10 @@ export function AtelierHero({ onUpload, onBudget, onDropFile }: Props) {
   return (
     <section className="relative overflow-hidden bg-background text-foreground">
       {/* ── Hero principal ─────────────────────────────────────────────────── */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-14 pb-10 grid lg:grid-cols-[0.78fr_1.5fr] gap-10 lg:gap-14 items-center">
+      {/* Grid assimétrico: texto enxuto à esquerda, imagem protagonista
+          à direita. Proporção mais larga (0.55fr / 2fr) pra dar peso
+          editorial à foto antes/depois. */}
+      <div className="mx-auto max-w-[88rem] px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-14 pb-10 grid lg:grid-cols-[0.55fr_2fr] gap-10 lg:gap-12 items-center">
         {/* Texto */}
         <div className="is-fade-up">
           {/* Headline editorial em 2 linhas: matter-of-fact no topo (balanceada
@@ -162,7 +165,7 @@ export function AtelierHero({ onUpload, onBudget, onDropFile }: Props) {
               alt="Ambiente antes e depois da transformação pela IA"
               auto
               priority
-              className="aspect-[16/11] w-full"
+              className="aspect-[16/10] w-full"
             />
           </div>
 
