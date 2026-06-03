@@ -96,6 +96,20 @@ const SHOPPING_LIST_BANHEIRO: ReadonlyArray<BudgetItem> = [
   { tag: "Opcional", name: "Planta para banheiro", cat: "Decoração", price: "R$ 50–200" },
 ];
 
+// Lista de compras: Quarto infantil. Categoria própria (não herda de quarto adulto).
+// Faixas conservadoras (BRL), sem marca/SKU. Itens de bebê em Recomendado/Opcional
+// para equilibrar bebê e criança maior.
+const SHOPPING_LIST_QUARTO_INFANTIL: ReadonlyArray<BudgetItem> = [
+  { tag: "Essencial", name: "Berço / cama infantil", cat: "Móveis principais", price: "R$ 500–2.500" },
+  { tag: "Essencial", name: "Cômoda com trocador", cat: "Móveis principais", price: "R$ 400–1.800" },
+  { tag: "Recomendado", name: "Luminária suave / abajur", cat: "Iluminação", price: "R$ 80–350" },
+  { tag: "Recomendado", name: "Tapete lúdico", cat: "Têxtil", price: "R$ 90–400" },
+  { tag: "Recomendado", name: "Cortina blackout", cat: "Têxtil", price: "R$ 120–500" },
+  { tag: "Opcional", name: "Nichos / prateleiras", cat: "Organização", price: "R$ 80–350" },
+  { tag: "Opcional", name: "Cesto de brinquedos", cat: "Organização", price: "R$ 50–200" },
+  { tag: "Opcional", name: "Poltrona de apoio", cat: "Móveis principais", price: "R$ 400–1.500" },
+];
+
 // Mapa cômodo → lista de compras estática. "sala" reaproveita SHOPPING_LIST.
 const SHOPPING_LISTS_BY_ROOM: Record<string, ReadonlyArray<BudgetItem>> = {
   quarto: SHOPPING_LIST_QUARTO,
@@ -103,6 +117,7 @@ const SHOPPING_LISTS_BY_ROOM: Record<string, ReadonlyArray<BudgetItem>> = {
   "home-office": SHOPPING_LIST_HOME_OFFICE,
   banheiro: SHOPPING_LIST_BANHEIRO,
   sala: SHOPPING_LIST,
+  "quarto-infantil": SHOPPING_LIST_QUARTO_INFANTIL,
 };
 
 /**
