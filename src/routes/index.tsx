@@ -1061,7 +1061,7 @@ function Header({ onDemo, onUpload }: { onDemo: () => void; onUpload: () => void
           )}
           <Button
             onClick={handleHeaderUpload}
-            className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm"
+            className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-4 h-9 text-sm whitespace-nowrap"
           >
             <Camera className="h-4 w-4 mr-1.5" /> Criar projeto com IA
           </Button>
