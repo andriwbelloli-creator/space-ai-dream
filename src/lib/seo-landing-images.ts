@@ -10,18 +10,25 @@
 import decoratedBathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
 import decoratedBathroom from "@/assets/decorated-bathroom.jpg";
 import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
+import decoratedCloset from "@/assets/decorated-closet.jpg";
 import decoratedDining from "@/assets/decorated-dining.jpg";
 import decoratedKitchenIsland from "@/assets/decorated-kitchen-island.jpg";
 import decoratedKitchen from "@/assets/decorated-kitchen.jpg";
+import decoratedLavabo from "@/assets/decorated-lavabo.jpg";
+import decoratedLavanderia from "@/assets/decorated-lavanderia.jpg";
 import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
 import decoratedLiving from "@/assets/decorated-living.jpg";
+import decoratedQuartoInfantil from "@/assets/decorated-quarto-infantil.jpg";
+import decoratedSalaTv from "@/assets/decorated-sala-tv.jpg";
 import emptyBathroomSuite from "@/assets/empty-bathroom-suite.jpg";
 import emptyBathroom from "@/assets/empty-bathroom.jpg";
 import emptyBedroom from "@/assets/empty-bedroom.jpg";
 import emptyKitchenIsland from "@/assets/empty-kitchen-island.jpg";
 import emptyKitchen from "@/assets/empty-kitchen.jpg";
+import emptyLavanderia from "@/assets/empty-lavanderia.jpg";
 import emptyLiving from "@/assets/empty-living.jpg";
 import emptyOffice from "@/assets/empty-office.jpg";
+import emptyQuartoInfantil from "@/assets/empty-quarto-infantil.jpg";
 import galleryLoft from "@/assets/gallery-loft.jpg";
 import galleryOffice from "@/assets/gallery-office.jpg";
 import galleryVaranda from "@/assets/gallery-varanda.jpg";
@@ -41,18 +48,25 @@ export const LANDING_IMAGES: Record<string, string> = {
   "decorated-bathroom-suite": decoratedBathroomSuite,
   "decorated-bathroom": decoratedBathroom,
   "decorated-bedroom": decoratedBedroom,
+  "decorated-closet": decoratedCloset,
   "decorated-dining": decoratedDining,
   "decorated-kitchen-island": decoratedKitchenIsland,
   "decorated-kitchen": decoratedKitchen,
+  "decorated-lavabo": decoratedLavabo,
+  "decorated-lavanderia": decoratedLavanderia,
   "decorated-living-warm": decoratedLivingWarm,
   "decorated-living": decoratedLiving,
+  "decorated-quarto-infantil": decoratedQuartoInfantil,
+  "decorated-sala-tv": decoratedSalaTv,
   "empty-bathroom-suite": emptyBathroomSuite,
   "empty-bathroom": emptyBathroom,
   "empty-bedroom": emptyBedroom,
   "empty-kitchen-island": emptyKitchenIsland,
   "empty-kitchen": emptyKitchen,
+  "empty-lavanderia": emptyLavanderia,
   "empty-living": emptyLiving,
   "empty-office": emptyOffice,
+  "empty-quarto-infantil": emptyQuartoInfantil,
   "gallery-loft": galleryLoft,
   "gallery-office": galleryOffice,
   "gallery-varanda": galleryVaranda,
