@@ -1,15 +1,37 @@
 /**
  * /objetos — Catálogo editorial de objetos decorativos.
- * Header magazine (kicker + h2 com keyword italic bronze + hairline divider)
- * + grid 4x2 de PremiumOverlayCard espelhando o padrão de /ambientes.
+ * Header magazine + bento dinâmico (curadoria em tamanhos variados)
+ * espelhando o ritmo de EditorialCollections ("Inspiração curada").
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
-import { SEO_OBJETOS } from "@/lib/seo-objetos-data";
+import { SEO_OBJETOS, type ObjetoSlug } from "@/lib/seo-objetos-data";
 
 const TITLE = "Objetos decorativos curados | Ideal Space";
 const DESCRIPTION =
   "Catálogo editorial de objetos decorativos: vasos, luminárias, espelhos, quadros, têxteis, plantas, esculturas e mesas de apoio. Curadoria por categoria para inspirar composições reais.";
+
+/**
+ * Bento dinâmico — 12 colunas. Cada slug define seu span e o aspect
+ * da imagem. Total de larguras por linha soma 12 no desktop.
+ *   Linha 1: vasos(7,tall) + luminarias(5,portrait)
+ *   Linha 2: espelhos(5,portrait) + quadros(7,wide)
+ *   Linha 3: texteis(4,tall) + plantas(4,tall) + esculturas(4,tall)
+ *   Linha 4: mesas-apoio(12,wide) — banner editorial
+ */
+const LAYOUT: Record<
+  ObjetoSlug,
+  { span: string; aspect: "tall" | "portrait" | "wide"; size?: "sm" | "md" | "lg" }
+> = {
+  vasos:         { span: "lg:col-span-7", aspect: "tall",     size: "lg" },
+  luminarias:    { span: "lg:col-span-5", aspect: "portrait", size: "md" },
+  espelhos:      { span: "lg:col-span-5", aspect: "portrait", size: "md" },
+  quadros:       { span: "lg:col-span-7", aspect: "wide",     size: "lg" },
+  texteis:       { span: "lg:col-span-4", aspect: "tall",     size: "sm" },
+  plantas:       { span: "lg:col-span-4", aspect: "tall",     size: "sm" },
+  esculturas:    { span: "lg:col-span-4", aspect: "tall",     size: "sm" },
+  "mesas-apoio": { span: "lg:col-span-12", aspect: "wide",    size: "lg" },
+};
 
 export const Route = createFileRoute("/objetos")({
   head: () => ({
@@ -54,21 +76,26 @@ function ObjetosPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
-            {SEO_OBJETOS.map((obj) => (
-              <PremiumOverlayCard
-                key={obj.slug}
-                src={obj.src}
-                alt={obj.alt}
-                kicker={obj.kicker}
-                title={obj.name}
-                description={obj.description}
-                aspect="portrait"
-                size="sm"
-                to={obj.to}
-                ctaLabel="Ver em ambiente"
-              />
-            ))}
+          {/* Bento dinâmico — tamanhos variados (lg:12-col). */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-12">
+            {SEO_OBJETOS.map((obj) => {
+              const l = LAYOUT[obj.slug];
+              return (
+                <div key={obj.slug} className={l.span}>
+                  <PremiumOverlayCard
+                    src={obj.src}
+                    alt={obj.alt}
+                    kicker={obj.kicker}
+                    title={obj.name}
+                    description={obj.description}
+                    aspect={l.aspect}
+                    size={l.size}
+                    to={obj.to}
+                    ctaLabel="Ver em ambiente"
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
