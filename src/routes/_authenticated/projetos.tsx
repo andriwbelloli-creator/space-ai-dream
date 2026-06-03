@@ -9,6 +9,7 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import { Button } from "@/components/ui/button";
 import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
 import { logEvent } from "@/lib/tracking.functions";
+import { styleLabel } from "@/lib/style-labels";
 import { ShareProjectDialog } from "@/components/ShareProjectDialog";
 
 /**
@@ -33,24 +34,6 @@ type ProjectRow = {
   ai_response: ProjectAiResponse | null;
   is_public: boolean | null;
 };
-
-/** Rótulos legíveis para os slugs persistidos em projects.style_slug. */
-const STYLE_LABELS: Record<string, string> = {
-  japandi: "Japandi",
-  modern: "Contemporâneo",
-  contemporaneo: "Contemporâneo",
-  minimal: "Minimalista",
-  minimalista: "Minimalista",
-  natural: "Natural",
-  industrial: "Industrial",
-  luxe: "Luxo discreto",
-  escandinavo: "Escandinavo",
-};
-
-/** Converte o slug de estilo num rótulo legível; capitaliza se desconhecido. */
-function styleLabel(slug: string): string {
-  return STYLE_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
-}
 
 export const Route = createFileRoute("/_authenticated/projetos")({
   head: () => ({

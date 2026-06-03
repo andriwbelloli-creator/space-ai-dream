@@ -17,6 +17,7 @@ import { StatCard } from "@/components/admin/StatCard";
 import { StatusBlock } from "@/components/admin/StatusBlock";
 import { RankedList } from "@/components/admin/RankedList";
 import { formatDateOnly } from "@/components/admin/formatters";
+import { styleLabel } from "@/lib/style-labels";
 
 export const Route = createFileRoute("/admin/projetos")({
   head: () => ({
@@ -34,18 +35,6 @@ type PageState =
   | { status: "error"; message: string }
   | { status: "ready"; projects: AdminProjects };
 
-const STYLE_LABELS: Record<string, string> = {
-  japandi: "Japandi",
-  modern: "Contemporâneo",
-  contemporaneo: "Contemporâneo",
-  minimal: "Minimalista",
-  minimalista: "Minimalista",
-  natural: "Natural",
-  industrial: "Industrial",
-  luxe: "Luxo discreto",
-  escandinavo: "Escandinavo",
-};
-
 const ROOM_LABELS: Record<string, string> = {
   sala: "Sala",
   quarto: "Quarto",
@@ -54,11 +43,6 @@ const ROOM_LABELS: Record<string, string> = {
   banheiro: "Banheiro",
   outro: "Outro",
 };
-
-function styleLabel(slug: string | null): string {
-  if (!slug) return "—";
-  return STYLE_LABELS[slug] ?? slug;
-}
 
 function roomLabel(slug: string | null): string {
   if (!slug) return "—";
@@ -240,7 +224,7 @@ function AdminProjectsPage() {
                           )}
                         </div>
                       </td>
-                      <td className="px-3 py-2.5 font-medium">{styleLabel(p.styleSlug)}</td>
+                      <td className="px-3 py-2.5 font-medium">{styleLabel(p.styleSlug, "—")}</td>
                       <td className="px-3 py-2.5 text-muted-foreground">{roomLabel(p.roomType)}</td>
                       <td className="px-3 py-2.5">
                         {p.isPublic ? (

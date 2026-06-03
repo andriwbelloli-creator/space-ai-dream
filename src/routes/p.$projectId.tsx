@@ -8,23 +8,7 @@ import { Camera, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { getPublicProject, type PublicProjectSnapshot } from "@/lib/projects.functions";
 import { getShoppingFallback, estimateTotal, sortByPriority } from "@/lib/shopping";
 import { logEvent } from "@/lib/tracking.functions";
-
-const STYLE_LABELS: Record<string, string> = {
-  japandi: "Japandi",
-  modern: "Contemporâneo",
-  contemporaneo: "Contemporâneo",
-  minimal: "Minimalista",
-  minimalista: "Minimalista",
-  natural: "Natural",
-  industrial: "Industrial",
-  luxe: "Luxo discreto",
-  escandinavo: "Escandinavo",
-};
-
-function styleLabel(slug: string | null): string {
-  if (!slug) return "Estilo personalizado";
-  return STYLE_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
-}
+import { styleLabel } from "@/lib/style-labels";
 
 const ROOM_LABELS: Record<string, string> = {
   sala: "Sala",
