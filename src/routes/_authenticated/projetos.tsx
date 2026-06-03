@@ -435,61 +435,65 @@ function ProjectDetailDialog({
                 </button>
               </div>
 
-              <ul className="mt-3 divide-y divide-border/60">
-                {grouped
-                  ? groupByCategory(filtered).flatMap((g, gi) => [
-                      <li
-                        key={`cat_${gi}_${g.cat}`}
-                        className="pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+              {filtered.length === 0 ? (
+                <ShoppingEmptyState onClearFilter={() => setTagFilter("Todos")} />
+              ) : (
+                <ul className="mt-3 divide-y divide-border/60">
+                  {grouped
+                    ? groupByCategory(filtered).flatMap((g, gi) => [
+                        <li
+                          key={`cat_${gi}_${g.cat}`}
+                          className="pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+                        >
+                          {g.cat} · {g.items.length}
+                        </li>,
+                        ...g.items.map((it) => (
+                          <li key={`${g.cat}_${it.name}`} className="py-2.5 flex items-start gap-3">
+                            <span
+                              className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] uppercase tracking-wider ${
+                                it.tag === "Essencial"
+                                  ? "bg-accent/15 text-accent"
+                                  : it.tag === "Recomendado"
+                                    ? "bg-foreground/10 text-foreground"
+                                    : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {it.tag}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-medium text-foreground truncate">
+                                {it.name}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">
+                                {it.cat} · {it.price}
+                              </div>
+                            </div>
+                          </li>
+                        )),
+                      ])
+                    : filtered.map((it) => (
+                    <li key={it.name} className="py-2.5 flex items-start gap-3">
+                      <span
+                        className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] uppercase tracking-wider ${
+                          it.tag === "Essencial"
+                            ? "bg-accent/15 text-accent"
+                            : it.tag === "Recomendado"
+                              ? "bg-foreground/10 text-foreground"
+                              : "bg-muted text-muted-foreground"
+                        }`}
                       >
-                        {g.cat} · {g.items.length}
-                      </li>,
-                      ...g.items.map((it) => (
-                        <li key={`${g.cat}_${it.name}`} className="py-2.5 flex items-start gap-3">
-                          <span
-                            className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] uppercase tracking-wider ${
-                              it.tag === "Essencial"
-                                ? "bg-accent/15 text-accent"
-                                : it.tag === "Recomendado"
-                                  ? "bg-foreground/10 text-foreground"
-                                  : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {it.tag}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium text-foreground truncate">
-                              {it.name}
-                            </div>
-                            <div className="text-[11px] text-muted-foreground">
-                              {it.cat} · {it.price}
-                            </div>
-                          </div>
-                        </li>
-                      )),
-                    ])
-                  : filtered.map((it) => (
-                  <li key={it.name} className="py-2.5 flex items-start gap-3">
-                    <span
-                      className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] uppercase tracking-wider ${
-                        it.tag === "Essencial"
-                          ? "bg-accent/15 text-accent"
-                          : it.tag === "Recomendado"
-                            ? "bg-foreground/10 text-foreground"
-                            : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {it.tag}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium text-foreground truncate">{it.name}</div>
-                      <div className="text-[11px] text-muted-foreground">
-                        {it.cat} · {it.price}
+                        {it.tag}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-foreground truncate">{it.name}</div>
+                        <div className="text-[11px] text-muted-foreground">
+                          {it.cat} · {it.price}
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <p className="mt-3 text-[10px] text-muted-foreground">
                 Lista sugerida com base no cômodo. Para uma seleção curada com links de compra, gere
                 um novo projeto pela página inicial.

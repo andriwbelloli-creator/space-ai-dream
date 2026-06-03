@@ -1808,24 +1808,46 @@ function ShoppingPanel({
         </div>
       )}
 
-      <ul className="mt-3 -mx-1 divide-y divide-border/60">
-        {isLoading && !aiItems
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <li key={`sk_${i}`} className="px-1 py-2.5 animate-pulse">
-                <div className="h-3 w-2/3 rounded bg-muted" />
-                <div className="mt-2 h-2.5 w-1/3 rounded bg-muted/60" />
-              </li>
-            ))
-          : grouped && unlocked
-          ? groupByCategory(filtered).flatMap((g, gi) => [
-              <li
-                key={`cat_${gi}_${g.cat}`}
-                className="px-1 pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-              >
-                {g.cat} · {g.items.length}
-              </li>,
-              ...g.items.map((it, idx) => (
-                <li key={`${g.cat}_${it.name}`}>
+      {filtered.length === 0 && !isLoading ? (
+        <ShoppingEmptyState
+          onClearFilter={() => {
+            setTagFilter("Todos");
+            setUnlocked(true);
+          }}
+          onRegenerate={fetchList}
+          showRegenerate
+        />
+      ) : (
+        <ul className="mt-3 -mx-1 divide-y divide-border/60">
+          {isLoading && !aiItems
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <li key={`sk_${i}`} className="px-1 py-2.5 animate-pulse">
+                  <div className="h-3 w-2/3 rounded bg-muted" />
+                  <div className="mt-2 h-2.5 w-1/3 rounded bg-muted/60" />
+                </li>
+              ))
+            : grouped && unlocked
+            ? groupByCategory(filtered).flatMap((g, gi) => [
+                <li
+                  key={`cat_${gi}_${g.cat}`}
+                  className="px-1 pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+                >
+                  {g.cat} · {g.items.length}
+                </li>,
+                ...g.items.map((it, idx) => (
+                  <li key={`${g.cat}_${it.name}`}>
+                    <ShoppingItemRow
+                      item={it}
+                      idx={idx}
+                      buyUrl={buyUrl}
+                      onAffiliateClick={handleAffiliateClick}
+                      tagStyles={tagStyles}
+                    />
+                  </li>
+                )),
+              ])
+            : visibleItems.map((it, idx) => (
+                <li key={it.name}>
                   <ShoppingItemRow
                     item={it}
                     idx={idx}
@@ -1834,20 +1856,9 @@ function ShoppingPanel({
                     tagStyles={tagStyles}
                   />
                 </li>
-              )),
-            ])
-          : visibleItems.map((it, idx) => (
-              <li key={it.name}>
-                <ShoppingItemRow
-                  item={it}
-                  idx={idx}
-                  buyUrl={buyUrl}
-                  onAffiliateClick={handleAffiliateClick}
-                  tagStyles={tagStyles}
-                />
-              </li>
-            ))}
-      </ul>
+              ))}
+        </ul>
+      )}
 
       <p className="mt-2 px-1 text-[10px] leading-relaxed text-muted-foreground">
         Sugestões aproximadas pelo estilo do ambiente, sem garantia de produto idêntico. Os links

@@ -245,68 +245,72 @@ function PublicProjectPage() {
                 </button>
               </div>
 
-              <ul className="mt-3 divide-y divide-border/60">
-                {grouped
-                  ? groupByCategory(filtered).flatMap((g, gi) => [
-                      <li
-                        key={`cat_${gi}_${g.cat}`}
-                        className="pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
-                      >
-                        {g.cat} · {g.items.length}
-                      </li>,
-                      ...g.items.map((it) => (
+              {filtered.length === 0 ? (
+                <ShoppingEmptyState onClearFilter={() => setTagFilter("Todos")} />
+              ) : (
+                <ul className="mt-3 divide-y divide-border/60">
+                  {grouped
+                    ? groupByCategory(filtered).flatMap((g, gi) => [
                         <li
-                          key={`${g.cat}_${it.name}`}
-                          className="py-2.5 flex items-start gap-3"
+                          key={`cat_${gi}_${g.cat}`}
+                          className="pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
                         >
-                          <span
-                            className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold uppercase tracking-wider ${
-                              it.tag === "Essencial"
-                                ? "bg-accent text-accent-foreground"
-                                : it.tag === "Recomendado"
-                                  ? "bg-foreground/85 text-background"
-                                  : "bg-muted text-foreground"
-                            }`}
+                          {g.cat} · {g.items.length}
+                        </li>,
+                        ...g.items.map((it) => (
+                          <li
+                            key={`${g.cat}_${it.name}`}
+                            className="py-2.5 flex items-start gap-3"
                           >
-                            {it.tag}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div
-                              className={`text-sm truncate ${it.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+                            <span
+                              className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold uppercase tracking-wider ${
+                                it.tag === "Essencial"
+                                  ? "bg-accent text-accent-foreground"
+                                  : it.tag === "Recomendado"
+                                    ? "bg-foreground/85 text-background"
+                                    : "bg-muted text-foreground"
+                              }`}
                             >
-                              {it.name}
+                              {it.tag}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div
+                                className={`text-sm truncate ${it.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+                              >
+                                {it.name}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground">{it.cat}</div>
                             </div>
-                            <div className="text-[11px] text-muted-foreground">{it.cat}</div>
-                          </div>
-                          <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
-                        </li>
-                      )),
-                    ])
-                  : filtered.map((it) => (
-                  <li key={it.name} className="py-2.5 flex items-start gap-3">
-                    <span
-                      className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold uppercase tracking-wider ${
-                        it.tag === "Essencial"
-                          ? "bg-accent text-accent-foreground"
-                          : it.tag === "Recomendado"
-                            ? "bg-foreground/85 text-background"
-                            : "bg-muted text-foreground"
-                      }`}
-                    >
-                      {it.tag}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div
-                        className={`text-sm truncate ${it.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+                            <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
+                          </li>
+                        )),
+                      ])
+                    : filtered.map((it) => (
+                    <li key={it.name} className="py-2.5 flex items-start gap-3">
+                      <span
+                        className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold uppercase tracking-wider ${
+                          it.tag === "Essencial"
+                            ? "bg-accent text-accent-foreground"
+                            : it.tag === "Recomendado"
+                              ? "bg-foreground/85 text-background"
+                              : "bg-muted text-foreground"
+                        }`}
                       >
-                        {it.name}
+                        {it.tag}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div
+                          className={`text-sm truncate ${it.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+                        >
+                          {it.name}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">{it.cat}</div>
                       </div>
-                      <div className="text-[11px] text-muted-foreground">{it.cat}</div>
-                    </div>
-                    <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
-                  </li>
-                ))}
-              </ul>
+                      <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <p className="mt-3 text-[10px] text-muted-foreground">
                 Sugestões aproximadas pelo estilo do ambiente, sem garantia de produto idêntico.
                 Para a lista personalizada do seu ambiente, gere um projeto.
