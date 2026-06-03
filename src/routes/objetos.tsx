@@ -128,7 +128,7 @@ function ObjetosPage() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           {/* Cabeçalho de catálogo: título compacto + busca, ordenação e filtros */}
-          <header className="mb-8 sm:mb-10">
+          <header className="sticky top-16 z-30 -mx-4 mb-8 bg-background/80 px-4 py-4 backdrop-blur-md sm:mx-0 sm:-mx-6 sm:mb-10 sm:px-6 sm:py-5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <span className="is-kicker">Objetos decorativos</span>
