@@ -9,6 +9,7 @@ import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
 import { ObjetosTeaser } from "@/components/ObjetosTeaser";
 import { AcessibilidadeTeaser } from "@/components/AcessibilidadeTeaser";
+import { SectionHead } from "@/components/SectionHead";
 import { Tipos2D5D } from "@/components/Tipos2D5D";
 import { PremiumVerticalCard } from "@/components/ui/premium-cards";
 import { PresentationModal } from "@/components/PresentationModal";
