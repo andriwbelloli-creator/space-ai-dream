@@ -18,6 +18,7 @@
 import { Camera, ArrowRight, Sparkles, Check, LayoutGrid, ShoppingBag, Calculator } from "lucide-react";
 import { useTrack } from "@/lib/use-track";
 import { useSmartAnchor } from "@/lib/use-smart-anchor";
+import { BeforeAfter } from "@/components/BeforeAfter";
 
 import imgBefore from "@/assets/empty-living.jpg";
 import imgAfter from "@/assets/decorated-living-warm.jpg";
@@ -29,8 +30,6 @@ import imgLista from "@/assets/decorated-kitchen-island.jpg";
 // Usado só em trilhos, divisórias e bordas premium finas desta dobra.
 const GOLD = "#9C7B48";
 const GOLD_LIGHT = "#C4A96B";
-
-const CHIPS = ["Japandi", "Orçamento R$ 8.000", "Preservar piso"];
 
 const TRUST = ["3 gerações grátis", "Sem cartão", "Fotos privadas", "Resultado em segundos"];
 
@@ -153,69 +152,17 @@ export function AtelierHero({ onUpload, onBudget, onDropFile }: Props) {
             }}
             className="rounded-2xl overflow-hidden border"
           >
-            <div className="relative aspect-[16/11] flex">
-                {/* Faixa "antes" */}
-                <div
-                  className="w-[30%] flex-shrink-0 relative overflow-hidden"
-                  style={{ filter: "grayscale(22%) brightness(0.97)" }}
-                >
-                  <img
-                    src={imgBefore}
-                    alt="Ambiente antes da transformação"
-                    className="absolute inset-0 w-full h-full object-cover"
-                    style={{ objectPosition: "right center" }}
-                    loading="eager"
-                  />
-                  <span
-                    style={{ borderColor: `${GOLD_LIGHT}66` }}
-                    className="absolute bottom-3 left-3 text-[9px] font-medium uppercase tracking-[0.18em] px-2.5 py-1 rounded-full border bg-background/90 text-foreground backdrop-blur-sm"
-                  >
-                    Antes
-                  </span>
-                </div>
-
-                {/* Divisor dourado */}
-                <div
-                  className="w-[2px] flex-shrink-0 self-stretch z-10"
-                  style={{ background: `linear-gradient(to bottom, transparent, ${GOLD}, transparent)` }}
-                />
-
-                {/* Imagem "depois" — protagonista */}
-                <div className="flex-1 relative overflow-hidden">
-                  <img
-                    src={imgAfter}
-                    alt="Mesmo ambiente transformado pela IA"
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="eager"
-                  />
-                  <span
-                    style={{ borderColor: `${GOLD_LIGHT}66` }}
-                    className="absolute bottom-3 right-3 text-[9px] font-medium uppercase tracking-[0.18em] px-2.5 py-1 rounded-full border bg-background/90 text-foreground backdrop-blur-sm"
-                  >
-                    Depois
-                  </span>
-                </div>
-              </div>
-          </div>
-
-          {/* Chips discretos sobre a imagem */}
-          <div className="absolute top-5 right-5 flex flex-col gap-2.5 items-end">
-            {CHIPS.map((label) => (
-              <div
-                key={label}
-                style={{
-                  borderColor: `${GOLD}66`,
-                  boxShadow: "0 4px 16px -4px rgba(23,23,23,0.20)",
-                }}
-                className="border rounded-full pl-2.5 pr-3.5 py-1.5 text-[12.5px] font-medium tracking-tight flex items-center gap-2 bg-background/95 text-foreground backdrop-blur-sm"
-              >
-                <span
-                  className="h-2 w-2 rounded-full flex-shrink-0"
-                  style={{ background: GOLD, boxShadow: `0 0 0 2px ${GOLD}33` }}
-                />
-                {label}
-              </div>
-            ))}
+            {/* Slider interativo antes/depois — auto-anima até o user
+                arrastar; depois passa pra controle manual. Affordance
+                explícita (handle + labels) substitui o split estático. */}
+            <BeforeAfter
+              before={imgBefore}
+              after={imgAfter}
+              alt="Ambiente antes e depois da transformação pela IA"
+              auto
+              priority
+              className="aspect-[16/11] w-full"
+            />
           </div>
 
           {/* Selos de entrega abaixo da imagem (reforço de conversão) */}
