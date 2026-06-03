@@ -14,6 +14,9 @@
  *   - decorated-varanda-gourmet.jpg (varanda com churrasqueira e mesa)
  */
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
+import { BeforeAfter } from "@/components/BeforeAfter";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 
 import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
 import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
@@ -27,6 +30,10 @@ import decoratedLavanderia from "@/assets/decorated-lavanderia.jpg";
 import decoratedQuartoBebe from "@/assets/decorated-quarto-bebe.jpg";
 import decoratedHomeTheater from "@/assets/decorated-home-theater.jpg";
 import decoratedAreaPet from "@/assets/decorated-area-pet.jpg";
+import emptyLiving from "@/assets/empty-living.jpg";
+import emptyBedroom from "@/assets/empty-bedroom.jpg";
+import emptyKitchen from "@/assets/empty-kitchen.jpg";
+import emptyBathroom from "@/assets/empty-bathroom.jpg";
 
 type RoomItem = {
   slug: string;
@@ -34,6 +41,8 @@ type RoomItem = {
   description: string;
   src: string;
   alt: string;
+  /** Quando definido, o card renderiza o slider antes/depois interativo. */
+  before?: string;
 };
 
 /**
@@ -70,6 +79,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Sofá, tapete, iluminação e mesa de centro em harmonia.",
         src: decoratedLivingWarm,
         alt: "Sala de estar decorada em estilo moderno acolhedor",
+        before: emptyLiving,
       },
       {
         slug: "quarto",
@@ -77,6 +87,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Sono, descanso e identidade pessoal em paleta calma.",
         src: decoratedBedroom,
         alt: "Quarto decorado com texturas naturais",
+        before: emptyBedroom,
       },
       {
         slug: "cozinha",
@@ -84,6 +95,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Funcional e bonita, integrada ou compacta.",
         src: decoratedKitchen,
         alt: "Cozinha decorada em estilo premium",
+        before: emptyKitchen,
       },
       {
         slug: "banheiro",
@@ -91,6 +103,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Visualize metal, espelho e iluminação antes de comprar.",
         src: decoratedBathroom,
         alt: "Banheiro decorado em estilo minimalista premium",
+        before: emptyBathroom,
       },
     ],
   },
