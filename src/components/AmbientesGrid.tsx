@@ -34,139 +34,141 @@ type RoomItem = {
   description: string;
   src: string;
   alt: string;
-  /** Span em 12 colunas no breakpoint lg (bento dinâmico). */
-  span: string;
-  /** Aspect da imagem combinado com o span pra dar ritmo magazine. */
-  aspect: "tall" | "portrait" | "wide";
-  /** Tamanho tipográfico do card, casa com a área visual. */
-  size: "sm" | "md" | "lg";
 };
 
-const ROOMS: ReadonlyArray<RoomItem> = [
+/**
+ * Hierarquia objetiva por ubiquidade do cômodo na residência brasileira média
+ * (PNAD/IBGE): Essenciais = presentes em ~100% dos domicílios; Comuns =
+ * presentes em parcela majoritária; Especialidade = cômodos opcionais ou
+ * dedicados. Dentro de cada tier os cards são uniformes — hierarquia vem do
+ * tier (tamanho, posição, kicker), não de "destaque" subjetivo card a card.
+ */
+type Tier = {
+  id: string;
+  label: string;
+  caption: string;
+  /** Aspect/size aplicados uniformemente a todos os cards do tier. */
+  aspect: "tall" | "portrait" | "wide";
+  size: "sm" | "md" | "lg";
+  /** Span em 12 cols no breakpoint lg, uniforme dentro do tier. */
+  span: string;
+  rooms: ReadonlyArray<RoomItem>;
+};
+
+const TIERS: ReadonlyArray<Tier> = [
   {
-    slug: "sala",
-    name: "Sala de estar",
-    description: "Sofá, tapete, iluminação e mesa de centro em harmonia.",
-    src: decoratedLivingWarm,
-    alt: "Sala de estar decorada em estilo moderno acolhedor",
-    span: "lg:col-span-7",
-    aspect: "tall",
-    size: "lg",
-  },
-  {
-    slug: "quarto",
-    name: "Quarto",
-    description: "Sono, descanso e identidade pessoal em paleta calma.",
-    src: decoratedBedroom,
-    alt: "Quarto decorado com texturas naturais",
-    span: "lg:col-span-5",
+    id: "essenciais",
+    label: "Essenciais",
+    caption: "Cômodos presentes em praticamente toda residência.",
     aspect: "portrait",
-    size: "md",
-  },
-  {
-    slug: "cozinha",
-    name: "Cozinha",
-    description: "Funcional e bonita, integrada ou compacta.",
-    src: decoratedKitchen,
-    alt: "Cozinha decorada em estilo premium",
-    span: "lg:col-span-4",
-    aspect: "tall",
-    size: "sm",
-  },
-  {
-    slug: "home-office",
-    name: "Home office",
-    description: "Foco, ergonomia e fundo profissional pra calls.",
-    src: galleryOffice,
-    alt: "Home office com madeira e iluminação natural",
-    span: "lg:col-span-4",
-    aspect: "tall",
-    size: "sm",
-  },
-  {
-    slug: "banheiro",
-    name: "Banheiro",
-    description: "Visualize metal, espelho e iluminação antes de comprar.",
-    src: decoratedBathroom,
-    alt: "Banheiro decorado em estilo minimalista premium",
-    span: "lg:col-span-4",
-    aspect: "tall",
-    size: "sm",
-  },
-  {
-    slug: "sala-jantar",
-    name: "Sala de jantar",
-    description: "Mesa central, iluminação certa, paleta coerente.",
-    src: galleryLoft,
-    alt: "Sala de jantar integrada com mesa central e iluminação",
-    span: "lg:col-span-5",
-    aspect: "portrait",
-    size: "md",
-  },
-  {
-    slug: "varanda-gourmet",
-    name: "Varanda gourmet",
-    description: "Mesa, bancada, churrasqueira e plantas. Extensão da sala como área social.",
-    src: decoratedVarandaGourmet,
-    alt: "Varanda gourmet com churrasqueira, mesa de madeira e vista urbana",
-    span: "lg:col-span-7",
-    aspect: "wide",
     size: "lg",
+    span: "lg:col-span-6",
+    rooms: [
+      {
+        slug: "sala",
+        name: "Sala de estar",
+        description: "Sofá, tapete, iluminação e mesa de centro em harmonia.",
+        src: decoratedLivingWarm,
+        alt: "Sala de estar decorada em estilo moderno acolhedor",
+      },
+      {
+        slug: "quarto",
+        name: "Quarto",
+        description: "Sono, descanso e identidade pessoal em paleta calma.",
+        src: decoratedBedroom,
+        alt: "Quarto decorado com texturas naturais",
+      },
+      {
+        slug: "cozinha",
+        name: "Cozinha",
+        description: "Funcional e bonita, integrada ou compacta.",
+        src: decoratedKitchen,
+        alt: "Cozinha decorada em estilo premium",
+      },
+      {
+        slug: "banheiro",
+        name: "Banheiro",
+        description: "Visualize metal, espelho e iluminação antes de comprar.",
+        src: decoratedBathroom,
+        alt: "Banheiro decorado em estilo minimalista premium",
+      },
+    ],
   },
   {
-    slug: "closet",
-    name: "Closet",
-    description:
-      "Roupas, sapatos e acessórios organizados e visíveis. Cômodo dedicado ou integrado.",
-    src: decoratedCloset,
-    alt: "Closet com armários abertos, ilha central e iluminação direta",
-    span: "lg:col-span-4",
+    id: "comuns",
+    label: "Comuns",
+    caption: "Cômodos frequentes em apartamentos e casas familiares.",
     aspect: "tall",
-    size: "sm",
-  },
-  {
-    slug: "lavanderia",
-    name: "Lavanderia",
-    description:
-      "Marcenaria sob medida, máquinas integradas e organização vertical pra aproveitar cada centímetro.",
-    src: decoratedLavanderia,
-    alt: "Lavanderia planejada com marcenaria sob medida e máquinas integradas",
-    span: "lg:col-span-4",
-    aspect: "tall",
-    size: "sm",
-  },
-  {
-    slug: "quarto-bebe",
-    name: "Quarto de bebê",
-    description:
-      "Berço, paleta calma e organização funcional pros primeiros anos.",
-    src: decoratedQuartoBebe,
-    alt: "Quarto de bebê em estilo escandinavo com berço e paleta clara",
-    span: "lg:col-span-4",
-    aspect: "tall",
-    size: "sm",
-  },
-  {
-    slug: "home-theater",
-    name: "Home theater",
-    description:
-      "Acústica, blackout e poltronas certas pra experiência de cinema em casa.",
-    src: decoratedHomeTheater,
-    alt: "Home theater residencial com poltronas reclináveis e tela grande",
-    span: "lg:col-span-7",
-    aspect: "wide",
-    size: "lg",
-  },
-  {
-    slug: "area-pet",
-    name: "Área pet",
-    description:
-      "Nicho dedicado, piso lavável e organização de utensílios pra cães e gatos.",
-    src: decoratedAreaPet,
-    alt: "Área pet integrada com cama em nicho e prateleiras organizadas",
-    span: "lg:col-span-5",
-    aspect: "portrait",
     size: "md",
+    span: "lg:col-span-3",
+    rooms: [
+      {
+        slug: "home-office",
+        name: "Home office",
+        description: "Foco, ergonomia e fundo profissional pra calls.",
+        src: galleryOffice,
+        alt: "Home office com madeira e iluminação natural",
+      },
+      {
+        slug: "sala-jantar",
+        name: "Sala de jantar",
+        description: "Mesa central, iluminação certa, paleta coerente.",
+        src: galleryLoft,
+        alt: "Sala de jantar integrada com mesa central e iluminação",
+      },
+      {
+        slug: "lavanderia",
+        name: "Lavanderia",
+        description: "Marcenaria sob medida, máquinas integradas e organização vertical.",
+        src: decoratedLavanderia,
+        alt: "Lavanderia planejada com marcenaria sob medida e máquinas integradas",
+      },
+      {
+        slug: "varanda-gourmet",
+        name: "Varanda gourmet",
+        description: "Mesa, bancada, churrasqueira e plantas como extensão da sala.",
+        src: decoratedVarandaGourmet,
+        alt: "Varanda gourmet com churrasqueira, mesa de madeira e vista urbana",
+      },
+    ],
+  },
+  {
+    id: "especialidade",
+    label: "Especialidade",
+    caption: "Cômodos dedicados, opcionais ou planejados sob medida.",
+    aspect: "tall",
+    size: "sm",
+    span: "lg:col-span-3",
+    rooms: [
+      {
+        slug: "closet",
+        name: "Closet",
+        description: "Roupas, sapatos e acessórios organizados e visíveis.",
+        src: decoratedCloset,
+        alt: "Closet com armários abertos, ilha central e iluminação direta",
+      },
+      {
+        slug: "quarto-bebe",
+        name: "Quarto de bebê",
+        description: "Berço, paleta calma e organização funcional pros primeiros anos.",
+        src: decoratedQuartoBebe,
+        alt: "Quarto de bebê em estilo escandinavo com berço e paleta clara",
+      },
+      {
+        slug: "home-theater",
+        name: "Home theater",
+        description: "Acústica, blackout e poltronas certas pra cinema em casa.",
+        src: decoratedHomeTheater,
+        alt: "Home theater residencial com poltronas reclináveis e tela grande",
+      },
+      {
+        slug: "area-pet",
+        name: "Área pet",
+        description: "Nicho dedicado, piso lavável e organização de utensílios.",
+        src: decoratedAreaPet,
+        alt: "Área pet integrada com cama em nicho e prateleiras organizadas",
+      },
+    ],
   },
 ] as const;
 
@@ -191,7 +193,7 @@ export function AmbientesGrid() {
             </h2>
             <span
               aria-hidden="true"
-              className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60"
+              className="mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60"
             />
           </div>
           <p className="max-w-sm text-sm text-muted-foreground sm:text-base">
@@ -200,21 +202,34 @@ export function AmbientesGrid() {
           </p>
         </div>
 
-        {/* Bento dinâmico — 12 col no desktop, ritmo editorial. */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12">
-          {ROOMS.map((room) => (
-            <div key={room.slug} className={room.span}>
-              <PremiumOverlayCard
-                src={room.src}
-                alt={room.alt}
-                kicker="Ambiente"
-                title={room.name}
-                description={room.description}
-                aspect={room.aspect}
-                size={room.size}
-                to={`/ambientes/${room.slug}`}
-                ctaLabel="Decorar"
-              />
+        {/* Tiers objetivos: Essenciais → Comuns → Especialidade. Hierarquia
+            visual vem do tier (tamanho/posição), não de destaque arbitrário. */}
+        <div className="flex flex-col gap-12 sm:gap-16">
+          {TIERS.map((tier) => (
+            <div key={tier.id}>
+              <div className="mb-5 flex items-baseline justify-between gap-4 sm:mb-6">
+                <span className="is-kicker">{tier.label}</span>
+                <p className="hidden max-w-sm text-right text-xs text-muted-foreground sm:block sm:text-sm">
+                  {tier.caption}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12">
+                {tier.rooms.map((room) => (
+                  <div key={room.slug} className={tier.span}>
+                    <PremiumOverlayCard
+                      src={room.src}
+                      alt={room.alt}
+                      kicker={tier.label}
+                      title={room.name}
+                      description={room.description}
+                      aspect={tier.aspect}
+                      size={tier.size}
+                      to={`/ambientes/${room.slug}`}
+                      ctaLabel="Decorar"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
