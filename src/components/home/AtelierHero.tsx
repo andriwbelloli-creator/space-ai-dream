@@ -77,10 +77,11 @@ export function AtelierHero({ onUpload, onBudget, onDropFile }: Props) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-14 pb-10 grid lg:grid-cols-[0.78fr_1.5fr] gap-10 lg:gap-14 items-center">
         {/* Texto */}
         <div className="is-fade-up">
-          {/* Headline com quebra editorial intencional */}
-          <h1 className="text-[2.6rem] sm:text-5xl lg:text-[3.6rem] font-semibold leading-[1.04] tracking-[-0.03em]">
-            <span className="block">Transforme seu</span>
-            <span className="block">ambiente</span>
+          {/* Headline editorial em 2 linhas: matter-of-fact no topo (balanceada
+              pra evitar 3+ quebras em colunas estreitas) + assinatura italic
+              bronze embaixo. */}
+          <h1 className="text-[2.6rem] sm:text-5xl lg:text-[3.6rem] font-semibold leading-[1.04] tracking-[-0.03em] text-balance">
+            Transforme seu ambiente
             <span className="block font-serif italic font-normal text-accent mt-1">
               antes de reformar
             </span>
