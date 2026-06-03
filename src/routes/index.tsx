@@ -92,11 +92,6 @@ import { imagesFor, pair, img } from "@/lib/image-catalog";
 
 // Assets adicionais pros 5 estilos novos (R2) que entram no StylesCarousel
 // sem estar no image-catalog (que zela só pelas seções principais).
-import styleBoho from "@/assets/moodboard-pro.jpg";
-import styleMidCentury from "@/assets/decorated-living.jpg";
-import styleMediterraneo from "@/assets/decorated-living-warm.jpg";
-import styleArtDeco from "@/assets/decorated-bathroom-suite.jpg";
-import styleMaximalista from "@/assets/decorated-dining.jpg";
 // Assets dedicados pros 5 novos estilos (R6.1) — gerados via Imagen 4
 // (imagen-4.0-generate-001) com prompts calibrados por estilo.
 import styleTransicional from "@/assets/style-transicional.jpg";
