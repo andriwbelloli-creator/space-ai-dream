@@ -35,9 +35,8 @@
     },
     {
       "asset": "src/assets/decorated-bathroom-suite.jpg",
-      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
       "allowedFiles": [
-        "src/components/EditorialCollections.tsx",
         "src/lib/image-catalog.ts",
         "src/lib/seo-landing-images.ts"
       ]
@@ -107,6 +106,14 @@
       ]
     },
     {
+      "asset": "src/assets/decorated-lavabo.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/EditorialCollections.tsx",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
       "asset": "src/assets/decorated-lavanderia.jpg",
       "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
       "allowedFiles": [
@@ -129,7 +136,6 @@
       "asset": "src/assets/decorated-living.jpg",
       "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
       "allowedFiles": [
-        "src/components/EditorialCollections.tsx",
         "src/components/Tipos2D5D.tsx",
         "src/lib/image-catalog.ts",
         "src/lib/seo-landing-images.ts"
@@ -140,6 +146,14 @@
       "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
       "allowedFiles": [
         "src/components/AmbientesGrid.tsx",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-sala-tv.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/EditorialCollections.tsx",
         "src/lib/seo-landing-images.ts"
       ]
     },
