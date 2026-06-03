@@ -157,7 +157,6 @@
       "asset": "src/assets/empty-bathroom.jpg",
       "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
       "allowedFiles": [
-        "src/components/AmbientesGrid.tsx",
         "src/lib/image-catalog.ts",
         "src/lib/seo-landing-images.ts",
         "src/routes/index.tsx"
@@ -167,7 +166,6 @@
       "asset": "src/assets/empty-bedroom.jpg",
       "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
       "allowedFiles": [
-        "src/components/AmbientesGrid.tsx",
         "src/lib/image-catalog.ts",
         "src/lib/seo-landing-images.ts",
         "src/routes/index.tsx"
@@ -193,7 +191,6 @@
       "asset": "src/assets/empty-kitchen.jpg",
       "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
       "allowedFiles": [
-        "src/components/AmbientesGrid.tsx",
         "src/lib/image-catalog.ts",
         "src/lib/seo-landing-images.ts",
         "src/routes/index.tsx"
@@ -203,7 +200,6 @@
       "asset": "src/assets/empty-living.jpg",
       "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
       "allowedFiles": [
-        "src/components/AmbientesGrid.tsx",
         "src/components/home/AtelierHero.tsx",
         "src/lib/image-catalog.ts",
         "src/lib/seo-landing-images.ts",
