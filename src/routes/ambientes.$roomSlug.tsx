@@ -17,6 +17,7 @@ function roomName(slug: RoomSlug): string {
     "varanda-gourmet": "Varanda gourmet",
     "quarto-infantil": "Quarto infantil",
     "sala-tv": "Sala de TV",
+    "lavanderia": "Lavanderia",
     "quarto-bebe": "Quarto de bebê",
     "home-theater": "Home theater",
     "area-pet": "Área pet",

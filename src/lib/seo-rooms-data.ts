@@ -27,6 +27,7 @@ export type RoomSlug =
   | "quarto-infantil"
   | "lavabo"
   | "sala-tv"
+  | "lavanderia"
   | "quarto-bebe"
   | "home-theater"
   | "area-pet";
@@ -1101,6 +1102,100 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
       before: "empty-living",
       after: "decorated-sala-tv",
       gallery: ["decorated-sala-tv", "decorated-living-warm", "gallery-loft"],
+    },
+  },
+  lavanderia: {
+    title: "Decorar Lavanderia com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja sua lavanderia decorada com IA. Envie uma foto, escolha o estilo e receba inspiração visual com marcenaria sob medida, máquinas integradas e lista de compras.",
+    h1: "Veja sua *lavanderia* decorada com IA",
+    promise:
+      "Envie uma foto da lavanderia como ela está hoje e veja como ela pode virar um espaço funcional e bonito. Teste marcenaria sob medida, máquinas integradas, organização vertical e bancada de apoio em diferentes estilos. Você recebe sugestões de produtos reais pra começar.",
+    cta: "Ver minha lavanderia decorada",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "lavanderia",
+    benefits: [
+      "Teste marcenaria sob medida, torre de máquinas e bancada de apoio",
+      "Visualize máquinas integradas, tanque embutido e tábua de passar retrátil",
+      "Compare versões em contemporâneo, escandinavo, industrial e natural",
+      "Funciona em lavanderia dedicada, área de serviço integrada ou nicho compacto",
+      "Organização vertical pra produtos de limpeza, panos e cesto de roupa",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+      "Ideias pra aproveitar cada centímetro sem virar depósito",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto da lavanderia",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Contemporâneo, escandinavo, industrial ou natural. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Uma lavanderia comum ganhando organização premium",
+    visualDescription:
+      "Exemplo de transformação a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Funciona em lavanderia muito pequena?",
+        a: "Funciona. A IA propõe torre vertical (lavadora + secadora empilhadas), marcenaria até o teto e bancada dobrável pra aproveitar cada centímetro.",
+      },
+      {
+        q: "Posso integrar lavanderia e área de serviço?",
+        a: "Sim. A IA mantém coerência visual entre as zonas, separando funcionalmente sem brigar com a marcenaria existente.",
+      },
+      {
+        q: "A IA considera lavadora e secadora separadas ou torre?",
+        a: "Sim. Você define a configuração e a IA propõe layout coerente com o modelo escolhido (lado a lado, torre ou embutidas).",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A lista inclui marcenaria sob medida?",
+        a: "Sim. As sugestões priorizam módulos planejados disponíveis no varejo ou referências pra marceneiro local fazer sob medida.",
+      },
+      {
+        q: "Funciona em lavanderia externa, na varanda?",
+        a: "Funciona. A IA propõe revestimento resistente, marcenaria com proteção contra umidade e organização que tolera vento e chuva eventual.",
+      },
+      {
+        q: "Posso comparar vários estilos na mesma lavanderia?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver minha lavanderia decorada",
+    relatedLinks: [
+      { label: "Cozinha", to: "/ambientes/cozinha" },
+      { label: "Closet", to: "/ambientes/closet" },
+      { label: "Área pet", to: "/ambientes/area-pet" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Escandinavo", to: "/estilos/escandinavo" },
+      { label: "Natural", to: "/estilos/natural" },
+    ],
+    whyChoose: [
+      "Visualize a lavanderia pronta antes de comprar marcenaria, máquinas ou bancada",
+      "Compare uma versão contemporânea e uma escandinava na mesma foto",
+      "Ideias pra lavanderia compacta funcionar sem virar depósito",
+      "A IA respeita a estrutura real, você decide o que entra no orçamento",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Útil mesmo se a meta for só renovar (trocar marcenaria, pintar parede)",
+    ],
+    images: {
+      before: "empty-lavanderia",
+      after: "decorated-lavanderia",
+      gallery: ["decorated-lavanderia", "decorated-kitchen", "decorated-closet"],
     },
   },
   "quarto-bebe": {
