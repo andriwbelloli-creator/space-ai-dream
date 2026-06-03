@@ -26,7 +26,10 @@ export type RoomSlug =
   | "varanda-gourmet"
   | "quarto-infantil"
   | "lavabo"
-  | "sala-tv";
+  | "sala-tv"
+  | "quarto-bebe"
+  | "home-theater"
+  | "area-pet";
 
 /** Conteúdo de SEO + copy de conversão de uma landing page de ambiente. */
 export interface RoomSeoData {
