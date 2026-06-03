@@ -1879,13 +1879,12 @@ function FeaturedBeforeAfter() {
     <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-5 order-2 lg:order-1">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
-            Antes e depois em destaque
-          </div>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold leading-tight">
+          <span className="is-kicker">Antes e depois em destaque</span>
+          <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
             Um <span className="italic font-normal text-[color:var(--gold-soft)]">banheiro vazio</span> vira refúgio em
             segundos.
           </h2>
+          <span aria-hidden className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-4 text-muted-foreground max-w-md">
             Arraste o controle e veja a estrutura preservada, a iluminação trabalhada e o mobiliário
             sugerido pela IA, pronto para virar lista de compras e orçamento.
@@ -2456,11 +2455,12 @@ function Pricing({
     <section id="planos" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="text-center">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Assinatura</div>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold">
+          <span className="is-kicker">Assinatura</span>
+          <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
             Planos para criar seus{" "}
             <span className="italic font-normal text-[color:var(--gold-soft)]">projetos com IA</span>.
           </h2>
+          <span aria-hidden className="mx-auto mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
             Comece grátis e evolua quando precisar, do 2D rápido aos recursos profissionais.
           </p>
