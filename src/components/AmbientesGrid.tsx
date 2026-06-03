@@ -70,7 +70,6 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Sofá, tapete, iluminação e mesa de centro em harmonia.",
         src: decoratedLivingWarm,
         alt: "Sala de estar decorada em estilo moderno acolhedor",
-        before: emptyLiving,
       },
       {
         slug: "quarto",
@@ -78,7 +77,6 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Sono, descanso e identidade pessoal em paleta calma.",
         src: decoratedBedroom,
         alt: "Quarto decorado com texturas naturais",
-        before: emptyBedroom,
       },
       {
         slug: "cozinha",
@@ -86,7 +84,6 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Funcional e bonita, integrada ou compacta.",
         src: decoratedKitchen,
         alt: "Cozinha decorada em estilo premium",
-        before: emptyKitchen,
       },
       {
         slug: "banheiro",
@@ -94,7 +91,6 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Visualize metal, espelho e iluminação antes de comprar.",
         src: decoratedBathroom,
         alt: "Banheiro decorado em estilo minimalista premium",
-        before: emptyBathroom,
       },
     ],
   },
@@ -220,24 +216,17 @@ export function AmbientesGrid() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12">
                 {tier.rooms.map((room) => (
                   <div key={room.slug} className={tier.span}>
-                    {room.before ? (
-                      <BeforeAfterRoomCard
-                        room={{ ...room, before: room.before }}
-                        kicker={tier.label}
-                      />
-                    ) : (
-                      <PremiumOverlayCard
-                        src={room.src}
-                        alt={room.alt}
-                        kicker={tier.label}
-                        title={room.name}
-                        description={room.description}
-                        aspect={tier.aspect}
-                        size={tier.size}
-                        to={`/ambientes/${room.slug}`}
-                        ctaLabel="Decorar"
-                      />
-                    )}
+                    <PremiumOverlayCard
+                      src={room.src}
+                      alt={room.alt}
+                      kicker={tier.label}
+                      title={room.name}
+                      description={room.description}
+                      aspect={tier.aspect}
+                      size={tier.size}
+                      to={`/ambientes/${room.slug}`}
+                      ctaLabel="Decorar"
+                    />
                   </div>
                 ))}
               </div>
@@ -246,48 +235,5 @@ export function AmbientesGrid() {
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * Card antes/depois para os 4 cômodos essenciais. Slider interativo
- * (drag/teclado) acima, com cabeçalho editorial e CTA abaixo apontando
- * para a página do cômodo. Mantém o ritmo visual do tier Essenciais
- * (aspect portrait 3/4) sem alterar os outros tiers.
- */
-function BeforeAfterRoomCard({
-  room,
-  kicker,
-}: {
-  room: RoomItem & { before: string };
-  kicker: string;
-}) {
-  return (
-    <article className="group flex h-full flex-col gap-4">
-      <BeforeAfter
-        before={room.before}
-        after={room.src}
-        alt={room.alt}
-        className="aspect-[3/4] w-full ring-1 ring-black/5 shadow-xl shadow-black/5"
-      />
-      <div className="flex items-start justify-between gap-4 px-1">
-        <div className="min-w-0">
-          <span className="is-kicker">{kicker}</span>
-          <h3 className="mt-1.5 font-serif text-xl leading-tight tracking-tight text-foreground sm:text-2xl">
-            {room.name}
-          </h3>
-          <p className="mt-1.5 text-sm text-muted-foreground">{room.description}</p>
-        </div>
-        <Link
-          to="/ambientes/$roomSlug"
-          params={{ roomSlug: room.slug }}
-          className="mt-1 inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-accent"
-          aria-label={`Decorar ${room.name}`}
-        >
-          Decorar
-          <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-        </Link>
-      </div>
-    </article>
   );
 }
