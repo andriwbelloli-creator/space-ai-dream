@@ -7,7 +7,7 @@ import { SectionHead } from "./SectionHead";
 function EditorialRhythm() {
   return (
     <main className="bg-background text-foreground">
-      <section className="py-14 sm:py-20">
+      <section className="py-12 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <SectionHead
             kicker="Padrão editorial"

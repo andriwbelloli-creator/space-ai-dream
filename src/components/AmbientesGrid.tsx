@@ -176,7 +176,7 @@ export function AmbientesGrid() {
   return (
     <section
       id="ambientes"
-      className="bg-background py-14 sm:py-20"
+      className="bg-background py-12 sm:py-16"
       aria-labelledby="ambientes-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
