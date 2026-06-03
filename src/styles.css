@@ -494,6 +494,46 @@
   }
 }
 
+/* Premium dialog transitions — overrides shadcn defaults for the
+   Atelier Curated modal: longer easing, stronger zoom-from for a
+   refined editorial feel. Pair with shadcn's data-[state] animate
+   classes (fade + zoom). */
+.is-dialog-premium {
+  animation-duration: 420ms !important;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.is-dialog-premium[data-state="open"] {
+  animation-name: is-dialog-premium-in !important;
+}
+.is-dialog-premium[data-state="closed"] {
+  animation-name: is-dialog-premium-out !important;
+  animation-duration: 240ms !important;
+}
+@keyframes is-dialog-premium-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes is-dialog-premium-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.97);
+  }
+}
+.is-dialog-overlay-premium {
+  animation-duration: 420ms !important;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .is-marquee,
   .is-marquee-slow,
