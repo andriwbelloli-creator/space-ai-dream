@@ -11,7 +11,10 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "prepare": "husky",
-    "visual-check": "bun scripts/visual-consistency-check.ts"
+    "visual-check": "bun scripts/visual-consistency-check.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test-storybook": "test-storybook --url http://localhost:6006"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
