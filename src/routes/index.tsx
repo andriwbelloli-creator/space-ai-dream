@@ -1664,7 +1664,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Ambientes vazios"
             title={
               <>
-                Escolha o <span className="font-serif italic font-normal">cômodo</span> para
+                Escolha o <span className="italic font-normal text-[color:var(--gold-soft)]">cômodo</span> para
                 transformar
               </>
             }
@@ -1733,7 +1733,7 @@ function StylesCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Estilos de decoração"
             title={
               <>
-                Escolha um <span className="font-serif italic font-normal">estilo</span> para seu
+                Escolha um <span className="italic font-normal text-[color:var(--gold-soft)]">estilo</span> para seu
                 projeto
               </>
             }
@@ -1883,7 +1883,7 @@ function FeaturedBeforeAfter() {
             Antes e depois em destaque
           </div>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold leading-tight">
-            Um <span className="font-serif italic font-normal">banheiro vazio</span> vira refúgio em
+            Um <span className="italic font-normal text-[color:var(--gold-soft)]">banheiro vazio</span> vira refúgio em
             segundos.
           </h2>
           <p className="mt-4 text-muted-foreground max-w-md">
@@ -1933,7 +1933,7 @@ function ResultShowcase({
           title={
             <>
               Seu projeto fica{" "}
-              <span className="font-serif italic font-normal">pronto em minutos</span>
+              <span className="italic font-normal text-[color:var(--gold-soft)]">pronto em minutos</span>
             </>
           }
           sub="Imagem como protagonista, lista de compras ao lado e orçamento a um clique."
@@ -2097,7 +2097,7 @@ function InspirationGallery({
             title={
               <>
                 Projetos{" "}
-                <span className="font-serif italic font-normal">2D, 5D e planta baixa</span>
+                <span className="italic font-normal text-[color:var(--gold-soft)]">2D, 5D e planta baixa</span>
               </>
             }
             sub="Variações 2D reais geradas pela plataforma. 5D e planta baixa em breve. Filtre por tipo de projeto."
@@ -2245,7 +2245,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
             kicker="Inspirações"
             title={
               <>
-                Ambientes para <span className="font-serif italic font-normal">se inspirar</span>
+                Ambientes para <span className="italic font-normal text-[color:var(--gold-soft)]">se inspirar</span>
               </>
             }
             sub="Exemplos de transformações criadas com IA na plataforma."
@@ -2459,7 +2459,7 @@ function Pricing({
           <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Assinatura</div>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold">
             Planos para criar seus{" "}
-            <span className="font-serif italic font-normal">projetos com IA</span>.
+            <span className="italic font-normal text-[color:var(--gold-soft)]">projetos com IA</span>.
           </h2>
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
             Comece grátis e evolua quando precisar, do 2D rápido aos recursos profissionais.
@@ -2596,7 +2596,7 @@ function Trust() {
           title={
             <>
               Suas fotos e dados com{" "}
-              <span className="font-serif italic font-normal">segurança</span>
+              <span className="italic font-normal text-[color:var(--gold-soft)]">segurança</span>
             </>
           }
         />
