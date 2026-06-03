@@ -38,9 +38,16 @@ import { transformImage } from "@/lib/transform.functions";
 import { saveReturnContext } from "@/lib/navigation-return";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import useEmblaCarousel from "embla-carousel-react";
-import { getShoppingFallback, estimateTotal, sortByPriority } from "@/lib/shopping";
+import {
+  getShoppingFallback,
+  estimateTotal,
+  sortByPriority,
+  countByTag,
+  groupByCategory,
+  toClipboardText,
+} from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
-import { FileDown, ShoppingBag, RefreshCw, Download, Lock } from "lucide-react";
+import { FileDown, ShoppingBag, RefreshCw, Download, Lock, Copy, Check } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
