@@ -17,6 +17,9 @@ function roomName(slug: RoomSlug): string {
     "varanda-gourmet": "Varanda gourmet",
     "quarto-infantil": "Quarto infantil",
     "sala-tv": "Sala de TV",
+    "quarto-bebe": "Quarto de bebê",
+    "home-theater": "Home theater",
+    "area-pet": "Área pet",
   };
   return overrides[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
 }
