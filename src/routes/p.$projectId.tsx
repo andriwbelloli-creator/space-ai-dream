@@ -1,12 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
-import { Camera, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { Camera, ArrowRight, ShieldCheck, Sparkles, Copy } from "lucide-react";
 import { getPublicProject, type PublicProjectSnapshot } from "@/lib/projects.functions";
-import { getShoppingFallback, estimateTotal, sortByPriority } from "@/lib/shopping";
+import {
+  getShoppingFallback,
+  estimateTotal,
+  sortByPriority,
+  countByTag,
+  groupByCategory,
+  toClipboardText,
+} from "@/lib/shopping";
+import type { BudgetItem } from "@/lib/budget-pdf";
+import { toast } from "sonner";
 import { logEvent } from "@/lib/tracking.functions";
 import { styleLabel } from "@/lib/style-labels";
 
@@ -89,6 +98,31 @@ function PublicProjectPage() {
   const style = styleLabel(project.styleSlug);
   const room = roomLabel(project.roomType);
   const dateLabel = new Date(project.createdAt).toLocaleDateString("pt-BR");
+  const counts = countByTag(items);
+  const [tagFilter, setTagFilter] = useState<BudgetItem["tag"] | "Todos">("Todos");
+  const [grouped, setGrouped] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const filtered: ReadonlyArray<BudgetItem> =
+    tagFilter === "Todos" ? items : items.filter((it) => it.tag === tagFilter);
+  const filteredTotal = estimateTotal(filtered);
+  const projectName = project.title ?? `${room} no estilo ${style}`;
+  const tagChips: ReadonlyArray<BudgetItem["tag"] | "Todos"> = [
+    "Todos",
+    "Essencial",
+    "Recomendado",
+    "Opcional",
+  ];
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(toClipboardText(items, projectName));
+      setCopied(true);
+      toast.success("Lista copiada");
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
+  };
 
   const goCreate = () => {
     void track({
@@ -158,12 +192,96 @@ function PublicProjectPage() {
             </p>
 
             <div className="mt-5 rounded-2xl border bg-card/60 p-4">
-              <div className="flex items-baseline justify-between">
-                <span className="text-xs text-muted-foreground">{items.length} itens</span>
-                <span className="text-sm font-semibold">{total}</span>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-xs text-muted-foreground">
+                  {filtered.length} de {items.length} itens
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold">
+                    {tagFilter === "Todos" ? total : filteredTotal}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={onCopy}
+                    className="inline-flex items-center gap-1 rounded-full bg-muted hover:bg-muted/80 px-2.5 py-1 text-[11px] font-medium text-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <Copy className="h-3 w-3" /> {copied ? "Copiado" : "Copiar"}
+                  </button>
+                </div>
               </div>
+
+              <div className="mt-3 flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-1 flex-wrap" role="tablist" aria-label="Filtrar por prioridade">
+                  {tagChips.map((t) => {
+                    const active = tagFilter === t;
+                    const n = t === "Todos" ? items.length : counts[t];
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        role="tab"
+                        aria-selected={active}
+                        onClick={() => setTagFilter(t)}
+                        disabled={n === 0}
+                        className={`text-[10px] font-medium uppercase tracking-wider rounded-full px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:opacity-40 ${
+                          active
+                            ? "bg-foreground text-background"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                        }`}
+                      >
+                        {t} <span className="opacity-70">· {n}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGrouped((v) => !v)}
+                  className="text-[10px] text-muted-foreground hover:text-foreground rounded-full px-2 py-1 transition"
+                  aria-pressed={grouped}
+                >
+                  {grouped ? "Lista" : "Por categoria"}
+                </button>
+              </div>
+
               <ul className="mt-3 divide-y divide-border/60">
-                {items.map((it) => (
+                {grouped
+                  ? groupByCategory(filtered).flatMap((g, gi) => [
+                      <li
+                        key={`cat_${gi}_${g.cat}`}
+                        className="pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+                      >
+                        {g.cat} · {g.items.length}
+                      </li>,
+                      ...g.items.map((it) => (
+                        <li
+                          key={`${g.cat}_${it.name}`}
+                          className="py-2.5 flex items-start gap-3"
+                        >
+                          <span
+                            className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold uppercase tracking-wider ${
+                              it.tag === "Essencial"
+                                ? "bg-accent text-accent-foreground"
+                                : it.tag === "Recomendado"
+                                  ? "bg-foreground/85 text-background"
+                                  : "bg-muted text-foreground"
+                            }`}
+                          >
+                            {it.tag}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div
+                              className={`text-sm truncate ${it.tag === "Essencial" ? "font-semibold" : "font-medium"}`}
+                            >
+                              {it.name}
+                            </div>
+                            <div className="text-[11px] text-muted-foreground">{it.cat}</div>
+                          </div>
+                          <span className="text-xs font-medium whitespace-nowrap">{it.price}</span>
+                        </li>
+                      )),
+                    ])
+                  : filtered.map((it) => (
                   <li key={it.name} className="py-2.5 flex items-start gap-3">
                     <span
                       className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] font-semibold uppercase tracking-wider ${
