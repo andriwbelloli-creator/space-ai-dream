@@ -1809,7 +1809,9 @@ function ShoppingPanel({
         </div>
       )}
 
-      {filtered.length === 0 && !isLoading ? (
+      {isLoading ? (
+        <ShoppingSkeleton count={6} />
+      ) : filtered.length === 0 ? (
         <ShoppingEmptyState
           onClearFilter={() => {
             setTagFilter("Todos");
@@ -1820,14 +1822,7 @@ function ShoppingPanel({
         />
       ) : (
         <ul className="mt-3 -mx-1 divide-y divide-border/60">
-          {isLoading && !aiItems
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <li key={`sk_${i}`} className="px-1 py-2.5 animate-pulse">
-                  <div className="h-3 w-2/3 rounded bg-muted" />
-                  <div className="mt-2 h-2.5 w-1/3 rounded bg-muted/60" />
-                </li>
-              ))
-            : grouped && unlocked
+          {grouped && unlocked
             ? groupByCategory(filtered).flatMap((g, gi) => [
                 <li
                   key={`cat_${gi}_${g.cat}`}
