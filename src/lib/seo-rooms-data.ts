@@ -1103,4 +1103,286 @@ export const SEO_ROOMS: Record<RoomSlug, RoomSeoData> = {
       gallery: ["decorated-sala-tv", "decorated-living-warm", "gallery-loft"],
     },
   },
+  "quarto-bebe": {
+    title: "Decorar Quarto de Bebê com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja o quarto do bebê decorado com IA. Envie uma foto, escolha o estilo e receba inspiração visual com berço, paleta calma, organização e lista de compras.",
+    h1: "Veja o *quarto do bebê* decorado com IA",
+    promise:
+      "Envie uma foto do quarto como ele está hoje e veja como ele pode receber o bebê com segurança, paleta calma e organização funcional. Teste berço, cômoda, poltrona de amamentação e iluminação suave em diferentes estilos. Você recebe sugestões de produtos reais pra começar.",
+    cta: "Ver o quarto do bebê decorado",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "quarto-bebe",
+    benefits: [
+      "Teste berço, cômoda trocador, poltrona de amamentação e tapete",
+      "Visualize paleta calma e iluminação suave antes de comprar",
+      "Compare versões em escandinavo, neutro contemporâneo, candy color e boho",
+      "Funciona em quarto dedicado ou compartilhado com o casal",
+      "Organização de roupas, fraldas e brinquedos pensada pra rotina",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+      "Ideias pra durar além dos primeiros meses, sem refazer tudo aos 2 anos",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do quarto",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Escandinavo, neutro contemporâneo, candy color ou boho. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Um quarto comum virando o quarto do bebê",
+    visualDescription:
+      "Exemplo de transformação a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "A IA sugere móveis seguros pro bebê?",
+        a: "A inspiração prioriza berço com espaçamento adequado entre ripas, cantos arredondados e ausência de quinas vivas próximas. Você confirma medidas e selo Inmetro na compra final.",
+      },
+      {
+        q: "Funciona em quarto pequeno ou compartilhado com o casal?",
+        a: "Sim. A IA propõe escala proporcional e zoneamento, mantendo área de circulação e separação visual entre cama de casal e berço.",
+      },
+      {
+        q: "Posso pedir paleta neutra ou colorida?",
+        a: "Sim. Você define se prefere off-white e madeira clara, candy color suave ou contraste com parede escura.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A lista inclui poltrona de amamentação?",
+        a: "Sim, quando faz parte da proposta visual. Você pode pedir versão minimal (só berço e cômoda) ou versão completa.",
+      },
+      {
+        q: "Serve pra quarto que vai durar até a criança crescer?",
+        a: "Sim. Você pode pedir versão que evolui pra quarto infantil sem refazer tudo aos 2 anos, trocando berço por mini-cama no mesmo layout.",
+      },
+      {
+        q: "Posso comparar vários estilos no mesmo quarto?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver o quarto do bebê decorado",
+    relatedLinks: [
+      { label: "Quarto infantil", to: "/ambientes/quarto-infantil" },
+      { label: "Quarto", to: "/ambientes/quarto" },
+      { label: "Closet", to: "/ambientes/closet" },
+      { label: "Escandinavo", to: "/estilos/escandinavo" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+      { label: "Natural", to: "/estilos/natural" },
+    ],
+    whyChoose: [
+      "Visualize o quarto pronto antes de comprar berço, cômoda ou poltrona",
+      "Compare uma versão neutra calma e uma candy color suave na mesma foto",
+      "Ideias pra quarto compartilhado com o casal funcionar nos primeiros meses",
+      "A IA respeita a estrutura real, você decide o que entra no orçamento",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Útil mesmo se a meta for só renovar (trocar berço, repintar parede)",
+    ],
+    images: {
+      before: "empty-bedroom",
+      after: "decorated-quarto-bebe",
+      gallery: ["decorated-quarto-bebe", "decorated-quarto-infantil", "decorated-bedroom"],
+    },
+  },
+  "home-theater": {
+    title: "Decorar Home Theater com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja seu home theater decorado com IA. Envie uma foto, escolha o estilo e receba inspiração visual com poltronas, acústica, blackout e lista de compras.",
+    h1: "Veja seu *home theater* decorado com IA",
+    promise:
+      "Envie uma foto do espaço como ele está hoje e veja como ele pode virar uma experiência de cinema em casa. Teste poltronas reclináveis, painel acústico, iluminação cênica e blackout em diferentes estilos. Você recebe sugestões de produtos reais pra começar.",
+    cta: "Ver meu home theater decorado",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "home-theater",
+    benefits: [
+      "Teste poltronas reclináveis, sofá retrátil e disposição em fileira",
+      "Visualize painel acústico, blackout e iluminação cênica antes de comprar",
+      "Compare versões em contemporâneo escuro, industrial, mid-century e luxo discreto",
+      "Funciona em sala dedicada, sótão, edícula ou ambiente integrado",
+      "Acústica, posição da tela e ângulo de visão pensados pra reduzir cansaço",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+      "Ponto de partida realista antes de gastar com projetor, tela ou poltrona",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do espaço",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Contemporâneo escuro, industrial, mid-century ou luxo discreto. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Um cômodo comum virando home theater",
+    visualDescription:
+      "Exemplo de transformação a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "A IA leva em conta a acústica do ambiente?",
+        a: "A inspiração prioriza painel ripado, cortina pesada e tapete pra reduzir reverberação. Tratamento acústico técnico segue projeto especializado na execução final.",
+      },
+      {
+        q: "Funciona em sala que não é totalmente escura?",
+        a: "Sim. A IA propõe blackout sob medida, cortina dupla e paleta escura nas paredes pra controlar reflexo na tela.",
+      },
+      {
+        q: "Posso comparar projetor e TV grande?",
+        a: "Sim. Você pode pedir versão com tela de projeção ou painel com TV de grande polegada. A IA propõe proporções coerentes com o ambiente.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A lista inclui poltronas reclináveis?",
+        a: "Sim, quando fazem parte da proposta visual. Você pode pedir versão econômica (sofá retrátil) ou versão premium (poltronas individuais em fileira).",
+      },
+      {
+        q: "Funciona em sótão ou edícula?",
+        a: "Funciona. A IA respeita pé-direito, formato em L ou inclinação do telhado, propondo layout que aproveita o espaço real.",
+      },
+      {
+        q: "Posso comparar vários estilos no mesmo cômodo?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver meu home theater decorado",
+    relatedLinks: [
+      { label: "Sala de TV", to: "/ambientes/sala-tv" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Mid-century modern", to: "/estilos/mid-century" },
+      { label: "Industrial", to: "/estilos/industrial" },
+      { label: "Luxo discreto", to: "/estilos/luxo" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+    ],
+    whyChoose: [
+      "Visualize o home theater pronto antes de comprar poltronas, tela ou projetor",
+      "Compare uma versão contemporânea escura e uma mid-century quente na mesma foto",
+      "Ideias pra sótão, edícula ou ambiente compacto funcionar como cinema",
+      "A IA respeita a estrutura real, você decide o que entra no orçamento",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Útil mesmo se a meta for só renovar (poltrona nova, blackout, pintura)",
+    ],
+    images: {
+      before: "empty-living",
+      after: "decorated-home-theater",
+      gallery: ["decorated-home-theater", "decorated-sala-tv", "decorated-living-warm"],
+    },
+  },
+  "area-pet": {
+    title: "Decorar Área Pet com Inteligência Artificial | Ideal Space",
+    description:
+      "Veja a área pet decorada com IA. Envie uma foto, escolha o estilo e receba inspiração visual com nicho, piso lavável, organização e lista de compras.",
+    h1: "Veja a *área pet* decorada com IA",
+    promise:
+      "Envie uma foto do espaço como ele está hoje e veja como ele pode virar uma área pet funcional e bonita. Teste nicho de marcenaria, piso lavável, prateleiras pra utensílios e bebedouro de água corrente em diferentes estilos. Você recebe sugestões de produtos reais pra começar.",
+    cta: "Ver minha área pet decorada",
+    trustText: "Em poucos passos, a partir de uma foto comum.",
+    defaultRoomType: "area-pet",
+    benefits: [
+      "Teste nicho com cama, comedouro elevado e bebedouro automático",
+      "Visualize piso porcelanato lavável e parede com revestimento resistente",
+      "Compare versões em escandinavo, contemporâneo, natural e industrial",
+      "Funciona em área de serviço integrada, varanda, hall ou canto da sala",
+      "Organização vertical pra ração, brinquedos, coleiras e utensílios",
+      "Lista de compras com sugestões reais e faixa de preço",
+      "Privacidade: suas fotos não são publicadas sem sua autorização",
+      "Ideias pra cães, gatos ou multipet sem virar canil",
+    ],
+    steps: [
+      {
+        t: "Envie uma foto do espaço",
+        d: "Use a foto que você já tem, do celular ou do computador. Quanto mais clara, melhor.",
+      },
+      {
+        t: "Escolha um estilo de decoração",
+        d: "Escandinavo, contemporâneo, natural ou industrial. Você decide a vibe.",
+      },
+      {
+        t: "Veja antes/depois e lista de compras",
+        d: "Receba uma inspiração visual com sugestões de produtos e faixa de preço estimada.",
+      },
+    ],
+    visualTitle: "Um canto comum virando área pet integrada",
+    visualDescription:
+      "Exemplo de transformação a partir de uma foto comum. Arraste para comparar antes e depois.",
+    faq: [
+      {
+        q: "Serve pra cão de porte grande?",
+        a: "Sim. Você define o porte do pet e a IA propõe nicho, cama e altura de comedouro proporcionais. Confirme medidas reais na execução.",
+      },
+      {
+        q: "Funciona pra gato com prateleiras altas?",
+        a: "Sim. A IA propõe circuito vertical com prateleiras, arranhador integrado à marcenaria e nicho protegido em ponto alto.",
+      },
+      {
+        q: "Posso integrar a área pet à área de serviço?",
+        a: "Sim. A IA mantém coerência visual entre as duas zonas, separando funcionalmente sem brigar com a marcenaria existente.",
+      },
+      {
+        q: "Posso usar uma foto do celular?",
+        a: "Sim. Foto comum do celular já serve, desde que o ambiente esteja visível e iluminado.",
+      },
+      {
+        q: "A lista inclui bebedouro automático e comedouro elevado?",
+        a: "Sim, quando fazem parte da proposta visual. Você pode pedir versão minimal (cama e comedouro) ou completa.",
+      },
+      {
+        q: "Funciona em apartamento sem área externa?",
+        a: "Funciona. A IA propõe canto integrado à sala, varanda ou hall, usando marcenaria sob medida pra não virar canto solto.",
+      },
+      {
+        q: "Posso comparar vários estilos no mesmo espaço?",
+        a: "Sim. A mesma foto pode receber versões em diferentes estilos. Compare lado a lado.",
+      },
+      {
+        q: "Quanto custa para experimentar?",
+        a: "3 gerações grátis por mês no plano gratuito. Sem cartão de crédito.",
+      },
+    ],
+    finalCta: "Ver minha área pet decorada",
+    relatedLinks: [
+      { label: "Varanda gourmet", to: "/ambientes/varanda-gourmet" },
+      { label: "Sala", to: "/ambientes/sala" },
+      { label: "Closet", to: "/ambientes/closet" },
+      { label: "Escandinavo", to: "/estilos/escandinavo" },
+      { label: "Natural", to: "/estilos/natural" },
+      { label: "Contemporâneo", to: "/estilos/contemporaneo" },
+    ],
+    whyChoose: [
+      "Visualize a área pet pronta antes de comprar nicho, cama ou comedouro",
+      "Compare uma versão escandinava e uma natural na mesma foto",
+      "Ideias pra apartamento sem área externa funcionar pro pet sem virar canil",
+      "A IA respeita a estrutura real, você decide o que entra no orçamento",
+      "Sugestões de produtos com faixa de preço, ponto de partida realista",
+      "Útil mesmo se a meta for só renovar (trocar cama, organizar utensílios)",
+    ],
+    images: {
+      before: "empty-lavanderia",
+      after: "decorated-area-pet",
+      gallery: ["decorated-area-pet", "decorated-lavanderia", "decorated-closet"],
+    },
+  },
 };
