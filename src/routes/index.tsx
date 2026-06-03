@@ -374,41 +374,6 @@ const styles: ReadonlyArray<{
     styleId: STYLE_META[i.id]?.styleId ?? "japandi",
     slug: STYLE_META[i.id]?.slug ?? "japandi",
   })),
-  {
-    img: styleBoho,
-    name: "Boho chic",
-    sub: "Camadas e tons quentes",
-    styleId: "boho",
-    slug: "boho-chic",
-  },
-  {
-    img: styleMidCentury,
-    name: "Mid-century",
-    sub: "Linhas atemporais",
-    styleId: "mid-century",
-    slug: "mid-century",
-  },
-  {
-    img: styleMediterraneo,
-    name: "Mediterrâneo",
-    sub: "Luz natural, cerâmica",
-    styleId: "mediterraneo",
-    slug: "mediterraneo",
-  },
-  {
-    img: styleArtDeco,
-    name: "Art déco",
-    sub: "Geometria sofisticada",
-    styleId: "art-deco",
-    slug: "art-deco",
-  },
-  {
-    img: styleMaximalista,
-    name: "Maximalista",
-    sub: "Camadas autorais",
-    styleId: "maximalista",
-    slug: "maximalista",
-  },
   // 5 novos estilos (R6) com slug pra rota /estilos/<slug>.
   {
     img: styleTransicional,
