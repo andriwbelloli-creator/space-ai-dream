@@ -47,7 +47,7 @@ import {
   toClipboardText,
 } from "@/lib/shopping";
 import { generateBudgetPdf, type BudgetItem } from "@/lib/budget-pdf";
-import { FileDown, ShoppingBag, RefreshCw, Download, Lock, Copy, Check } from "lucide-react";
+import { FileDown, ShoppingBag, RefreshCw, Download, Lock, Copy } from "lucide-react";
 import { generateShoppingList } from "@/lib/shopping.functions";
 import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
