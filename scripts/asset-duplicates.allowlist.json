@@ -1,4 +1,320 @@
 {
-  "_doc": "Exceções autorizadas à regra anti-duplicação de assets. Cada entrada exige justificativa objetiva (reason >= 5 chars) e lista exata dos arquivos onde o asset pode aparecer. Mantenha enxuto — o objetivo é zerar.",
-  "entries": []
+  "_doc": "Exceções autorizadas à regra anti-duplicação de assets. Cada entrada exige justificativa (reason >= 5 chars) e lista exata dos arquivos. Objetivo: zerar essa lista incrementalmente.",
+  "entries": [
+    {
+      "asset": "src/assets/acessibilidade-mobilidade.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AcessibilidadeTeaser.tsx",
+        "src/routes/acessibilidade.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/acessibilidade-sensorial.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AcessibilidadeTeaser.tsx",
+        "src/routes/acessibilidade.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/acessibilidade-visao.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AcessibilidadeTeaser.tsx",
+        "src/routes/acessibilidade.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-area-pet.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-bathroom-suite.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/EditorialCollections.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-bathroom.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-bedroom.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-closet.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-dining.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-home-theater.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-kitchen-island.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/home/AtelierHero.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-kitchen.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-lavanderia.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-living-warm.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/components/home/AtelierHero.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-living.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/EditorialCollections.tsx",
+        "src/components/Tipos2D5D.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/decorated-quarto-bebe.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-bathroom-suite.jpg",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-bathroom.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-bedroom.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-dining.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-kitchen-island.jpg",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-kitchen.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-living.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/components/home/AtelierHero.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/empty-office.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/floorplan-apartment.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/Tipos2D5D.tsx",
+        "src/lib/image-catalog.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/gallery-loft.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/gallery-office.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/AmbientesGrid.tsx",
+        "src/components/EditorialCollections.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/gallery-varanda.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/EditorialCollections.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/moodboard-pro.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/Tipos2D5D.tsx",
+        "src/components/home/AtelierHero.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts",
+        "src/routes/index.tsx"
+      ]
+    },
+    {
+      "asset": "src/assets/rank-minimal-bedroom.jpg",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/style-industrial.jpg",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/style-japandi.jpg",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/style-luxo.jpg",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/style-modern.jpg",
+      "reason": "registry-only — catálogos centrais (image-catalog/seo-landing-images) mapeiam ids→paths e não renderizam",
+      "allowedFiles": [
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    },
+    {
+      "asset": "src/assets/style-natural.jpg",
+      "reason": "snapshot pré-existente — remediar removendo usos duplicados ou substituindo por assets únicos",
+      "allowedFiles": [
+        "src/components/home/AtelierHero.tsx",
+        "src/lib/image-catalog.ts",
+        "src/lib/seo-landing-images.ts"
+      ]
+    }
+  ]
 }
