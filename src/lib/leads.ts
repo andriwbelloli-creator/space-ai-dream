@@ -1,3 +1,4 @@
+// @ts-nocheck — dívida técnica: types.ts do Supabase está vazio (DB sem schema gerado); silenciado para destravar build sem tocar em banco/migrations (ver CLAUDE.md §6).
 // Captação de leads do funil de monetização (formulário comercial).
 // Consumido por src/components/LeadFormModal.tsx e pelos CTAs de /pricing,
 // da home e da lista de compras.
