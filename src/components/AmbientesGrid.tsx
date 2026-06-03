@@ -14,6 +14,9 @@
  *   - decorated-varanda-gourmet.jpg (varanda com churrasqueira e mesa)
  */
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
+import { BeforeAfter } from "@/components/BeforeAfter";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 
 import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
 import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
@@ -27,6 +30,10 @@ import decoratedLavanderia from "@/assets/decorated-lavanderia.jpg";
 import decoratedQuartoBebe from "@/assets/decorated-quarto-bebe.jpg";
 import decoratedHomeTheater from "@/assets/decorated-home-theater.jpg";
 import decoratedAreaPet from "@/assets/decorated-area-pet.jpg";
+import emptyLiving from "@/assets/empty-living.jpg";
+import emptyBedroom from "@/assets/empty-bedroom.jpg";
+import emptyKitchen from "@/assets/empty-kitchen.jpg";
+import emptyBathroom from "@/assets/empty-bathroom.jpg";
 
 type RoomItem = {
   slug: string;
@@ -34,6 +41,8 @@ type RoomItem = {
   description: string;
   src: string;
   alt: string;
+  /** Quando definido, o card renderiza o slider antes/depois interativo. */
+  before?: string;
 };
 
 /**
@@ -70,6 +79,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Sofá, tapete, iluminação e mesa de centro em harmonia.",
         src: decoratedLivingWarm,
         alt: "Sala de estar decorada em estilo moderno acolhedor",
+        before: emptyLiving,
       },
       {
         slug: "quarto",
@@ -77,6 +87,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Sono, descanso e identidade pessoal em paleta calma.",
         src: decoratedBedroom,
         alt: "Quarto decorado com texturas naturais",
+        before: emptyBedroom,
       },
       {
         slug: "cozinha",
@@ -84,6 +95,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Funcional e bonita, integrada ou compacta.",
         src: decoratedKitchen,
         alt: "Cozinha decorada em estilo premium",
+        before: emptyKitchen,
       },
       {
         slug: "banheiro",
@@ -91,6 +103,7 @@ const TIERS: ReadonlyArray<Tier> = [
         description: "Visualize metal, espelho e iluminação antes de comprar.",
         src: decoratedBathroom,
         alt: "Banheiro decorado em estilo minimalista premium",
+        before: emptyBathroom,
       },
     ],
   },
@@ -216,17 +229,28 @@ export function AmbientesGrid() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-12">
                 {tier.rooms.map((room) => (
                   <div key={room.slug} className={tier.span}>
-                    <PremiumOverlayCard
-                      src={room.src}
-                      alt={room.alt}
-                      kicker={tier.label}
-                      title={room.name}
-                      description={room.description}
-                      aspect={tier.aspect}
-                      size={tier.size}
-                      to={`/ambientes/${room.slug}`}
-                      ctaLabel="Decorar"
-                    />
+                    {room.before ? (
+                      <BeforeAfterRoomCard
+                        slug={room.slug}
+                        name={room.name}
+                        description={room.description}
+                        before={room.before}
+                        after={room.src}
+                        alt={room.alt}
+                      />
+                    ) : (
+                      <PremiumOverlayCard
+                        src={room.src}
+                        alt={room.alt}
+                        kicker={tier.label}
+                        title={room.name}
+                        description={room.description}
+                        aspect={tier.aspect}
+                        size={tier.size}
+                        to={`/ambientes/${room.slug}`}
+                        ctaLabel="Decorar"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -235,5 +259,51 @@ export function AmbientesGrid() {
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Card com slider antes/depois interativo. Mantém o mesmo destino clicável
+ * (`/ambientes/<slug>`) via barra de ação no rodapé — separada do slider
+ * pra não conflitar com o gesto de arrastar.
+ */
+function BeforeAfterRoomCard({
+  slug,
+  name,
+  description,
+  before,
+  after,
+  alt,
+}: {
+  slug: string;
+  name: string;
+  description: string;
+  before: string;
+  after: string;
+  alt: string;
+}) {
+  return (
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-shadow hover:shadow-md">
+      <div className="aspect-[3/4] w-full overflow-hidden">
+        <BeforeAfter before={before} after={after} alt={alt} className="h-full w-full" />
+      </div>
+      <Link
+        to="/ambientes/$slug"
+        params={{ slug }}
+        className="flex items-start justify-between gap-3 p-5 sm:p-6"
+      >
+        <div className="min-w-0">
+          <span className="is-kicker text-[10px]">Essenciais</span>
+          <h3 className="mt-1 font-serif text-lg leading-tight text-foreground sm:text-xl">
+            {name}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        </div>
+        <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-sm font-medium text-[color:var(--gold-soft)] transition-transform group-hover:translate-x-0.5">
+          Decorar
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </span>
+      </Link>
+    </article>
   );
 }
