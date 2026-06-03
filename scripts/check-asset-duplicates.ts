@@ -17,6 +17,23 @@ const ROOT = resolve(import.meta.dir, "..");
 const SRC = join(ROOT, "src");
 const ALLOWLIST_PATH = join(import.meta.dir, "asset-duplicates.allowlist.json");
 
+/**
+ * Registries centrais de lookup id→URL. Não renderizam por si só — só
+ * resolvem chaves para landings programáticas (`/estilos/$slug`,
+ * `/ambientes/$slug`). Duplicações *somente* entre eles, ou entre eles +
+ * UM componente de render, não são tratadas como violação visual: a
+ * landing programática e o componente nunca aparecem na mesma view.
+ */
+const REGISTRY_FILES = new Set<string>([
+  "src/lib/image-catalog.ts",
+  "src/lib/seo-landing-images.ts",
+]);
+
+function isRegistryOnlyOrSingleRender(files: string[]): boolean {
+  const renderFiles = files.filter((f) => !REGISTRY_FILES.has(f));
+  return renderFiles.length <= 1;
+}
+
 const IMAGE_EXT = new Set([
   ".png",
   ".jpg",
@@ -145,17 +162,19 @@ function main() {
   const violations: { asset: string; files: string[] }[] = [];
   for (const [asset, files] of usage) {
     if (files.size <= 1) continue;
+    const list = [...files].sort();
+    // Exceção estrutural permanente: registries + no máximo 1 render.
+    if (isRegistryOnlyOrSingleRender(list)) continue;
     const allowed = allowMap.get(asset);
     if (allowed) {
       const expected = new Set(allowed.allowedFiles);
-      const actual = [...files].sort();
       const sameShape =
-        actual.length === expected.size && actual.every((f) => expected.has(f));
+        list.length === expected.size && list.every((f) => expected.has(f));
       if (sameShape) continue;
-      violations.push({ asset: `${asset} (allowlist desatualizada)`, files: actual });
+      violations.push({ asset: `${asset} (allowlist desatualizada)`, files: list });
       continue;
     }
-    violations.push({ asset, files: [...files].sort() });
+    violations.push({ asset, files: list });
   }
 
   if (violations.length === 0) {
