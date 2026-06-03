@@ -728,6 +728,7 @@ function Index() {
       <HowItWorks onUpload={openUpload} />
       <StylesCarousel onUpload={openUpload} />
       <AmbientesGrid />
+      <ObjetosTeaser />
       <Tipos2D5D />
       {/* Galeria #galeria — destino do menu "Ideias". Sub-CTAs no fim
           levam pras sections de Estilos e Ambientes. */}
@@ -737,6 +738,7 @@ function Index() {
         onLead={(title) => setLead({ title, source: "galeria" })}
       />
       <EditorialCollections />
+      <AcessibilidadeTeaser />
       <ResultShowcase
         onBudget={() => openReward("budget")}
         onAffiliate={setAffiliateOpen}
