@@ -53,6 +53,7 @@ import { buildAffiliateLinks } from "@/lib/affiliate";
 import { WhatsAppShareDialog } from "@/components/WhatsAppShareDialog";
 import { LeadFormModal } from "@/components/LeadFormModal";
 import { AtelierCurated } from "@/components/AtelierCurated";
+import { ShoppingEmptyState } from "@/components/ShoppingEmptyState";
 import { MessageCircle } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";

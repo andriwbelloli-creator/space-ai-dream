@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
+import { ShoppingEmptyState } from "@/components/ShoppingEmptyState";
 import { Camera, ArrowRight, ShieldCheck, Sparkles, Copy } from "lucide-react";
 import { getPublicProject, type PublicProjectSnapshot } from "@/lib/projects.functions";
 import {

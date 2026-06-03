@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { logEvent } from "@/lib/tracking.functions";
 import { styleLabel } from "@/lib/style-labels";
 import { ShareProjectDialog } from "@/components/ShareProjectDialog";
+import { ShoppingEmptyState } from "@/components/ShoppingEmptyState";
 
 /**
  * Snapshot do que o detalhe do projeto precisa exibir. `ai_response` traz
