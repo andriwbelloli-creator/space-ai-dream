@@ -2,13 +2,7 @@
 // Usado para orientar a recomendação de produtos por ambiente
 // (lista de compras + afiliados). Dados estáticos, sem lógica de risco.
 
-export type RoomType =
-  | "quarto"
-  | "sala"
-  | "cozinha"
-  | "home-office"
-  | "banheiro"
-  | "quarto-infantil";
+export type RoomType = "quarto" | "sala" | "cozinha" | "home-office" | "banheiro";
 
 export const ROOM_PRODUCT_CATEGORIES: Record<RoomType, string[]> = {
   quarto: ["cama", "cabeceira", "criado-mudo", "luminária", "tapete", "cortina"],
@@ -16,16 +10,6 @@ export const ROOM_PRODUCT_CATEGORIES: Record<RoomType, string[]> = {
   cozinha: ["armários", "banquetas", "luminárias", "organizadores", "mesa"],
   "home-office": ["mesa", "cadeira", "monitor", "luminária", "suporte", "organizadores"],
   banheiro: ["gabinete", "espelho", "nichos", "metais", "acessórios"],
-  // Categoria própria (não herda de "quarto"): itens de bebê/criança.
-  "quarto-infantil": [
-    "berço/cama infantil",
-    "cômoda",
-    "luminária",
-    "tapete",
-    "cortina blackout",
-    "organizadores",
-    "nichos/prateleiras",
-  ],
 };
 
 /** Retorna as categorias sugeridas para um cômodo, ou [] se não mapeado. */
