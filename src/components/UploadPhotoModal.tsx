@@ -1441,6 +1441,9 @@ export function UploadPhotoModal({
           projectName={`${STYLES.find((s) => s.id === style)?.name ?? "Projeto"}${variations[activeIdx]?.label ? " · " + variations[activeIdx].label : ""}`}
           imageUrl={variations[activeIdx]?.url}
           downloadName={`ideal-space-${style}-${activeIdx + 1}.png`}
+          leadSource="whatsapp-share"
+          leadStyle={style}
+          leadRoomType={variations[activeIdx]?.roomType}
         />
       )}
       {/* Lote 8 — upsell de download HD para usuário Free (reusa o LeadFormModal). */}

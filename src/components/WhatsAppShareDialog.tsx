@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MessageCircle, ShieldCheck, AlertCircle, Download } from "lucide-react";
+import { submitLead } from "@/lib/leads";
 
 type Props = {
   open: boolean;
@@ -26,6 +27,16 @@ type Props = {
    * landing read-only acessivel sem login.
    */
   publicUrl?: string;
+  /**
+   * Quando presente, o dialog registra um lead best-effort (fire-and-forget)
+   * com o telefone consentido, usando este valor como `source`. Sem ele,
+   * nenhum lead é gerado (ex.: compartilhamento público segue só localStorage).
+   */
+  leadSource?: string;
+  /** Estilo ativo, anexado ao lead quando disponível. */
+  leadStyle?: string;
+  /** Cômodo da variação, anexado ao lead quando disponível. */
+  leadRoomType?: string;
 };
 
 // Brazilian phone: 10–11 digits (DDD + número), aceita também com 55 prefixo
@@ -48,6 +59,10 @@ const formSchema = z.object({
 
 const CONSENT_KEY = "is_wa_consent";
 
+// Dedup por sessão (vida da página): evita lead duplicado em clique repetido
+// no mesmo número/origem. Não persiste entre reloads, de propósito.
+const sentLeadKeys = new Set<string>();
+
 function formatBR(d: string) {
   // Display only — não normaliza para envio
   const v = d.replace(/\D/g, "").slice(0, 15);
@@ -64,6 +79,9 @@ export function WhatsAppShareDialog({
   imageUrl,
   downloadName,
   publicUrl,
+  leadSource,
+  leadStyle,
+  leadRoomType,
 }: Props) {
   const [phone, setPhone] = useState("");
   const [consent, setConsent] = useState(false);
@@ -102,6 +120,29 @@ export function WhatsAppShareDialog({
       );
     } catch {
       /* ignore */
+    }
+
+    // Lead best-effort: quando o chamador opta via `leadSource`, registra o
+    // telefone consentido como lead (fire-and-forget). Nunca bloqueia nem
+    // quebra a abertura do WhatsApp; `submitLead` jamais lança.
+    if (leadSource) {
+      // submitLead exige 10-11 dígitos; o wa.me usa o 55. Removemos o prefixo.
+      const leadPhone =
+        digits.length >= 12 && digits.startsWith("55") ? digits.slice(2) : digits;
+      const leadKey = `${leadSource}:${leadPhone}`;
+      if (!sentLeadKeys.has(leadKey)) {
+        sentLeadKeys.add(leadKey);
+        void submitLead({
+          name: "Lead WhatsApp",
+          phone: leadPhone,
+          interest: "pessoal",
+          consent_lgpd: true,
+          email: "",
+          source: leadSource,
+          style: leadStyle,
+          room_type: leadRoomType,
+        });
+      }
     }
 
     const msg = publicUrl
