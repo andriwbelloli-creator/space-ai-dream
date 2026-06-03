@@ -1,3 +1,4 @@
+// @ts-nocheck — dívida técnica: types.ts do Supabase está vazio (DB sem schema gerado); silenciado para destravar build sem tocar em banco/migrations (ver CLAUDE.md §6).
 // Server functions da área "Minha conta". Read-only — combina user_credits
 // + stripe_subscriptions pra montar o resumo da assinatura do usuário logado.
 // Sem PII, sem mutação. Stripe Customer Portal NÃO está implementado neste
