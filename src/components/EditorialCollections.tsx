@@ -8,9 +8,9 @@
  */
 import { EditorialFeatureCard, CollectionCard } from "@/components/ui/premium-cards";
 
-import livingAlt from "@/assets/decorated-living.jpg";
+import livingAlt from "@/assets/decorated-sala-tv.jpg";
 import varandaCuradoria from "@/assets/gallery-varanda.jpg";
-import bathroomSuite from "@/assets/decorated-bathroom-suite.jpg";
+import bathroomSuite from "@/assets/decorated-lavabo.jpg";
 import office from "@/assets/gallery-office.jpg";
 
 export function EditorialCollections() {
