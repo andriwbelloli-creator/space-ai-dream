@@ -232,7 +232,10 @@ export function AmbientesGrid() {
                 {tier.rooms.map((room) => (
                   <div key={room.slug} className={tier.span}>
                     {room.before ? (
-                      <BeforeAfterRoomCard room={room} kicker={tier.label} />
+                      <BeforeAfterRoomCard
+                        room={{ ...room, before: room.before }}
+                        kicker={tier.label}
+                      />
                     ) : (
                       <PremiumOverlayCard
                         src={room.src}
