@@ -5,6 +5,7 @@ import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
 import { Footer } from "@/components/Footer";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { AtelierHero } from "@/components/home/AtelierHero";
+import heroAfterUrl from "@/assets/decorated-living-warm.jpg";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
 import { ObjetosTeaser } from "@/components/ObjetosTeaser";
