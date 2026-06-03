@@ -1640,11 +1640,15 @@ function SectionHead({
 }) {
   return (
     <div className="max-w-2xl">
-      <div className="text-[11px] uppercase tracking-[0.22em] text-accent">{kicker}</div>
-      <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold leading-tight">
+      <span className="is-kicker">{kicker}</span>
+      <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
         {title}
       </h2>
-      {sub && <p className="mt-3 text-muted-foreground">{sub}</p>}
+      <span
+        aria-hidden
+        className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60"
+      />
+      {sub && <p className="mt-4 max-w-xl text-muted-foreground">{sub}</p>}
     </div>
   );
 }
