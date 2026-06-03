@@ -96,12 +96,26 @@ const SHOPPING_LIST_BANHEIRO: ReadonlyArray<BudgetItem> = [
   { tag: "Opcional", name: "Planta para banheiro", cat: "Decoração", price: "R$ 50–200" },
 ];
 
+// Lista de compras — Lavanderia. Preços em faixas conservadoras (BRL).
+const SHOPPING_LIST_LAVANDERIA: ReadonlyArray<BudgetItem> = [
+  { tag: "Essencial", name: "Tanque com gabinete", cat: "Móveis principais", price: "R$ 350–1.400" },
+  { tag: "Essencial", name: "Máquina de lavar", cat: "Eletrodomésticos", price: "R$ 1.200–3.800" },
+  { tag: "Essencial", name: "Armário multiuso", cat: "Móveis principais", price: "R$ 400–1.600" },
+  { tag: "Recomendado", name: "Varal de parede retrátil", cat: "Organização", price: "R$ 80–320" },
+  { tag: "Recomendado", name: "Tábua de passar dobrável", cat: "Utilidades", price: "R$ 120–450" },
+  { tag: "Recomendado", name: "Prateleiras / nichos", cat: "Organização", price: "R$ 70–300" },
+  { tag: "Recomendado", name: "Cesto organizador (par)", cat: "Organização", price: "R$ 90–320" },
+  { tag: "Opcional", name: "Tapete antiderrapante", cat: "Decoração", price: "R$ 40–180" },
+  { tag: "Opcional", name: "Potes para sabão", cat: "Organização", price: "R$ 60–220" },
+];
+
 // Mapa cômodo → lista de compras estática. "sala" reaproveita SHOPPING_LIST.
 const SHOPPING_LISTS_BY_ROOM: Record<string, ReadonlyArray<BudgetItem>> = {
   quarto: SHOPPING_LIST_QUARTO,
   cozinha: SHOPPING_LIST_COZINHA,
   "home-office": SHOPPING_LIST_HOME_OFFICE,
   banheiro: SHOPPING_LIST_BANHEIRO,
+  lavanderia: SHOPPING_LIST_LAVANDERIA,
   sala: SHOPPING_LIST,
 };
 
