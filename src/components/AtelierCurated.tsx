@@ -99,7 +99,7 @@ export function AtelierCurated({
       <button
         type="button"
         onClick={() => handleOpenChange(true)}
-        className="mt-5 w-full text-left rounded-2xl border border-accent/20 bg-accent/[0.04] p-4 sm:p-5 is-atelier-card group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="mt-5 w-full text-left rounded-2xl border border-accent/20 bg-accent/[0.04] p-4 sm:p-5 is-atelier-card group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] transition-transform duration-150"
         aria-haspopup="dialog"
         aria-expanded={open}
       >
@@ -173,7 +173,7 @@ export function AtelierCurated({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => handleClick(e, piece, url, i)}
-                      className="inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      className="inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded active:scale-[0.97] active:text-accent/80 transition-transform duration-150"
                     >
                       Ver peça
                       <ExternalLink className="h-3 w-3 is-arrow-slide" aria-hidden />
