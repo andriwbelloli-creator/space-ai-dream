@@ -24,6 +24,9 @@ import galleryLoft from "@/assets/gallery-loft.jpg";
 import decoratedCloset from "@/assets/decorated-closet.jpg";
 import decoratedVarandaGourmet from "@/assets/decorated-varanda-gourmet.jpg";
 import decoratedLavanderia from "@/assets/decorated-lavanderia.jpg";
+import decoratedQuartoBebe from "@/assets/decorated-quarto-bebe.jpg";
+import decoratedHomeTheater from "@/assets/decorated-home-theater.jpg";
+import decoratedAreaPet from "@/assets/decorated-area-pet.jpg";
 
 type RoomItem = {
   slug: string;
@@ -98,6 +101,30 @@ const ROOMS: ReadonlyArray<RoomItem> = [
       "Marcenaria sob medida, máquinas integradas e organização vertical pra aproveitar cada centímetro.",
     src: decoratedLavanderia,
     alt: "Lavanderia planejada com marcenaria sob medida e máquinas integradas",
+  },
+  {
+    slug: "quarto-bebe",
+    name: "Quarto de bebê",
+    description:
+      "Berço, paleta calma e organização funcional pros primeiros anos.",
+    src: decoratedQuartoBebe,
+    alt: "Quarto de bebê em estilo escandinavo com berço e paleta clara",
+  },
+  {
+    slug: "home-theater",
+    name: "Home theater",
+    description:
+      "Acústica, blackout e poltronas certas pra experiência de cinema em casa.",
+    src: decoratedHomeTheater,
+    alt: "Home theater residencial com poltronas reclináveis e tela grande",
+  },
+  {
+    slug: "area-pet",
+    name: "Área pet",
+    description:
+      "Nicho dedicado, piso lavável e organização de utensílios pra cães e gatos.",
+    src: decoratedAreaPet,
+    alt: "Área pet integrada com cama em nicho e prateleiras organizadas",
   },
 ] as const;
 
