@@ -263,10 +263,36 @@ function ProjectDetailDialog({
 }) {
   // Mantém o `project` durante a animação de fechamento — evita "flash" vazio.
   const open = !!project;
-  const items = getShoppingFallback(project?.ai_response?.roomType);
+  const items = sortByPriority(getShoppingFallback(project?.ai_response?.roomType));
+  const counts = countByTag(items);
+  const [tagFilter, setTagFilter] = useState<BudgetItem["tag"] | "Todos">("Todos");
+  const [grouped, setGrouped] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const filtered: ReadonlyArray<BudgetItem> =
+    tagFilter === "Todos" ? items : items.filter((it) => it.tag === tagFilter);
   const total = estimateTotal(items);
+  const filteredTotal = estimateTotal(filtered);
   const dateLabel = project ? new Date(project.created_at).toLocaleDateString("pt-BR") : "";
   const styleName = project?.style_slug != null ? styleLabel(project.style_slug) : null;
+  const projectName = project?.title ?? "Projeto";
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(toClipboardText(items, projectName));
+      setCopied(true);
+      toast.success("Lista copiada");
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
+  };
+
+  const tagChips: ReadonlyArray<BudgetItem["tag"] | "Todos"> = [
+    "Todos",
+    "Essencial",
+    "Recomendado",
+    "Opcional",
+  ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -351,16 +377,97 @@ function ProjectDetailDialog({
             <div className="px-5 sm:px-7 pt-6 pb-6">
               <div className="flex items-baseline justify-between">
                 <h3 className="text-sm font-medium text-foreground">Sugestões para o ambiente</h3>
-                <span className="text-xs text-muted-foreground">{items.length} itens</span>
+                <span className="text-xs text-muted-foreground">
+                  {filtered.length} de {items.length} itens
+                </span>
               </div>
-              <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2.5">
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                  Estimativa total
+              <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2.5 flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Estimativa {tagFilter === "Todos" ? "total" : tagFilter.toLowerCase()}
+                  </div>
+                  <div className="text-base font-medium text-foreground">
+                    {tagFilter === "Todos" ? total : filteredTotal}
+                  </div>
                 </div>
-                <div className="text-base font-medium text-foreground">{total}</div>
+                <button
+                  type="button"
+                  onClick={onCopy}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-background/80 hover:bg-background px-3 py-1.5 text-[11px] font-medium text-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Copy className="h-3 w-3" /> {copied ? "Copiado" : "Copiar lista"}
+                </button>
               </div>
+
+              {/* Chips de filtro por tag + toggle agrupar */}
+              <div className="mt-3 flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-1 flex-wrap" role="tablist" aria-label="Filtrar por prioridade">
+                  {tagChips.map((t) => {
+                    const active = tagFilter === t;
+                    const n = t === "Todos" ? items.length : counts[t];
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        role="tab"
+                        aria-selected={active}
+                        onClick={() => setTagFilter(t)}
+                        disabled={n === 0}
+                        className={`text-[10px] font-medium uppercase tracking-wider rounded-full px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:opacity-40 ${
+                          active
+                            ? "bg-foreground text-background"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                        }`}
+                      >
+                        {t} <span className="opacity-70">· {n}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGrouped((v) => !v)}
+                  className="text-[10px] text-muted-foreground hover:text-foreground rounded-full px-2 py-1 transition"
+                  aria-pressed={grouped}
+                >
+                  {grouped ? "Lista" : "Por categoria"}
+                </button>
+              </div>
+
               <ul className="mt-3 divide-y divide-border/60">
-                {items.map((it) => (
+                {grouped
+                  ? groupByCategory(filtered).flatMap((g, gi) => [
+                      <li
+                        key={`cat_${gi}_${g.cat}`}
+                        className="pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+                      >
+                        {g.cat} · {g.items.length}
+                      </li>,
+                      ...g.items.map((it) => (
+                        <li key={`${g.cat}_${it.name}`} className="py-2.5 flex items-start gap-3">
+                          <span
+                            className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] uppercase tracking-wider ${
+                              it.tag === "Essencial"
+                                ? "bg-accent/15 text-accent"
+                                : it.tag === "Recomendado"
+                                  ? "bg-foreground/10 text-foreground"
+                                  : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {it.tag}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium text-foreground truncate">
+                              {it.name}
+                            </div>
+                            <div className="text-[11px] text-muted-foreground">
+                              {it.cat} · {it.price}
+                            </div>
+                          </div>
+                        </li>
+                      )),
+                    ])
+                  : filtered.map((it) => (
                   <li key={it.name} className="py-2.5 flex items-start gap-3">
                     <span
                       className={`mt-0.5 inline-flex h-5 items-center rounded-full px-2 text-[10px] uppercase tracking-wider ${
