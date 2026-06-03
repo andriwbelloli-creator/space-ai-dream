@@ -1239,7 +1239,7 @@ function Hero({
         <div className="lg:col-span-5 is-fade-up">
           {/* H1 editorial: serif italic dominante, escala maior. Misturado
               com sans pra ritmo. */}
-          <h1 className="text-[2.6rem] sm:text-[3.5rem] lg:text-[5.25rem] leading-[1.02] tracking-[-0.025em] font-semibold">
+          <h1 className="text-[2.6rem] sm:text-[3.5rem] lg:text-[5.25rem] leading-[1.02] tracking-[-0.025em] font-semibold text-balance">
             Veja seu ambiente virar um{" "}
             <span className="font-serif italic font-normal text-accent">projeto pronto</span>
           </h1>
