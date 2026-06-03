@@ -72,26 +72,26 @@
 
 :root {
   --radius: 1rem;
-  /* Atelier Inteligente palette — marfim arquitetônico + grafite profundo,
-     com acentos terracota e dourado fosco. Mantém estrutura warm-neutral
-     do Home Office Life pra não quebrar componentes existentes. */
-  --background: oklch(0.962 0.013 82); /* #F7F3EC marfim arquitetônico */
-  --foreground: oklch(0.2 0 0); /* #171717 grafite profundo */
-  --card: oklch(0.99 0.008 85); /* #FFFCF7 branco cálido */
+  /* Luxe Minimal palette (refit 2026-06) — ivory editorial + grafite,
+     accent bronze quente. Substitui terracota anterior por bronze mais
+     refinado, alinhado à direção visual aprovada (v3 do retrofit). */
+  --background: oklch(0.968 0.008 84); /* #F9F7F2 ivory editorial */
+  --foreground: oklch(0.21 0 0); /* #1A1A1A grafite profundo */
+  --card: oklch(0.99 0.006 86); /* #FDFCFB branco cálido */
   --card-foreground: oklch(0.2 0 0);
-  --popover: oklch(0.99 0.008 85);
+  --popover: oklch(0.99 0.006 86);
   --popover-foreground: oklch(0.2 0 0);
-  --primary: oklch(0.2 0 0); /* grafite */
-  --primary-foreground: oklch(0.99 0.008 85);
-  --secondary: oklch(0.945 0.014 80);
+  --primary: oklch(0.21 0 0); /* grafite */
+  --primary-foreground: oklch(0.99 0.006 86);
+  --secondary: oklch(0.948 0.01 82);
   --secondary-foreground: oklch(0.2 0 0);
-  --muted: oklch(0.935 0.012 78);
+  --muted: oklch(0.938 0.01 82);
   --muted-foreground: oklch(0.5 0.012 75); /* #6F6A62 cinza pedra */
-  --accent: oklch(0.62 0.115 40); /* #B87355 terracota suave */
-  --accent-foreground: oklch(0.99 0.008 85);
-  /* Secondary editorial accents — gold for kickers/badges, sage for
-     Canvas de Decisão chips, ink-blue for tech modules. */
-  --gold-soft: oklch(0.74 0.085 82); /* #C4A56A dourado fosco */
+  --accent: oklch(0.58 0.072 65); /* #A67C52 bronze warm (Luxe Minimal) */
+  --accent-foreground: oklch(0.99 0.006 86);
+  /* Secondary editorial accents — bronze claro pra kickers (alinhado ao
+     accent principal), sage pros chips de decisão, ink-blue p/ tech. */
+  --gold-soft: oklch(0.64 0.078 65); /* #B58A60 bronze claro pra kickers */
   --gold-foreground: oklch(0.2 0 0);
   --sage: oklch(0.61 0.04 155); /* #6F8F7A verde sálvia */
   --sage-foreground: oklch(0.99 0.008 85);
@@ -103,9 +103,9 @@
   --shadow-editorial-lg: 0 2px 4px rgb(0 0 0 / 0.04), 0 16px 48px rgb(0 0 0 / 0.08);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.89 0.018 80); /* #E5DED2 areia */
-  --input: oklch(0.91 0.016 80);
-  --ring: oklch(0.62 0.115 40);
+  --border: oklch(0.892 0.012 86); /* #E5E1D8 hairline editorial */
+  --input: oklch(0.91 0.012 84);
+  --ring: oklch(0.58 0.072 65);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
