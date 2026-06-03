@@ -7,6 +7,8 @@ import { BeforeAfter } from "@/components/BeforeAfter";
 import { AtelierHero } from "@/components/home/AtelierHero";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
+import { ObjetosTeaser } from "@/components/ObjetosTeaser";
+import { AcessibilidadeTeaser } from "@/components/AcessibilidadeTeaser";
 import { Tipos2D5D } from "@/components/Tipos2D5D";
 import { PremiumVerticalCard } from "@/components/ui/premium-cards";
 import { PresentationModal } from "@/components/PresentationModal";
@@ -726,6 +728,7 @@ function Index() {
       <HowItWorks onUpload={openUpload} />
       <StylesCarousel onUpload={openUpload} />
       <AmbientesGrid />
+      <ObjetosTeaser />
       <Tipos2D5D />
       {/* Galeria #galeria — destino do menu "Ideias". Sub-CTAs no fim
           levam pras sections de Estilos e Ambientes. */}
@@ -735,6 +738,7 @@ function Index() {
         onLead={(title) => setLead({ title, source: "galeria" })}
       />
       <EditorialCollections />
+      <AcessibilidadeTeaser />
       <ResultShowcase
         onBudget={() => openReward("budget")}
         onAffiliate={setAffiliateOpen}
