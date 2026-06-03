@@ -1839,7 +1839,7 @@ function FeaturedBeforeAfter() {
             Um banheiro vazio vira refúgio em
             segundos.
           </h2>
-          <span aria-hidden className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
+          <span aria-hidden className="mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-4 text-muted-foreground max-w-md">
             Arraste o controle e veja a estrutura preservada, a iluminação trabalhada e o mobiliário
             sugerido pela IA, pronto para virar lista de compras e orçamento.
@@ -2415,7 +2415,7 @@ function Pricing({
             Planos para criar seus{" "}
             <span className="italic font-normal text-[color:var(--gold-soft)]">projetos com IA</span>.
           </h2>
-          <span aria-hidden className="mx-auto mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
+          <span aria-hidden className="mx-auto mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
             Comece grátis e evolua quando precisar, do 2D rápido aos recursos profissionais.
           </p>

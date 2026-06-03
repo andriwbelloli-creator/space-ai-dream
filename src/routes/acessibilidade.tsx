@@ -107,7 +107,7 @@ function AcessibilidadePage() {
             </h1>
             <span
               aria-hidden="true"
-              className="mt-6 block h-px w-16 bg-[color:var(--gold-soft)]/60"
+              className="mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60"
             />
             <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
               Acessibilidade não é adaptação tardia, é decisão de projeto. Aqui
@@ -164,7 +164,7 @@ function AcessibilidadePage() {
             </h2>
             <span
               aria-hidden="true"
-              className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60"
+              className="mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60"
             />
             <p className="mt-5 text-sm text-muted-foreground sm:text-base">
               Mobilidade, sensorial e baixa visão lidos juntos. Cada pilar traz

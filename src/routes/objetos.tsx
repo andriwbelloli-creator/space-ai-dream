@@ -67,7 +67,7 @@ function ObjetosPage() {
               </h1>
               <span
                 aria-hidden="true"
-                className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60"
+                className="mt-6 block h-px w-24 bg-[color:var(--gold-soft)]/60"
               />
             </div>
             <p className="max-w-sm text-sm text-muted-foreground sm:text-base">
