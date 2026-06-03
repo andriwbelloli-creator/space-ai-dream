@@ -19,6 +19,7 @@ export function Footer() {
         { label: "Ambientes", href: "#ambientes" },
         { label: "Estilos", href: "#estilos" },
         { label: "Objetos", href: "/objetos" },
+        { label: "Acessibilidade", href: "/acessibilidade" },
         { label: "Galeria", href: "#galeria" },
         { label: "Planos", href: "/pricing" },
       ],
