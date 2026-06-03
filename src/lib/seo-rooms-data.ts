@@ -27,6 +27,7 @@ export type RoomSlug =
   | "quarto-infantil"
   | "lavabo"
   | "sala-tv"
+  | "lavanderia"
   | "quarto-bebe"
   | "home-theater"
   | "area-pet";
