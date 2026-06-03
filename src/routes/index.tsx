@@ -1640,11 +1640,15 @@ function SectionHead({
 }) {
   return (
     <div className="max-w-2xl">
-      <div className="text-[11px] uppercase tracking-[0.22em] text-accent">{kicker}</div>
-      <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold leading-tight">
+      <span className="is-kicker">{kicker}</span>
+      <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
         {title}
       </h2>
-      {sub && <p className="mt-3 text-muted-foreground">{sub}</p>}
+      <span
+        aria-hidden
+        className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60"
+      />
+      {sub && <p className="mt-4 max-w-xl text-muted-foreground">{sub}</p>}
     </div>
   );
 }
@@ -1660,7 +1664,7 @@ function EmptyRoomsCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Ambientes vazios"
             title={
               <>
-                Escolha o <span className="font-serif italic font-normal">cômodo</span> para
+                Escolha o <span className="italic font-normal text-[color:var(--gold-soft)]">cômodo</span> para
                 transformar
               </>
             }
@@ -1729,7 +1733,7 @@ function StylesCarousel({ onUpload }: { onUpload: () => void }) {
             kicker="Estilos de decoração"
             title={
               <>
-                Escolha um <span className="font-serif italic font-normal">estilo</span> para seu
+                Escolha um <span className="italic font-normal text-[color:var(--gold-soft)]">estilo</span> para seu
                 projeto
               </>
             }
@@ -1875,13 +1879,12 @@ function FeaturedBeforeAfter() {
     <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 grid lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-5 order-2 lg:order-1">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-accent">
-            Antes e depois em destaque
-          </div>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold leading-tight">
-            Um <span className="font-serif italic font-normal">banheiro vazio</span> vira refúgio em
+          <span className="is-kicker">Antes e depois em destaque</span>
+          <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
+            Um <span className="italic font-normal text-[color:var(--gold-soft)]">banheiro vazio</span> vira refúgio em
             segundos.
           </h2>
+          <span aria-hidden className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-4 text-muted-foreground max-w-md">
             Arraste o controle e veja a estrutura preservada, a iluminação trabalhada e o mobiliário
             sugerido pela IA, pronto para virar lista de compras e orçamento.
@@ -1929,7 +1932,7 @@ function ResultShowcase({
           title={
             <>
               Seu projeto fica{" "}
-              <span className="font-serif italic font-normal">pronto em minutos</span>
+              <span className="italic font-normal text-[color:var(--gold-soft)]">pronto em minutos</span>
             </>
           }
           sub="Imagem como protagonista, lista de compras ao lado e orçamento a um clique."
@@ -2093,7 +2096,7 @@ function InspirationGallery({
             title={
               <>
                 Projetos{" "}
-                <span className="font-serif italic font-normal">2D, 5D e planta baixa</span>
+                <span className="italic font-normal text-[color:var(--gold-soft)]">2D, 5D e planta baixa</span>
               </>
             }
             sub="Variações 2D reais geradas pela plataforma. 5D e planta baixa em breve. Filtre por tipo de projeto."
@@ -2241,7 +2244,7 @@ function RankingStrip({ onUpload }: { onUpload: () => void }) {
             kicker="Inspirações"
             title={
               <>
-                Ambientes para <span className="font-serif italic font-normal">se inspirar</span>
+                Ambientes para <span className="italic font-normal text-[color:var(--gold-soft)]">se inspirar</span>
               </>
             }
             sub="Exemplos de transformações criadas com IA na plataforma."
@@ -2452,11 +2455,12 @@ function Pricing({
     <section id="planos" className="py-14 sm:py-20 bg-card/40 border-y border-border/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="text-center">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-accent">Assinatura</div>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] font-semibold">
+          <span className="is-kicker">Assinatura</span>
+          <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
             Planos para criar seus{" "}
-            <span className="font-serif italic font-normal">projetos com IA</span>.
+            <span className="italic font-normal text-[color:var(--gold-soft)]">projetos com IA</span>.
           </h2>
+          <span aria-hidden className="mx-auto mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60" />
           <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
             Comece grátis e evolua quando precisar, do 2D rápido aos recursos profissionais.
           </p>
@@ -2592,7 +2596,7 @@ function Trust() {
           title={
             <>
               Suas fotos e dados com{" "}
-              <span className="font-serif italic font-normal">segurança</span>
+              <span className="italic font-normal text-[color:var(--gold-soft)]">segurança</span>
             </>
           }
         />
