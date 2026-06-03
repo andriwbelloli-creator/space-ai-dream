@@ -72,7 +72,14 @@ export type TransformOutput = {
   roomType?: string;
 };
 
-type RoomType = "sala" | "quarto" | "cozinha" | "home-office" | "banheiro" | "outro";
+type RoomType =
+  | "sala"
+  | "quarto"
+  | "cozinha"
+  | "home-office"
+  | "banheiro"
+  | "quarto-infantil"
+  | "outro";
 
 const ROOM_TYPES: ReadonlyArray<RoomType> = [
   "sala",
@@ -80,8 +87,21 @@ const ROOM_TYPES: ReadonlyArray<RoomType> = [
   "cozinha",
   "home-office",
   "banheiro",
+  "quarto-infantil",
   "outro",
 ];
+
+// Slugs compostos do picker /ambientes que resolvem para uma categoria-base
+// canônica. Sem isto, caíam em "outro" e envenenavam a inferência da IA: o hint
+// "outro" sobrescrevia o room_type que o modelo teria inferido. Sprint 4 Commit A.
+// quarto-infantil NÃO entra aqui: é categoria própria (resolve via ROOM_TYPES).
+const ROOM_SLUG_ALIASES: Record<string, RoomType> = {
+  "sala-jantar": "sala",
+  "sala-tv": "sala",
+  "varanda-gourmet": "cozinha",
+  closet: "quarto",
+  lavabo: "banheiro",
+};
 
 /**
  * Normaliza, de forma resiliente e defensiva, o `room_type` retornado pela IA.
@@ -95,6 +115,8 @@ function normalizeRoomType(value: unknown): RoomType | undefined {
   const v = value.trim().toLowerCase();
   if (!v) return undefined;
   if ((ROOM_TYPES as ReadonlyArray<string>).includes(v)) return v as RoomType;
+  // Slugs compostos do picker /ambientes → categoria-base (evita "outro").
+  if (v in ROOM_SLUG_ALIASES) return ROOM_SLUG_ALIASES[v];
   if (["home office", "homeoffice", "office", "escritório", "escritorio"].includes(v)) {
     return "home-office";
   }
@@ -103,7 +125,7 @@ function normalizeRoomType(value: unknown): RoomType | undefined {
   }
   if (["bedroom", "dormitório", "dormitorio"].includes(v)) return "quarto";
   if (v === "kitchen") return "cozinha";
-  if (["bathroom", "lavabo", "wc"].includes(v)) return "banheiro";
+  if (["bathroom", "wc"].includes(v)) return "banheiro";
   return "outro";
 }
 
