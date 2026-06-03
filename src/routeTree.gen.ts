@@ -15,6 +15,7 @@ import { Route as ParaImobiliariasRouteImport } from './routes/para-imobiliarias
 import { Route as ParaDesignersRouteImport } from './routes/para-designers'
 import { Route as ParaArquitetosRouteImport } from './routes/para-arquitetos'
 import { Route as OrcamentoDesignInterioresRouteImport } from './routes/orcamento-design-interiores'
+import { Route as ObjetosRouteImport } from './routes/objetos'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegalRouteImport } from './routes/legal'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -70,6 +71,11 @@ const OrcamentoDesignInterioresRoute =
     path: '/orcamento-design-interiores',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ObjetosRoute = ObjetosRouteImport.update({
+  id: '/objetos',
+  path: '/objetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/objetos': typeof ObjetosRoute
   '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
   '/para-arquitetos': typeof ParaArquitetosRoute
   '/para-designers': typeof ParaDesignersRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/objetos': typeof ObjetosRoute
   '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
   '/para-arquitetos': typeof ParaArquitetosRoute
   '/para-designers': typeof ParaDesignersRoute
@@ -252,6 +260,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/legal': typeof LegalRoute
   '/login': typeof LoginRoute
+  '/objetos': typeof ObjetosRoute
   '/orcamento-design-interiores': typeof OrcamentoDesignInterioresRoute
   '/para-arquitetos': typeof ParaArquitetosRoute
   '/para-designers': typeof ParaDesignersRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/legal'
     | '/login'
+    | '/objetos'
     | '/orcamento-design-interiores'
     | '/para-arquitetos'
     | '/para-designers'
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/'
     | '/legal'
     | '/login'
+    | '/objetos'
     | '/orcamento-design-interiores'
     | '/para-arquitetos'
     | '/para-designers'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/legal'
     | '/login'
+    | '/objetos'
     | '/orcamento-design-interiores'
     | '/para-arquitetos'
     | '/para-designers'
@@ -376,6 +388,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   LegalRoute: typeof LegalRoute
   LoginRoute: typeof LoginRoute
+  ObjetosRoute: typeof ObjetosRoute
   OrcamentoDesignInterioresRoute: typeof OrcamentoDesignInterioresRoute
   ParaArquitetosRoute: typeof ParaArquitetosRoute
   ParaDesignersRoute: typeof ParaDesignersRoute
@@ -433,6 +446,13 @@ declare module '@tanstack/react-router' {
       path: '/orcamento-design-interiores'
       fullPath: '/orcamento-design-interiores'
       preLoaderRoute: typeof OrcamentoDesignInterioresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/objetos': {
+      id: '/objetos'
+      path: '/objetos'
+      fullPath: '/objetos'
+      preLoaderRoute: typeof ObjetosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -654,6 +674,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   LegalRoute: LegalRoute,
   LoginRoute: LoginRoute,
+  ObjetosRoute: ObjetosRoute,
   OrcamentoDesignInterioresRoute: OrcamentoDesignInterioresRoute,
   ParaArquitetosRoute: ParaArquitetosRoute,
   ParaDesignersRoute: ParaDesignersRoute,
