@@ -4,11 +4,20 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { IdealSpaceLogo } from "@/components/IdealSpaceLogo";
-import { Loader2, ImageIcon, X, Share2, Globe } from "lucide-react";
+import { Loader2, ImageIcon, X, Share2, Globe, Copy } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { Button } from "@/components/ui/button";
-import { getShoppingFallback, estimateTotal } from "@/lib/shopping";
+import {
+  getShoppingFallback,
+  estimateTotal,
+  sortByPriority,
+  countByTag,
+  groupByCategory,
+  toClipboardText,
+} from "@/lib/shopping";
+import type { BudgetItem } from "@/lib/budget-pdf";
+import { toast } from "sonner";
 import { logEvent } from "@/lib/tracking.functions";
 import { styleLabel } from "@/lib/style-labels";
 import { ShareProjectDialog } from "@/components/ShareProjectDialog";
