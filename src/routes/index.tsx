@@ -9,6 +9,7 @@ import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
 import { ObjetosTeaser } from "@/components/ObjetosTeaser";
 import { AcessibilidadeTeaser } from "@/components/AcessibilidadeTeaser";
+import { SectionHead } from "@/components/SectionHead";
 import { Tipos2D5D } from "@/components/Tipos2D5D";
 import { PremiumVerticalCard } from "@/components/ui/premium-cards";
 import { PresentationModal } from "@/components/PresentationModal";
@@ -1628,30 +1629,7 @@ function Marquee() {
 }
 
 /* ----------------------------- SECTION HEAD ----------------------------- */
-
-function SectionHead({
-  kicker,
-  title,
-  sub,
-}: {
-  kicker: string;
-  title: React.ReactNode;
-  sub?: string;
-}) {
-  return (
-    <div className="max-w-2xl">
-      <span className="is-kicker">{kicker}</span>
-      <h2 className="mt-3 font-serif text-3xl leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl">
-        {title}
-      </h2>
-      <span
-        aria-hidden
-        className="mt-5 block h-px w-16 bg-[color:var(--gold-soft)]/60"
-      />
-      {sub && <p className="mt-4 max-w-xl text-muted-foreground">{sub}</p>}
-    </div>
-  );
-}
+// SectionHead vive em src/components/SectionHead.tsx para ser story-testado.
 
 /* ----------------------------- EMPTY ROOMS ----------------------------- */
 
