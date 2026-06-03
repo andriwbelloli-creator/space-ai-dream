@@ -8,7 +8,8 @@ import { AtelierHero } from "@/components/home/AtelierHero";
 import { EditorialCollections } from "@/components/EditorialCollections";
 import { AmbientesGrid } from "@/components/AmbientesGrid";
 import { ObjetosTeaser } from "@/components/ObjetosTeaser";
-import { AcessibilidadeTeaser } from "@/components/AcessibilidadeTeaser";
+// AcessibilidadeTeaser não é mais renderizada na home (compete com seções
+// comerciais). Página /acessibilidade segue acessível pelo footer.
 import { SectionHead } from "@/components/SectionHead";
 import { Tipos2D5D } from "@/components/Tipos2D5D";
 import { PremiumVerticalCard } from "@/components/ui/premium-cards";
@@ -739,7 +740,6 @@ function Index() {
         onLead={(title) => setLead({ title, source: "galeria" })}
       />
       <EditorialCollections />
-      <AcessibilidadeTeaser />
       <ResultShowcase
         onBudget={() => openReward("budget")}
         onAffiliate={setAffiliateOpen}
