@@ -14,9 +14,6 @@
  *   - decorated-varanda-gourmet.jpg (varanda com churrasqueira e mesa)
  */
 import { PremiumOverlayCard } from "@/components/ui/premium-cards";
-import { BeforeAfter } from "@/components/BeforeAfter";
-import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 
 import decoratedLivingWarm from "@/assets/decorated-living-warm.jpg";
 import decoratedBedroom from "@/assets/decorated-bedroom.jpg";
@@ -30,12 +27,6 @@ import decoratedLavanderia from "@/assets/decorated-lavanderia.jpg";
 import decoratedQuartoBebe from "@/assets/decorated-quarto-bebe.jpg";
 import decoratedHomeTheater from "@/assets/decorated-home-theater.jpg";
 import decoratedAreaPet from "@/assets/decorated-area-pet.jpg";
-// Imagens "antes" (cômodos vazios) — reaproveitam os mesmos pares já
-// curados do hero, sem regenerar via IA (regra inviolável do projeto).
-import emptyLiving from "@/assets/empty-living.jpg";
-import emptyBedroom from "@/assets/empty-bedroom.jpg";
-import emptyKitchen from "@/assets/empty-kitchen.jpg";
-import emptyBathroom from "@/assets/empty-bathroom.jpg";
 
 type RoomItem = {
   slug: string;
@@ -43,8 +34,6 @@ type RoomItem = {
   description: string;
   src: string;
   alt: string;
-  /** Imagem "antes" — quando presente, o card vira slider antes/depois. */
-  before?: string;
 };
 
 /**
